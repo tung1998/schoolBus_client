@@ -27,6 +27,11 @@ import '../../ui/components/module/classManager/classManager.js'
 
 //login
 import '../../ui/pages/login/login.js'
+import '../../ui/components/module/administratorManager/administratorManager.js'
+import '../../ui/components/module/driverManager/driverManager.js'
+import '../../ui/components/module/parentManager/parentManager.js'
+import '../../ui/components/module/nannyManager/nannyManager.js'
+import '../../ui/components/module/carModelManager/carModelManager.js'
 
 //route
 import '../../ui/components/module/route/route.js'
@@ -77,6 +82,56 @@ FlowRouter.route('/classManager', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'classManager',
+        });
+    },
+});
+
+FlowRouter.route('/administratorManager', {
+    name: 'App.home',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'administratorManager',
+        });
+    },
+});
+
+FlowRouter.route('/driverManager', {
+    name: 'App.home',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'driverManager',
+        });
+    },
+});
+
+FlowRouter.route('/parentManager', {
+    name: 'App.home',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'parentManager',
+        });
+    },
+});
+
+FlowRouter.route('/nannyManager', {
+    name: 'App.home',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'nannyManager',
+        });
+    },
+});
+
+FlowRouter.route('/carModelManager', {
+    name: 'App.home',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'carModelManager',
         });
     },
 });
