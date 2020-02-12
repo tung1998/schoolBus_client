@@ -1,0 +1,2 @@
+import './teacherManager.html';
+
