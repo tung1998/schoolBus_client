@@ -8,27 +8,27 @@ var KTApp = function() {
     /** @type {object} colors State colors **/
     var colors = {};
 
-    var initTooltip = function(el) {
-        var skin = el.data('skin') ? 'tooltip-' + el.data('skin') : '';
-        var width = el.data('width') == 'auto' ? 'tooltop-auto-width' : '';
-        var triggerValue = el.data('trigger') ? el.data('trigger') : 'hover';
-        var placement = el.data('placement') ? el.data('placement') : 'left';
+    // var initTooltip = function(el) {
+    //     var skin = el.data('skin') ? 'tooltip-' + el.data('skin') : '';
+    //     var width = el.data('width') == 'auto' ? 'tooltop-auto-width' : '';
+    //     var triggerValue = el.data('trigger') ? el.data('trigger') : 'hover';
+    //     var placement = el.data('placement') ? el.data('placement') : 'left';
 
-        el.tooltip({
-            trigger: triggerValue,
-            template: '<div class="tooltip ' + skin + ' ' + width + '" role="tooltip">\
-                <div class="arrow"></div>\
-                <div class="tooltip-inner"></div>\
-            </div>'
-        });
-    }
+    //     el.tooltip({
+    //         trigger: triggerValue,
+    //         template: '<div class="tooltip ' + skin + ' ' + width + '" role="tooltip">\
+    //             <div class="arrow"></div>\
+    //             <div class="tooltip-inner"></div>\
+    //         </div>'
+    //     });
+    // }
 
-    var initTooltips = function() {
-        // init bootstrap tooltips
-        $('[data-toggle="kt-tooltip"]').each(function() {
-            initTooltip($(this));
-        });
-    }
+    // var initTooltips = function() {
+    //     // init bootstrap tooltips
+    //     $('[data-toggle="kt-tooltip"]').each(function() {
+    //         initTooltip($(this));
+    //     });
+    // }
 
     var initPopover = function(el) {
         var skin = el.data('skin') ? 'popover-' + el.data('skin') : '';
@@ -169,7 +169,7 @@ var KTApp = function() {
 
         initComponents: function() {
             initScroll();
-            initTooltips();
+            // initTooltips();
             initPopovers();
             initAlerts();
             initPortlets();
@@ -178,13 +178,13 @@ var KTApp = function() {
             initAbsoluteDropdowns();
         },
 
-        initTooltips: function() {
-            initTooltips();
-        },
+        // initTooltips: function() {
+        //     initTooltips();
+        // },
 
-        initTooltip: function(el) {
-            initTooltip(el);
-        },
+        // initTooltip: function(el) {
+        //     initTooltip(el);
+        // },
 
         initPopovers: function() {
             initPopovers();
