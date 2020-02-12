@@ -41,7 +41,7 @@
               <!--begin::Section-->
               <div class="kt-section">
                 <div class="kt-section__content">
-                  <button type="button" class="btn btn-outline-brand mb-4" data-toggle="modal" data-target="#editStudentModal">Thêm mới</button>
+                  <button type="button" class="btn btn-outline-brand mb-4" data-toggle="modal" data-target="#editClassModal">Thêm mới</button>
                   <table class="table table-bordered table-hover">
                     <thead class="thead-light">
                       <tr>
@@ -61,7 +61,7 @@
                         <td>@twitter</td>
                         <td>@twitter</td>
                         <td>
-                          <button type="button" class="btn btn-outline-brand" data-toggle="modal" data-target="#editStudentModal">Sửa</button>
+                          <button type="button" class="btn btn-outline-brand" data-toggle="modal" data-target="#editClassModal">Sửa</button>
                           <button type="button" class="btn btn-outline-danger">Xóa</button>
                         </td>
                       </tr>
@@ -77,12 +77,12 @@
     </div>
     <!-- end:: Content -->
   </div>
-  {{> editStudentModal}}
+  {{> editClassModal}}
 </template>
 
 
-<template name="editStudentModal">
-<div class="modal fade" id="editStudentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<template name="editClassModal">
+<div class="modal fade" id="editClassModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
   style="display: none;" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
