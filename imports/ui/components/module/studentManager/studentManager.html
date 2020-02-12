@@ -41,27 +41,37 @@
               <!--begin::Section-->
               <div class="kt-section">
                 <div class="kt-section__content">
-                  <button type="button" class="btn btn-outline-brand mb-4" data-toggle="modal" data-target="#editStudentModal">Thêm mới</button>
+                  <button type="button" class="btn btn-outline-brand mb-4" data-toggle="modal"
+                    data-target="#editStudentModal">Thêm mới</button>
                   <table class="table table-bordered table-hover">
                     <thead class="thead-light">
                       <tr>
-                        <th>#</th>
+                        <th></th>
                         <th>Họ tên</th>
-                        <th>Tuổi</th>
+                        <th>Ngày sinh</th>
+                        <th>Địa chỉ</th>
+                        <th>Số điện thoại</th>
+                        <th>Email</th>
+                        <th>Trường</th>
                         <th>Lớp</th>
-                        <th>Ngàậksdklasjdkljaskldjaskljdklasjdkljy sinh</th>
-                        <th>Username</th>
+                        <th>Mã học sinh</th>
+                        <th></th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
                         <th scope="row">3</th>
+                        <td><img src="/assets/media/users/100_3.jpg" alt="image"></td>
+                        <td>Larry</td>
+                        <td>Larry</td>
+                        <td>Larry</td>
                         <td>Larry</td>
                         <td>the Bird</td>
                         <td>@twitter</td>
                         <td>@twitter</td>
                         <td>
-                          <button type="button" class="btn btn-outline-brand" data-toggle="modal" data-target="#editStudentModal">Sửa</button>
+                          <button type="button" class="btn btn-outline-brand" data-toggle="modal"
+                            data-target="#editStudentModal">Sửa</button>
                           <button type="button" class="btn btn-outline-danger">Xóa</button>
                         </td>
                       </tr>
@@ -82,32 +92,42 @@
 
 
 <template name="editStudentModal">
-<div class="modal fade" id="editStudentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-  style="display: none;" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">New message</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        </button>
-      </div>
-      <div class="modal-body">
-        <form>
-          <div class="form-group">
-            <label for="recipient-name" class="form-control-label">Recipient:</label>
-            <input type="text" class="form-control" id="recipient-name">
-          </div>
-          <div class="form-group">
-            <label for="message-text" class="form-control-label">Message:</label>
-            <textarea class="form-control" id="message-text"></textarea>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Send message</button>
+  <div class="modal fade" id="editStudentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          </button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-group row">
+              <label for="example-text-input" class="col-2 col-form-label">Text</label>
+              <div class="col-10">
+                <input class="form-control" type="text" value="Artisanal kale" id="example-text-input">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="example-text-input" class="col-2 col-form-label">Text</label>
+              <div class="col-10">
+                <input class="form-control" type="text" value="Artisanal kale" id="example-text-input">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="example-text-input" class="col-2 col-form-label">Text</label>
+              <div class="col-10">
+                <input class="form-control" type="text" value="Artisanal kale" id="example-text-input">
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Send message</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 </template>
