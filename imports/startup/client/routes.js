@@ -6,6 +6,7 @@ import {
 } from 'meteor/kadira:blaze-layout';
 
 // Import needed templates
+// layout template
 import '../../ui/layouts/body/body.js';
 
 // page template

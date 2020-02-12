@@ -1,5 +1,5 @@
 import Keyboard from '../modules/keyboard';
-import DropdownIcon from '../assets/icons/dropdown.svg';
+import DropdownIcon from './assets/icons/dropdown.svg';
 
 let optionsCounter = 0;
 

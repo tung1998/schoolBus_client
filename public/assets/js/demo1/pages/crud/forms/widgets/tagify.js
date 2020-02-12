@@ -150,7 +150,7 @@ var KTTagify = function() {
                 email : 'chris.muller@wix.com',
                 initials: '',
                 initialsState: '',
-                pic: './assets/media/users/100_11.jpg',
+                pic: '/assets/media/users/100_11.jpg',
                 class : 'tagify__tag--brand'
             }, {
                 value : 'Nick Bold',
@@ -163,37 +163,37 @@ var KTTagify = function() {
                 email : 'alon@keenthemes.com',
                 initials: '',
                 initialsState: '',
-                pic: './assets/media/users/100_6.jpg'
+                pic: '/assets/media/users/100_6.jpg'
             }, {
                 value : 'Sam Seanic',
                 email : 'sam.senic@loop.com',
                 initials: '',
                 initialsState: '',
-                pic: './assets/media/users/100_8.jpg'
+                pic: '/assets/media/users/100_8.jpg'
             }, {
                 value : 'Sara Loran',
                 email : 'sara.loran@tilda.com',
                 initials: '',
                 initialsState: '',
-                pic: './assets/media/users/100_9.jpg'
+                pic: '/assets/media/users/100_9.jpg'
             }, {
                 value : 'Eric Davok',
                 email : 'davok@mix.com',
                 initials: '',
                 initialsState: '',
-                pic: './assets/media/users/100_13.jpg'
+                pic: '/assets/media/users/100_13.jpg'
             }, {
                 value : 'Sam Seanic',
                 email : 'sam.senic@loop.com',
                 initials: '',
                 initialsState: '',
-                pic: './assets/media/users/100_13.jpg'
+                pic: '/assets/media/users/100_13.jpg'
             }, {
                 value : 'Lina Nilson',
                 email : 'lina.nilson@loop.com',
                 initials: 'LN',
                 initialsState: 'danger',
-                pic: './assets/media/users/100_15.jpg'
+                pic: '/assets/media/users/100_15.jpg'
             }],
             templates: {
                 dropdownItem : function(tagData){
