@@ -24,6 +24,7 @@ import '../../ui/components/module/studentManager/studentManager.js'
 import '../../ui/components/module/teacherManager/teacherManager.js'
 import '../../ui/components/module/schoolManager/schoolManager.js'
 import '../../ui/components/module/classManager/classManager.js'
+import '../../ui/components/module/studentListManager/studentListManager.js'
 
 
 // Set up all routes in the app
@@ -73,6 +74,16 @@ FlowRouter.route('/classManager', {
     BlazeLayout.render('App_body', {
       main: 'App_home',
       content: 'classManager',
+    });
+  },
+});
+
+FlowRouter.route('/studentListManager', {
+  name: 'App.home',
+  action() {
+    BlazeLayout.render('App_body', {
+      main: 'App_home',
+      content: 'studentListManager',
     });
   },
 });
