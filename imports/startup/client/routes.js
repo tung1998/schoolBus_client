@@ -18,23 +18,23 @@ import '../../ui/components/mobileHeader/mobileHeader.js'
 import '../../ui/components/aside/aside.js'
 import '../../ui/components/header/header.js'
 import '../../ui/components/footer/footer.js'
-// module template
-import '../../ui/components/module/sample/sample.js'
-import '../../ui/components/module/studentManager/studentManager.js'
-import '../../ui/components/module/teacherManager/teacherManager.js'
-import '../../ui/components/module/schoolManager/schoolManager.js'
-import '../../ui/components/module/classManager/classManager.js'
+// admin template
+import '../../ui/components/admin/sample/sample.js'
+import '../../ui/components/admin/studentManager/studentManager.js'
+import '../../ui/components/admin/teacherManager/teacherManager.js'
+import '../../ui/components/admin/schoolManager/schoolManager.js'
+import '../../ui/components/admin/classManager/classManager.js'
 
 //login
 import '../../ui/pages/login/login.js'
-import '../../ui/components/module/administratorManager/administratorManager.js'
-import '../../ui/components/module/driverManager/driverManager.js'
-import '../../ui/components/module/parentManager/parentManager.js'
-import '../../ui/components/module/nannyManager/nannyManager.js'
-import '../../ui/components/module/carModelManager/carModelManager.js'
+import '../../ui/components/admin/administratorManager/administratorManager.js'
+import '../../ui/components/admin/driverManager/driverManager.js'
+import '../../ui/components/admin/parentManager/parentManager.js'
+import '../../ui/components/admin/nannyManager/nannyManager.js'
+import '../../ui/components/admin/carModelManager/carModelManager.js'
 
 //route
-import '../../ui/components/module/route/route.js'
+import '../../ui/components/admin/route/route.js'
 // Set up all routes in the app
 FlowRouter.route('/', {
     name: 'App.home',

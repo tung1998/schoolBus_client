@@ -1,2 +1,0 @@
-import './studentManager.html';
-

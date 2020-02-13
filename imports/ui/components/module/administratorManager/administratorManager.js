@@ -1,1 +1,0 @@
-import './administratorManager.html'
