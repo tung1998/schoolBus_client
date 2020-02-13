@@ -38,6 +38,7 @@ import '../../ui/components/admin/notification/notification.js';
 import '../../ui/components/admin/carMaintenance/carMaintenance.js';
 // import '../../ui/components/admin/admin/admin.js';
 // driver template
+import '../../ui/components/driver/upCommingTripInfo/upCommingTripInfo.js';
 // parent template
 // nanny template
 
@@ -227,6 +228,18 @@ FlowRouter.route('/admin', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'admin',
+        });
+    },
+});
+
+//DRIVER
+
+FlowRouter.route('/upCommingTripInfo', {
+    name: 'App.home',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'upCommingTripInfo',
         });
     },
 });
