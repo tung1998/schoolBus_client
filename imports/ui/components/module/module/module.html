@@ -1,0 +1,85 @@
+<template name="module">
+    <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+        <!-- begin:: Subheader -->
+        <div class="kt-subheader   kt-grid__item" id="kt_subheader">
+            <div class="kt-container  kt-container--fluid ">
+                <div class="kt-subheader__main">
+                    <h3 class="kt-subheader__title">
+
+                        Quản lý module </h3>
+
+                    <span class="kt-subheader__separator kt-hidden"></span>
+                    <div class="kt-subheader__breadcrumbs">
+                        <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
+                        <span class="kt-subheader__breadcrumbs-separator"></span>
+                        <a href="" class="kt-subheader__breadcrumbs-link">
+                            SchoolBus </a>
+                        <span class="kt-subheader__breadcrumbs-separator"></span>
+                        <a href="" class="kt-subheader__breadcrumbs-link">
+                            Quản lý module</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end:: Subheader -->
+
+        <!-- begin:: Content -->
+        <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+            <div class="row">
+                <div class="col">
+
+                    <div class="kt-portlet">
+                        <div class="kt-portlet__head">
+                            <div class="kt-portlet__head-label">
+                                <h3 class="kt-portlet__head-title">
+                                    Danh sách
+                                </h3>
+                            </div>
+                        </div>
+
+                        <div class="kt-portlet__body">
+                            <!--begin::Section-->
+                            <div class="kt-section">
+                                <div class="kt-section__content">
+                                    <button type="button" class="btn btn-outline-brand mb-4" data-toggle="modal"
+                                        data-target="#editRouteModal">Thêm mới</button>
+                                    <table class="table table-bordered table-hover">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Tên module</th>
+                                                <th>Mô tả</th>
+                                                <th>Đường dẫn</th>
+                                                <th>Cấp phép cho</th>
+                                                <th>Thời gian khởi tạo</th>
+                                                <th>Hành động</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row">3</th>
+                                                <td>Larry</td>
+                                                <td>the Bird</td>
+                                                <td>@twitter</td>
+                                                <td>@twitter</td>
+                                                <td></td>
+                                                <td>
+                                                    <button type="button" class="btn btn-outline-brand"
+                                                        data-toggle="modal" data-target="#editRouteModal">Sửa</button>
+                                                    <button type="button" class="btn btn-outline-danger">Xóa</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!--end::Section-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end:: Content -->
+    </div>
+    <!--{{> editRoute}}-->
+</template>
