@@ -1,6 +1,6 @@
 import './home.html';
 
-import '../../components/aside/aside.js'
-import '../../components/header/header.js'
-import '../../components/footer/footer.js'
-import '../../components/mobileHeader/mobileHeader.js'
+import '../../components/shared/aside/aside.js'
+import '../../components/shared/header/header.js'
+import '../../components/shared/footer/footer.js'
+import '../../components/shared/mobileHeader/mobileHeader.js'

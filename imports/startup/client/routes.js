@@ -15,10 +15,10 @@ import '../../ui/pages/home/home.js';
 import '../../ui/pages/login/login.js'
 import '../../ui/pages/not-found/not-found.js';
 // shared component template
-import '../../ui/components/mobileHeader/mobileHeader.js'
-import '../../ui/components/aside/aside.js'
-import '../../ui/components/header/header.js'
-import '../../ui/components/footer/footer.js'
+// import '../../ui/components/shared/mobileHeader/mobileHeader.js'
+// import '../../ui/components/shared/aside/aside.js'
+// import '../../ui/components/shared/header/header.js'
+// import '../../ui/components/shared/footer/footer.js'
 // admin template
 import '../../ui/components/admin/sample/sample.js'
 import '../../ui/components/admin/studentManager/studentManager.js'
