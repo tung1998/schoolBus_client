@@ -15,6 +15,7 @@ import '../../ui/pages/home/home.js';
 import '../../ui/pages/login/login.js'
 import '../../ui/pages/not-found/not-found.js';
 // shared component template
+import '../../ui/components/shared/profile/profile.js'
 // import '../../ui/components/shared/mobileHeader/mobileHeader.js'
 // import '../../ui/components/shared/aside/aside.js'
 // import '../../ui/components/shared/header/header.js'
@@ -48,6 +49,16 @@ FlowRouter.route('/', {
         BlazeLayout.setRoot('body');
         BlazeLayout.render('App_body', {
             main: 'login'
+        });
+    },
+});
+
+FlowRouter.route('/profile', {
+    name: 'App.home',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'profile',
         });
     },
 });
