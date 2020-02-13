@@ -1,2 +1,2 @@
-import { Template } from 'meteor/templating';
 import './route.html';
+// import { Template } from 'meteor/templating';

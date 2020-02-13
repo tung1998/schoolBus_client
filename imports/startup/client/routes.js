@@ -6,14 +6,14 @@ import {
 } from 'meteor/kadira:blaze-layout';
 
 Blaze._allowJavascriptUrls()
-    // Import needed templates
-    // layout template
+// Import needed templates
+// layout template
 import '../../ui/layouts/body/body.js';
 
 // page template
 import '../../ui/pages/home/home.js';
-import '../../ui/pages/not-found/not-found.js';
 import '../../ui/pages/login/login.js'
+import '../../ui/pages/not-found/not-found.js';
 // shared component template
 import '../../ui/components/mobileHeader/mobileHeader.js'
 import '../../ui/components/aside/aside.js'
@@ -36,7 +36,7 @@ import '../../ui/components/admin/carFuel/carFuel.js';
 import '../../ui/components/admin/feedback/feedback.js';
 import '../../ui/components/admin/notification/notification.js';
 import '../../ui/components/admin/carMaintenance/carMaintenance.js';
-import '../../ui/components/admin/admin/admin.js';
+// import '../../ui/components/admin/admin/admin.js';
 // driver template
 // parent template
 // nanny template
@@ -143,13 +143,13 @@ FlowRouter.route('/carModelManager', {
 });
 
 FlowRouter.route('/studentListManager', {
-  name: 'App.home',
-  action() {
-    BlazeLayout.render('App_body', {
-      main: 'App_home',
-      content: 'studentListManager',
-    });
-  },
+    name: 'App.home',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'studentListManager',
+        });
+    },
 });
 
 FlowRouter.notFound = {
