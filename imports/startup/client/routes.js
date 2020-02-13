@@ -35,6 +35,18 @@ import '../../ui/components/admin/carModelManager/carModelManager.js'
 
 //route
 import '../../ui/components/admin/route/route.js'
+//tripLocation
+import '../../ui/components/admin/tripLocation/tripLocation.js';
+//carFuel
+import '../../ui/components/admin/carFuel/carFuel.js';
+//feedback
+import '../../ui/components/admin/feedback/feedback.js';
+//notification
+import '../../ui/components/admin/notification/notification.js';
+//carMaintenace
+import '../../ui/components/admin/carMaintenance/carMaintenance.js';
+//admin
+import '../../ui/components/admin/admin/admin.js';
 // Set up all routes in the app
 FlowRouter.route('/', {
     name: 'App.home',
@@ -136,6 +148,16 @@ FlowRouter.route('/carModelManager', {
     },
 });
 
+FlowRouter.route('/studentListManager', {
+  name: 'App.home',
+  action() {
+    BlazeLayout.render('App_body', {
+      main: 'App_home',
+      content: 'studentListManager',
+    });
+  },
+});
+
 FlowRouter.notFound = {
     action() {
         BlazeLayout.render('App_body', {
@@ -151,6 +173,66 @@ FlowRouter.route('/route', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'route',
+        });
+    },
+});
+
+FlowRouter.route('/tripLocation', {
+    name: 'tripLocation',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'tripLocation',
+        });
+    },
+});
+
+FlowRouter.route('/carFuel', {
+    name: 'carFuel',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'carFuel',
+        });
+    },
+});
+
+FlowRouter.route('/feedback', {
+    name: 'feedback',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'feedback',
+        });
+    },
+});
+
+FlowRouter.route('/notification', {
+    name: 'notification',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'notification',
+        });
+    },
+});
+
+FlowRouter.route('/carMaintenance', {
+    name: 'notification',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'carMaintenance',
+        });
+    },
+});
+
+FlowRouter.route('/admin', {
+    name: 'notification',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'admin',
         });
     },
 });
