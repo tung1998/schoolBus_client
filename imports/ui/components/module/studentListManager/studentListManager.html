@@ -1,0 +1,250 @@
+<template name="studentListManager">
+    <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+      <!-- begin:: Subheader -->
+      <div class="kt-subheader   kt-grid__item" id="kt_subheader">
+        <div class="kt-container  kt-container--fluid ">
+          <div class="kt-subheader__main">
+            <h3 class="kt-subheader__title">
+  
+              Quản lý học </h3>
+  
+            <span class="kt-subheader__separator kt-hidden"></span>
+            <div class="kt-subheader__breadcrumbs">
+              <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
+              <span class="kt-subheader__breadcrumbs-separator"></span>
+              <a href="" class="kt-subheader__breadcrumbs-link">
+                SchoolBus </a>
+              <span class="kt-subheader__breadcrumbs-separator"></span>
+              <a href="" class="kt-subheader__breadcrumbs-link">
+                Quản lý danh sách học sinh</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- end:: Subheader -->
+  
+      <!-- begin:: Content -->
+      <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+        <div class="row">
+          <div class="col">
+  
+            <div class="kt-portlet">
+              <div class="kt-portlet__head">
+                <div class="kt-portlet__head-label">
+                  <h3 class="kt-portlet__head-title">
+                    Tên danh sách
+                  </h3>
+                </div>
+              </div>
+  
+              <div class="kt-portlet__body">
+                <!--begin::Section-->
+                <div class="kt-section">
+                  <div class="kt-section__content">
+                    <button type="button" class="btn btn-outline-brand mb-4" data-toggle="modal" data-target="#editListModal">Thêm mới</button>
+                    <table class="table table-bordered table-hover">
+                      <thead class="thead-light">
+                        <tr>
+                          <th>#</th>
+                          <th>Tên</th>
+                          <th>DS</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <th scope="row">1</th>
+                          <td width="40%">Larry</td>
+                          <td width="10%">
+                            <div class="form-grou">
+                              <label class="kt-radio kt-radio--bold kt-radio--brand">
+                                <input type="radio" name="radio6" value="1">
+                                <span></span>
+                              </label>
+                            </div>
+                          </td>
+                          <td width="30%">
+                            <button type="button" class="btn btn-outline-brand" data-toggle="modal" data-target="#editStudentListModal">Sửa</button>
+                            <button type="button" class="btn btn-outline-danger">Xóa</button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <!--end::Section-->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {{> listStudent}}  
+      </div>
+
+      
+      <!-- end:: Content -->
+    </div>
+    {{> editListModal}}
+    {{> editStudentListModal}}   
+  </template>
+  
+  <template name="listStudent">
+    <div class="row">
+      <div class="col">
+
+        <div class="kt-portlet">
+          <div class="kt-portlet__head">
+            <div class="kt-portlet__head-label">
+              <h3 class="kt-portlet__head-title">
+                Danh sách học sinh của "abc"
+              </h3>
+            </div>
+          </div>
+
+          <div class="kt-portlet__body">
+            <!--begin::Section-->
+            <div class="kt-section">
+              <div class="kt-section__content">
+                <button type="button" class="btn btn-outline-brand mb-4" data-toggle="modal" data-target="#editStudentListModal">Thêm mới</button>
+                <table class="table table-bordered table-hover">
+                  <thead class="thead-light">
+                    <tr>
+                      <th>#</th>
+                      <th>Mã học sinh</th>
+                      <th>Họ tên</th>
+                      <th>Lớp</th>
+                      <th>Email</th>
+                      <th>Số điện thoại</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">1</th>
+                      <td>123</td>
+                      <td>the Bird</td>
+                      <td>247car</td>
+                      <td>123@fimo.edu.vn</td>
+                      <td>12312312312</td>
+                      <td>
+                        <button type="button" class="btn btn-outline-danger">Xóa</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!--end::Section-->
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template name="editListModal">
+  <div class="modal fade" id="editListModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Thêm mới</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          </button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-group">
+              <label for="recipient-name" class="form-control-label">Tên</label>
+              <input type="text" class="form-control" id="recipient-name">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-outline-primary">Add</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </template>
+
+  <template name="editStudentListModal">
+    <div class="modal fade" id="editStudentListModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    style="display: none;" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Thêm học sinh</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            </button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label>Chọn lớp học</label>
+                <div></div>
+                <select class="custom-select form-control">
+                    <option selected="">-- Chọn --</option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                </select>
+              </div>
+              <div class="kt-portlet">
+                <div class="kt-portlet__head">
+                  <div class="kt-portlet__head-label">
+                    <h3 class="kt-portlet__head-title">
+                      Danh sách học sinh trong lớp
+                    </h3>
+                  </div>
+                </div>
+                <div class="kt-portlet__body">
+                  <!--begin::Section-->
+                  <div class="kt-section">
+                    <div class="kt-section__content">
+                      <table class="table table-bordered table-hover">
+                        <thead class="thead-light">
+                          <tr>
+                            <th>#</th>
+                            <th>Mã học sinh</th>
+                            <th>Họ tên</th>
+                            <th>Lớp</th>
+                            <th>Email</th>
+                            <th>Số điện thoại</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <th scope="row">1</th>
+                            <td>123</td>
+                            <td>the Bird</td>
+                            <td>247car</td>
+                            <td>123@fimo.edu.vn</td>
+                            <td>12312312312</td>
+                            <td>
+                              <div class="from-group">
+                                <label class="kt-checkbox kt-checkbox--brand">
+                                  <input type="checkbox">
+                                  <span></span>
+                                </label>
+                              </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <!--end::Section-->
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-outline-primary">Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>

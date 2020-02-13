@@ -24,6 +24,7 @@ import '../../ui/components/module/studentManager/studentManager.js'
 import '../../ui/components/module/teacherManager/teacherManager.js'
 import '../../ui/components/module/schoolManager/schoolManager.js'
 import '../../ui/components/module/classManager/classManager.js'
+import '../../ui/components/module/studentListManager/studentListManager.js'
 
 //login
 import '../../ui/pages/login/login.js'
@@ -147,6 +148,16 @@ FlowRouter.route('/carModelManager', {
             content: 'carModelManager',
         });
     },
+});
+
+FlowRouter.route('/studentListManager', {
+  name: 'App.home',
+  action() {
+    BlazeLayout.render('App_body', {
+      main: 'App_home',
+      content: 'studentListManager',
+    });
+  },
 });
 
 FlowRouter.notFound = {
