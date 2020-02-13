@@ -13,6 +13,7 @@ import '../../ui/layouts/body/body.js';
 // page template
 import '../../ui/pages/home/home.js';
 import '../../ui/pages/not-found/not-found.js';
+import '../../ui/pages/login/login.js'
 // shared component template
 import '../../ui/components/mobileHeader/mobileHeader.js'
 import '../../ui/components/aside/aside.js'
@@ -24,29 +25,22 @@ import '../../ui/components/admin/studentManager/studentManager.js'
 import '../../ui/components/admin/teacherManager/teacherManager.js'
 import '../../ui/components/admin/schoolManager/schoolManager.js'
 import '../../ui/components/admin/classManager/classManager.js'
-
-//login
-import '../../ui/pages/login/login.js'
 import '../../ui/components/admin/administratorManager/administratorManager.js'
 import '../../ui/components/admin/driverManager/driverManager.js'
 import '../../ui/components/admin/parentManager/parentManager.js'
 import '../../ui/components/admin/nannyManager/nannyManager.js'
 import '../../ui/components/admin/carModelManager/carModelManager.js'
-
-//route
 import '../../ui/components/admin/route/route.js'
-//tripLocation
 import '../../ui/components/admin/tripLocation/tripLocation.js';
-//carFuel
 import '../../ui/components/admin/carFuel/carFuel.js';
-//feedback
 import '../../ui/components/admin/feedback/feedback.js';
-//notification
 import '../../ui/components/admin/notification/notification.js';
-//carMaintenace
 import '../../ui/components/admin/carMaintenance/carMaintenance.js';
-//admin
 import '../../ui/components/admin/admin/admin.js';
+// driver template
+// parent template
+// nanny template
+
 // Set up all routes in the app
 FlowRouter.route('/', {
     name: 'App.home',
