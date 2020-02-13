@@ -15,6 +15,7 @@ import '../../ui/pages/home/home.js';
 import '../../ui/pages/login/login.js'
 import '../../ui/pages/not-found/not-found.js';
 // shared component template
+import '../../ui/components/shared/profile/profile.js'
 // import '../../ui/components/shared/mobileHeader/mobileHeader.js'
 // import '../../ui/components/shared/aside/aside.js'
 // import '../../ui/components/shared/header/header.js'
@@ -41,6 +42,8 @@ import '../../ui/components/admin/carMaintenance/carMaintenance.js';
 import '../../ui/components/driver/upCommingTripInfo/upCommingTripInfo.js';
 // parent template
 // nanny template
+import '../../ui/components/nanny/tripHistory/tripHistory.js';
+import '../../ui/components/nanny/tripListStudent/tripListStudent.js';
 
 // Set up all routes in the app
 FlowRouter.route('/', {
@@ -49,6 +52,16 @@ FlowRouter.route('/', {
         BlazeLayout.setRoot('body');
         BlazeLayout.render('App_body', {
             main: 'login'
+        });
+    },
+});
+
+FlowRouter.route('/profile', {
+    name: 'App.home',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'profile',
         });
     },
 });
@@ -240,6 +253,26 @@ FlowRouter.route('/upCommingTripInfo', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'upCommingTripInfo',
+        });
+    },
+});
+
+FlowRouter.route('/tripHistory', {
+    name: 'notification',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'tripHistory',
+        });
+    },
+});
+
+FlowRouter.route('/trip/listStudent', {
+    name: 'notification',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'tripListStudent',
         });
     },
 });
