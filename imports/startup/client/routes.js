@@ -42,6 +42,7 @@ import '../../ui/components/admin/carMaintenance/carMaintenance.js';
 // parent template
 // nanny template
 import '../../ui/components/nanny/tripHistory/tripHistory.js';
+import '../../ui/components/nanny/tripListStudent/tripListStudent.js';
 
 // Set up all routes in the app
 FlowRouter.route('/', {
@@ -249,6 +250,16 @@ FlowRouter.route('/tripHistory', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'tripHistory',
+        });
+    },
+});
+
+FlowRouter.route('/trip/listStudent', {
+    name: 'notification',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'tripListStudent',
         });
     },
 });
