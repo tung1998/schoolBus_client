@@ -1,4 +1,4 @@
-<template name="route">
+<template name="feedback">
     <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
         <!-- begin:: Subheader -->
         <div class="kt-subheader   kt-grid__item" id="kt_subheader">
@@ -6,7 +6,7 @@
                 <div class="kt-subheader__main">
                     <h3 class="kt-subheader__title">
 
-                        Quản lý tuyến đường </h3>
+                        Quản lý phản hồi </h3>
 
                     <span class="kt-subheader__separator kt-hidden"></span>
                     <div class="kt-subheader__breadcrumbs">
@@ -16,7 +16,7 @@
                             SchoolBus </a>
                         <span class="kt-subheader__breadcrumbs-separator"></span>
                         <a href="" class="kt-subheader__breadcrumbs-link">
-                            Quản lý tuyến đường</a>
+                            Quản lý phản hồi</a>
                     </div>
                 </div>
             </div>
@@ -32,7 +32,7 @@
                         <div class="kt-portlet__head">
                             <div class="kt-portlet__head-label">
                                 <h3 class="kt-portlet__head-title">
-                                    Danh sách học sinh
+                                    Danh sách phản hồi
                                 </h3>
                             </div>
                         </div>
@@ -47,12 +47,13 @@
                                         <thead class="thead-light">
                                             <tr>
                                                 <th>ID</th>
-                                                <th>requireCarStop</th>
-                                                <th>pickupCarStop</th>
-                                                <th>takeoffCarStop</th>
-                                                <th>toll</th>
-                                                <th>createdTime</th>
-                                                <th>updatedTime</th>
+                                                <th>ID người dùng</th>
+                                                <th>Loại</th>
+                                                <th>Nội dung phản ánh</th>
+                                                <th>Thời gian nhận</th>
+                                                <th>Hồi đáp bởi</th>
+                                                <th>Thời gian hồi đáp</th>
+                                                <th>Nội dung hồi đáp</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -82,35 +83,3 @@
     </div>
     <!--{{> editRoute}}-->
 </template>
-
-
-<!--<template name="editRouteModal">
-    <div class="modal fade" id="editRouteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        style="display: none;" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">New message</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <label for="recipient-name" class="form-control-label">Recipient:</label>
-                            <input type="text" class="form-control" id="recipient-name">
-                        </div>
-                        <div class="form-group">
-                            <label for="message-text" class="form-control-label">Message:</label>
-                            <textarea class="form-control" id="message-text"></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Send message</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</template>-->

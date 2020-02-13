@@ -35,6 +35,19 @@ import '../../ui/components/module/carModelManager/carModelManager.js'
 
 //route
 import '../../ui/components/module/route/route.js'
+
+//tripLocation
+import '../../ui/components/module/tripLocation/tripLocation.js';
+//carFuel
+import '../../ui/components/module/carFuel/carFuel.js';
+//feedback
+import '../../ui/components/module/feedback/feedback.js';
+//notification
+import '../../ui/components/module/notification/notification.js';
+//carMaintenace
+import '../../ui/components/module/carMaintenance/carMaintenance.js';
+//module
+import '../../ui/components/module/module/module.js';
 // Set up all routes in the app
 FlowRouter.route('/', {
     name: 'App.home',
@@ -151,6 +164,66 @@ FlowRouter.route('/route', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'route',
+        });
+    },
+});
+
+FlowRouter.route('/tripLocation', {
+    name: 'tripLocation',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'tripLocation',
+        });
+    },
+});
+
+FlowRouter.route('/carFuel', {
+    name: 'carFuel',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'carFuel',
+        });
+    },
+});
+
+FlowRouter.route('/feedback', {
+    name: 'feedback',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'feedback',
+        });
+    },
+});
+
+FlowRouter.route('/notification', {
+    name: 'notification',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'notification',
+        });
+    },
+});
+
+FlowRouter.route('/carMaintenance', {
+    name: 'notification',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'carMaintenance',
+        });
+    },
+});
+
+FlowRouter.route('/module', {
+    name: 'notification',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'module',
         });
     },
 });
