@@ -1,0 +1,109 @@
+<template name="absentRequest">
+    <div id="absentRequest">
+        <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+            <!-- begin:: Subheader -->
+            <div class="kt-subheader   kt-grid__item" id="kt_subheader">
+                <div class="kt-container  kt-container--fluid ">
+                    <div class="kt-subheader__main">
+                        <h3 class="kt-subheader__title">
+
+                            Phụ huynh </h3>
+
+                        <span class="kt-subheader__separator kt-hidden"></span>
+                        <div class="kt-subheader__breadcrumbs">
+                            <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
+                            <span class="kt-subheader__breadcrumbs-separator"></span>
+                            <a href="" class="kt-subheader__breadcrumbs-link">
+                                SchoolBus </a>
+                            <span class="kt-subheader__breadcrumbs-separator"></span>
+                            <a href="" class="kt-subheader__breadcrumbs-link">
+                                Yêu cầu hủy chuyến</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end:: Subheader -->
+            <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <!--begin::Portlet-->
+
+                        <div class="kt-portlet kt-portlet--last kt-portlet--head-lg kt-portlet--responsive-mobile"
+                            id="kt_page_portlet">
+
+                            <body>
+                                <div class="kt-portlet__body">
+                                    <form class="kt-form" id="kt_form">
+                                        <div class="row">
+                                            <div class="col-xl-2"></div>
+                                            <div class="col-xl-8">
+                                                <div class="kt-section kt-section--first">
+                                                    <div class="kt-section__body">
+                                                        <h3 class="kt-section__title kt-section__title-lg">YÊU CẦU HỦY
+                                                            CHUYẾN</h3>
+
+                                                        <div class="form-group row">
+                                                            <label class="col-3 col-form-label">Lý do hủy chuyến</label>
+                                                            <div class="col-9">
+                                                                <div class="kt-checkbox-inline">
+                                                                    <label class="kt-checkbox">
+                                                                        <input type="checkbox" id="feedback1"
+                                                                            name="feedback1">
+                                                                        Đưa đón bằng phương tiện khác
+                                                                        <span></span>
+                                                                    </label>
+                                                                    <label class="kt-checkbox">
+                                                                        <input type="checkbox" id="feedback2"
+                                                                            name="feedback2">
+                                                                        Nghỉ học
+                                                                        <span></span>
+                                                                    </label>
+                                                                    <label class="kt-checkbox">
+                                                                        <input type="checkbox" id="feedback3"
+                                                                            name="feedback3">
+                                                                        Khác
+                                                                        <span></span>
+
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label class="col-3 col-form-label">Ghi chú</label>
+                                                        <div class="col-9">
+                                                            <textarea class="form-control" type="text"
+                                                                placeholder="Nội dung"
+                                                                style="height: 150px;"></textarea>
+                                                            <span class="form-text text-muted"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="kt-form__actions container" style="width:100%">
+                                                <div class="row">
+                                                    <div class="col-sm-3"></div>
+                                                    <div class="col-sm-9">
+                                                        <a href="/absentHistory"><button  type="reset" class="btn btn-brand"
+                                                            style="float:right; margin-left: 0.5rem;">Xem lịch sử hủy
+                                                            chuyến</button></a>&nbsp;
+                                                        <button type="reset" class="btn btn-brand"
+                                                            style="float:right;">Gửi yêu cầu</button>&nbsp;
+                                                    </div>
+                                                    <div class="col-sm-0"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-2"></div>
+                                    </form>
+                                </div>
+                            </body>
+                        </div>
+                    </div>
+                    <!--end::Portlet-->
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

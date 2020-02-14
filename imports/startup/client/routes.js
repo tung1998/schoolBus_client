@@ -43,6 +43,11 @@ import '../../ui/components/driver/upCommingTripInfo/upCommingTripInfo.js';
 import '../../ui/components/driver/carMaintenanceReport/carMaintenanceReport.js';
 import '../../ui/components/driver/tripHistoryDriver/tripHistoryDriver.js';
 // parent template
+import '../../ui/components/parent/tripTracking/tripTracking.js';
+import '../../ui/components/parent/sendFeedback/parentFeedback.js';
+import '../../ui/components/parent/absentRequest/absentRequest.js';
+import '../../ui/components/parent/absentHistory/absentHistory.js';
+import '../../ui/components/parent/historyTrip/historyTrip.js';
 // nanny template
 import '../../ui/components/nanny/tripHistory/tripHistory.js';
 import '../../ui/components/nanny/tripListStudent/tripListStudent.js';
@@ -247,6 +252,37 @@ FlowRouter.route('/admin', {
     },
 });
 
+FlowRouter.route('/tripTracking', {
+    name: 'tripTracking',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'tripTracking',
+        });
+    },
+});
+
+FlowRouter.route('/parentFeedback', {
+    name: 'feedback',
+    action() {
+        BlazeLayout.setRoot("body")
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'parentFeedback',
+        });
+    },
+});
+
+FlowRouter.route('/absentRequest', {
+    name: 'feedback',
+    action() {
+        BlazeLayout.setRoot("body")
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'absentRequest',
+        });
+    },
+});
 //DRIVER
 
 FlowRouter.route('/upCommingTripInfo', {
@@ -280,12 +316,34 @@ FlowRouter.route('/tripHistoryDriver', {
     },
 });
 
+FlowRouter.route('/absentHistory', {
+    name: 'feedback',
+    action() {
+        BlazeLayout.setRoot("body")
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'absentHistory',
+        });
+    },
+});
+
 FlowRouter.route('/tripHistory', {
     name: 'notification',
     action() {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'tripHistory',
+        });
+    },
+});
+
+FlowRouter.route('/historyTrip', {
+    name: 'feedback',
+    action() {
+        BlazeLayout.setRoot("body")
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'historyTrip',
         });
     },
 });
