@@ -6,8 +6,8 @@ import {
 } from 'meteor/kadira:blaze-layout';
 
 Blaze._allowJavascriptUrls()
-// Import needed templates
-// layout template
+    // Import needed templates
+    // layout template
 import '../../ui/layouts/body/body.js';
 
 // page template
@@ -40,6 +40,8 @@ import '../../ui/components/admin/carMaintenance/carMaintenance.js';
 // import '../../ui/components/admin/admin/admin.js';
 // driver template
 import '../../ui/components/driver/upCommingTripInfo/upCommingTripInfo.js';
+import '../../ui/components/driver/carMaintenanceReport/carMaintenanceReport.js';
+import '../../ui/components/driver/tripHistoryDriver/tripHistoryDriver.js';
 // parent template
 // nanny template
 import '../../ui/components/nanny/tripHistory/tripHistory.js';
@@ -253,6 +255,27 @@ FlowRouter.route('/upCommingTripInfo', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'upCommingTripInfo',
+        });
+    },
+});
+
+FlowRouter.route('/carMaintenanceReport', {
+    name: 'App.home',
+    action() {
+        BlazeLayout.setRoot("body"),
+            BlazeLayout.render('App_body', {
+                main: 'App_home',
+                content: 'carMaintenanceReport',
+            });
+    },
+});
+
+FlowRouter.route('/tripHistoryDriver', {
+    name: 'notification',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'tripHistoryDriver',
         });
     },
 });
