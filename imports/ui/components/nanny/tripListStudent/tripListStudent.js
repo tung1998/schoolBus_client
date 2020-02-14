@@ -1,0 +1,1 @@
+import './tripListStudent.html';

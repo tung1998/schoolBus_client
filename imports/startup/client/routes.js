@@ -15,6 +15,7 @@ import '../../ui/pages/home/home.js';
 import '../../ui/pages/login/login.js'
 import '../../ui/pages/not-found/not-found.js';
 // shared component template
+import '../../ui/components/shared/profile/profile.js'
 // import '../../ui/components/shared/mobileHeader/mobileHeader.js'
 // import '../../ui/components/shared/aside/aside.js'
 // import '../../ui/components/shared/header/header.js'
@@ -38,6 +39,7 @@ import '../../ui/components/admin/notification/notification.js';
 import '../../ui/components/admin/carMaintenance/carMaintenance.js';
 // import '../../ui/components/admin/admin/admin.js';
 // driver template
+import '../../ui/components/driver/upCommingTripInfo/upCommingTripInfo.js';
 // parent template
 import '../../ui/components/parent/tripTracking/tripTracking.js';
 import '../../ui/components/parent/sendFeedback/parentFeedback.js';
@@ -45,6 +47,8 @@ import '../../ui/components/parent/absentRequest/absentRequest.js';
 import '../../ui/components/parent/absentHistory/absentHistory.js';
 import '../../ui/components/parent/historyTrip/historyTrip.js';
 // nanny template
+import '../../ui/components/nanny/tripHistory/tripHistory.js';
+import '../../ui/components/nanny/tripListStudent/tripListStudent.js';
 
 // Set up all routes in the app
 FlowRouter.route('/', {
@@ -53,6 +57,16 @@ FlowRouter.route('/', {
         BlazeLayout.setRoot('body');
         BlazeLayout.render('App_body', {
             main: 'login'
+        });
+    },
+});
+
+FlowRouter.route('/profile', {
+    name: 'App.home',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'profile',
         });
     },
 });
@@ -267,6 +281,17 @@ FlowRouter.route('/absentRequest', {
         });
     },
 });
+//DRIVER
+
+FlowRouter.route('/upCommingTripInfo', {
+    name: 'App.home',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'upCommingTripInfo',
+        });
+    },
+});
 
 FlowRouter.route('/absentHistory', {
     name: 'feedback',
@@ -279,6 +304,16 @@ FlowRouter.route('/absentHistory', {
     },
 });
 
+FlowRouter.route('/tripHistory', {
+    name: 'notification',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'tripHistory',
+        });
+    },
+});
+
 FlowRouter.route('/historyTrip', {
     name: 'feedback',
     action() {
@@ -286,6 +321,16 @@ FlowRouter.route('/historyTrip', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'historyTrip',
+        });
+    },
+});
+
+FlowRouter.route('/trip/listStudent', {
+    name: 'notification',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'tripListStudent',
         });
     },
 });
