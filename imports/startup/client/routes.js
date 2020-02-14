@@ -6,8 +6,8 @@ import {
 } from 'meteor/kadira:blaze-layout';
 
 Blaze._allowJavascriptUrls()
-// Import needed templates
-// layout template
+    // Import needed templates
+    // layout template
 import '../../ui/layouts/body/body.js';
 
 // page template
@@ -39,6 +39,11 @@ import '../../ui/components/admin/carMaintenance/carMaintenance.js';
 // import '../../ui/components/admin/admin/admin.js';
 // driver template
 // parent template
+import '../../ui/components/parent/tripTracking/tripTracking.js';
+import '../../ui/components/parent/sendFeedback/parentFeedback.js';
+import '../../ui/components/parent/absentRequest/absentRequest.js';
+import '../../ui/components/parent/absentHistory/absentHistory.js';
+import '../../ui/components/parent/historyTrip/historyTrip.js';
 // nanny template
 
 // Set up all routes in the app
@@ -227,6 +232,60 @@ FlowRouter.route('/admin', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'admin',
+        });
+    },
+});
+
+FlowRouter.route('/tripTracking', {
+    name: 'tripTracking',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'tripTracking',
+        });
+    },
+});
+
+FlowRouter.route('/parentFeedback', {
+    name: 'feedback',
+    action() {
+        BlazeLayout.setRoot("body")
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'parentFeedback',
+        });
+    },
+});
+
+FlowRouter.route('/absentRequest', {
+    name: 'feedback',
+    action() {
+        BlazeLayout.setRoot("body")
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'absentRequest',
+        });
+    },
+});
+
+FlowRouter.route('/absentHistory', {
+    name: 'feedback',
+    action() {
+        BlazeLayout.setRoot("body")
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'absentHistory',
+        });
+    },
+});
+
+FlowRouter.route('/historyTrip', {
+    name: 'feedback',
+    action() {
+        BlazeLayout.setRoot("body")
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'historyTrip',
         });
     },
 });

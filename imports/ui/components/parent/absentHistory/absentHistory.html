@@ -1,0 +1,97 @@
+<template name="absentHistory">
+    <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+        <!-- begin:: Subheader -->
+        <div class="kt-subheader   kt-grid__item" id="kt_subheader">
+            <div class="kt-container  kt-container--fluid ">
+                <div class="kt-subheader__main">
+                    <h3 class="kt-subheader__title">
+
+                        Phụ huynh </h3>
+
+                    <span class="kt-subheader__separator kt-hidden"></span>
+                    <div class="kt-subheader__breadcrumbs">
+                        <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
+                        <span class="kt-subheader__breadcrumbs-separator"></span>
+                        <a href="" class="kt-subheader__breadcrumbs-link">
+                            SchoolBus </a>
+                        <span class="kt-subheader__breadcrumbs-separator"></span>
+                        <a href="" class="kt-subheader__breadcrumbs-link">
+                            Lịch sử hủy chuyến</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end:: Subheader -->
+        <div id="absentHistory">
+            <!-- begin:: Content -->
+            <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                <div class="row">
+                    <div class="col">
+
+                        <div class="kt-portlet">
+                            <div class="kt-portlet__head">
+                                <div class="kt-portlet__head-label">
+                                    <h3 class="kt-portlet__head-title">
+                                        Tên danh sách
+                                    </h3>
+                                </div>
+                            </div>
+
+                            <div class="kt-portlet__body">
+                                <!--begin::Section-->
+                                <div class="kt-section">
+                                    <div class="kt-section__content">
+                                        <a href="/absentRequest"><button type="button"
+                                                class="btn btn-outline-brand mb-4" data-toggle="modal"
+                                                data-target="#editListModal">Báo hủy chuyến</button></a>
+                                        <table class="table table-bordered table-hover">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th>STT</th>
+                                                    <th>Ngày nghỉ</th>
+                                                    <th>Lý do</th>
+                                                    <th>Ghi chú</th>
+                                                    <th>Hành động</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <th scope="row">1</th>
+                                                    <td width="30%">Larry</td>
+                                                    <td width="20%">
+                                                        <div class="form-grou">
+                                                            <label class="kt-radio kt-radio--bold kt-radio--brand">
+                                                                <input type="radio" name="radio6" value="1">
+                                                                <span></span>
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                    <td width="20%"></td>
+                                                    <td width="20%">
+                                                        <button type="button" class="btn btn-outline-brand"
+                                                            data-toggle="modal"
+                                                            data-target="#editStudentListModal">Sửa</button>
+                                                        <button type="button"
+                                                            class="btn btn-outline-danger">Xóa</button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <!--end::Section-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--{{> listStudent}}-->
+            </div>
+
+
+            <!-- end:: Content -->
+        </div>
+        <!--{{> editListModal}}
+    {{> editStudentListModal}}-->
+    </div>
+</template>
