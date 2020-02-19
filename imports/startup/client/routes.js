@@ -56,6 +56,7 @@ import '../../ui/components/nanny/tripListStudent/tripListStudent.js';
 import '../../ui/components/teacher/listClass/listClass.js';
 import '../../ui/components/teacher/studentListByClass/studentListByClass.js';
 import '../../ui/components/teacher/absentRequestManager/absentRequestManager.js';
+import '../../ui/components/teacher/chat/chat.js';
 
 // Set up all routes in the app
 FlowRouter.route('/', {
@@ -392,6 +393,16 @@ FlowRouter.route('/teacher/listAbsentRequest', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'absentRequestManager',
+        });
+    },
+});
+    //nhắn tin
+FlowRouter.route('/teacher/chat', {
+    name: 'teacher',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'chatParent',
         });
     },
 });
