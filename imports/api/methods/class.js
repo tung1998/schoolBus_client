@@ -50,6 +50,7 @@ function createClass(data, accessToken = '') {
 function updateClass(data, accessToken = '') {
     let url = `${AUTH_CLASS}/${data._id}`
     return httpDefault(METHOD.put, url, {
+        body: data,
         token: accessToken
     });
 }

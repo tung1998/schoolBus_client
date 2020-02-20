@@ -50,6 +50,7 @@ function createCarFuel(data, accessToken = '') {
 function updateCarFuel(data, accessToken = '') {
     let url = `${AUTH_CARFUEL}/${data._id}`
     return httpDefault(METHOD.put, url, {
+        body: data,
         token: accessToken
     });
 }

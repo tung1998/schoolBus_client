@@ -50,6 +50,7 @@ function createCar(data, accessToken = '') {
 function updateCar(data, accessToken = '') {
     let url = `${AUTH_CAR}/${data._id}`
     return httpDefault(METHOD.put, url, {
+        body: data,
         token: accessToken
     });
 }
