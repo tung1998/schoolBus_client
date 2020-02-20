@@ -50,6 +50,7 @@ function createCarStop(data, accessToken = '') {
 function updateCarStop(data, accessToken = '') {
     let url = `${AUTH_CARSTOP}/${data._id}`
     return httpDefault(METHOD.put, url, {
+        body: data,
         token: accessToken
     });
 }
