@@ -15,7 +15,11 @@ export const COLLECTION_CAR = new Mongo.Collection('Car', { idGeneration: 'MONGO
 if (Meteor.isServer) {
     Meteor.methods({
         'car.create': createCar,
+<<<<<<< HEAD
         'car.getAll': getCars,
+=======
+        // 'car.getAll': getCars,
+>>>>>>> f47e67d16e006e4790a5cf6643eed5c7b455ad67
         // 'car.getNotAssignDriver': getCarNotAssignDriver,
         // 'car.getByPage': getCarsByPage,
         'car.getByDriver': getCarByDriver,
