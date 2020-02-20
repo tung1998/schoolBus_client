@@ -15,7 +15,7 @@ Template.studentListManager.onCreated(() => {
 });
 
 Template.studentListManager.onCreated(() => {
-    MeteorCall('student.getAll', {}, accessToken).then(result => {
+    MeteorCall(_METHODS.studentList.GetAll, {}, accessToken).then(result => {
         console.log(result)
     }).catch(handleError)
 });
