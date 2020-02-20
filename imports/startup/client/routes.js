@@ -52,6 +52,12 @@ import '../../ui/components/parent/historyTrip/historyTrip.js';
 import '../../ui/components/nanny/tripHistory/tripHistory.js';
 import '../../ui/components/nanny/tripListStudent/tripListStudent.js';
 
+// teacher template
+import '../../ui/components/teacher/listClass/listClass.js';
+import '../../ui/components/teacher/studentListByClass/studentListByClass.js';
+import '../../ui/components/teacher/absentRequestManager/absentRequestManager.js';
+import '../../ui/components/teacher/chat/chat.js';
+
 // Set up all routes in the app
 FlowRouter.route('/', {
     name: 'App.home',
@@ -354,6 +360,49 @@ FlowRouter.route('/trip/listStudent', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'tripListStudent',
+        });
+    },
+});
+
+//teacher
+    //xem danh sách học sinh
+FlowRouter.route('/teacher/listClass', {
+    name: 'teacher',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'listClass',
+        });
+    },
+});
+
+FlowRouter.route('/teacher/listClass/class/:idClass', {
+    name: 'teacher',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'studentListByClass',
+        });
+    },
+});
+
+    //xem danh sách yêu cầu xin nghỉ
+FlowRouter.route('/teacher/listAbsentRequest', {
+    name: 'teacher',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'absentRequestManager',
+        });
+    },
+});
+    //nhắn tin
+FlowRouter.route('/teacher/chat', {
+    name: 'teacher',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'chatParent',
         });
     },
 });

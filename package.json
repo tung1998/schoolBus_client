@@ -1,3 +1,22 @@
+<<<<<<< HEAD
+{
+  "name": "SchoolBus_Client",
+  "private": true,
+  "scripts": {
+    "start": "meteor run",
+    "test": "meteor test --once --driver-package meteortesting:mocha"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.7.6",
+    "jquery": "^3.4.1",
+    "js-cookie": "^2.2.1",
+    "meteor-node-stubs": "^1.0.0"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2"
+  }
+}
+=======
 {
   "name": "SchoolBus_Client",
   "private": true,
@@ -16,3 +35,4 @@
     "chai": "^4.1.2"
   }
 }
+>>>>>>> f47e67d16e006e4790a5cf6643eed5c7b455ad67

@@ -1,88 +1,62 @@
-// Methods related to links
+import {
+    Meteor
+} from 'meteor/meteor';
 
-import { Meteor } from 'meteor/meteor';
-import { Mongo } from 'meteor/mongo';
+import {
+    BASE,
+    AUTH_PATH,
+} from '../config'
+import {
+    METHOD,
+    httpDefault
+} from '../checkAPI'
 
-import { BASE, AUTH_PATH, } from '../config'
-import { METHOD, httpDefault } from '../checkAPI'
-
-const BASE_StudentTrip = `${BASE}/StudentTrip`
-const AUTH_StudentTrip = `${AUTH_PATH}/StudentTrip`
-
-// render data truc tiep tu mongodb
-export const COLLECTION_StudentTrip = new Mongo.Collection('StudentTrip', { idGeneration: 'MONGO' });
+const BASE_STUDENT_TRIP = `${BASE}/StudentTrip`
+const AUTH_STUDENT_TRIP = `${AUTH_PATH}/StudentTrip`
 
 if (Meteor.isServer) {
     Meteor.methods({
-        'StudentTrip.create': createStudentTrip,
-        'StudentTrip.getAll': getStudentTrips,
-        'StudentTrip.getByPage': getStudentTripsByPage,
-        'StudentTrip.getByID': getStudentTripByID,
-        'StudentTrip.update': updateStudentTrip,
-        'StudentTrip.delete': deleteStudentTrip,
-        'StudentTrip.log': getStudentTripsByLog,
-        'StudentTrip.seeByLog': getStudentTripIDbyLog,
-    });
-    // public cho client subscribe
-    Meteor.publish('StudentTrip.getAll.meteor', () => {
-        return COLLECTION_StudentTrip.find({ isDeleted: false });
-    });
-
-    // public cho client subscribe
-    Meteor.publish('StudentTrip.getByIDs.meteor', (ids) => {
-        return COLLECTION_StudentTrip.find({
-            isDeleted: false,
-            _id: {
-                $in: ids.map(e => new Meteor.Collection.ObjectID(e))
-            }
-        });
+        'studentTrip.getAll': getAllStudentTrip,
+        'studentTrip.getByID': getStudentTripByID,
+        'studentTrip.create': createStudentTrip,
+        'studentTrip.update': updateStudentTrip,
+        'studentTrip.delete': deleteStudentTrip,
     });
 }
-//THÊM
-function createStudentTrip(StudentTrip, accessToken = '') {
-    let url = `${AUTH_StudentTrip}/`
-    return httpDefault(METHOD.post, url, { token: accessToken });
-}
-//XEM HẾT
-function getStudentTrips(options = {}, accessToken = '', extra) {
-    let url = AUTH_StudentTrip;
-    //let { driverBlockedType } = options;
-    //if (driverBlockedType) url += `?driverBlockedType=${driverBlockedType}`
-    return httpDefault(METHOD.get, url, { token: accessToken });
-}
-//XEM THEO TRANG
-function getStudentTripsByPage(accessToken = '', page = 1) {
-    let url = `${AUTH_StudentTrip}/${page}`;
-    return httpDefault(METHOD.get, url, { token: accessToken });
-}
-//XEM THEO ID
-function getStudentTripByID(StudentTripID, accessToken = '') {
-    //console.log(driverID, accessToken);
-    let url = `${AUTH_StudentTrip}/${StudentTripID}`;
-    //console.log(url);
 
-    return httpDefault(METHOD.get, url, { token: accessToken });
-}
-//UPDATE 
-function updateStudentTrip(StudentTrip, accessToken = '') {
-    let url = `${AUTH_StudentTrip}/${StudentTripID}`
-    return httpDefault(METHOD.put, url, { token: accessToken });
+function getAllStudentTrip(accessToken = '') {
+    let url = `${AUTH_STUDENT_TRIP}`
+    return httpDefault(METHOD.get, url, {
+        body: data,
+        token: accessToken
+    });
 }
 
-//XÓA
-function deleteStudentTrip(StudentTripID, accessToken = '') {
-    let url = `${AUTH_StudentTrip}/${StudentTripID}`
-    return httpDefault(METHOD.del, url, { token: accessToken });
+function getStudentTripByID(data, accessToken = '') {
+    let url = `${AUTH_STUDENT_TRIP}/${data._id}`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
 }
 
-//LOG
-function getStudentTripsByLog(accessToken = '', page = 1) {
-    let url = `${AUTH_StudentTrip}/Log`;
-    return httpDefault(METHOD.get, url, { token: accessToken });
+function createStudentTrip(data, accessToken = '') {
+    let url = `${AUTH_STUDENT_TRIP}`
+    return httpDefault(METHOD.post, url, {
+        body: data,
+        token: accessToken
+    });
 }
 
-//GET ID BY LOG
-function getStudentTripIDbyLog(accessToken = '', page = 1) {
-    let url = `${AUTH_StudentTrip}/${StudentTripID}/Log`;
-    return httpDefault(METHOD.get, url, { token: accessToken });
+function updateStudentTrip(data, accessToken = '') {
+    let url = `${AUTH_STUDENT_TRIP}/${data._id}`
+    return httpDefault(METHOD.put, url, {
+        token: accessToken
+    });
+}
+
+function deleteStudentTrip(data, accessToken = '') {
+    let url = `${AUTH_STUDENT_TRIP}/${data._id}`
+    return httpDefault(METHOD.del, url, {
+        token: accessToken
+    });
 }

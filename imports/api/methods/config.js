@@ -1,71 +1,63 @@
-// Methods related to links
-
 import {
     Meteor
 } from 'meteor/meteor';
-import {
-    Mongo
-} from 'meteor/mongo';
 
 import {
     BASE,
-    AUTH_PATH
+    AUTH_PATH,
 } from '../config'
-
-
 import {
     METHOD,
     httpDefault
 } from '../checkAPI'
 
-const BASE_CONFIG = `${AUTH_PATH}/Config`
-
-// render data truc tiep tu mongodb
-export const COLLECTION_CONFIG = new Mongo.Collection('Config', {
-    idGeneration: 'MONGO'
-});
+const BASE_CONFIG = `${BASE}/Config`
+const AUTH_CONFIG = `${AUTH_PATH}/Config`
 
 if (Meteor.isServer) {
     Meteor.methods({
+        'config.getAll': getAllConfig,
+        'config.getByID': getConfigByID,
         'config.create': createConfig,
-        'config.getAll': getConfigs,
         'config.update': updateConfig,
         'config.delete': deleteConfig,
     });
-    // public cho client subscribe
-    Meteor.publish('config.getAll.meteor', () => {
-        return COLLECTION_CONFIG.find({
-            isDeleted: false
-        });
+}
+
+function getAllConfig(accessToken = '') {
+    let url = `${AUTH_CONFIG}`
+    return httpDefault(METHOD.get, url, {
+        body: data,
+        token: accessToken
     });
 }
 
-function getConfigs(accessToken = '') {
-    let url = BASE_CONFIG
+function getConfigByID(data, accessToken = '') {
+    let url = `${AUTH_CONFIG}/${data._id}`
     return httpDefault(METHOD.get, url, {
         token: accessToken
-    }).then(result => result.data).catch(err => err);
+    });
 }
 
-function createConfig(config, accessToken = '') {
-    let url = BASE_CONFIG
+function createConfig(data, accessToken = '') {
+    let url = `${AUTH_CONFIG}`
     return httpDefault(METHOD.post, url, {
-        body: config,
+        body: data,
         token: accessToken
-    })
+    });
 }
 
-function updateConfig(config, accessToken = '') {
-    let url = `${BASE_CONFIG}/${config._id}`
+function updateConfig(data, accessToken = '') {
+    let url = `${AUTH_CONFIG}/${data._id}`
     return httpDefault(METHOD.put, url, {
-        body: config,
+        body: data,
         token: accessToken
-    })
+    });
 }
 
-function deleteConfig(configID, accessToken = '') {
-    let url = `${BASE_CONFIG}/${configID}`
+function deleteConfig(data, accessToken = '') {
+    let url = `${AUTH_CONFIG}/${data._id}`
     return httpDefault(METHOD.del, url, {
         token: accessToken
-    })
+    });
 }

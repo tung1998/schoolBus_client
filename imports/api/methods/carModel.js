@@ -1,64 +1,63 @@
-// Methods related to links
-
-import { Meteor } from 'meteor/meteor';
-import { Mongo } from 'meteor/mongo';
+import {
+    Meteor
+} from 'meteor/meteor';
 
 import {
     BASE,
     AUTH_PATH,
 } from '../config'
+import {
+    METHOD,
+    httpDefault
+} from '../checkAPI'
 
-const BASE_CAR_MODEL = `${BASE}/CarModel`
-const AUTH_CAR_MODEL = `${AUTH_PATH}/CarModel`
-
-// render data truc tiep tu mongodb
-export const COLLECTION_CARMODEL = new Mongo.Collection('CarModel', { idGeneration: 'MONGO' });
+const BASE_CARMODEL = `${BASE}/CarModel`
+const AUTH_CARMODEL = `${AUTH_PATH}/CarModel`
 
 if (Meteor.isServer) {
     Meteor.methods({
-        'carModel.create': createCarModel,
-        'carModel.getAll': getCarModels,
+        'carModel.getAll': getAllCarModel,
         'carModel.getByID': getCarModelByID,
-        'carModel.getByPage': getCarModelsByPage,
+        'carModel.create': createCarModel,
         'carModel.update': updateCarModel,
         'carModel.delete': deleteCarModel,
     });
-    // public cho client subscribe
-    Meteor.publish('carModel.getAll.meteor', () => {
-        return COLLECTION_CARMODEL.find({ isDeleted: false });
-    });
-
-    // public cho client subscribe
-    Meteor.publish('carModel.getByIDs.meteor', (ids) => {
-        return COLLECTION_CARMODEL.find({
-            isDeleted: false,
-            _id: {
-                $in: ids.map(e => new Meteor.Collection.ObjectID(e))
-            }
-        });
-    });
-}
-//XEM
-function getCarModels(accessToken = '') {
-    return httpDefault(METHOD.get, AUTH_CAR_MODEL, { token: accessToken });
-}
-//XEM THEO ID
-function getCarModelByID(carModelID, accessToken = '') {
-    return httpDefault(METHOD.get, `${AUTH_CAR_MODEL}/${carModelID}`, { token: accessToken });
-}
-//XEM THEO TRANG
-function getCarModelsByPage(accessToken = '', page = 1) {
-    return httpDefault(METHOD.get, `${AUTH_CAR_MODEL}/${page}`, { token: accessToken });
-}
-//THÊM
-function createCarModel(carModel, accessToken = '') {
-    return httpDefault(METHOD.post, AUTH_CAR_MODEL, { token: accessToken });
-}
-//SỬA
-function updateCarModel(carModel, accessToken = '') {
-    return httpDefault(METHOD.put, `${AUTH_CAR_MODEL}/${carModelID}`, { token: accessToken });
 }
 
-function deleteCarModel(carModelID, accessToken = '') {
-    return httpDefault(METHOD.del, `${AUTH_CAR_MODEL}/${carModelID}`, { token: accessToken });
+function getAllCarModel(accessToken = '') {
+    let url = `${AUTH_CARMODEL}`
+    return httpDefault(METHOD.get, url, {
+        body: data,
+        token: accessToken
+    });
+}
+
+function getCarModelByID(data, accessToken = '') {
+    let url = `${AUTH_CARMODEL}/${data._id}`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
+}
+
+function createCarModel(data, accessToken = '') {
+    let url = `${AUTH_CARMODEL}`
+    return httpDefault(METHOD.post, url, {
+        body: data,
+        token: accessToken
+    });
+}
+
+function updateCarModel(data, accessToken = '') {
+    let url = `${AUTH_CARMODEL}/${data._id}`
+    return httpDefault(METHOD.put, url, {
+        body: data,
+        token: accessToken
+    });
+}
+
+function deleteCarModel(data, accessToken = '') {
+    let url = `${AUTH_CARMODEL}/${data._id}`
+    return httpDefault(METHOD.del, url, {
+        token: accessToken
+    });
 }
