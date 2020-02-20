@@ -1,5 +1,5 @@
 import './administratorManager.html'
-import { createadmin } from '../../../helpers/admin.js'
+
 Template.editAdministratorModal.events({
     'submit form' (event) {
         event.preventDefault();
@@ -17,6 +17,5 @@ Template.editAdministratorModal.events({
         let accessToken = Cookies.get('accessToken')
         console.log(accessToken)
         console.log(admin)
-        createadmin(admin, accessToken).then(console.log).catch(console.log)
     }
 })
