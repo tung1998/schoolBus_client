@@ -157,6 +157,64 @@
               <label for="recipient-name" class="form-control-label">Tên</label>
               <input type="text" class="form-control" id="recipient-name">
             </div>
+            <div class="form-group">
+              <label>Chọn lớp học</label>
+              <div></div>
+              <select class="custom-select form-control">
+                  <option selected="">-- Chọn --</option>
+                  <option value="1">One</option>
+                  <option value="2">Two</option>
+                  <option value="3">Three</option>
+              </select>
+            </div>
+            <div class="kt-portlet">
+              <div class="kt-portlet__head">
+                <div class="kt-portlet__head-label">
+                  <h3 class="kt-portlet__head-title">
+                    Danh sách học sinh trong lớp
+                  </h3>
+                </div>
+              </div>
+              <div class="kt-portlet__body">
+                <!--begin::Section-->
+                <div class="kt-section">
+                  <div class="kt-section__content">
+                    <table class="table table-bordered table-hover">
+                      <thead class="thead-light">
+                        <tr>
+                          <th>#</th>
+                          <th>Mã học sinh</th>
+                          <th>Họ tên</th>
+                          <th>Lớp</th>
+                          <th>Email</th>
+                          <th>Số điện thoại</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <th scope="row">1</th>
+                          <td>123</td>
+                          <td>the Bird</td>
+                          <td>247car</td>
+                          <td>123@fimo.edu.vn</td>
+                          <td>12312312312</td>
+                          <td>
+                            <div class="from-group">
+                              <label class="kt-checkbox kt-checkbox--brand">
+                                <input type="checkbox">
+                                <span></span>
+                              </label>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <!--end::Section-->
+              </div>
+            </div>
           </form>
         </div>
         <div class="modal-footer">
