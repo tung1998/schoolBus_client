@@ -14,7 +14,7 @@ const AUTH_DRIVER = `${AUTH_PATH}/Driver`
 if (Meteor.isServer) {
     Meteor.methods({
         'driver.getAll': getDrivers,
-        'driver.getById': getDriverbyId,
+        'driver.getByID': getDriverbyId,
         'driver.create': createDriver,
         'driver.update': updateDriver,
         'driver.delete': deleteDriver,

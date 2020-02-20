@@ -13,7 +13,7 @@ if (Meteor.isServer) {
     Meteor.methods({
         'feedback.create': createFeedback,
         'feedback.getAll': getFeedbacks,
-        'feedback.getById': getFeedbackById,
+        'feedback.getByID': getFeedbackById,
         'feedback.update': updateFeedback,
         'feedback.delete': deleteFeedback,
     });

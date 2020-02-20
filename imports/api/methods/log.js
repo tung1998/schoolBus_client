@@ -8,7 +8,7 @@ const AUTH_LOG = `${AUTH_PATH}/Log`
 if (Meteor.isServer) {
     Meteor.methods({
         'log.getAll': getLog,
-        'log.getById': getLogById,
+        'log.getByID': getLogById,
     });
 }
 
