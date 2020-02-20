@@ -1,88 +1,62 @@
-// Methods related to links
+import {
+    Meteor
+} from 'meteor/meteor';
 
-import { Meteor } from 'meteor/meteor';
-import { Mongo } from 'meteor/mongo';
+import {
+    BASE,
+    AUTH_PATH,
+} from '../config'
+import {
+    METHOD,
+    httpDefault
+} from '../checkAPI'
 
-import { BASE, AUTH_PATH, } from '../config'
-import { METHOD, httpDefault } from '../checkAPI'
-
-const BASE_Class = `${BASE}/Class`
-const AUTH_Class = `${AUTH_PATH}/Class`
-
-// render data truc tiep tu mongodb
-export const COLLECTION_Class = new Mongo.Collection('Class', { idGeneration: 'MONGO' });
+const BASE_CLASS = `${BASE}/Class`
+const AUTH_CLASS = `${AUTH_PATH}/Class`
 
 if (Meteor.isServer) {
     Meteor.methods({
-        'Class.create': createClass,
-        'Class.getAll': getClasss,
-        'Class.getByPage': getClasssByPage,
-        'Class.getByID': getClassByID,
-        'Class.update': updateClass,
-        'Class.delete': deleteClass,
-        'Class.log': getClasssByLog,
-        'Class.seeByLog': getClassIDbyLog,
-    });
-    // public cho client subscribe
-    Meteor.publish('Class.getAll.meteor', () => {
-        return COLLECTION_Class.find({ isDeleted: false });
-    });
-
-    // public cho client subscribe
-    Meteor.publish('Class.getByIDs.meteor', (ids) => {
-        return COLLECTION_Class.find({
-            isDeleted: false,
-            _id: {
-                $in: ids.map(e => new Meteor.Collection.ObjectID(e))
-            }
-        });
+        'class.getAll': getAllClass,
+        'class.getByID': getClassByID,
+        'class.create': createClass,
+        'class.update': updateClass,
+        'class.delete': deleteClass,
     });
 }
-//THÊM
-function createClass(Class, accessToken = '') {
-    let url = `${AUTH_Class}/`
-    return httpDefault(METHOD.post, url, { token: accessToken });
-}
-//XEM HẾT
-function getClasss(options = {}, accessToken = '', extra) {
-    let url = AUTH_Class;
-    //let { driverBlockedType } = options;
-    //if (driverBlockedType) url += `?driverBlockedType=${driverBlockedType}`
-    return httpDefault(METHOD.get, url, { token: accessToken });
-}
-//XEM THEO TRANG
-function getClasssByPage(accessToken = '', page = 1) {
-    let url = `${AUTH_Class}/${page}`;
-    return httpDefault(METHOD.get, url, { token: accessToken });
-}
-//XEM THEO ID
-function getClassByID(ClassID, accessToken = '') {
-    //console.log(driverID, accessToken);
-    let url = `${AUTH_Class}/${ClassID}`;
-    //console.log(url);
 
-    return httpDefault(METHOD.get, url, { token: accessToken });
-}
-//UPDATE 
-function updateClass(Class, accessToken = '') {
-    let url = `${AUTH_Class}/${ClassID}`
-    return httpDefault(METHOD.put, url, { token: accessToken });
+function getAllClass(accessToken = '') {
+    let url = `${AUTH_CLASS}`
+    return httpDefault(METHOD.get, url, {
+        body: data,
+        token: accessToken
+    });
 }
 
-//XÓA
-function deleteClass(ClassID, accessToken = '') {
-    let url = `${AUTH_Class}/${ClassID}`
-    return httpDefault(METHOD.del, url, { token: accessToken });
+function getClassByID(data, accessToken = '') {
+    let url = `${AUTH_CLASS}/${data._id}`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
 }
 
-//LOG
-function getClasssByLog(accessToken = '', page = 1) {
-    let url = `${AUTH_Class}/Log`;
-    return httpDefault(METHOD.get, url, { token: accessToken });
+function createClass(data, accessToken = '') {
+    let url = `${AUTH_CLASS}`
+    return httpDefault(METHOD.post, url, {
+        body: data,
+        token: accessToken
+    });
 }
 
-//GET ID BY LOG
-function getClassIDbyLog(accessToken = '', page = 1) {
-    let url = `${AUTH_Class}/${ClassID}/Log`;
-    return httpDefault(METHOD.get, url, { token: accessToken });
+function updateClass(data, accessToken = '') {
+    let url = `${AUTH_CLASS}/${data._id}`
+    return httpDefault(METHOD.put, url, {
+        token: accessToken
+    });
+}
+
+function deleteClass(data, accessToken = '') {
+    let url = `${AUTH_CLASS}/${data._id}`
+    return httpDefault(METHOD.del, url, {
+        token: accessToken
+    });
 }
