@@ -1,0 +1,59 @@
+<template name="listClass">
+  <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+    <!-- begin:: Subheader -->
+    <div class="kt-subheader   kt-grid__item" id="kt_subheader">
+      <div class="kt-container  kt-container--fluid ">
+        <div class="kt-subheader__main">
+          <h3 class="kt-subheader__title">
+
+           Giáo viên</h3>
+
+          <span class="kt-subheader__separator kt-hidden"></span>
+          <div class="kt-subheader__breadcrumbs">
+            <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
+            <span class="kt-subheader__breadcrumbs-separator"></span>
+            <a href="" class="kt-subheader__breadcrumbs-link">
+              SchoolBus </a>
+            <span class="kt-subheader__breadcrumbs-separator"></span>
+            <a href="" class="kt-subheader__breadcrumbs-link">
+              Danh sách lớp</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end:: Subheader -->
+
+    <!-- begin:: Content -->
+    <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+      <div class="row">
+        {{#each ClassItems}}
+          {{> classItem}}
+        {{/each}}
+        {{> classItem}}
+        {{> classItem}}
+        {{> classItem}}
+        {{> classItem}}
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="classItem">
+  <div class="col-md-4">
+    <div class="kt-portlet kt-callout">
+      <div class="kt-portlet__body">
+        <div class="kt-callout__body">
+          <div class="kt-callout__content">
+            <h3 class="kt-callout__title">Lớp 1A1</h3>
+            <p class="kt-callout__desc">
+              33 học sinh
+            </p>
+          </div>
+          <div class="kt-callout__action">
+            <a href="#" class="btn btn-custom btn-bold btn-upper btn-font-sm  btn-primary">chi tiết</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

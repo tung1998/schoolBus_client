@@ -19,6 +19,17 @@ if (Meteor.isServer) {
         'car.getAll': getAllCar,
         'car.getByID': getCarByID,
         'car.create': createCar,
+<<<<<<< HEAD
+<<<<<<< HEAD
+        'car.getAll': getCars,
+=======
+        // 'car.getAll': getCars,
+>>>>>>> f47e67d16e006e4790a5cf6643eed5c7b455ad67
+        // 'car.getNotAssignDriver': getCarNotAssignDriver,
+        // 'car.getByPage': getCarsByPage,
+        'car.getByDriver': getCarByDriver,
+=======
+>>>>>>> d66459822327e10045c71c763685913b03f39eb7
         'car.update': updateCar,
         'car.delete': deleteCar,
     });

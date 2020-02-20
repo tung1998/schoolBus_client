@@ -7,7 +7,12 @@ const BASE_API = `${AUTH_PATH}/sms`
 
 if (Meteor.isServer) {
 	Meteor.methods({
-		'sms.send': sendSMS,
+        'sms.getSMS': getSMS,
+        'sms.getSMSByID': getSMSByID,
+        'sms.getSMSByPage': getSMSByPage,
+        'sms.createSMS': createSMS,
+        'sms.updateSMS': updateSMS,
+        'sms.deleteSMS': deleteSMS
     });
 }
 /**
@@ -15,10 +20,15 @@ if (Meteor.isServer) {
  * @param {Object} data is customerTrip data.
  * @param {string} accessToken token validate
  */
-function sendSMS(data, accessToken) {
-    let url =  `${BASE_API}?`;
-    // return httpDefault(METHOD.get, url, { token: accessToken });
-    return new Promise((resolve, reject) => {
-        resolve('ok')
+
+function getSMS(data, accessToken = '') {
+    let url = `${AUTH_School}/`;
+    return httpDefault(METHOD.get, url, { token: accessToken });
+}
+
+function getSMSByID(data, accessToken = '') {
+    let url = `${AUTH_PATH}/${data._id}`;
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
     });
 }
