@@ -15,12 +15,12 @@ export const COLLECTION_CAR = new Mongo.Collection('Car', { idGeneration: 'MONGO
 if (Meteor.isServer) {
     Meteor.methods({
         'car.create': createCar,
-        'car.getAll': getCars,
-        'car.getNotAssignDriver': getCarNotAssignDriver,
-        'car.getByPage': getCarsByPage,
+        // 'car.getAll': getCars,
+        // 'car.getNotAssignDriver': getCarNotAssignDriver,
+        // 'car.getByPage': getCarsByPage,
         'car.getByDriver': getCarByDriver,
         'car.update': updateCar,
-        'car.updateStatus': updateCarStatus,
+        // 'car.updateStatus': updateCarStatus,
         'car.delete': deleteCar,
     });
     // public cho client subscribe

@@ -3,8 +3,8 @@ export{
     AUTH_PATH
 }
 
-const BASE = 'http://14.231.140.53:3000'
-const AUTH_PATH = 'http://14.231.140.53:2999'
+const BASE = 'http://14.231.140.53:5904'
+const AUTH_PATH = 'http://14.231.140.53:5903'
 
 // const BASE = 'http://150.95.111.24:5904';
 // const AUTH_PATH = 'http://150.95.111.24:5903';

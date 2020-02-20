@@ -37,45 +37,6 @@ function getFutureTrips(accessToken = '', extra = '') {
         });
     });
 }
-
-function getCurrentTrip(accessToken = '', extra = '') {
-    return new Promise((resolve, reject) => {
-        Meteor.call('trip.getCurrent', accessToken, extra, (err, result) => {
-            if (result.error) {
-                reject(result)
-            } else {
-                // Nếu có thì lấy danh sách khách hàng
-                let status = [
-                    _CUSTOMERTRIP.status.dang_doi.number,
-                    _CUSTOMERTRIP.status.dang_thuc_hien.number,
-                    // _CUSTOMERTRIP.status.ket_thuc.number,
-                ]
-                getCustomerTripsByTrip(result._id, accessToken).then(customerTrips => {
-                    // prices: tong so tien phai thu
-                    // seats: so ghe
-                    let {seats, prices} = customerTrips.reduce((res, value) => {
-                        res.prices += value.price - (value.deposit || 0);
-                        res.seats += value.seats;
-                        return res;
-                    }, {seats: 0, prices: 0})
-                    
-                    // sort theo địa chỉ đón
-                    customerTrips = customerTrips.sort((a, b) => {
-                        if (a.pickup.address.toLowerCase() < b.pickup.address.toLowerCase())    return -1;
-                        if (a.pickup.address.toLowerCase() > b.pickup.address.toLowerCase())    return 1;
-                        return 0;
-                    });
-                    result.customerTrips = customerTrips;
-                    result.seats = seats;
-                    result.prices = prices;
-                    // console.log(result);
-                    resolve(result);
-                })
-            }
-        });
-    });
-}
-
 function findTrip(trip, accessToken = '', extra = '') {
     return new Promise((resolve, reject) => {
         Meteor.call('trip.find', trip, accessToken, extra, (err, result) => {
