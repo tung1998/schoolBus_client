@@ -6,13 +6,13 @@ function getUsers(accessToken = '') {
     });
 }
 
-function getUserByID(userID, accessToken = '') {
+/*function getUserByID(userID, accessToken = '') {
     return new Promise((resolve, reject) => {
         Meteor.call('user.getByID', userID, accessToken, (error, result) => {
             resolve(result);
         });
     });
-}
+}*/
 
 /*function getUsersByPage(accessToken = '', page) {
     return new Promise((resolve, reject) => {
@@ -215,7 +215,7 @@ function getUserSearch(options, page, limit, accessToken = '') {
 */
 export {
     getUsers,
-    getUserByID,
+    //getUserByID,
     //getUserByPhone,
     //getUsersByPage,
     createUser,
