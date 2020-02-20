@@ -3,11 +3,11 @@ export{
     AUTH_PATH
 }
 
-const BASE = 'http://14.231.140.53:5904'
-const AUTH_PATH = 'http://14.231.140.53:5903'
+// const BASE = 'http://192.168.100.69:3000'
+// const AUTH_PATH = 'http://192.168.100.69:2999'
 
-// const BASE = 'http://150.95.111.24:5904';
-// const AUTH_PATH = 'http://150.95.111.24:5903';
+const AUTH_PATH = 'http://192.168.100.69:3000';
+const BASE = 'http://192.168.100.69:2999';
 
 // console.log(BASE);
 // mail hainv@fimo

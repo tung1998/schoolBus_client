@@ -27,7 +27,6 @@ if (Meteor.isServer) {
 function getAllStudent(accessToken = '') {
     let url = `${AUTH_STUDENT}`
     return httpDefault(METHOD.get, url, {
-        body: data,
         token: accessToken
     });
 }
