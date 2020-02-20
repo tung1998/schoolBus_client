@@ -16,36 +16,27 @@ if (Meteor.isServer) {
     Meteor.methods({
         'School.create': createSchool,
         'School.getAll': getSchools,
-        'School.getByPage': getSchoolsByPage,
         'School.getByID': getSchoolByID,
+        'School.getByPage': getSchoolsByPage,
         'School.update': updateSchool,
-        'School.delete': deleteSchool,
-        'School.log': getSchoolsByLog,
-        'School.seeByLog': getSchoolIDbyLog,
-    });
-    // public cho client subscribe
-    Meteor.publish('School.getAll.meteor', () => {
-        return COLLECTION_School.find({ isDeleted: false });
-    });
-
-    // public cho client subscribe
-    Meteor.publish('School.getByIDs.meteor', (ids) => {
-        return COLLECTION_School.find({
-            isDeleted: false,
-            _id: {
-                $in: ids.map(e => new Meteor.Collection.ObjectID(e))
-            }
-        });
+        'School.delete': deleteSchool
     });
 }
 //THÊM
-function createSchool(School, accessToken = '') {
+function createSchool(data, accessToken = '') {
     let url = `${AUTH_School}/`
-    return httpDefault(METHOD.post, url, { token: accessToken });
+    return httpDefault(
+        METHOD.post,
+        url,
+        { 
+            body: data,
+            token: accessToken
+        }
+    );
 }
 //XEM HẾT
 function getSchools(options = {}, accessToken = '', extra) {
-    let url = AUTH_School;
+    let url = `${AUTH_School}/`;
     //let { driverBlockedType } = options;
     //if (driverBlockedType) url += `?driverBlockedType=${driverBlockedType}`
     return httpDefault(METHOD.get, url, { token: accessToken });
@@ -56,33 +47,33 @@ function getSchoolsByPage(accessToken = '', page = 1) {
     return httpDefault(METHOD.get, url, { token: accessToken });
 }
 //XEM THEO ID
-function getSchoolByID(SchoolID, accessToken = '') {
+function getSchoolByID(data, accessToken = '') {
     //console.log(driverID, accessToken);
-    let url = `${AUTH_School}/${SchoolID}`;
+    let url = `${AUTH_School}/${data.SchoolID}`;
     //console.log(url);
 
-    return httpDefault(METHOD.get, url, { token: accessToken });
+    return httpDefault(METHOD.get, url, {token: accessToken });
 }
 //UPDATE 
-function updateSchool(School, accessToken = '') {
-    let url = `${AUTH_School}/${SchoolID}`
-    return httpDefault(METHOD.put, url, { token: accessToken });
+function updateSchool(data, accessToken = '') {
+    let url = `${AUTH_School}/${data.SchoolID}`
+    return httpDefault(METHOD.put, url, {body: data, token: accessToken });
 }
 
 //XÓA
-function deleteSchool(SchoolID, accessToken = '') {
-    let url = `${AUTH_School}/${SchoolID}`
-    return httpDefault(METHOD.del, url, { token: accessToken });
+function deleteSchool(data, accessToken = '') {
+    let url = `${AUTH_School}/${data.SchoolID}`
+    return httpDefault(METHOD.del, url, {body: data, token: accessToken });
 }
 
-//LOG
-function getSchoolsByLog(accessToken = '', page = 1) {
-    let url = `${AUTH_School}/Log`;
-    return httpDefault(METHOD.get, url, { token: accessToken });
-}
+// //LOG
+// function getSchoolsByLog(accessToken = '', page = 1) {
+//     let url = `${AUTH_School}/Log`;
+//     return httpDefault(METHOD.get, url, { token: accessToken });
+// }
 
-//GET ID BY LOG
-function getSchoolIDbyLog(accessToken = '', page = 1) {
-    let url = `${AUTH_School}/${SchoolID}/Log`;
-    return httpDefault(METHOD.get, url, { token: accessToken });
-}
+// //GET ID BY LOG
+// function getSchoolIDbyLog(accessToken = '', page = 1) {
+//     let url = `${AUTH_School}/${SchoolID}/Log`;
+//     return httpDefault(METHOD.get, url, { token: accessToken });
+// }
