@@ -191,5 +191,13 @@ const _METHODS = {
         Create: 'user.create',
         Update: 'user.update',
         Delete: 'user.delete',
+    },
+    sms: {
+        GetAll: 'sms.getSMS',
+        GetById: 'sms.getSMSByID',
+        GetBYPage: 'getSMSByPage',
+        Create: 'sms.createSMS',
+        Update: 'sms.updateSMS',
+        Delete: 'sms.deleteSMS',
     }
 }
