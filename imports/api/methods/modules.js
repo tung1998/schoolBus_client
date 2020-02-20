@@ -65,12 +65,12 @@ function updateModule(module, accessToken = '') {
     })
 }
 
-function deleteModule(moduleID, accessToken = '') {
-    let url = `${AUTH_MODULE}/${moduleID}`;
+function deleteModule(data, accessToken = '') {
+    let url = `${AUTH_MODULE}/${data._id}`;
     return httpDefault(METHOD.del, url, {
         token: accessToken
     }).then(result => {
-        updateTask('Module', moduleID)
+        updateTask('Module', data._id)
         return result
     })
 }

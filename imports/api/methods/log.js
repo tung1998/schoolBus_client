@@ -7,11 +7,17 @@ const AUTH_LOG = `${AUTH_PATH}/Log`
 
 if (Meteor.isServer) {
     Meteor.methods({
-        'log.get': getLog,
+        'log.getAll': getLog,
+        'log.getById': getLogById,
     });
 }
 
 function getLog() {
     let url = `${AUTH_LOG}`;
+    return httpDefault(METHOD.get, url, { token: accessToken });
+}
+
+function getLogById(data) {
+    let url = `${AUTH_LOG}/${data._id}`;
     return httpDefault(METHOD.get, url, { token: accessToken });
 }
