@@ -18,7 +18,6 @@ import '../../api/methods/phone';
 import '../../api/methods/report';
 import '../../api/methods/route';
 import '../../api/methods/sms';
-import '../../api/methods/task.1';
 import '../../api/methods/task';
 import '../../api/methods/token';
 import '../../api/methods/trip';
