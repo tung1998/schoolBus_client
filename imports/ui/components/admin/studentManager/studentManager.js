@@ -7,6 +7,10 @@ import {
     handleError
 } from '../../functions'
 
+import {
+    _METHODS
+} from '../../variableConst'
+
 let accessToken
 
 Template.studentManager.onCreated(() => {
@@ -15,7 +19,7 @@ Template.studentManager.onCreated(() => {
 })
 
 Template.studentManager.onRendered(() => {
-    MeteorCall('student.getAll', {}, accessToken).then(result => {
+    MeteorCall(_METHODS.students.GetAll, {}, accessToken).then(result => {
         console.log(result)
     }).catch(handleError)
 })
