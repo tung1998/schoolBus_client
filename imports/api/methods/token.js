@@ -18,12 +18,12 @@ const BASE_TOKEN = `${AUTH_PATH}/Token`;
 if (Meteor.isServer) {
     Meteor.methods({
         'token.checkAccessToken': checkAccessToken,
-        'token.getUserType': getUserType,
+        //'token.getUserType': getUserType,
         'token.getUserInfo': getUserInfo,
-        'token.getByPage': getTokensByPage,
+        //'token.getByPage': getTokensByPage,
         'token.getByUserID': getByUserID,
         'token.deleteByID': deleteTokenByID,
-        'token.deleteLogout': deleteTokenLogout,
+        //'token.deleteLogout': deleteTokenLogout,
     });
 }
 
@@ -38,7 +38,7 @@ function checkAccessToken(accessToken) {
     })
 }
 
-function getUserType(accessToken) {
+/*function getUserType(accessToken) {
     let url = `${BASE_INFO}`
     return httpDefault(METHOD.get, url, {
         token: accessToken,
@@ -46,7 +46,7 @@ function getUserType(accessToken) {
             _id
         }
     })
-}
+}*/
 
 function getUserInfo(accessToken) {
     let url = `${BASE_INFO}`;
@@ -56,7 +56,7 @@ function getUserInfo(accessToken) {
 }
 
 
-function getTokensByPage({
+/*function getTokensByPage({
     page,
     limit,
     options
@@ -90,7 +90,7 @@ function getTokensByPage({
     return httpDefault(METHOD.get, url, {
         token: accessToken
     })
-}
+}*/
 
 function deleteTokenByID(_id, accessToken = '') {
     let url = `${BASE_TOKEN}/byID`
@@ -102,12 +102,12 @@ function deleteTokenByID(_id, accessToken = '') {
     })
 }
 
-function deleteTokenLogout(accessToken = '') {
+/*function deleteTokenLogout(accessToken = '') {
     let url = `${BASE_TOKEN}/logout`
     return httpDefault(METHOD.del, url, {
         token: accessToken,
     })
-}
+}*/
 
 
 

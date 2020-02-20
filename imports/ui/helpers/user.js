@@ -14,13 +14,14 @@ function getUserByID(userID, accessToken = '') {
     });
 }
 
-function getUsersByPage(accessToken = '', page) {
+/*function getUsersByPage(accessToken = '', page) {
     return new Promise((resolve, reject) => {
         Meteor.call('user.getByPage', accessToken, page, (error, result) => {
             resolve(result);
         });
     });
 }
+*/
 
 function createUser(user, accessToken = '') {
     return new Promise((resolve, reject) => {
@@ -51,7 +52,7 @@ function createUser(user, accessToken = '') {
     })
 }
 
-function getUserByPhone(userPhone, accessToken = '') {
+/*function getUserByPhone(userPhone, accessToken = '') {
     return new Promise((resolve, reject) => {
         Meteor.call('user.getByPhone', userPhone, accessToken, (error, result) => {
             if (error) {
@@ -108,7 +109,7 @@ function changePasswordByAdmin(user, accessToken = '') {
             }
         });
     });
-}
+}*/
 
 function updateUser(user, accessToken = '', callback) {
     Meteor.call('user.update', user, accessToken, callback);
@@ -118,7 +119,7 @@ function deleteUser(userID, accessToken = '', callback) {
     Meteor.call('user.delete', userID, accessToken, callback)
 }
 
-function blockUser({
+/*function blockUser({
     userID,
     blockReason
 }, accessToken = '') {
@@ -147,13 +148,13 @@ function unBlockUser(userID, accessToken = '') {
         });
     });
 }
-
+*/
 /**
  * Hàm lấy User theo ID
  * @param {String} userID
  * @return {Object}
  */
-function getUserByIDMeteor(userID) {
+/*function getUserByIDMeteor(userID) {
     return COLLECTION_USER
         .find({
             isDeleted: false,
@@ -166,7 +167,8 @@ function getUserByIDMeteor(userID) {
  * @param {Array} userIDs
  * @return {Object}
  */
-function getUsersByIDsMeteor(userIDs) {
+
+/* function getUsersByIDsMeteor(userIDs) {
     return COLLECTION_USER
         .find({
             isDeleted: false,
@@ -210,26 +212,26 @@ function getUserSearch(options, page, limit, accessToken = '') {
         })
     })
 }
-
+*/
 export {
     getUsers,
     getUserByID,
-    getUserByPhone,
-    getUsersByPage,
+    //getUserByPhone,
+    //getUsersByPage,
     createUser,
     updateUser,
     deleteUser,
-    getUserByEmail,
-    changePasswordByAdmin,
-    blockUser,
-    unBlockUser,
-    getUsersByIDsMeteor,
-    getUserByIDMeteor,
-    getUserByPhone_new,
-    getUserByTypeAndPhone,
-    updateUserProfile,
-    getUserSearch,
-    updateUsers
+    //getUserByEmail,
+    //changePasswordByAdmin,
+    //blockUser,
+    //unBlockUser,
+    //getUsersByIDsMeteor,
+    //getUserByIDMeteor,
+    //getUserByPhone_new,
+    //getUserByTypeAndPhone,
+    //updateUserProfile,
+    //getUserSearch,
+    //updateUsers
 }
 
 // import collection mongoDB

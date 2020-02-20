@@ -16,11 +16,11 @@ if (Meteor.isServer) {
     Meteor.methods({
         'car.create': createCar,
         'car.getAll': getCars,
-        'car.getNotAssignDriver': getCarNotAssignDriver,
+        //'car.getNotAssignDriver': getCarNotAssignDriver,
         'car.getByPage': getCarsByPage,
         'car.getByDriver': getCarByDriver,
         'car.update': updateCar,
-        'car.updateStatus': updateCarStatus,
+        //'car.updateStatus': updateCarStatus,
         'car.delete': deleteCar,
     });
     // public cho client subscribe
@@ -58,7 +58,11 @@ function getCarByDriver(driverID, accessToken = '') {
 
     return httpDefault(METHOD.get, url, { token: accessToken });
 }
-//LẤY XE THEO ID
+//LẤY XE THEO page
+function getCarsByPage(accessToken = '', page = 1) {
+    let url = `${AUTH_CAR}/${page}`;
+    return httpDefault(METHOD.get, url, { token: accessToken });
+}
 //LẤY XE THEO IDs
 //XÓA XE
 function deleteCar(carID, accessToken = '') {

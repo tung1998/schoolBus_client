@@ -2,9 +2,9 @@ export {
     getUserInfo,
     getInfo,
     checkAccessToken,
-    getTokensByPage,
+    //getTokensByPage,
     deleteTokenByID,
-    deleteTokenLogout,
+    //deleteTokenLogout,
     getByUserID
 }
 
@@ -37,7 +37,7 @@ function getInfo(accessToken) {
 }
 
 
-function getTokensByPage(page, limit, options, accessToken = '') {
+/*function getTokensByPage(page, limit, options, accessToken = '') {
     return new Promise((resolve, reject) => {
         Meteor.call('token.getByPage', {
             page,
@@ -53,7 +53,7 @@ function getTokensByPage(page, limit, options, accessToken = '') {
             }
         });
     });
-}
+}*/
 
 function deleteTokenByID(_id, accessToken = '') {
     return new Promise((resolve, reject) => {
@@ -69,7 +69,7 @@ function deleteTokenByID(_id, accessToken = '') {
     });
 }
 
-function deleteTokenLogout(accessToken = '') {
+/*function deleteTokenLogout(accessToken = '') {
     return new Promise((resolve, reject) => {
         Meteor.call('token.deleteLogout', accessToken, (err, result) => {
             if (result && result.error) {
@@ -81,7 +81,7 @@ function deleteTokenLogout(accessToken = '') {
             }
         });
     });
-}
+}*/
 
 function getByUserID(userID, accessToken = '') {
     return new Promise((resolve, reject) => {
