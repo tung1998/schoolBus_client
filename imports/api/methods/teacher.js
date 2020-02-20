@@ -16,11 +16,11 @@ const AUTH_TEACHER = `${AUTH_PATH}/Teacher`
 
 if (Meteor.isServer) {
     Meteor.methods({
-        'car.getAll': getAllTeacher,
-        'car.getByID': getTeacherByID,
-        'car.create': createTeacher,
-        'car.update': updateTeacher,
-        'car.delete': deleteTeacher,
+        'teacher.getAll': getAllTeacher,
+        'teacher.getByID': getTeacherByID,
+        'teacher.create': createTeacher,
+        'teacher.update': updateTeacher,
+        'teacher.delete': deleteTeacher,
     });
 }
 
