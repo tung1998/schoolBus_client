@@ -50,6 +50,7 @@ function createConfig(data, accessToken = '') {
 function updateConfig(data, accessToken = '') {
     let url = `${AUTH_CONFIG}/${data._id}`
     return httpDefault(METHOD.put, url, {
+        body: data,
         token: accessToken
     });
 }

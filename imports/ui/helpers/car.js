@@ -7,15 +7,6 @@ function getCars(accessToken = '', { driverBlockedType = 'all' } = {}) {
     });
 }
 
-function getCarNotAssignDriver(accessToken = '') {
-    return new Promise((resolve, reject) => {
-        Meteor.call('car.getNotAssignDriver', accessToken, (err, result) => {
-            if (result && result.error) reject(result);
-            resolve(result);
-        });
-    });
-}
-
 function getCarByID(accessToken = '') {
     return new Promise((resolve, reject) => {
         Meteor.call('car.getByID', accessToken, (err, result) => {
@@ -47,10 +38,6 @@ function createCar(car, accessToken = '', callback) {
 
 function updateCar(car, accessToken = '', callback) {
     Meteor.call('car.update', car, accessToken, callback)
-}
-
-function updateCarStatus(car, accessToken = '', callback) {
-    Meteor.call('car.updateStatus', car, accessToken, callback)
 }
 
 function deleteCar(carID, accessToken = '', callback) {
@@ -130,15 +117,11 @@ function addExtra(cars, extra) {
 
 export {
     getCars,
-    getCarNotAssignDriver,
     getCarByID,
     getCarsByPage,
-    getCarByDriver,
     createCar,
     updateCar,
     deleteCar,
-    getCarsByIDMeteor,
-    getCarsByIDsMeteor,
 }
 
 // import collection mongoDB
