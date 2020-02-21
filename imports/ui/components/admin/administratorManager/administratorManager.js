@@ -1,6 +1,6 @@
 import './administratorManager.html'
 
-Template.editAdministratorModal.events({
+/*Template.editAdministratorModal.events({
     'submit form' (event) {
         event.preventDefault();
         const target = event.target;
@@ -12,10 +12,9 @@ Template.editAdministratorModal.events({
             email: target.email.value,
             adminType: target.adminType.value,
             //avatar: target.adminType
-
         }
         let accessToken = Cookies.get('accessToken')
         console.log(accessToken)
         console.log(admin)
     }
-})
+})*/

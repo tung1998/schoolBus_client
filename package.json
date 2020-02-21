@@ -9,6 +9,7 @@
     "@babel/runtime": "^7.7.6",
     "jquery": "^3.4.1",
     "js-cookie": "^2.2.1",
+    "leaflet-routing-machine": "^3.2.12",
     "meteor-node-stubs": "^1.0.0",
     "xlsx": "^0.15.5"
   },

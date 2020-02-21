@@ -53,21 +53,11 @@
                         <th>Email</th>
                         <th>Trường</th>
                         <th>Lớp</th>
-                        <th></th>
+                        <th>Hành động</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      <tr>
-                        <th scope="row">3</th>
-                        <td>Larry</td>
-                        <td>the Bird</td>
-                        <td>@twitter</td>
-                        <td>@twitter</td>
-                        <td>
-                          <button type="button" class="btn btn-outline-brand" data-toggle="modal" data-target="#editTeacherModal">Sửa</button>
-                          <button type="button" class="btn btn-outline-danger">Xóa</button>
-                        </td>
-                      </tr>
+                    <tbody id="tableBody">
+                      
                     </tbody>
                   </table>
                 </div>
@@ -90,7 +80,7 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Thêm mới</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         </button>
       </div>
@@ -100,58 +90,59 @@
             <div class="form-group row">
               <label for="example-text-input" class="col-2 col-form-label">Họ tên</label>
               <div class="col-10">
-                <input class="form-control" type="text" value="Artisanal kale" id="example-text-input">
+                <input class="form-control" type="text" value="Artisanal kale" id="example-text-input" name = "name">
               </div>
             </div>
             <div class="form-group row">
               <label for="example-search-input" class="col-2 col-form-label">Ngày sinh</label>
               <div class="col-10">
-                <input class="form-control" type="search" value="How do I shoot web" id="example-search-input">
+                <input class="form-control" type="search" value="How do I shoot web" id="example-search-input" name="dob">
               </div>
             </div>
             <div class="form-group row">
               <label for="example-email-input" class="col-2 col-form-label">Địa chỉ</label>
               <div class="col-10">
-                <input class="form-control" type="email" value="bootstrap@example.com" id="example-email-input">
+                <input class="form-control" type="email" value="bootstrap@example.com" id="example-email-input" name="address">
               </div>
             </div>
             <div class="form-group row">
               <label for="example-url-input" class="col-2 col-form-label">Số điện thoại</label>
               <div class="col-10">
-                <input class="form-control" type="url" value="https://getbootstrap.com" id="example-url-input">
+                <input class="form-control" type="url" value="https://getbootstrap.com" id="example-url-input" name=phoneNumber>
               </div>
             </div>
             <div class="form-group row">
               <label for="example-tel-input" class="col-2 col-form-label">Email</label>
               <div class="col-10">
-                <input class="form-control" type="tel" value="1-(555)-555-5555" id="example-tel-input">
+                <input class="form-control" type="text" value="1-(555)-555-5555" id="example-tel-input" name=email>
               </div>
             </div>
             <div class="form-group row">
               <label for="example-password-input" class="col-2 col-form-label">Trường</label>
               <div class="col-10">
-                <input class="form-control" type="password" value="hunter2" id="example-password-input">
+                <input class="form-control" type="text" value="hunter2" id="example-password-input" name=school>
               </div>
             </div>
             <div class="form-group row">
               <label for="example-number-input" class="col-2 col-form-label">Lớp</label>
               <div class="col-10">
-                <input class="form-control" type="number" value="42" id="example-number-input">
+                <input class="form-control" type="text" value="42" id="example-number-input" name="class">
               </div>
             </div>
             <div class="form-group row">
               <label for="example-date-input" class="col-2 col-form-label">Ảnh đại diện</label>
               <div class="col-10">
-                <input class="form-control" type="file" value="2011-08-19" id="example-date-input">
+                <input class="form-control" type="file" value="2011-08-19" id="example-date-input" name="avatar">
               </div>
             </div>
           </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Send message</button>
+          </div>
         </form>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Send message</button>
-      </div>
+      
     </div>
   </div>
 </div>
