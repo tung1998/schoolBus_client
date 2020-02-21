@@ -37,6 +37,7 @@ import '../../ui/components/admin/carFuel/carFuel.js';
 import '../../ui/components/admin/feedback/feedback.js';
 import '../../ui/components/admin/notification/notification.js';
 import '../../ui/components/admin/carMaintenance/carMaintenance.js';
+import '../../ui/components/admin/studentListManager/studentListManager.js';
 // import '../../ui/components/admin/admin/admin.js';
 // driver template
 import '../../ui/components/driver/upCommingTripInfo/upCommingTripInfo.js';
