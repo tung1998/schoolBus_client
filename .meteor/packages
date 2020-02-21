@@ -28,3 +28,4 @@ johanbrook:publication-collector  # Test a Meteor publication by collecting its 
 bevanhunt:leaflet
 froatsnook:request
 http
+session
