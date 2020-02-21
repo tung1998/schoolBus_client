@@ -26,10 +26,7 @@ if (Meteor.isServer) {
 
 function getAllSchool(accessToken = '') {
     let url = `${AUTH_SCHOOL}`
-    return httpDefault(METHOD.get, url, {
-        body: data,
-        token: accessToken
-    });
+    return httpDefault(METHOD.get, url, { token: accessToken });
 }
 
 function getSchoolByID(data, accessToken = '') {
@@ -50,6 +47,7 @@ function createSchool(data, accessToken = '') {
 function updateSchool(data, accessToken = '') {
     let url = `${AUTH_SCHOOL}/${data._id}`
     return httpDefault(METHOD.put, url, {
+        body: data,
         token: accessToken
     });
 }
