@@ -36,7 +36,7 @@ if (Meteor.isServer) {
 
 function getModules(accessToken = '') {
     let url = AUTH_MODULE;
-    return httpDefault(METHOD.del, url, {
+    return httpDefault(METHOD.get, url, {
         token: accessToken
     })
 }

@@ -42,7 +42,7 @@
                             <div class="kt-section">
                                 <div class="kt-section__content">
                                     <button type="button" class="btn btn-outline-brand mb-4" data-toggle="modal"
-                                        data-target="#editRouteModal">Thêm mới</button>
+                                        data-target="#editModuleModal">Thêm mới</button>
                                     <table class="table table-bordered table-hover">
                                         <thead class="thead-light">
                                             <tr>
@@ -80,6 +80,92 @@
             </div>
         </div>
         <!-- end:: Content -->
+
+        {{> editModuleModal}}
     </div>
     <!--{{> editRoute}}-->
+</template>
+
+<template name="editModuleModal">
+    <div class="modal fade" id="editModuleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Thêm mới</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="kt-form kt-form--label-right">
+                        <div class="kt-portlet__body">
+                            <div class="form-group row">
+                                <label for="module-name" class="col-2 col-form-label">Tên Module</label>
+                                <div class="col-10">
+                                    <input class="form-control" type="text" value="" id="module-name" name="module-name" placeholder="Tên Module">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="module-description" class="col-2 col-form-label">Miêu tả</label>
+                                <div class="col-10">
+                                    <input class="form-control" type="text" value=""
+                                        id="module-description" name="module-description" placeholder="Mô Tả">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="module-route" class="col-2 col-form-label">Đường dẫn</label>
+                                <div class="col-10">
+                                    <input class="form-control" type="text" value="Artisanal kale"
+                                        id="module-route" name="module-route" placeholder="Đường dẫn">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="parent-route" class="col-2 col-form-label">Đường dẫn cha</label>
+                                <div class="col-10">
+                                    <select id="parentRoute" class="form-control" name="parent-route">
+										<option value="" selected>Chọn đường dẫn cha</option>
+										<!-- {{#each parentRoutes}} -->
+										<option value="{{this}}">
+											<!-- {{this}} -->
+										</option>
+										<!-- {{/each}} -->
+									</select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="module-icon" class="col-2 col-form-label">Icon</label>
+                                <div class="col-10">
+                                    <select id="module-icon" class="form-control" style='font: normal normal normal 18px/1 "Material Design Icons"'>
+										<!-- {{#each icons}} -->
+										<option value="{{this.[0]}}">
+											<div class="waves-effect">
+												<!-- <i class="mdi {{this.[0]}}"></i>{{this.[1]}} {{this.[0]}} -->
+											</div>
+										</option>
+										<!-- {{/each}} -->
+									</select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="module-permission" class="col-2 col-form-label">Họ tên</label>
+                                <div class="col-10">
+                                    <select class="form-control kt-select2 select2-hidden-accessible" id="module-permission" name="module-permission" data-select2-id="module-permission" tabindex="-1" aria-hidden="true">
+                                        <optgroup label="Lựa chọn quyền" data-select2-id="103">
+                                          <option value="AK" data-select2-id="104">Alaska</option>
+                                          <option value="HI" data-select2-id="105">Hawaii</option>
+                                        </optgroup>
+                                  </select>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-primary">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>

@@ -7,15 +7,20 @@ import {
     handleError
 } from '../../functions';
 
+import {
+    _METHODS
+} from '../../variableConst';
+
 let accessToken;
+let data;
 
 Template.studentListManager.onCreated(() => {
     accessToken = Cookies.get('accessToken');
     console.log(accessToken);
 });
 
-Template.studentListManager.onCreated(() => {
+Template.studentListManager.onRendered(() => {
     MeteorCall(_METHODS.studentList.GetAll, {}, accessToken).then(result => {
-        console.log(result)
-    }).catch(handleError)
+        data = result;
+    }).catch(handleError);
 });

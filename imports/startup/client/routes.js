@@ -38,6 +38,7 @@ import '../../ui/components/admin/feedback/feedback.js';
 import '../../ui/components/admin/notification/notification.js';
 import '../../ui/components/admin/carMaintenance/carMaintenance.js';
 import '../../ui/components/admin/studentListManager/studentListManager.js';
+import '../../ui/components/admin/module/module.js';
 // import '../../ui/components/admin/admin/admin.js';
 // driver template
 import '../../ui/components/driver/upCommingTripInfo/upCommingTripInfo.js';
@@ -58,6 +59,7 @@ import '../../ui/components/teacher/listClass/listClass.js';
 import '../../ui/components/teacher/studentListByClass/studentListByClass.js';
 import '../../ui/components/teacher/absentRequestManager/absentRequestManager.js';
 import '../../ui/components/teacher/chat/chat.js';
+
 
 // Set up all routes in the app
 FlowRouter.route('/', {
@@ -140,14 +142,14 @@ FlowRouter.route('/driverManager', {
     },
 });
 
-FlowRouter.route('/parentManager', {
+FlowRouter.route('/module', {
     name: 'App.home',
     action() {
         BlazeLayout.render('App_body', {
             main: 'App_home',
-            content: 'parentManager',
-        });
-    },
+            content: 'module',
+        })
+    }
 });
 
 FlowRouter.route('/nannyManager', {
@@ -156,6 +158,16 @@ FlowRouter.route('/nannyManager', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'nannyManager',
+        });
+    },
+});
+
+FlowRouter.route('/parentManager', {
+    name: 'App.home',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'parentManager',
         });
     },
 });

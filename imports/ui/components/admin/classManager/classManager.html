@@ -41,7 +41,7 @@
               <!--begin::Section-->
               <div class="kt-section">
                 <div class="kt-section__content">
-                  <button type="button" class="btn btn-outline-brand mb-4" data-toggle="modal" data-target="#editClassModal">Thêm mới</button>
+                  <button type="button" id="add-class" class="btn btn-outline-brand mb-4" data-toggle="modal" data-target="#editClassModal">Thêm mới</button>
                   <table class="table table-bordered table-hover">
                     <thead class="thead-light">
                       <tr>
@@ -49,6 +49,7 @@
                         <th>Trường</th>
                         <th>Mã lớp</th>
                         <th>Giáo viên</th>
+                        <th></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -56,8 +57,9 @@
                         <th scope="row">3</th>
                         <td>@twitter</td>
                         <td>@twitter</td>
+                        <td></td>
                         <td>
-                          <button type="button" class="btn btn-outline-brand" data-toggle="modal" data-target="#editClassModal">Sửa</button>
+                          <button type="button" id="edit-class" class="btn btn-outline-brand" data-toggle="modal" data-target="#editClassModal">Sửa</button>
                           <button type="button" class="btn btn-outline-danger">Xóa</button>
                         </td>
                       </tr>
@@ -83,7 +85,7 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Thêm mới lớp học</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         </button>
       </div>
@@ -91,22 +93,27 @@
         <form class="kt-form kt-form--label-right">
           <div class="kt-portlet__body">
             <div class="form-group row">
-              <label for="example-datetime-local-input" class="col-2 col-form-label">Trường</label>
+              <label for="class-name" class="col-2 col-form-label">Tên lớp</label>
               <div class="col-10">
-                <input class="form-control" type="datetime-local" value="2011-08-19T13:45:00"
-                  id="example-datetime-local-input">
+                <input type="text" class="form-control" id="class-name" value="" placeholder="Tên lớp">
               </div>
             </div>
             <div class="form-group row">
-              <label for="example-date-input" class="col-2 col-form-label">Mã lớp</label>
+              <label for="class-id" class="col-2 col-form-label">Tên lớp</label>
               <div class="col-10">
-                <input class="form-control" type="file" value="2011-08-19" id="example-date-input">
+                  <input type="text" class="form-control" id="class-id" value="" placeholder="Mã lớp">
               </div>
             </div>
             <div class="form-group row">
-              <label for="example-date-input" class="col-2 col-form-label">Giáo viên</label>
+              <label for="teacher-name" class="col-2 col-form-label">Tên giáo viên</label>
+              <div></div>
               <div class="col-10">
-                <input class="form-control" type="file" value="2011-08-19" id="example-date-input">
+                <select class="custom-select form-control">
+                  <option selected="">-- Chọn --</option>
+                  <option value="1">One</option>
+                  <option value="2">Two</option>
+                  <option value="3">Three</option>
+              </select>
               </div>
             </div>
           </div>
@@ -114,7 +121,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Send message</button>
+        <button type="button" class="btn btn-primary"></button>
       </div>
     </div>
   </div>
