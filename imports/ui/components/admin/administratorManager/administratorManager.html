@@ -41,7 +41,7 @@
                 <!--begin::Section-->
                 <div class="kt-section">
                   <div class="kt-section__content">
-                    <button type="button" class="btn btn-outline-brand mb-4" data-toggle="modal" data-target="#editStudentModal">Thêm mới</button>
+                    <button type="button" class="btn btn-outline-brand mb-4 add-more" data-toggle="modal" data-target="#editStudentModal">Thêm mới</button>
                     <table class="table table-bordered table-hover">
                       <thead class="thead-light">
                         <tr>
@@ -54,7 +54,7 @@
                           <th></th>
                         </tr>
                       </thead>
-                      <tbody>
+                      <tbody id="table-body">
                         <tr>
                           <th scope="row">1</th>
                           <td>Larry</td>
@@ -63,8 +63,8 @@
                           <td>abc@gmail.com</td>
                           <td>22</td>
                           <td>
-                            <button type="button" class="btn btn-outline-brand" data-toggle="modal" data-target="#editStudentModal">Sửa</button>
-                            <button type="button" class="btn btn-outline-danger">Xóa</button>
+                            <button type="button" class="btn btn-outline-brand modify-button" data-toggle="modal" data-target="#editStudentModal">Sửa</button>
+                            <button type="button" class="btn btn-outline-danger delete-button">Xóa</button>
                           </td>
                         </tr>
                       </tbody>
@@ -99,49 +99,49 @@
               <div class="form-group row">
                 <label for="example-text-input" class="col-2 col-form-label">Họ tên</label>
                 <div class="col-10">
-                  <input class="form-control" type="text" name="name" id="example-text-input">
+                  <input class="form-control" type="text" name="name" id="name-input">
                 </div>
               </div>
-              <div class="form-group row">
+              <!-- <div class="form-group row">
                 <label for="example-search-input" class="col-2 col-form-label">Ngày sinh</label>
                 <div class="col-10">
-                  <input class="form-control" type="text" value="How do I shoot web" name="dob" id="example-search-input">
+                  <input class="form-control" type="text" value="How do I shoot web" name="dob" id="date-input">
                 </div>
-              </div>
+              </div> -->
               <div class="form-group row">
                 <label for="example-email-input" class="col-2 col-form-label">Địa chỉ</label>
                 <div class="col-10">
-                  <input class="form-control" type="text" value="bootstrap@example.com" name="address" id="example-email-input">
+                  <input class="form-control" type="text" value="bootstrap@example.com" name="address" id="address-input">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-url-input" class="col-2 col-form-label">Số điện thoại</label>
                 <div class="col-10">
-                  <input class="form-control" type="text" value="https://getbootstrap.com" name="phoneNumber" id="example-url-input">
+                  <input class="form-control" type="text" value="https://getbootstrap.com" name="phoneNumber" id="phonenumber-input">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-tel-input" class="col-2 col-form-label">Email</label>
                 <div class="col-10">
-                  <input class="form-control" type="text" value="1-(555)-555-5555" name="email" id="example-tel-input">
+                  <input class="form-control" type="text" value="1-(555)-555-5555" name="email" id="email-input">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-tel-input" class="col-2 col-form-label">Loại admin</label>
                 <div class="col-10">
-                  <input class="form-control" type="text" value="1-(555)-555-5555" name="adminType" id="example-tel-input">
+                  <input class="form-control" type="text" value="1-(555)-555-5555" name="adminType" id="admintype-input">
                 </div>
               </div>
-              <div class="form-group row">
+              <!-- <div class="form-group row">
                 <label for="example-date-input" class="col-2 col-form-label">Ảnh đại diện</label>
                 <div class="col-10">
-                  <input class="form-control" type="text" value="2011-08-19" name="avatar" id="example-date-input">
+                  <input class="form-control" type="text" value="2011-08-19" name="avatar" id="avatar-input">
                 </div>
-              </div>
+              </div> -->
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-              <button type="submit" class="btn btn-primary confirm">Xác nhận</button>
+              <button type="button" class="btn btn-secondary cancel-button" data-dismiss="modal">Hủy</button>
+              <button type="submit" class="btn btn-primary confirm-button" >Xác nhận</button>
             </div>
           </form>
         </div>
