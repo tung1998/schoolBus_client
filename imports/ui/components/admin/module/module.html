@@ -1,4 +1,4 @@
-<template name="module">
+<template name="moduleManager">
     <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
         <!-- begin:: Subheader -->
         <div class="kt-subheader   kt-grid__item" id="kt_subheader">
@@ -99,64 +99,72 @@
                 <div class="modal-body">
                     <form class="kt-form kt-form--label-right">
                         <div class="kt-portlet__body">
+                            <input type="hidden" id="module-id" value="">
                             <div class="form-group row">
-                                <label for="module-name" class="col-2 col-form-label">Tên Module</label>
-                                <div class="col-10">
-                                    <input class="form-control" type="text" value="" id="module-name" name="module-name" placeholder="Tên Module">
+                                <label for="module-name" class="col-3 col-form-label">Tên Module</label>
+                                <div class="col-9">
+                                    <input class="form-control" type="text" value="" id="module-name" name="module-name"
+                                        placeholder="Tên Module">
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label for="module-description" class="col-2 col-form-label">Miêu tả</label>
-                                <div class="col-10">
-                                    <input class="form-control" type="text" value=""
-                                        id="module-description" name="module-description" placeholder="Mô Tả">
+                                <label for="module-description" class="col-3 col-form-label">Miêu tả</label>
+                                <div class="col-9">
+                                    <input class="form-control" type="text" value="" id="module-description"
+                                        name="module-description" placeholder="Mô Tả">
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label for="module-route" class="col-2 col-form-label">Đường dẫn</label>
-                                <div class="col-10">
-                                    <input class="form-control" type="text" value="Artisanal kale"
-                                        id="module-route" name="module-route" placeholder="Đường dẫn">
+                                <label for="module-route" class="col-3 col-form-label">Đường dẫn</label>
+                                <div class="col-9">
+                                    <input class="form-control" type="text" value="Artisanal kale" id="module-route"
+                                        name="module-route" placeholder="Đường dẫn">
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label for="parent-route" class="col-2 col-form-label">Đường dẫn cha</label>
-                                <div class="col-10">
-                                    <select id="parentRoute" class="form-control" name="parent-route">
-										<option value="" selected>Chọn đường dẫn cha</option>
-										<!-- {{#each parentRoutes}} -->
-										<option value="{{this}}">
-											<!-- {{this}} -->
-										</option>
-										<!-- {{/each}} -->
-									</select>
+                                <label for="module-parent-route" class="col-3 col-form-label">Đường dẫn cha</label>
+                                <div class="col-9">
+                                    <select id="module-parent-route" class="form-control" name="parent-route">
+                                        <option value="" selected>Chọn đường dẫn cha</option>
+                                        <!-- {{#each parentRoutes}} -->
+                                        <option value="{{this}}">
+                                            <!-- {{this}} -->
+                                        </option>
+                                        <!-- {{/each}} -->
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label for="module-icon" class="col-2 col-form-label">Icon</label>
-                                <div class="col-10">
-                                    <select id="module-icon" class="form-control" style='font: normal normal normal 18px/1 "Material Design Icons"'>
-										<!-- {{#each icons}} -->
-										<option value="{{this.[0]}}">
-											<div class="waves-effect">
-												<!-- <i class="mdi {{this.[0]}}"></i>{{this.[1]}} {{this.[0]}} -->
-											</div>
-										</option>
-										<!-- {{/each}} -->
-									</select>
+                                <label for="module-icon" class="col-3 col-form-label">Icon</label>
+                                <div class="col-9">
+                                    <select id="module-icon" class="form-control"
+                                        style='font: normal normal normal 18px/1 "Material Design Icons"'>
+                                        <!-- {{#each icons}} -->
+                                        <option value="{{this.[0]}}">
+                                            <div class="waves-effect">
+                                                <!-- <i class="mdi {{this.[0]}}"></i>{{this.[1]}} {{this.[0]}} -->
+                                            </div>
+                                        </option>
+                                        <!-- {{/each}} -->
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label for="module-permission" class="col-2 col-form-label">Họ tên</label>
-                                <div class="col-10">
-                                    <select class="form-control kt-select2 select2-hidden-accessible" id="module-permission" name="module-permission" data-select2-id="module-permission" tabindex="-1" aria-hidden="true">
-                                        <optgroup label="Lựa chọn quyền" data-select2-id="103">
-                                          <option value="AK" data-select2-id="104">Alaska</option>
-                                          <option value="HI" data-select2-id="105">Hawaii</option>
-                                        </optgroup>
-                                  </select>
+                                <label for="module-permission" class="col-3 col-form-label">Chọn quyền</label>
+                                <div class="col-9">
+                                    <select id="module-permission" class="form-control" name="parent-route">
+                                        <option value="" selected disabled>-- Chọn quyền --</option>
+                                        <option value="admin">Quản trị</option>
+                                        <option value="operator">Tổng đài viên</option>
+                                        <option value="manager">Điều hành viên</option>
+                                        <option value="driver">Lái xe</option>
+                                        <option value="customer">Khách hàng</option>
+                                        <option value="receptionist">Lễ tân</option>
+                                        <option value="accountancy">Kế toán</option>
+                                    </select>
                                 </div>
                             </div>
+
                         </div>
                     </form>
                 </div>
