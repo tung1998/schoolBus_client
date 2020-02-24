@@ -21,7 +21,6 @@ Template.teacherManager.onCreated(() => {
 Template.teacherManager.onRendered(() => {
     MeteorCall(_METHODS.teacher.GetAll, {}, accessToken).then(result => {
         if ($(document).ready) {
-            Session.set("index", result.data.length)
             let wrap = document.getElementById('tableBody')
             for (let i = 0; i < result.data.length; i++) {
                 /*wrap.appendChild(`<tr id='${i}'>
@@ -54,7 +53,6 @@ Template.teacherManager.onRendered(() => {
                     </td>
                     </tr>`)
             }
-            console.log(result.data.length)
         }
     }).catch(handleError)
 })

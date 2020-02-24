@@ -1,7 +1,63 @@
 import './absentRequest.html';
+import { Meteor } from 'meteor/meteor';
+import { Tracker } from 'meteor/tracker'
+const Cookies = require('js-cookie');
+import {
+    MeteorCall,
+    handleError
+} from '../../functions'
+
+import {
+    _METHODS
+} from '../../variableConst'
+
+let accessToken;
+Template.absentRequest.onCreated(() => {
+    accessToken = Cookies.get('accessToken')
+})
+
 Template.absentRequest.rendered = () => {
     setFormHeight()
 }
+
+Template.absentRequest.events({
+    'submit form': (event) => {
+        event.preventDefault();
+        $(document).ready(() => {
+            let countCheck = 0,
+                reportType;
+            for (let i = 1; i <= 3; i++) {
+                if (document.getElementById(`feedback${i}`).checked) {
+                    reportType = i;
+                    countCheck++;
+                }
+                if (countCheck > 1) {
+                    alert("Chỉ được chọn một mục! Vui lòng thử lại.")
+                    break;
+                }
+            }
+            if (countCheck == 1) {
+                let request = {
+                    requestID: '12345',
+                    studentID: '12345312',
+                    content: document.getElementById("content").value,
+                    approve: 0,
+                    createdTime: Date.now(),
+                    updatedTime: Date.now(),
+                    isDeleted: false,
+                }
+                console.log(request)
+                MeteorCall(_METHODS.ParrentRequest.Create, request, accessToken).then(result => {
+                    alert("Gửi yêu cầu thành công!")
+                }).catch(handleError)
+            } else {
+                alert("Xin hãy chọn mục.")
+            }
+
+        })
+
+    }
+})
 
 function setFormHeight() {
     let windowHeight = $(window).height();

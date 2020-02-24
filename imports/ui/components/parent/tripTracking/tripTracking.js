@@ -16,11 +16,7 @@ Template.tripTracking.onRendered(function() {
     L.marker([21.03709858, 105.78349972]).addTo(mymap);
     var pointList = [new L.LatLng(21.03709858, 105.78349972)];
     mymap.on('click', function(e) {
-        let point = new L.LatLng(e.latlng.lat, e.latlng.lng);
-        pointList.push(point);
-        console.log(pointList[pointList.length - 2])
-        new L.polyline([pointList[pointList.length - 2], point], { color: 'blue', weight: 5, opacity: 0.5, smoothFactor: 1 }).addTo(mymap);
-
+        addPoly(e, pointList, mymap)
     });
 })
 
@@ -52,4 +48,10 @@ function setMapHeight() {
             "padding-bottom": 0
         })
     }
+}
+
+function addPoly(e, pointList, mymap) {
+    let point = new L.LatLng(e.latlng.lat, e.latlng.lng);
+    pointList.push(point);
+    new L.polyline([pointList[pointList.length - 2], point], { color: 'blue', weight: 10, opacity: 0.5, smoothFactor: 1 }).addTo(mymap);
 }
