@@ -18,7 +18,7 @@ import {
 
 import {
     NOTI_DEFAULT
-} from '../../ui/components/variableConst.js'
+} from '../../variableConst.js'
 
 const BASE_API = `${AUTH_PATH}/Notification`
 let msgID = 0;

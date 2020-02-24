@@ -1,9 +1,65 @@
 import { Meteor } from 'meteor/meteor';
 import { Tracker } from 'meteor/tracker'
 import './parentFeedback.html';
+const Cookies = require('js-cookie');
+import {
+    MeteorCall,
+    handleError
+} from '../../../../functions'
+
+import {
+    _METHODS
+} from '../../../../variableConst'
+
+let accessToken;
+Template.parentFeedback.onCreated(() => {
+    accessToken = Cookies.get('accessToken')
+})
+
 Template.parentFeedback.rendered = () => {
     setFormHeight()
 }
+
+Template.parentFeedback.events({
+    'submit form': (event) => {
+        event.preventDefault();
+        $(document).ready(() => {
+            let countCheck = 0,
+                reportType;
+            for (let i = 1; i <= 4; i++) {
+                if (document.getElementById(`feedback${i}`).checked) {
+                    reportType = i;
+                    countCheck++;
+                }
+                if (countCheck > 1) {
+                    alert("Chỉ được chọn một mục! Vui lòng thử lại.")
+                    break;
+                }
+            }
+            if (countCheck == 1) {
+                let feedback = {
+                    userID: '123456',
+                    type: reportType,
+                    feedback: document.getElementById("content").value,
+                    status: 0,
+                    responseBy: null,
+                    responseTime: null,
+                    response: null,
+                    createdTime: Date.now(),
+                    updatedTime: Date.now(),
+                    isDeleted: false,
+                }
+                MeteorCall(_METHODS.feedback.Create, feedback, accessToken).then(result => {
+                    alert("Gửi phản hồi thành công!")
+                }).catch(handleError)
+            } else {
+                alert("Xin hãy chọn mục.")
+            }
+
+        })
+
+    }
+})
 
 function setFormHeight() {
     let windowHeight = $(window).height();

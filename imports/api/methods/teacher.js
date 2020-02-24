@@ -24,8 +24,8 @@ if (Meteor.isServer) {
     });
 }
 
-function getAllTeacher(accessToken = '') {
-    let url = `${AUTH_TEACHER}`
+function getAllTeacher(data, accessToken = '') {
+    let url = `${AUTH_TEACHER}?extra=${data.extra}`
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });
