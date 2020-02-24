@@ -18,6 +18,7 @@ if (Meteor.isServer) {
     Meteor.methods({
         'user.getAll': getAllUser,
         'user.getByID': getUserByID,
+        'user.getCurrentInfor': getCurrentUserInfor,
         'user.create': createUser,
         'user.update': updateUser,
         'user.delete': deleteUser,
@@ -34,6 +35,13 @@ function getAllUser(accessToken = '') {
 
 function getUserByID(data, accessToken = '') {
     let url = `${AUTH_USER}/${data._id}`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
+}
+
+function getCurrentUserInfor(data, accessToken = '') {
+    let url = `${AUTH_USER}/Current`
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });
