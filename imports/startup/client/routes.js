@@ -4,33 +4,41 @@ import {
 import {
     BlazeLayout
 } from 'meteor/kadira:blaze-layout';
-import { MeteorCall } from '../../ui/components/functions';
+import {
+    MeteorCall
+} from '../../ui/components/functions';
 
 Blaze._allowJavascriptUrls()
 
 // Set up all routes in the app
 
-FlowRouter.triggers.enter([function (context, redirect) {
-    getUserInfo()
-    console.log(context, redirect)
-}]);
-
-
-FlowRouter.route('/login', {
-    name: 'App.login',
-    triggersEnter: [function() {
-        
-    }],
+FlowRouter.route('/', {
+    name: 'App.home',
     action() {
         BlazeLayout.setRoot('body');
-        BlazeLayout.render('App_body', {
-            main: 'login'
+        let accessToken = Cookies.get('accessToken');
+        console.log(123)
+        MeteorCall('user.getCurrentInfor', null, accessToken).then(result => {
+            if (result && result.user) {
+                FlowRouter.go('/profile');
+            } else {
+                alertify.error('Đã có lỗi xảy ra');
+            }
+        }).catch(e => {
+            if (e && e.error) {
+                console.log("1ss23",e)
+                FlowRouter.redirect('/login');
+                redirectLogin();
+            }
         });
     },
 });
 
-FlowRouter.route('/', {
-    name: 'App.home',
+FlowRouter.route('/login', {
+    name: 'App.login',
+    triggersEnter: [function () {
+
+    }],
     action() {
         BlazeLayout.setRoot('body');
         BlazeLayout.render('App_body', {
@@ -50,8 +58,8 @@ FlowRouter.route('/profile', {
 });
 
 
-function getUserInfo(){
+function getUserInfo() {
     let accessToken = Cookies.get('accessToken')
     console.log(accessToken)
-    // MeteorCall('user.getByAccessToken')
+    return MeteorCall('user.getCurrentInfor')
 }

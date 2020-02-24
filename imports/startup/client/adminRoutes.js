@@ -1,10 +1,4 @@
 // Set up all routes in the app
-
-FlowRouter.triggers.enter([function (context, redirect) {
-    console.log(context, redirect)
-}]);
-
-
 FlowRouter.route('/login', {
     name: 'App.login',
     triggersEnter: [function() {
