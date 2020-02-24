@@ -33,10 +33,11 @@ function ClickModifyButton(e) {
   $(".modal-title").html("Chỉnh Sửa");
   $(".confirm-button").html("Sửa");
   $("#editTeacherModal").modal("show");
+  $(' input[name="password"]').parent().parent().hide();
 
   $(' input[name="name"]').val(teacherData.name);
   $(' input[name="username"]').val(teacherData.username);
-  // $(' input[name="address"]').val(teacherData.address);
+//   $(' input[name="password"]').val(teacherData.password);
   $(' input[name="phoneNumber"]').val(teacherData.phone);
   $(' input[name="email"]').val(teacherData.email);
   $(' input[name="school"]').val(teacherData.school);
@@ -72,6 +73,7 @@ function SubmitForm(event) {
     // address: target.address.value,
     phone: target.phoneNumber.value,
     email: target.email.value,
+    password: target.password.value
     // schoolID: "5e536a220a36ed5f0c2a5b88"
   };
   console.log(data);

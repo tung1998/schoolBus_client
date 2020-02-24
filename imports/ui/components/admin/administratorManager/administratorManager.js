@@ -29,6 +29,8 @@ function ClickModifyButton(event) {
   $("#editAdministratorModal").attr("adminID", adminData._id);
   $(".modal-title").html("Chỉnh Sửa");
   $(".confirm-button").html("Sửa");
+  $(' input[name="password"]').parent().parent().hide();
+
   $("#name-input").val(adminData.name);
   $("#username-input").val(adminData.username);
   $("#address-input").val(adminData.address);
@@ -56,7 +58,8 @@ function SubmitForm(event) {
     // address: target.address.value,
     phone: target.phoneNumber.value,
     email: target.email.value,
-    adminType: target.adminType.value
+    adminType: target.adminType.value,
+    password: target.password.value
     //avatar: target.adminType
   };
   let modify = $("#editAdministratorModal").attr("adminID");
