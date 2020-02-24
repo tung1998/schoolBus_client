@@ -55,18 +55,7 @@
                         </tr>
                       </thead>
                       <tbody id="table-body">
-                        <tr>
-                          <th scope="row">1</th>
-                          <td>Larry</td>
-                          <td>the Bird</td>
-                          <td>0123456789</td>
-                          <td>abc@gmail.com</td>
-                          <td>22</td>
-                          <td>
-                            <button type="button" class="btn btn-outline-brand modify-button" data-toggle="modal" data-target="#editStudentModal">Sửa</button>
-                            <button type="button" class="btn btn-outline-danger delete-button">Xóa</button>
-                          </td>
-                        </tr>
+                        
                       </tbody>
                     </table>
                   </div>
@@ -84,7 +73,7 @@
 
 
 <template name="editAdministratorModal">
-    <div class="modal fade" id="editStudentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    <div class="modal fade" id="editAdministratorModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
@@ -102,18 +91,18 @@
                   <input class="form-control" type="text" name="name" id="name-input">
                 </div>
               </div>
-              <!-- <div class="form-group row">
-                <label for="example-search-input" class="col-2 col-form-label">Ngày sinh</label>
-                <div class="col-10">
-                  <input class="form-control" type="text" value="How do I shoot web" name="dob" id="date-input">
-                </div>
-              </div> -->
               <div class="form-group row">
+                <label for="example-search-input" class="col-2 col-form-label">Tên Đăng nhập</label>
+                <div class="col-10">
+                  <input class="form-control" type="text" name="username" id="username-input">
+                </div>
+              </div>
+              <!-- <div class="form-group row">
                 <label for="example-email-input" class="col-2 col-form-label">Địa chỉ</label>
                 <div class="col-10">
                   <input class="form-control" type="text" value="bootstrap@example.com" name="address" id="address-input">
                 </div>
-              </div>
+              </div> -->
               <div class="form-group row">
                 <label for="example-url-input" class="col-2 col-form-label">Số điện thoại</label>
                 <div class="col-10">
