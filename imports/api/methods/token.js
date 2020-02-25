@@ -11,8 +11,8 @@ import {
     httpDefault
 } from '../checkAPI'
 
-const BASE_CAR = `${BASE}/Token`
-const AUTH_CAR = `${AUTH_PATH}/Token`
+const BASE_TOKEN = `${BASE}/Token`
+const AUTH_TOKEN = `${AUTH_PATH}/Token`
 
 if (Meteor.isServer) {
     Meteor.methods({
@@ -21,11 +21,12 @@ if (Meteor.isServer) {
         'token.create': createToken,
         'token.update': updateToken,
         'token.delete': deleteToken,
+        'token.loginByUsername': loginByUsername,
     });
 }
 
 function getAllToken(accessToken = '') {
-    let url = `${AUTH_CAR}`
+    let url = `${AUTH_TOKEN}`
     return httpDefault(METHOD.get, url, {
         body: data,
         token: accessToken
@@ -33,14 +34,14 @@ function getAllToken(accessToken = '') {
 }
 
 function getTokenByID(data, accessToken = '') {
-    let url = `${AUTH_CAR}/${data._id}`
+    let url = `${AUTH_TOKEN}/${data._id}`
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });
 }
 
 function createToken(data, accessToken = '') {
-    let url = `${AUTH_CAR}`
+    let url = `${AUTH_TOKEN}`
     return httpDefault(METHOD.post, url, {
         body: data,
         token: accessToken
@@ -48,15 +49,29 @@ function createToken(data, accessToken = '') {
 }
 
 function updateToken(data, accessToken = '') {
-    let url = `${AUTH_CAR}/${data._id}`
+    let url = `${AUTH_TOKEN}/${data._id}`
     return httpDefault(METHOD.put, url, {
         token: accessToken
     });
 }
 
 function deleteToken(data, accessToken = '') {
-    let url = `${AUTH_CAR}/${data._id}`
+    let url = `${AUTH_TOKEN}/${data._id}`
     return httpDefault(METHOD.del, url, {
         token: accessToken
+    });
+}
+
+function loginByUsername(data) {
+    let url = `${AUTH_TOKEN}`;
+    let content = 'username=' + data.username + '&password=' + data.password;
+    let headers = {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Authorization": "B",
+        "Cache-Control": "no-cache"
+    }
+    return httpDefault(METHOD.post, url, {
+        content,
+        headers
     });
 }

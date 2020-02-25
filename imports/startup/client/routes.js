@@ -4,46 +4,53 @@ import {
 import {
     BlazeLayout
 } from 'meteor/kadira:blaze-layout';
+
 import {
     MeteorCall
-} from '../../ui/components/functions';
+} from '../../functions'
+
+import {
+    _METHODS
+} from '../../variableConst'
 
 Blaze._allowJavascriptUrls()
 
 // Set up all routes in the app
 
+FlowRouter.triggers.enter([function (context, redirect) {
+    let accessToken = Cookies.get('accessToken');
+    if (!accessToken) FlowRouter.go('/login');
+    else {
+        MeteorCall(_METHODS.user.GetCurrentInfor, null, accessToken).then(result => {}).catch(e => {
+            FlowRouter.redirect('/login');
+        });
+    }
+}], {
+    except: ["App.login"]
+});
+
+
 FlowRouter.route('/', {
     name: 'App.home',
     action() {
-        BlazeLayout.setRoot('body');
-        let accessToken = Cookies.get('accessToken');
-        console.log(123)
-        MeteorCall('user.getCurrentInfor', null, accessToken).then(result => {
-            if (result && result.user) {
-                FlowRouter.go('/profile');
-            } else {
-                alertify.error('Đã có lỗi xảy ra');
-            }
-        }).catch(e => {
-            if (e && e.error) {
-                console.log("1ss23",e)
-                FlowRouter.redirect('/login');
-                redirectLogin();
-            }
-        });
+        FlowRouter.redirect('/profile');
     },
 });
 
 FlowRouter.route('/login', {
     name: 'App.login',
-    triggersEnter: [function () {
-
-    }],
     action() {
-        BlazeLayout.setRoot('body');
-        BlazeLayout.render('App_body', {
-            main: 'login'
-        });
+        let accessToken = Cookies.get('accessToken');
+        if (accessToken) {
+            MeteorCall(_METHODS.user.GetCurrentInfor, null, accessToken).then(result => {
+                FlowRouter.go('/profile')
+            }).catch(e => {
+                BlazeLayout.setRoot('body');
+                BlazeLayout.render('App_body', {
+                    main: 'login'
+                });
+            });
+        } else {}
     },
 });
 
@@ -56,10 +63,3 @@ FlowRouter.route('/profile', {
         });
     },
 });
-
-
-function getUserInfo() {
-    let accessToken = Cookies.get('accessToken')
-    console.log(accessToken)
-    return MeteorCall('user.getCurrentInfor')
-}

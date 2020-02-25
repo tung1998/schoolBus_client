@@ -35,7 +35,7 @@ function getAllUser(accessToken = '') {
 
 function getUserByID(data, accessToken = '') {
     let url = `${AUTH_USER}/${data._id}`
-    return httpDefault(METHOD.get, url, {
+    return httpDefault(METHOD.get, url, { 
         token: accessToken
     });
 }
