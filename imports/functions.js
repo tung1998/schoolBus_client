@@ -18,6 +18,8 @@ function MeteorCall(method = "", data = null, accessToken = "") {
     })
 }
 
+
+
 function handleError(error) {
     console.log(error)
 }

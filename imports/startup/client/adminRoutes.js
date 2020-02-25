@@ -245,6 +245,16 @@ FlowRouter.route('/parrentRequest', {
         });
     },
 });
+
+FlowRouter.route('/moduleManager', {
+    name: 'App.home',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'moduleManager',
+        })
+    }
+});
 //DRIVER
 
 FlowRouter.route('/upCommingTripInfo', {

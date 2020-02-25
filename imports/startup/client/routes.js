@@ -16,6 +16,7 @@ import {
 
 Blaze._allowJavascriptUrls()
 
+
 // Set up all routes in the app
 
 FlowRouter.triggers.enter([function (context, redirect) {
