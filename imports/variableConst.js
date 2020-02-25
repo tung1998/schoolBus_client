@@ -160,6 +160,7 @@ const _METHODS = {
     teacher: {
         GetAll: 'teacher.getAll',
         GetById: 'teacher.getByID',
+        GetBySchoolID: 'teacher.getBySchool',
         Create: 'teacher.create',
         Update: 'teacher.update',
         Delete: 'teacher.delete',

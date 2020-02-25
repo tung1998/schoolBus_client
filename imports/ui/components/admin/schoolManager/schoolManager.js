@@ -54,7 +54,7 @@ function ClickConfirmButton(){
     let modify = $("#editSchoolModal").attr("schoolID");
     if (modify == "") {
         MeteorCall(_METHODS.school.Create, data, accessToken).then(result => {
-            // console.log(result);
+            console.log(result);
             // console.log(data);
             $("#editSchoolModal").modal("hide");
             addToTable(data, result);

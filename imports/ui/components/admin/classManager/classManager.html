@@ -1,22 +1,27 @@
 <template name="classManager">
-  <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+  <div
+    class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor"
+    id="kt_content"
+  >
     <!-- begin:: Subheader -->
     <div class="kt-subheader   kt-grid__item" id="kt_subheader">
       <div class="kt-container  kt-container--fluid ">
         <div class="kt-subheader__main">
           <h3 class="kt-subheader__title">
-
-            Quản lý lớp học </h3>
+            Quản lý lớp học
+          </h3>
 
           <span class="kt-subheader__separator kt-hidden"></span>
           <div class="kt-subheader__breadcrumbs">
-            <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
+            <a href="#" class="kt-subheader__breadcrumbs-home"
+              ><i class="flaticon2-shelter"></i
+            ></a>
+            <span class="kt-subheader__breadcrumbs-separator"></span>
+            <a href="" class="kt-subheader__breadcrumbs-link"> SchoolBus </a>
             <span class="kt-subheader__breadcrumbs-separator"></span>
             <a href="" class="kt-subheader__breadcrumbs-link">
-              SchoolBus </a>
-            <span class="kt-subheader__breadcrumbs-separator"></span>
-            <a href="" class="kt-subheader__breadcrumbs-link">
-              Quản lý lớp học</a>
+              Quản lý lớp học</a
+            >
           </div>
         </div>
       </div>
@@ -24,10 +29,11 @@
     <!-- end:: Subheader -->
 
     <!-- begin:: Content -->
-    <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+    <div
+      class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid"
+    >
       <div class="row">
         <div class="col">
-
           <div class="kt-portlet">
             <div class="kt-portlet__head">
               <div class="kt-portlet__head-label">
@@ -41,26 +47,25 @@
               <!--begin::Section-->
               <div class="kt-section">
                 <div class="kt-section__content">
-                  <button type="button" class="btn btn-outline-brand mb-4" data-toggle="modal" data-target="#editClassModal">Thêm mới</button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-brand mb-4 add-more"
+                    data-toggle="modal"
+                    data-target="#editClassModal"
+                  >
+                    Thêm mới
+                  </button>
                   <table class="table table-bordered table-hover">
                     <thead class="thead-light">
                       <tr>
                         <th>#</th>
                         <th>Trường</th>
-                        <th>Mã lớp</th>
+                        <th>Lớp</th>
                         <th>Giáo viên</th>
+                        <th></th>
                       </tr>
                     </thead>
-                    <tbody>
-                      <tr>
-                        <th scope="row">3</th>
-                        <td>@twitter</td>
-                        <td>@twitter</td>
-                        <td>
-                          <button type="button" class="btn btn-outline-brand" data-toggle="modal" data-target="#editClassModal">Sửa</button>
-                          <button type="button" class="btn btn-outline-danger">Xóa</button>
-                        </td>
-                      </tr>
+                    <tbody id="table-body">
                     </tbody>
                   </table>
                 </div>
@@ -76,47 +81,160 @@
   {{> editClassModal}}
 </template>
 
-
 <template name="editClassModal">
-<div class="modal fade" id="editClassModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-  style="display: none;" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">New message</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        </button>
-      </div>
-      <div class="modal-body">
-        <form class="kt-form kt-form--label-right">
-          <div class="kt-portlet__body">
-            <div class="form-group row">
-              <label for="example-datetime-local-input" class="col-2 col-form-label">Trường</label>
-              <div class="col-10">
-                <input class="form-control" type="datetime-local" value="2011-08-19T13:45:00"
-                  id="example-datetime-local-input">
+  <div
+    class="modal fade"
+    id="editClassModal"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="exampleModalLabel"
+    style="display: none;"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form class="kt-form kt-form--label-right">
+            <div class="kt-portlet__body">
+              <div class="form-group row">
+                <label class="col-2 col-form-label"
+                  >Trường</label
+                >
+                <div class="col-10">
+                  <div class="dropdown bootstrap-select form-control kt-">
+                    <select
+                      class="form-control kt-selectpicker"
+                      data-size="4"
+                      tabindex="-98"
+                    >
+                      <option>Mustard</option> </select
+                    ><button
+                      type="button"
+                      class="btn dropdown-toggle btn-light button-school-selected"
+                      data-toggle="dropdown"
+                      role="combobox"
+                      aria-owns="bs-select-2"
+                      aria-haspopup="listbox"
+                      aria-expanded="false"
+                      title="chọn trường"
+                    >
+                      <div class="filter-option">
+                        <div class="filter-option-inner">
+                          <div class="filter-option-inner-inner school-result">Chọn Trường</div>
+                        </div>
+                      </div>
+                    </button>
+                    <div
+                      class="dropdown-menu"
+                      x-placement="bottom-start"
+                      style="max-height: 182px; overflow: hidden; min-width: 393px; position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 36px, 0px);"
+                    >
+                      <div
+                        class="inner show"
+                        role="listbox"
+                        id="bs-select-2"
+                        tabindex="-1"
+                        aria-activedescendant="bs-select-2-1"
+                        style="max-height: 156px; overflow-y: auto;"
+                      >
+                        <ul
+                          class="dropdown-menu inner show"
+                          role="presentation"
+                          style="margin-top: 0px; margin-bottom: 0px;"
+                          id="school-select"
+                        >
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-2 col-form-label"
+                  >Giáo Viên</label
+                >
+                <div class="col-10">
+                  <div class="dropdown bootstrap-select form-control kt-">
+                    <select
+                      class="form-control kt-selectpicker"
+                      data-size="4"
+                      tabindex="-98"
+                    >
+                      <option>Mustard</option> </select
+                    ><button
+                      type="button"
+                      class="btn dropdown-toggle btn-light button-teacher-selected"
+                      data-toggle="dropdown"
+                      role="combobox"
+                      aria-owns="bs-select-2"
+                      aria-haspopup="listbox"
+                      aria-expanded="false"
+                      title="chọn lớp"
+                    >
+                      <div class="filter-option">
+                        <div class="filter-option-inner">
+                          <div class="filter-option-inner-inner teacher-result">Chọn Giáo Viên</div>
+                        </div>
+                      </div>
+                    </button>
+                    <div
+                      class="dropdown-menu"
+                      x-placement="bottom-start"
+                      style="max-height: 182px; overflow: hidden; min-width: 393px; position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 36px, 0px);"
+                    >
+                      <div
+                        class="inner show"
+                        role="listbox"
+                        id="bs-select-2"
+                        tabindex="-1"
+                        aria-activedescendant="bs-select-2-1"
+                        style="max-height: 156px; overflow-y: auto;"
+                      >
+                        <ul
+                          class="dropdown-menu inner show"
+                          role="presentation"
+                          style="margin-top: 0px; margin-bottom: 0px;"
+                          id="teacher-select"
+                        >
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="example-date-input" class="col-2 col-form-label"
+                  >Lớp</label
+                >
+                <div class="col-10">
+                  <input class="form-control" type="text" id="example-url-input" name="className">
+                </div>
               </div>
             </div>
-            <div class="form-group row">
-              <label for="example-date-input" class="col-2 col-form-label">Mã lớp</label>
-              <div class="col-10">
-                <input class="form-control" type="file" value="2011-08-19" id="exampl1e-date-input">
-              </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary cancel-button"
+                data-dismiss="modal"
+              >
+                Hủy
+              </button>
+              <button type="submit" class="btn btn-primary confirm-button">
+                Xác nhận
+              </button>
             </div>
-            <div class="form-group row">
-              <label for="example-date-input" class="col-2 col-form-label">Giáo viên</label>
-              <div class="col-10">
-                <input class="form-control" type="file" value="2011-08-19" id="example123-date-input">
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Send message</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-</div>
 </template>
