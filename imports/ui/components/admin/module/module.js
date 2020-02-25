@@ -138,6 +138,7 @@ function reloadTable() {
         let parentRoutes = []
         let table = $('#table-module')
         dataModule = result.data;
+        console.log(result)
         let row = dataModule.map((key, index) => {
             routes.push(key.route)
             if (key.level === 0) {
