@@ -4,11 +4,11 @@ const Cookies = require('js-cookie');
 import {
     MeteorCall,
     handleError
-} from '../../functions'
+} from '../../../../functions'
 
 import {
     _METHODS
-} from '../../variableConst'
+} from '../../../../variableConst'
 
 let accessToken;
 let data;

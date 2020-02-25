@@ -4,7 +4,7 @@ import '../../ui/layouts/body/body.js';
 
 // page template
 import '../../ui/pages/home/home.js';
-import '../../ui/pages/login/login.js'
+import '../../ui/pages/login/login.js';
 import '../../ui/pages/not-found/not-found.js';
 // shared component template
 import '../../ui/components/shared/profile/profile.js'

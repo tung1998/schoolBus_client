@@ -9,7 +9,7 @@ import {
 
 import {
     _METHODS
-} from '../../variableConst';
+} from '../../../../variableConst';
 
 let accessToken;
 let data;
