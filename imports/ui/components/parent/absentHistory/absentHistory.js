@@ -138,7 +138,7 @@ function deleteRow(data) {
 }
 
 function reloadTable() {
-    MeteorCall(_METHODS.ParrentRequest.GetAll, { extra: "student" }, accessToken)
+    MeteorCall(_METHODS.ParrentRequest.GetAll, { extra: "studentUser" }, accessToken)
         .then(result => {
             console.log(result)
             let htmlTable = result.data.map(htmlRow);
