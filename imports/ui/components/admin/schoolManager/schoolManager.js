@@ -5,11 +5,11 @@ const Cookies = require('js-cookie');
 import {
     MeteorCall,
     handleError
-} from '../../functions'
+} from '../../../../functions'
 
 import {
     _METHODS
-} from '../../variableConst'
+} from '../../../../variableConst'
 
 let accessToken;
 Template.schoolManager.onCreated(() => {
@@ -18,15 +18,7 @@ Template.schoolManager.onCreated(() => {
 })
 
 Template.schoolManager.onRendered(()=>{
-    this.computation = Tracker.autorun(()=>{
-        renderTableRow();
-    })
-})
-
-Template.schoolManager.onDestroyed(()=>{
-    if(this.computation){
-        this.computation.stop();
-    }
+    reloadTable();
 })
 
 Template.schoolManager.events({
@@ -43,7 +35,7 @@ function ClickModifyButton(e){
     $(".confirm-button").html("Sửa")
     $("#name-input").val(schoolData.name) ;
     $("#address-input").val(schoolData.address);
-    // $("#editSchoolModal").modal("show");
+    $("#editSchoolModal").modal("show");
 }
 
 function ClickAddmoreButton(e){
@@ -63,16 +55,18 @@ function ClickConfirmButton(){
     if (modify == "") {
         MeteorCall(_METHODS.school.Create, data, accessToken).then(result => {
             // console.log(result);
-            // $("#editSchoolModal").modal("hide");
+            // console.log(data);
+            $("#editSchoolModal").modal("hide");
+            addToTable(data, result);
         }).catch(handleError)
     } else {
         data._id = modify;
         MeteorCall(_METHODS.school.Update, data, accessToken).then(result => {
             // console.log(result);
-            // $("#editSchoolModal").modal("hide");
+            $("#editSchoolModal").modal("hide");
+            modifyTable(data);
         }).catch(handleError)
     }
-    renderTableRow();
 }
 
 function ClickDeleteButton(e){
@@ -80,28 +74,70 @@ function ClickDeleteButton(e){
     // console.log(data._id)
     MeteorCall(_METHODS.school.Delete, data, accessToken).then(result => {
         // console.log(result);
-        renderTableRow();
+        deleteRow(data);
     }).catch(handleError)
+}
+
+function addToTable(data, result){
+    data._id = result._id;
+    $("#table-body").prepend(`<tr id=${result._id}>
+                                <td>${data.name}</td>
+                                <td>${data.address}</td>
+                                <td>
+                                    <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
+                                        data
+                                    )}\'>Sửa</button>
+                                    <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(
+                                        data
+                                    )}\'>Xóa</button>
+                                </td>
+                            </tr>`
+    )
+}
+
+function modifyTable(data){
+    $(`#${data._id}`).html(`    
+                                <td>${data.name}</td>
+                                <td>${data.address}</td>
+                                <td>
+                                    <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
+                                        data
+                                    )}\'>Sửa</button>
+                                    <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(
+                                        data
+                                    )}\'>Xóa</button>
+                                </td>`
+        )
+}
+
+function deleteRow(data){
+    $(`#${data._id}`).remove();
+}
+
+function reloadTable(){
+    MeteorCall(_METHODS.school.GetAll, {}, accessToken).then(result => {
+        let htmlTable = result.data.map(htmlRow);
+        $("#table-body").html(htmlTable.join(" "));
+    }).catch(handleError)
+}
+
+function htmlRow(data){
+        let item = {
+            _id: data._id,
+            name: data.name,
+            address: data.address
+        }
+        return ` <tr id=${item._id}>
+                    <td>${item.name}</td>
+                    <td>${item.address}</td>
+                    <td>
+                    <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(item)}\'>Sửa</button>
+                    <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(item)}\'>Xóa</button>
+                    </td>
+                </tr>`
 }
 
 function clearForm(){
     $("#name-input").val("");
     $("#address-input").val("");
-}
-
-function renderTableRow(data){
-    MeteorCall(_METHODS.school.GetAll, {}, accessToken).then(result => {
-        let data = result.data;
-        let row = data.map(item => {
-        return ` <tr>
-                    <th scope="row">${item.name}</th>
-                    <td>${item.address}</td>
-                    <td>
-                    <button type="button" class="btn btn-outline-brand modify-button" data-toggle="modal" data-target="#editSchoolModal" data-json=\'${JSON.stringify(item)}\'>Sửa</button>
-                    <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(item)}\'>Xóa</button>
-                    </td>
-                </tr>`
-        })
-        $("#table-body").html(row.join(""));
-    }).catch(handleError)
 }

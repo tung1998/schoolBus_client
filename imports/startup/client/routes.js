@@ -5,11 +5,11 @@ import {
     BlazeLayout
 } from 'meteor/kadira:blaze-layout';
 
-Blaze._allowJavascriptUrls()
-    // Import needed templates
-    // layout template
-import '../../ui/layouts/body/body.js';
+import {
+    MeteorCall
+} from '../../functions'
 
+<<<<<<< HEAD
 // page template
 import '../../ui/pages/home/home.js';
 import '../../ui/pages/login/login.js'
@@ -53,15 +53,17 @@ import '../../ui/components/parent/historyTrip/historyTrip.js';
 // nanny template
 import '../../ui/components/nanny/tripHistory/tripHistory.js';
 import '../../ui/components/nanny/tripListStudent/tripListStudent.js';
+=======
+import {
+    _METHODS
+} from '../../variableConst'
+>>>>>>> fe41cbf14fa16482c0ff7def37f2d5aee12b89e1
 
-// teacher template
-import '../../ui/components/teacher/listClass/listClass.js';
-import '../../ui/components/teacher/studentListByClass/studentListByClass.js';
-import '../../ui/components/teacher/absentRequestManager/absentRequestManager.js';
-import '../../ui/components/teacher/chat/chat.js';
+Blaze._allowJavascriptUrls()
 
 
 // Set up all routes in the app
+<<<<<<< HEAD
 FlowRouter.route('/', {
     name: 'App.home',
     action() {
@@ -240,182 +242,52 @@ FlowRouter.route('/feedback', {
         });
     },
 });
+=======
+>>>>>>> fe41cbf14fa16482c0ff7def37f2d5aee12b89e1
 
-FlowRouter.route('/notification', {
-    name: 'notification',
-    action() {
-        BlazeLayout.render('App_body', {
-            main: 'App_home',
-            content: 'notification',
+FlowRouter.triggers.enter([function(context, redirect) {
+    let accessToken = Cookies.get('accessToken');
+    if (!accessToken) FlowRouter.go('/login');
+    else {
+        MeteorCall(_METHODS.user.GetCurrentInfor, null, accessToken).then(result => {}).catch(e => {
+            FlowRouter.redirect('/login');
         });
-    },
+    }
+}], {
+    except: ["App.login"]
 });
 
-FlowRouter.route('/carMaintenance', {
-    name: 'notification',
-    action() {
-        BlazeLayout.render('App_body', {
-            main: 'App_home',
-            content: 'carMaintenance',
-        });
-    },
-});
 
-FlowRouter.route('/admin', {
-    name: 'notification',
-    action() {
-        BlazeLayout.render('App_body', {
-            main: 'App_home',
-            content: 'admin',
-        });
-    },
-});
-
-FlowRouter.route('/tripTracking', {
-    name: 'tripTracking',
-    action() {
-        BlazeLayout.render('App_body', {
-            main: 'App_home',
-            content: 'tripTracking',
-        });
-    },
-});
-
-FlowRouter.route('/parentFeedback', {
-    name: 'feedback',
-    action() {
-        BlazeLayout.setRoot("body")
-        BlazeLayout.render('App_body', {
-            main: 'App_home',
-            content: 'parentFeedback',
-        });
-    },
-});
-
-FlowRouter.route('/absentRequest', {
-    name: 'feedback',
-    action() {
-        BlazeLayout.setRoot("body")
-        BlazeLayout.render('App_body', {
-            main: 'App_home',
-            content: 'absentRequest',
-        });
-    },
-});
-//DRIVER
-
-FlowRouter.route('/upCommingTripInfo', {
+FlowRouter.route('/', {
     name: 'App.home',
     action() {
-        BlazeLayout.render('App_body', {
-            main: 'App_home',
-            content: 'upCommingTripInfo',
-        });
+        FlowRouter.redirect('/profile');
     },
 });
 
-FlowRouter.route('/carMaintenanceReport', {
-    name: 'App.home',
+FlowRouter.route('/login', {
+    name: 'App.login',
     action() {
-        BlazeLayout.setRoot("body"),
-            BlazeLayout.render('App_body', {
-                main: 'App_home',
-                content: 'carMaintenanceReport',
+        let accessToken = Cookies.get('accessToken');
+        if (accessToken) {
+            MeteorCall(_METHODS.user.GetCurrentInfor, null, accessToken).then(result => {
+                FlowRouter.go('/profile')
+            }).catch(e => {
+                BlazeLayout.setRoot('body');
+                BlazeLayout.render('App_body', {
+                    main: 'login'
+                });
             });
+        } else {}
     },
 });
 
-FlowRouter.route('/tripHistoryDriver', {
-    name: 'notification',
+FlowRouter.route('/profile', {
+    name: 'App.home',
     action() {
         BlazeLayout.render('App_body', {
             main: 'App_home',
-            content: 'tripHistoryDriver',
-        });
-    },
-});
-
-FlowRouter.route('/absentHistory', {
-    name: 'feedback',
-    action() {
-        BlazeLayout.setRoot("body")
-        BlazeLayout.render('App_body', {
-            main: 'App_home',
-            content: 'absentHistory',
-        });
-    },
-});
-
-FlowRouter.route('/tripHistory', {
-    name: 'notification',
-    action() {
-        BlazeLayout.render('App_body', {
-            main: 'App_home',
-            content: 'tripHistory',
-        });
-    },
-});
-
-FlowRouter.route('/historyTrip', {
-    name: 'feedback',
-    action() {
-        BlazeLayout.setRoot("body")
-        BlazeLayout.render('App_body', {
-            main: 'App_home',
-            content: 'historyTrip',
-        });
-    },
-});
-
-FlowRouter.route('/trip/listStudent', {
-    name: 'notification',
-    action() {
-        BlazeLayout.render('App_body', {
-            main: 'App_home',
-            content: 'tripListStudent',
-        });
-    },
-});
-
-//teacher
-    //xem danh sách học sinh
-FlowRouter.route('/teacher/listClass', {
-    name: 'teacher',
-    action() {
-        BlazeLayout.render('App_body', {
-            main: 'App_home',
-            content: 'listClass',
-        });
-    },
-});
-
-FlowRouter.route('/teacher/listClass/class/:idClass', {
-    name: 'teacher',
-    action() {
-        BlazeLayout.render('App_body', {
-            main: 'App_home',
-            content: 'studentListByClass',
-        });
-    },
-});
-
-    //xem danh sách yêu cầu xin nghỉ
-FlowRouter.route('/teacher/listAbsentRequest', {
-    name: 'teacher',
-    action() {
-        BlazeLayout.render('App_body', {
-            main: 'App_home',
-            content: 'absentRequestManager',
-        });
-    },
-});
-    //nhắn tin
-FlowRouter.route('/teacher/chat', {
-    name: 'teacher',
-    action() {
-        BlazeLayout.render('App_body', {
-            main: 'App_home',
-            content: 'chatParent',
+            content: 'profile',
         });
     },
 });

@@ -1,6 +1,6 @@
+import './parrentRequest.html';
 import { Meteor } from 'meteor/meteor';
 import { Tracker } from 'meteor/tracker'
-import './parentFeedback.html';
 const Cookies = require('js-cookie');
 import {
     MeteorCall,
@@ -12,21 +12,21 @@ import {
 } from '../../../../variableConst'
 
 let accessToken;
-Template.parentFeedback.onCreated(() => {
+Template.absentRequest.onCreated(() => {
     accessToken = Cookies.get('accessToken')
 })
 
-Template.parentFeedback.rendered = () => {
+Template.absentRequest.rendered = () => {
     setFormHeight()
 }
 
-Template.parentFeedback.events({
+Template.absentRequest.events({
     'submit form': (event) => {
         event.preventDefault();
         $(document).ready(() => {
             let countCheck = 0,
                 reportType;
-            for (let i = 1; i <= 4; i++) {
+            for (let i = 1; i <= 3; i++) {
                 if (document.getElementById(`feedback${i}`).checked) {
                     reportType = i;
                     countCheck++;
@@ -37,19 +37,17 @@ Template.parentFeedback.events({
                 }
             }
             if (countCheck == 1) {
-                let feedback = {
-                    userID: '5e536e400a36ed5f0c2a5ba0',
-                    type: reportType,
-                    feedback: document.getElementById("content").value,
-                    status: 0,
-                    //responseBy: '2141235425124314',
-                    //responseTime: ' ',
-                    //response: ' ',
+                let request = {
+                    requestID: '5e536e400a36ed5f0c2a5ba0',
+                    studentID: '5e536e4012e5f0c2as435ba0',
+                    content: document.getElementById("content").value,
+                    approve: 0,
                     //createdTime: Date.now(),
                     //updatedTime: Date.now(),
-                    isDeleted: 0,
+                    // isDeleted: false,
                 }
-                MeteorCall(_METHODS.feedback.Create, feedback, accessToken).then(result => {
+                console.log(request)
+                MeteorCall(_METHODS.ParrentRequest.Create, request, accessToken).then(result => {
                     console.log(result)
                 }).catch(handleError)
             } else {
@@ -63,13 +61,13 @@ Template.parentFeedback.events({
 
 function setFormHeight() {
     let windowHeight = $(window).height();
-    let formHeight = $("#parentFeedback").height();
+    let formHeight = $("#absentRequest").height();
     let footerHeight = $("#kt_footer").height();
     let topBarHeight = $("#kt_header").height();
 
     if ($(window).width() < 1024) {
         topBarHeight = $("#kt_header_mobile").height();
-        $("#parentFeedback").css({
+        $("#absentRequest").css({
             "height": windowHeight - topBarHeight - 2 * footerHeight + 17
         })
         $('#kt_content').css({
@@ -80,12 +78,12 @@ function setFormHeight() {
         $("#parentFeedback").css({
             "height": windowHeight - topBarHeight - 2 * footerHeight - 17
         })
-        $("#kt-portlet__body").css({
+        $("#absentRequest").css({
                 "height": windowHeight - topBarHeight - 2 * footerHeight - 17
             })
             //$("#kt_wrapper").css({
             //  "padding-top": 60
-            //})
+            //  })
         $('#kt_content').css({
             "padding-top": 0,
             "padding-bottom": 0

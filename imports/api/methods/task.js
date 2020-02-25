@@ -8,7 +8,7 @@ import {
 } from 'meteor/mongo';
 import {
     TIME_DEFAULT
-} from '../../ui/components/variableConst';
+} from '../../variableConst';
 
 
 

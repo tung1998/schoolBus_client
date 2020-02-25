@@ -5,7 +5,7 @@ import { request } from "meteor/froatsnook:request";
 import { httpDefault, METHOD, isStatusCodeError, msgError } from '../checkAPI';
 import { BASE, AUTH_PATH, } from '../config'
 
-import { USER_TYPE } from '../../ui/components/variableConst'
+import { USER_TYPE } from '../../variableConst'
 
 const BASE_DRIVER = `${BASE}/Driver`
 const AUTH_DRIVER = `${AUTH_PATH}/Driver`

@@ -3,14 +3,18 @@ export{
     AUTH_PATH
 }
 
-// const BASE = 'http://192.168.100.69:3000'
-// const AUTH_PATH = 'http://192.168.100.69:2999'
+const BASE = 'http://192.168.100.69:3000'
+const AUTH_PATH = 'http://192.168.100.69:2999'
 
 // const AUTH_PATH = 'http://192.168.100.69:3000';
 // const BASE = 'http://192.168.100.69:2999';
 
+<<<<<<< HEAD
 
 const AUTH_PATH = 'http://localhost:3000';
+=======
+// const AUTH_PATH = 'http://localhost:3000';
+>>>>>>> fe41cbf14fa16482c0ff7def37f2d5aee12b89e1
 
 // console.log(BASE);
 // mail hainv@fimo
