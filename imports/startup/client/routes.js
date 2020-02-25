@@ -6,7 +6,7 @@ import {
 } from 'meteor/kadira:blaze-layout';
 import {
     MeteorCall
-} from '../../ui/components/functions';
+} from '../../functions';
 
 Blaze._allowJavascriptUrls()
 
@@ -26,7 +26,7 @@ FlowRouter.route('/', {
             }
         }).catch(e => {
             if (e && e.error) {
-                console.log("1ss23",e)
+                console.log("1ss23", e)
                 FlowRouter.redirect('/login');
                 redirectLogin();
             }
@@ -36,7 +36,7 @@ FlowRouter.route('/', {
 
 FlowRouter.route('/login', {
     name: 'App.login',
-    triggersEnter: [function () {
+    triggersEnter: [function() {
 
     }],
     action() {

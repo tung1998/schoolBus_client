@@ -38,7 +38,7 @@ import '../../ui/components/driver/tripHistoryDriver/tripHistoryDriver.js';
 // parent template
 import '../../ui/components/parent/tripTracking/tripTracking.js';
 import '../../ui/components/parent/sendFeedback/parentFeedback.js';
-import '../../ui/components/parent/absentRequest/absentRequest.js';
+import '../../ui/components/parent/parrentRequest/parrentRequest.js';
 import '../../ui/components/parent/absentHistory/absentHistory.js';
 import '../../ui/components/parent/historyTrip/historyTrip.js';
 // nanny template

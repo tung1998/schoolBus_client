@@ -1,4 +1,4 @@
-import './absentRequest.html';
+import './parrentRequest.html';
 import { Meteor } from 'meteor/meteor';
 import { Tracker } from 'meteor/tracker'
 const Cookies = require('js-cookie');
@@ -38,17 +38,17 @@ Template.absentRequest.events({
             }
             if (countCheck == 1) {
                 let request = {
-                    requestID: '12345',
-                    studentID: '12345312',
+                    requestID: '5e536e400a36ed5f0c2a5ba0',
+                    studentID: '5e536e4012e5f0c2as435ba0',
                     content: document.getElementById("content").value,
                     approve: 0,
-                    createdTime: Date.now(),
-                    updatedTime: Date.now(),
-                    isDeleted: false,
+                    //createdTime: Date.now(),
+                    //updatedTime: Date.now(),
+                    // isDeleted: false,
                 }
                 console.log(request)
                 MeteorCall(_METHODS.ParrentRequest.Create, request, accessToken).then(result => {
-                    alert("Gửi yêu cầu thành công!")
+                    console.log(result)
                 }).catch(handleError)
             } else {
                 alert("Xin hãy chọn mục.")

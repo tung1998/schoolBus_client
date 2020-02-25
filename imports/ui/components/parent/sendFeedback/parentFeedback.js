@@ -38,19 +38,19 @@ Template.parentFeedback.events({
             }
             if (countCheck == 1) {
                 let feedback = {
-                    userID: '123456',
+                    userID: '5e536e400a36ed5f0c2a5ba0',
                     type: reportType,
                     feedback: document.getElementById("content").value,
                     status: 0,
-                    responseBy: null,
-                    responseTime: null,
-                    response: null,
-                    createdTime: Date.now(),
-                    updatedTime: Date.now(),
-                    isDeleted: false,
+                    //responseBy: '2141235425124314',
+                    //responseTime: ' ',
+                    //response: ' ',
+                    //createdTime: Date.now(),
+                    //updatedTime: Date.now(),
+                    isDeleted: 0,
                 }
                 MeteorCall(_METHODS.feedback.Create, feedback, accessToken).then(result => {
-                    alert("Gửi phản hồi thành công!")
+                    console.log(result)
                 }).catch(handleError)
             } else {
                 alert("Xin hãy chọn mục.")

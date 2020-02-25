@@ -19,8 +19,8 @@ if (Meteor.isServer) {
     });
 }
 
-function getFeedbacks(accessToken = '') {
-    let url = BASE_FEEDBACK;
+function getFeedbacks(data, accessToken = '') {
+    let url = `${BASE_FEEDBACK}?extra=${data.extra}`;
     return httpDefault(METHOD.get, url, { token: accessToken });
 }
 
@@ -31,7 +31,7 @@ function getFeedbackById(data, accessToken = '') {
 
 function createFeedback(data, accessToken = '') {
     let url = BASE_FEEDBACK;
-    return httpDefault(METHOD.post, url, { token: accessToken });
+    return httpDefault(METHOD.post, url, { body: data, token: accessToken });
 }
 
 

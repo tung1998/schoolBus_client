@@ -235,7 +235,7 @@ FlowRouter.route('/parentFeedback', {
     },
 });
 
-FlowRouter.route('/absentRequest', {
+FlowRouter.route('/parrentRequest', {
     name: 'feedback',
     action() {
         BlazeLayout.setRoot("body")

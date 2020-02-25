@@ -61,10 +61,10 @@ const _METHODS = {
     },
     class: {
         GetAll: 'class.getAll',
-        GetById: 'class.getByID',
-        Create: 'class.create',
-        Update: 'class.update',
-        Delete: 'class.delete',
+            GetById: 'class.getByID',
+            Create: 'class.create',
+            Update: 'class.update',
+            Delete: 'class.delete',
     },
     config: {
         GetAll: 'config.getAll',
@@ -121,7 +121,7 @@ const _METHODS = {
     },
     ParrentRequest: {
         GetAll: 'ParrentRequest.getAll',
-        GetById: 'ParrentRequest.getByID',
+        GetById: 'ParrentRequest.getById',
         Create: 'ParrentRequest.create',
         Update: 'ParrentRequest.update',
         Delete: 'ParrentRequest.delete',
