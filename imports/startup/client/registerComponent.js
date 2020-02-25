@@ -8,10 +8,6 @@ import '../../ui/pages/login/login.js';
 import '../../ui/pages/not-found/not-found.js';
 // shared component template
 import '../../ui/components/shared/profile/profile.js'
-// import '../../ui/components/shared/mobileHeader/mobileHeader.js'
-// import '../../ui/components/shared/aside/aside.js'
-// import '../../ui/components/shared/header/header.js'
-// import '../../ui/components/shared/footer/footer.js'
 // admin template
 import '../../ui/components/admin/sample/sample.js'
 import '../../ui/components/admin/studentManager/studentManager.js'
@@ -30,9 +26,12 @@ import '../../ui/components/admin/feedback/feedback.js';
 import '../../ui/components/admin/notification/notification.js';
 import '../../ui/components/admin/carMaintenance/carMaintenance.js';
 import '../../ui/components/admin/studentListManager/studentListManager.js';
+<<<<<<< HEAD
 import '../../ui/components/admin/module/module.js';
 
 // import '../../ui/components/admin/admin/admin.js';
+=======
+>>>>>>> e1a2424e324eb07233de38883d386818d5759028
 // driver template
 import '../../ui/components/driver/upCommingTripInfo/upCommingTripInfo.js';
 import '../../ui/components/driver/carMaintenanceReport/carMaintenanceReport.js';
