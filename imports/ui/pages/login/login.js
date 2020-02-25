@@ -1,5 +1,32 @@
 import './login.html';
+import {
+    FlowRouter
+} from 'meteor/kadira:flow-router';
+import {
+    MeteorCall,
+    handleError
+} from '../../../functions'
+import {
+    _METHODS,
+    _SESSION
+} from '../../../variableConst';
 
-Template.login.onCreated(function() {
-    $('body').addClass('kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header-mobile--fixed kt-subheader--enabled kt-subheader--fixed kt-subheader--solid kt-aside--enabled kt-aside--fixed kt-page--loading')
+Template.login.onRendered(function () {
+    console.log('test')
 });
+
+Template.login.events({
+    'click #kt_login_signin_submit': loginButtonClick
+});
+
+function loginButtonClick() {
+    let data = {
+        username: $('#username').val(),
+        password: $('#password').val()
+    }
+    MeteorCall(_METHODS.token.LoginByUsername, data, null).then(result => {
+        Cookies.set("accessToken", result.access_token)
+        Session.set(_SESSION.userID, result.userID)
+        FlowRouter.go('/profile')
+    }).catch(handleError)
+}

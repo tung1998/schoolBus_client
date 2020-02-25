@@ -1,5 +1,6 @@
 export {
-    _METHODS
+    _METHODS,
+    _SESSION,
 }
 
 const _METHODS = {
@@ -61,10 +62,10 @@ const _METHODS = {
     },
     class: {
         GetAll: 'class.getAll',
-        GetById: 'class.getByID',
-        Create: 'class.create',
-        Update: 'class.update',
-        Delete: 'class.delete',
+            GetById: 'class.getByID',
+            Create: 'class.create',
+            Update: 'class.update',
+            Delete: 'class.delete',
     },
     config: {
         GetAll: 'config.getAll',
@@ -121,7 +122,7 @@ const _METHODS = {
     },
     ParrentRequest: {
         GetAll: 'ParrentRequest.getAll',
-        GetById: 'ParrentRequest.getByID',
+        GetById: 'ParrentRequest.getById',
         Create: 'ParrentRequest.create',
         Update: 'ParrentRequest.update',
         Delete: 'ParrentRequest.delete',
@@ -164,13 +165,14 @@ const _METHODS = {
         Create: 'teacher.create',
         Update: 'teacher.update',
         Delete: 'teacher.delete',
+        Delete: 'teacher.delete',
     },
     token: {
         GetAll: 'token.getAll',
         GetById: 'token.getByID',
         Create: 'token.create',
         Update: 'token.update',
-        Delete: 'token.delete',
+        LoginByUsername: 'token.loginByUsername',
     },
     trip: {
         GetAll: 'trip.getAll',
@@ -192,6 +194,7 @@ const _METHODS = {
         Create: 'user.create',
         Update: 'user.update',
         Delete: 'user.delete',
+        GetCurrentInfor: 'user.getCurrentInfor'
     },
     sms: {
         GetAll: 'sms.getSMS',
@@ -201,4 +204,9 @@ const _METHODS = {
         Update: 'sms.updateSMS',
         Delete: 'sms.deleteSMS',
     }
+}
+
+const _SESSION = {
+    accessToken: 'accessToken',
+    userID: 'userID'
 }

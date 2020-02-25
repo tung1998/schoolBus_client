@@ -3,11 +3,12 @@ export{
     AUTH_PATH
 }
 
-// const BASE = 'http://192.168.100.69:3000'
-// const AUTH_PATH = 'http://192.168.100.69:2999'
+const BASE = 'http://192.168.100.69:3000'
+const AUTH_PATH = 'http://192.168.100.69:2999'
 
-const AUTH_PATH = 'http://192.168.100.69:3000';
-const BASE = 'http://192.168.100.69:2999';
+// const AUTH_PATH = 'http://192.168.100.69:3000';
+// const BASE = 'http://192.168.100.69:2999';
+
 
 // const AUTH_PATH = 'http://localhost:3000';
 
