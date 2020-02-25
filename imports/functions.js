@@ -21,8 +21,22 @@ function MeteorCall(method = "", data = null, accessToken = "") {
 
 
 function handleError(error) {
-    console.log(error)
+    console.log(error);
+    return Swal.fire({
+        toast: true,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 5000,
+        timerProgressBar: true,
+        onOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer),
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        },
+        icon: 'error',
+        title: 'Có lỗi xảy ra'
+    });
 }
+
 
 function redirectLogin() {
     Cookies.remove('accessToken');
