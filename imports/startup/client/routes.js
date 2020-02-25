@@ -141,13 +141,13 @@ FlowRouter.route('/driverManager', {
         });
     },
 });
-
-FlowRouter.route('/module', {
+//module manager
+FlowRouter.route('/moduleManager', {
     name: 'App.home',
     action() {
         BlazeLayout.render('App_body', {
             main: 'App_home',
-            content: 'module',
+            content: 'moduleManager',
         })
     }
 });

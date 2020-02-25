@@ -12,8 +12,8 @@ import {
     httpDefault
 } from '../checkAPI';
 
-const BASE_ADMIN = `${BASE}/Admin`
-const AUTH_ADMIN = `${AUTH_PATH}/Admin`
+const BASE_ADMIN = `${BASE}/Administrator`
+const AUTH_ADMIN = `${AUTH_PATH}/Administrator`
 
 if (Meteor.isServer) {
     Meteor.methods({
@@ -27,15 +27,15 @@ if (Meteor.isServer) {
 }
 
 function createAdmin(data, accessToken = '') {
-    let url = `${AUTH_URL}`;
+    let url = `${AUTH_ADMIN}`;
     return httpDefault(METHOD.post, url, {
         body: data,
         token: accessToken,
     })
 }
 
-function getAllAdmin(accessToken = '') {
-    let url = `${AUTH_URL}`;
+function getAllAdmin(data, accessToken = '') {
+    let url = `${AUTH_ADMIN}?extra=${data.extra}`;
     return httpDefault(METHOD.get, url, {
         token: accessToken
     })
