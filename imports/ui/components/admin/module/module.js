@@ -19,6 +19,7 @@ let accessToken;
 
 Template.moduleManager.onCreated(() => {
     accessToken = Cookies.get('accessToken')
+    
 });
 
 Template.moduleManager.onRendered(() => {
@@ -32,8 +33,10 @@ Template.moduleManager.onRendered(() => {
     reloadTable()
 });
 
+
 Template.editModuleModal.onRendered(() => {
     editTitleForm()
+    initSelect2()
     console.log(Session.get('module-parent-route'));
 })
 
@@ -83,9 +86,9 @@ function clickEditButton(event) {
     $('#module-name').val(data.name)
     $('#module-description').val(data.description)
     $('#module-route').val(data.route)
-    $('#module-parent-route').val(data.parent)
-    $('#module-icon').val(data.icon)
-    $('#module-permission').val(data.permission)
+    $('#module-parent-route').val(data.parent).trigger('change')
+    $('#module-icon').val(data.icon).trigger('change')
+    $('#module-permission').val(data.permission).trigger('change')
 }
 
 function submitDelButton(event) {
@@ -126,10 +129,10 @@ function clearForm() {
     $('#module-name').val('')
     $('#module-description').val('')
     $('#module-route').val('')
-    $('#module-parent-route').val('')
-    $('#module-icon').val('')
+    $('#module-parent-route').val('').trigger('change')
+    $('#module-icon').val('').trigger('change')
     $('#module-id').val('')
-    $('#module-permission').val('')
+    $('#module-permission').val('').trigger('change')
 }
 
 function reloadTable() {
@@ -176,3 +179,26 @@ function editTitleForm() {
     });
 
 }
+
+function initSelect2() {
+    $('#module-parent-route').select2({
+        placeholder: '-- Chọn đường dẫn cha (nếu có) --',
+        width: '100%',
+    });
+
+    $("#module-icon").select2({
+        placeholder: '-- Chọn icon --',
+        width: '100%',
+        templateSelection: formatText,
+        templateResult: formatText
+    });
+
+    $("#module-permission").select2({
+        width: '100%',
+        placeholder: "Select a state"
+    });
+}
+
+function formatText (icon) {
+    return $('<span><i class="fas ' + $(icon.element).data('icon') + '"></i> ' + icon.text + '</span>');
+};

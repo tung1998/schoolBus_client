@@ -113,7 +113,7 @@
                                 <label for="module-parent-route" class="col-3 col-form-label">Đường dẫn cha</label>
                                 <div class="col-9">
                                     <select id="module-parent-route" class="form-control" name="parent-route">
-                                        <option value="" selected>Chọn đường dẫn cha</option>
+                                        <option></option>
                                         {{#each parentRoutes}}
                                             <option value="{{this}}">
                                                 {{this}}
@@ -125,11 +125,11 @@
                             <div class="form-group row">
                                 <label for="module-icon" class="col-3 col-form-label">Icon</label>
                                 <div class="col-9">
-                                    <select id="module-icon" class="form-control" style='font: "FontAwesome";'>
-                                        <option value="" selected disabled>-- Chọn icon --</option>
+                                    <select id="module-icon" class="form-control">
+                                        <option></option>
                                         {{#each icons}}
-                                        <option value="{{this}}">
-                                            <i class="fab fa-{{this}}"></i><p style="text-transform: capitalize;">{{ this }}</p>
+                                        <option value="fa-{{this}}" data-icon="fa-{{this}}">
+                                            <p style="text-transform: capitalize;">&nbsp;fa-{{ this }}</p>
                                         </option>
                                         {{/each}}
                                     </select>
@@ -138,16 +138,14 @@
                             <div class="form-group row">
                                 <label for="module-permission" class="col-3 col-form-label">Chọn quyền</label>
                                 <div class="col-9">
-                                    <select id="module-permission" class="form-control" name="parent-route">
-                                        <option value="" selected disabled>-- Chọn quyền --</option>
-                                        <option value="admin">Quản trị</option>
+                                    <select id="module-permission" class="form-control" multiple="multiple" >
+                                        <option value="admin">Quản trị viên</option>
                                         <option value="driver">Lái xe</option>
                                         <option value="parent">Phụ huynh</option>
                                         <option value="teacher">Giáo viên</option>
                                     </select>
                                 </div>
                             </div>
-                            <i class="fab fa-500px    "></i>
                         </div>
                     </form>
                 </div>
