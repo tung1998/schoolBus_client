@@ -4,7 +4,8 @@ import {
 
 export {
     MeteorCall,
-    handleError
+    handleError,
+    redirectLogin
 }
 
 function MeteorCall(method = "", data = null, accessToken = "") {
@@ -19,4 +20,12 @@ function MeteorCall(method = "", data = null, accessToken = "") {
 
 function handleError(error) {
     console.log(error)
+}
+
+function redirectLogin() {
+    Cookies.remove('accessToken');
+    Cookies.remove('username');
+    localStorage.removeItem('modules');
+    FlowRouter.redirect('/login');
+    Push.setUser();
 }
