@@ -25,7 +25,7 @@ if (Meteor.isServer) {
         'modules.update': updateModule,
         'modules.delete': deleteModule,
         'modules.getIcons': function() {
-            return Assets.getText('icon.json')
+            return Assets.getText('icon.json');
         },
         'modules.init': initModules,
         // async 'modules.get'(accessToken) {
@@ -36,31 +36,27 @@ if (Meteor.isServer) {
 
 function getModules(accessToken = '') {
     let url = AUTH_MODULE;
-    return httpDefault(METHOD.del, url, {
+    return httpDefault(METHOD.get, url, {
         token: accessToken
     })
 }
 
-function createModule(module, accessToken = '') {
+function createModule(data, accessToken = '') {
     let url = AUTH_MODULE;
-    let body = module;
     return httpDefault(METHOD.post, url, {
-        body,
+        body: data,
         token: accessToken
     }).then(result => {
-        updateTask('Module', result._id)
         return result
     })
 }
 
-function updateModule(module, accessToken = '') {
-    let url = `${AUTH_MODULE}/${module._id}`;
-    let body = module;
+function updateModule(data, accessToken = '') {
+    let url = `${AUTH_MODULE}/${data._id}`;
     return httpDefault(METHOD.put, url, {
-        body,
+        body: data,
         token: accessToken
     }).then(result => {
-        updateTask('Module', module._id)
         return result
     })
 }
@@ -70,7 +66,7 @@ function deleteModule(data, accessToken = '') {
     return httpDefault(METHOD.del, url, {
         token: accessToken
     }).then(result => {
-        updateTask('Module', data._id)
+
         return result
     })
 }

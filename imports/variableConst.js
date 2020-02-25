@@ -1,6 +1,7 @@
 export {
     _METHODS,
-    _SESSION
+    _SESSION,
+    _ROUTE
 }
 
 const _METHODS = {

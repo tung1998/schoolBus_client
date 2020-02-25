@@ -6,22 +6,25 @@ import {
 } from 'meteor/kadira:blaze-layout';
 
 import {
-    MeteorCall
+    MeteorCall,
+    redirectLogin
 } from '../../functions'
 
 import {
-    _METHODS
+    _METHODS,
 } from '../../variableConst'
 
 Blaze._allowJavascriptUrls()
 
+
 // Set up all routes in the app
 
-FlowRouter.triggers.enter([function(context, redirect) {
+FlowRouter.triggers.enter([function (context, redirect) {
     let accessToken = Cookies.get('accessToken');
     if (!accessToken) FlowRouter.go('/login');
     else {
         MeteorCall(_METHODS.user.GetCurrentInfor, null, accessToken).then(result => {}).catch(e => {
+            Cookies.remove('accessToken');
             FlowRouter.redirect('/login');
         });
     }
@@ -50,7 +53,12 @@ FlowRouter.route('/login', {
                     main: 'login'
                 });
             });
-        } else {}
+        } else {
+            BlazeLayout.setRoot('body');
+            BlazeLayout.render('App_body', {
+                main: 'login'
+            });
+        }
     },
 });
 
