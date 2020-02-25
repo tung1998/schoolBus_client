@@ -43,7 +43,6 @@ FlowRouter.route('/login', {
     name: 'App.login',
     action() {
         let accessToken = Cookies.get('accessToken');
-        console.log(accessToken)
         if (accessToken) {
             MeteorCall(_METHODS.user.GetCurrentInfor, null, accessToken).then(result => {
                 FlowRouter.go('/profile')

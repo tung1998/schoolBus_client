@@ -1,40 +1,4 @@
 // Set up all routes in the app
-FlowRouter.route('/login', {
-    name: 'App.login',
-    triggersEnter: [function() {
-
-    }],
-    action() {
-        BlazeLayout.setRoot('body');
-        BlazeLayout.render('App_body', {
-            main: 'login'
-        });
-    },
-});
-
-FlowRouter.route('/', {
-    name: 'App.home',
-    action() {
-        BlazeLayout.setRoot('body');
-        BlazeLayout.render('App_body', {
-            main: 'login'
-        });
-    },
-});
-
-
-
-
-FlowRouter.route('/profile', {
-    name: 'App.home',
-    action() {
-        BlazeLayout.render('App_body', {
-            main: 'App_home',
-            content: 'profile',
-        });
-    },
-});
-
 FlowRouter.route('/studentManager', {
     name: 'App.home',
     action() {
