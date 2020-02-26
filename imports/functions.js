@@ -41,7 +41,7 @@ function handleError(error) {
 }
 
 function handleSuccess(type, name) {
-    let title = type + name + "thành công";
+    let title = type + " " + name + " thành công";
     return Swal.fire({
         icon: 'success',
         title: title,
