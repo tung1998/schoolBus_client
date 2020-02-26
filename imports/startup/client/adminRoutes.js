@@ -69,6 +69,16 @@ FlowRouter.route('/parentManager', {
     },
 });
 
+FlowRouter.route('/carStopList', {
+    name: 'App.home',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'carStopList',
+        });
+    },
+});
+
 FlowRouter.route('/nannyManager', {
     name: 'App.home',
     action() {
