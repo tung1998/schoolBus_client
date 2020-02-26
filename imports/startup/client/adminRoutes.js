@@ -356,7 +356,7 @@ FlowRouter.route('/routeManager', {
     action() {
         BlazeLayout.render('App_body', {
             main: 'App_home',
-            content: 'chatParent',
+            content: 'route',
         });
     },
 });

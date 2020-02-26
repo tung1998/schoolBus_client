@@ -25,7 +25,7 @@ Template.studentListInfo.onCreated(() => {
 
 Template.studentListInfo.onRendered(() => {
     initClassSelect2()
-    // reloadTable()
+    reloadTable()
 });
 
 Template.studentListInfo.events({
@@ -49,7 +49,7 @@ function classChangeEvent(e) {
     let classID = e.currentTarget.value
     console.log(classID)
     MeteorCall(_METHODS.student.getByClass, {
-        _id: studentListID
+        _id: classID
     }, accessToken).then(result => {
         console.log(result)
     }).catch(handleError)

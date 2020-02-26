@@ -24,10 +24,9 @@ if (Meteor.isServer) {
     });
 }
 
-function getAllRoute(accessToken = '') {
+function getAllRoute(data, accessToken = '') {
     let url = `${AUTH_ROUTE}`
     return httpDefault(METHOD.get, url, {
-        body: data,
         token: accessToken
     });
 }
