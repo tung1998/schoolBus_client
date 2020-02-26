@@ -6,7 +6,7 @@
           <div class="kt-subheader__main">
             <h3 class="kt-subheader__title">
   
-              Quản lý xe </h3>
+              Quản lý loại xe </h3>
   
             <span class="kt-subheader__separator kt-hidden"></span>
             <div class="kt-subheader__breadcrumbs">
@@ -16,7 +16,7 @@
                 SchoolBus </a>
               <span class="kt-subheader__breadcrumbs-separator"></span>
               <a href="" class="kt-subheader__breadcrumbs-link">
-                Quản lý xe</a>
+                Quản lý loại xe</a>
             </div>
           </div>
         </div>
@@ -32,7 +32,7 @@
               <div class="kt-portlet__head">
                 <div class="kt-portlet__head-label">
                   <h3 class="kt-portlet__head-title">
-                    Danh sách xe
+                    Danh sách loại xe
                   </h3>
                 </div>
               </div>
@@ -41,7 +41,7 @@
                 <!--begin::Section-->
                 <div class="kt-section">
                   <div class="kt-section__content">
-                    <button type="button" class="btn btn-outline-brand mb-4" data-toggle="modal" data-target="#editStudentModal">Thêm mới</button>
+                    <button type="button" class="btn btn-outline-brand mb-4 add-more" >Thêm mới</button>
                     <table class="table table-bordered table-hover">
                       <thead class="thead-light">
                         <tr>
@@ -51,28 +51,13 @@
                           <th>Số ghế</th>
                           <th>Loại nhiên liệu</th>
                           <th>Dung tích</th>
-                          <th>Biển số</th>
                           <th>Ngày bảo trì</th>
                           <th>Km bảo trì</th>
                           <th></th>
                         </tr>
                       </thead>
-                      <tbody>
-                        <tr>
-                          <th scope="row">1</th>
-                          <td>Honda</td>
-                          <td>the Bird</td>
-                          <td>10000</td>
-                          <td>dầu</td>
-                          <td>1000</td>
-                          <td>2sdfsd55</td>
-                          <td>Ngày bảo trì</td>
-                          <td>Km bảo trì</td>
-                          <td>
-                            <button type="button" class="btn btn-outline-brand" data-toggle="modal" data-target="#editStudentModal">Sửa</button>
-                            <button type="button" class="btn btn-outline-danger">Xóa</button>
-                          </td>
-                        </tr>
+                      <tbody id="table-body">
+                      
                       </tbody>
                     </table>
                   </div>
@@ -90,7 +75,7 @@
   
   
   <template name="editCarModelModal">
-    <div class="modal fade" id="editStudentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    <div class="modal fade" id="editCarModelModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
@@ -105,58 +90,53 @@
               <div class="form-group row">
                 <label for="example-text-input" class="col-2 col-form-label">Hãng xe</label>
                 <div class="col-10">
-                  <input class="form-control" type="text" value="Artisanal kale" id="example-text-input">
+                  <input class="form-control" type="text" id="example-text-input" name="brand-input">
                 </div>
               </div>
               <div class="form-group row">
-                <label for="example-search-input" class="col-2 col-form-label">model</label>
+                <label for="example-search-input" class="col-2 col-form-label">Model</label>
                 <div class="col-10">
-                  <input class="form-control" type="search" value="How do I shoot web" id="example-search-input">
+                  <input class="form-control" type="text" id="example-search-input" name="model-input">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-email-input" class="col-2 col-form-label">Số ghế</label>
                 <div class="col-10">
-                  <input class="form-control" type="email" value="bootstrap@example.com" id="example-email-input">
+                  <input class="form-control" type="number" id="example-email-input" name="seat-input">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-url-input" class="col-2 col-form-label">Loại nhiên liệu</label>
                 <div class="col-10">
-                  <input class="form-control" type="url" value="https://getbootstrap.com" id="example-url-input">
+                  <input class="form-control" type="text" id="example-url-input" name="fuelType-input">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-tel-input" class="col-2 col-form-label">Dung tích</label>
                 <div class="col-10">
-                  <input class="form-control" type="tel" value="1-(555)-555-5555" id="example-tel-input">
-                </div>
-              </div>
-              <div class="form-group row">
-                <label for="example-date-input" class="col-2 col-form-label">Biển số</label>
-                <div class="col-10">
-                  <input class="form-control" type="file" value="2011-08-19" id="example-date-input1">
+                  <input class="form-control" type="text" id="example-tel-input" name="capacity-input">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-tel-input" class="col-2 col-form-label">Ngày bảo trì</label>
                 <div class="col-10">
-                  <input class="form-control" type="tel" value="1-(555)-555-5555" id="example-tel-input">
+                  <input class="form-control" type="text" name="maintenance-input">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-date-input" class="col-2 col-form-label">Km bảo trì</label>
                 <div class="col-10">
-                  <input class="form-control" type="file" value="2011-08-19" id="example-date-i1nput">
+                  <input class="form-control" type="text" id="example-date-i1nput" name="km-input">
                 </div>
               </div>
             </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary cancel-button" data-dismiss="modal">Hủy</button>
+              <button type="submit" class="btn btn-primary confirm-button">Xác nhận</button>
+            </div>
           </form>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-          <button type="button" class="btn btn-primary">Xác nhận</button>
-        </div>
+        
       </div>
     </div>
   </div>
