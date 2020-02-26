@@ -24,10 +24,9 @@ if (Meteor.isServer) {
     });
 }
 
-function getAllCarModel(accessToken = '') {
+function getAllCarModel(data, accessToken = '') {
     let url = `${AUTH_CARMODEL}`
     return httpDefault(METHOD.get, url, {
-        body: data,
         token: accessToken
     });
 }
