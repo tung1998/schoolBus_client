@@ -256,6 +256,16 @@ FlowRouter.route('/carMaintenanceReport', {
     },
 });
 
+FlowRouter.route('/carManager', {
+    name: 'App.home',
+    action() {
+            BlazeLayout.render('App_body', {
+                main: 'App_home',
+                content: 'carManager',
+            });
+    },
+});
+
 FlowRouter.route('/tripHistoryDriver', {
     name: 'notification',
     action() {

@@ -28,6 +28,7 @@ import '../../ui/components/admin/carMaintenance/carMaintenance.js';
 import '../../ui/components/admin/studentListManager/studentListManager.js';
 import '../../ui/components/admin/studentListManager/studentListInfo/studentListInfo.js';
 import '../../ui/components/admin/module/module.js';
+import '../../ui/components/admin/carManager/carManager.js';
 
 // import '../../ui/components/admin/admin/admin.js';
 // driver template

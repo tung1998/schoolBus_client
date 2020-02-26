@@ -1,4 +1,4 @@
-import './carFuel.html';
+import './carManager.html'
 
 const Cookies = require("js-cookie");
 
@@ -8,58 +8,58 @@ import { _METHODS } from "../../../../variableConst";
 
 let accessToken;
 
-Template.carFuel.onCreated(() => {
+Template.carManager.onCreated(() => {
     accessToken = Cookies.get("accessToken");
 });
 
-Template.carFuel.onRendered(() => {
-    // reloadTable();
-    renderCarOption();
+Template.carManager.onRendered(() => {
+    reloadTable();
+    renderModelOption();
 });
 
-Template.carFuel.events({
+Template.carManager.events({
     "submit form": SubmitForm,
     "click .modify-button": ClickModifyButton,
     "click .add-more": ClickAddmoreButton,
     "click .delete-button": ClickDeleteButton,
-    "click .car-option": ClickSelectCarOption,
+    "click .model-option": ClickSelectModelOption,
 });
 
-function renderCarOption() {
-    MeteorCall(_METHODS.car.GetAll, null, accessToken)
-        .then(result => {
-            let optionSelects = result.data.map(res => {
-                return `<li>
+function renderModelOption() {
+    MeteorCall(_METHODS.carModel.GetAll, null, accessToken)
+    .then(result => {
+      let optionSelects = result.data.map(res => {
+        return `<li>
                       <a
                         role="option"
-                        class="dropdown-item car-option"
+                        class="dropdown-item model-option"
                         id=${res._id}
                         tabindex="0"
                         aria-setsize="6"
-                        aria-posinset="1" licensePlate=${res.licensePlate}
-                        ><span class="text"><b>Biển số</b>:&nbsp;${res.licensePlate}&nbsp;&nbsp;&nbsp;<b>Hãng xe</b>:&nbsp;${res.carModel.brand}&nbsp;&nbsp;&nbsp;<b>Loại xe</b>:&nbsp;&nbsp;&nbsp;${res.carModel.model}</span></a
+                        aria-posinset="1"
+                        ><span class="text">${res.model}</span></a
                       >
                     </li>`;
-            });
-            $("#car-select").html(optionSelects.join(" "));
-        })
-        .catch(handleError);
+      });
+      $("#model-select").html(optionSelects.join(" "));
+    })
+    .catch(handleError);
 }
 
-function ClickSelectCarOption(event) {
+function ClickSelectModelOption(event) {
     let id = $(event.currentTarget).attr("id");
-    let licensePlate = $(event.currentTarget).attr("licensePlate");
-    $(".car-result").html(licensePlate);
-    $(".button-car-selected").attr("title", licensePlate);
-    $(".car-result").attr("carID", id);
-}
+    let model = $(event.currentTarget).text();
+    $(".model-result").html(model);
+    $(".button-model-selected").attr("title", model);
+    $(".model-result").attr("carModelID", id);
+  }
 
 function ClickAddmoreButton(event) {
     $(".modal-title").html("Thêm mới");
     $(".confirm-button").html("Thêm");
 
-    $("#editCarFuelModal").modal("show");
-    $("#editCarFuelModal").attr("carFuelID", "");
+    $("#editCarManagerModal").modal("show");
+    $("#editCarManagerModal").attr("carID", "");
     clearForm();
 }
 
@@ -67,21 +67,22 @@ function ClickModifyButton(event) {
     $(".modal-title").html("Chỉnh sửa");
     $(".confirm-button").html("Sửa");
 
-    let carFuelData = $(event.currentTarget).data("json");
-    $("#editCarFuelModal").attr("carFuelID", carFuelData._id);
-    $("#editCarFuelModal").modal("show");
+    let carData = $(event.currentTarget).data("json");
+    $("#editCarManagerModal").attr("carID", carData._id);
+    $("#editCarManagerModal").modal("show");
 
-    $(".button-car-selected").attr("title", carFuelData.licensePlate);
-    $(".car-result").attr("carID", carFuelData.carID);
-    $(".car-result").html(carFuelData.licensePlate);
-    $('input[name="volume-input"]').val(carFuelData.volume);
-    $('input[name="cost-input"]').val(carFuelData.price);
+    $(".button-model-selected").attr("title", carData.modelName);
+    $(".model-result").attr("carModelID", carData.carModelID);
+    $(".model-result").html(carData.modelName);
+    $('input[name="licensePlate-input"]').val(carData.licensePlate);
+    $('input[name="status-input"]').val(carData.status);
+
 }
 
 function ClickDeleteButton(event) {
     let data = $(event.currentTarget).data("json");
     console.log(data._id)
-    MeteorCall(_METHODS.carFuel.Delete, data, accessToken)
+    MeteorCall(_METHODS.car.Delete, data, accessToken)
         .then(result => {
             deleteRow(data);
         })
@@ -91,25 +92,25 @@ function ClickDeleteButton(event) {
 function SubmitForm(event) {
     event.preventDefault();
     let data = {
-        licensePlate: $(".car-result").html(),
-        carID: $(".car-result").attr("carID"),
-        volume: $('input[name="volume-input"]').val(),
-        price: $('input[name="cost-input"]').val()
+        carModelID: $(".model-result").attr("carModelID"),
+        status: $('input[name="status-input"]').val(),
+        modelName: $(".model-result").html()
+        // licensePlate: $('input[name="licensePlate-input"]').val()
     };
 
-    let modify = $("#editCarFuelModal").attr("carFuelID");
+    let modify = $("#editCarManagerModal").attr("carID");
     if (modify == "") {
-        MeteorCall(_METHODS.carFuel.Create, data, accessToken)
+        MeteorCall(_METHODS.car.Create, data, accessToken)
             .then(result => {
-                $("#editCarFuelModal").modal("hide");
+                $("#editCarManagerModal").modal("hide");
                 addToTable(data, result)
             })
             .catch(handleError);
     } else {
         data._id = modify;
-        MeteorCall(_METHODS.carFuel.Update, data, accessToken)
+        MeteorCall(_METHODS.car.Update, data, accessToken)
             .then(result => {
-                $("#editCarFuelModal").modal("hide");
+                $("#editCarManagerModal").modal("hide");
                 modifyTable(data)
             })
             .catch(handleError);
@@ -120,11 +121,9 @@ function addToTable(data, result) {
     data._id = result._id;
     $("#table-body").prepend(`<tr id=${data._id}>
                                 <th scope="row"></th>
+                                <td>${data.modelName}</td>
                                 <td>${data.licensePlate}</td>
-                                <td>${data.volume}</td>
-                                <td>${data.price}</td>
-                                <td>${Date.now()}</td>
-                                <td>${Date.now()}</td>
+                                <td>${data.status}</td>
                                 <td>
                                 <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
                                 <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
@@ -135,11 +134,9 @@ function addToTable(data, result) {
 
 function modifyTable(data) {
     $(`#${data._id}`).html(`<th scope="row"></th>
+                            <td>${data.modelName}</td>
                             <td>${data.licensePlate}</td>
-                            <td>${data.volume}</td>
-                            <td>${data.price}</td>
-                            <td>${Date.now()}</td>
-                            <td>${Date.now()}</td>
+                            <td>${data.status}</td>
                             <td>
                             <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
                             <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
@@ -153,9 +150,9 @@ function deleteRow(data) {
 
 async function reloadTable() {
     try {
-        let carFuelData = await MeteorCall(_METHODS.carFuel.GetAll, null, accessToken);
-        carFuelData.data.map(carFuel => {
-            carFuel.modelName = car.carModel.model;
+        let carData = await MeteorCall(_METHODS.car.GetAll, null, accessToken);
+        carData.data.map(car => {
+            car.modelName = car.carModel.model;
             let html = htmlRow(car);
             $("#table-body").append(html);
         })
@@ -178,10 +175,11 @@ function htmlRow(data) {
             </tr>`
 }
 
+
 function clearForm() {
-    $(".button-car-selected").attr("title", "chọn xe");
-    $(".car-result").attr("carID", "");
-    $(".car-result").html("Chọn Xe");
-    $('input[name="volume-input"]').val();
-    $('input[name="cost-input"]').val();
+    $(".button-model-selected").attr("title", "chọn model");
+    $(".model-result").attr("carModelID", "");
+    $(".model-result").html("Chọn Model");
+    $('input[name="licensePlate-input"]').val();
+    $('input[name="status-input"]').val();
 }

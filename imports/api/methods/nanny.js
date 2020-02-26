@@ -24,11 +24,14 @@ if (Meteor.isServer) {
 //THÊM
 function createNanny(data, accessToken = '') {
     let url = `${AUTH_Nanny}/`
-    return httpDefault(METHOD.post, url, { token: accessToken });
+    return httpDefault(METHOD.post, url, { 
+        body: data,
+        token: accessToken 
+    });
 }
 //XEM HẾT
-function getNannys(accessToken = '') {
-    let url = AUTH_Nanny;
+function getNannys(data, accessToken = '') {
+    let url = `${AUTH_Nanny}?extra=${data.extra}`;
     return httpDefault(METHOD.get, url, { token: accessToken });
 }
 
