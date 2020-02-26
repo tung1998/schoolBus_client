@@ -22,7 +22,7 @@ function MeteorCall(method = "", data = null, accessToken = "") {
 
 
 
-function handleError(error) {
+function handleError(error, title = "Có lỗi xảy ra") {
     console.log(error);
     return Swal.fire({
         toast: true,
@@ -31,11 +31,11 @@ function handleError(error) {
         timer: 3000,
         timerProgressBar: true,
         onOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer),
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
         },
         icon: 'error',
-        title: 'Có lỗi xảy ra',
+        title,
         width: '20rem'
     });
 }
@@ -43,11 +43,18 @@ function handleError(error) {
 function handleSuccess(type, name) {
     let title = type + " " + name + " thành công";
     return Swal.fire({
-        icon: 'success',
-        title: title,
+        toast: true,
+        position: 'top',
         showConfirmButton: false,
-        width: "25rem",
-        timer: 3000
+        timer: 3000,
+        timerProgressBar: true,
+        onOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        },
+        icon: 'success',
+        title,
+        width: '20rem'
     });
 }
 

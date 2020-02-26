@@ -99,13 +99,17 @@ FlowRouter.route('/studentListManager', {
     },
 });
 
-FlowRouter.notFound = {
+FlowRouter.route('/studentListManager/:id([0-9a-fA-F]{24})', {
+    name: 'App.home',
     action() {
         BlazeLayout.render('App_body', {
-            main: 'App_notFound'
+            main: 'App_home',
+            content: 'studentListInfo',
         });
     },
-};
+});
+
+
 
 //ROUTE
 FlowRouter.route('/route', {

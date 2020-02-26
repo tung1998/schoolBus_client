@@ -36,12 +36,11 @@
                   </h3>
                 </div>
               </div>
-  
               <div class="kt-portlet__body">
                 <!--begin::Section-->
                 <div class="kt-section">
                   <div class="kt-section__content">
-                    <button type="button" class="btn btn-outline-brand mb-4" data-toggle="modal" data-target="#studentListModal">Thêm mới</button>
+                    <button type="button" class="btn btn-outline-brand mb-4" id="addStudentListButton">Thêm mới</button>
                     <table class="table table-bordered table-hover">
                       <thead class="thead-light">
                         <tr>
@@ -62,56 +61,10 @@
             </div>
           </div>
         </div>
-
-        {{> listStudent}}  
       </div>
-
-      
       <!-- end:: Content -->
     </div>
     {{> studentListModal}}
-    {{> editStudentListModal}}   
-  </template>
-  
-  <template name="listStudent">
-    <div class="row kt-hidden" id="listStudentPortlet">
-      <div class="col">
-        <div class="kt-portlet">
-          <div class="kt-portlet__head">
-            <div class="kt-portlet__head-label">
-              <h3 class="kt-portlet__head-title">
-                Danh sách học sinh
-              </h3>
-            </div>
-          </div>
-
-          <div class="kt-portlet__body">
-            <!--begin::Section-->
-            <div class="kt-section">
-              <div class="kt-section__content">
-                <button type="button" class="btn btn-outline-brand mb-4" data-toggle="modal" data-target="#editStudentListModal">Thêm mới</button>
-                <table class="table table-bordered table-hover">
-                  <thead class="thead-light">
-                    <tr>
-                      <th>#</th>
-                      <th>Mã học sinh</th>
-                      <th>Họ tên</th>
-                      <th>Lớp</th>
-                      <th>Email</th>
-                      <th>Số điện thoại</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <!--end::Section-->
-          </div>
-        </div>
-      </div>
-    </div>
   </template>
 
   <template name="studentListModal">
@@ -139,85 +92,4 @@
       </div>
     </div>
   </div>
-  </template>
-
-  <template name="editStudentListModal">
-    <div class="modal fade" id="editStudentListModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    style="display: none;" aria-hidden="true">
-      <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Thêm học sinh</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            </button>
-          </div>
-          <div class="modal-body">
-            <form>
-              <div class="form-group">
-                <label>Chọn lớp học</label>
-                <div></div>
-                <select class="custom-select form-control">
-                    <option selected="">-- Chọn --</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
-                </select>
-              </div>
-              <div class="kt-portlet">
-                <div class="kt-portlet__head">
-                  <div class="kt-portlet__head-label">
-                    <h3 class="kt-portlet__head-title">
-                      Danh sách học sinh trong lớp
-                    </h3>
-                  </div>
-                </div>
-                <div class="kt-portlet__body">
-                  <!--begin::Section-->
-                  <div class="kt-section">
-                    <div class="kt-section__content">
-                      <table class="table table-bordered table-hover">
-                        <thead class="thead-light">
-                          <tr>
-                            <th>#</th>
-                            <th>Mã học sinh</th>
-                            <th>Họ tên</th>
-                            <th>Lớp</th>
-                            <th>Email</th>
-                            <th>Số điện thoại</th>
-                            <th></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <th scope="row">1</th>
-                            <td>123</td>
-                            <td>the Bird</td>
-                            <td>247car</td>
-                            <td>123@fimo.edu.vn</td>
-                            <td>12312312312</td>
-                            <td>
-                              <div class="from-group">
-                                <label class="kt-checkbox kt-checkbox--brand">
-                                  <input type="checkbox">
-                                  <span></span>
-                                </label>
-                              </div>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                  <!--end::Section-->
-                </div>
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-outline-primary">Add</button>
-          </div>
-        </div>
-      </div>
-    </div>
   </template>
