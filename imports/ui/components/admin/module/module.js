@@ -21,14 +21,13 @@ let accessToken;
 
 Template.moduleManager.onCreated(() => {
     accessToken = Cookies.get('accessToken')
-    
 });
 
 Template.moduleManager.onRendered(() => {
     Session.setDefault('module-parent-route', [])
     // Session.setDefault('module-route', [])
 
-    MeteorCall(_METHODS.modules.GetIcons, {}, accessToken).then(result => {
+    MeteorCall(_METHODS.modules.GetIcons, null, accessToken).then(result => {
         Session.set('icons', result);
     });
 
@@ -159,12 +158,11 @@ function insertRow(data, result) {
 }
 
 function reloadTable() {
-    MeteorCall(_METHODS.modules.GetAll, {}, accessToken).then(result => {
+    MeteorCall(_METHODS.modules.GetAll, null, accessToken).then(result => {
         let routes = []
         let parentRoutes = []
         let table = $('#table-module')
         dataModule = result.data;
-        console.log(result)
         let row = dataModule.map((key, index) => {
             routes.push(key.route)
             if (key.level === 0) {

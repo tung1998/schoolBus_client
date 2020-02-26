@@ -34,7 +34,7 @@ if (Meteor.isServer) {
     });
 }
 
-function getModules(accessToken = '') {
+function getModules(data, accessToken = '') {
     let url = AUTH_MODULE;
     return httpDefault(METHOD.get, url, {
         token: accessToken

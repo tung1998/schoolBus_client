@@ -188,6 +188,16 @@ FlowRouter.route('/tripTracking', {
     },
 });
 
+FlowRouter.route('/carStop', {
+    name: 'carStop',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'carStop',
+        });
+    },
+});
+
 FlowRouter.route('/parentFeedback', {
     name: 'feedback',
     action() {

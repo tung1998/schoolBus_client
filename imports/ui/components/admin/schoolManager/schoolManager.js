@@ -12,9 +12,9 @@ import {
 } from '../../../../variableConst'
 
 let accessToken;
+
 Template.schoolManager.onCreated(() => {
     accessToken = Cookies.get('accessToken')
-    
 })
 
 Template.schoolManager.onRendered(()=>{
@@ -54,7 +54,7 @@ function ClickConfirmButton(){
     let modify = $("#editSchoolModal").attr("schoolID");
     if (modify == "") {
         MeteorCall(_METHODS.school.Create, data, accessToken).then(result => {
-            // console.log(result);
+            console.log(result);
             // console.log(data);
             $("#editSchoolModal").modal("hide");
             addToTable(data, result);
@@ -115,7 +115,8 @@ function deleteRow(data){
 }
 
 function reloadTable(){
-    MeteorCall(_METHODS.school.GetAll, {}, accessToken).then(result => {
+    MeteorCall(_METHODS.school.GetAll, null, accessToken).then(result => {
+        console.log(result)
         let htmlTable = result.data.map(htmlRow);
         $("#table-body").html(htmlTable.join(" "));
     }).catch(handleError)

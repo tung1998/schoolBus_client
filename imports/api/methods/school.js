@@ -24,9 +24,11 @@ if (Meteor.isServer) {
     });
 }
 
-function getAllSchool(accessToken = '') {
+function getAllSchool(data, accessToken = '') {
     let url = `${AUTH_SCHOOL}`
-    return httpDefault(METHOD.get, url, { token: accessToken });
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
 }
 
 function getSchoolByID(data, accessToken = '') {

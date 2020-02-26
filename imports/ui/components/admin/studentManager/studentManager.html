@@ -41,14 +41,13 @@
               <!--begin::Section-->
               <div class="kt-section">
                 <div class="kt-section__content">
-                  <button type="button" class="btn btn-outline-brand mb-4" data-toggle="modal"
-                    data-target="#editStudentModal" id="add-more">Thêm mới</button>
+                  <button type="button" class="btn btn-outline-brand mb-4 add-more" data-toggle="modal"
+                    data-target="#editStudentModal">Thêm mới</button>
                   <table class="table table-bordered table-hover">
                     <thead class="thead-light">
                       <tr>
                         <th></th>
                         <th>Họ tên</th>
-                        <th>Ngày sinh</th>
                         <th>Địa chỉ</th>
                         <th>Số điện thoại</th>
                         <th>Email</th>
@@ -58,23 +57,8 @@
                         <th></th>
                       </tr>
                     </thead>
-                    <tbody>
-                      <tr>
-                        <td><img src="/assets/media/users/100_3.jpg" alt="image"></td>
-                        <td>Larry</td>
-                        <td>Larry</td>
-                        <td>Larry</td>
-                        <td>Larry</td>
-                        <td>Larry</td>
-                        <td>the Bird</td>
-                        <td>@twitter</td>
-                        <td>@twitter</td>
-                        <td>
-                          <button type="button" class="btn btn-outline-brand" data-toggle="modal"
-                            data-target="#editStudentModal" id="modify-button">Sửa</button>
-                          <button type="button" class="btn btn-outline-danger" id="delete-button">Xóa</button>
-                        </td>
-                      </tr>
+                    <tbody id="table-body">
+                      
                     </tbody>
                   </table>
                 </div>
@@ -107,65 +91,160 @@
               <div class="form-group row">
                 <label for="example-text-input" class="col-2 col-form-label">Họ tên</label>
                 <div class="col-10">
-                  <input class="form-control" type="text" id="name-input">
-                </div>
-              </div>
-              <div class="form-group row">
-                <label for="example-search-input" class="col-2 col-form-label">Ngày sinh</label>
-                <div class="col-10">
-                  <input class="form-control" type="text" id="date-input">
+                  <input class="form-control" type="text" id="name-input" name="name">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-email-input" class="col-2 col-form-label">Địa chỉ</label>
                 <div class="col-10">
-                  <input class="form-control" type="text" id="address-input">
+                  <input class="form-control" type="text" id="address-input" name="address">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-url-input" class="col-2 col-form-label">Số điện thoại</label>
                 <div class="col-10">
-                  <input class="form-control" type="tel" id="phonenumber-input">
+                  <input class="form-control" type="tel" id="phonenumber-input" name="phone">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-tel-input" class="col-2 col-form-label">Email</label>
                 <div class="col-10">
-                  <input class="form-control" type="email" id="email-input">
+                  <input class="form-control" type="email" id="email-input" name="email">
                 </div>
               </div>
               <div class="form-group row">
-                <label for="example-email-input" class="col-2 col-form-label">Trường</label>
+                <label class="col-2 col-form-label"
+                  >Trường</label
+                >
                 <div class="col-10">
-                  <input class="form-control" type="text" id="school-input">
+                  <div class="dropdown bootstrap-select form-control kt-">
+                    <select
+                      class="form-control kt-selectpicker"
+                      data-size="4"
+                      tabindex="-98"
+                    >
+                      <option>Mustard</option> </select
+                    ><button
+                      type="button"
+                      class="btn dropdown-toggle btn-light button-school-selected"
+                      data-toggle="dropdown"
+                      role="combobox"
+                      aria-owns="bs-select-2"
+                      aria-haspopup="listbox"
+                      aria-expanded="false"
+                      title="chọn trường"
+                    >
+                      <div class="filter-option">
+                        <div class="filter-option-inner">
+                          <div class="filter-option-inner-inner school-result">Chọn Trường</div>
+                        </div>
+                      </div>
+                    </button>
+                    <div
+                      class="dropdown-menu"
+                      x-placement="bottom-start"
+                      style="max-height: 182px; overflow: hidden; min-width: 393px; position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 36px, 0px);"
+                    >
+                      <div
+                        class="inner show"
+                        role="listbox"
+                        id="bs-select-2"
+                        tabindex="-1"
+                        aria-activedescendant="bs-select-2-1"
+                        style="max-height: 156px; overflow-y: auto;"
+                      >
+                        <ul
+                          class="dropdown-menu inner show"
+                          role="presentation"
+                          style="margin-top: 0px; margin-bottom: 0px;"
+                          id="school-select"
+                        >
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="form-group row">
-                <label for="example-number-input" class="col-2 col-form-label">Lớp</label>
+                <label class="col-2 col-form-label"
+                  >Lớp</label
+                >
                 <div class="col-10">
-                  <input class="form-control" type="text" id="class-input">
+                  <div class="dropdown bootstrap-select form-control kt-">
+                    <select
+                      class="form-control kt-selectpicker"
+                      data-size="4"
+                      tabindex="-98"
+                    >
+                      <option>Mustard</option> </select
+                    ><button
+                      type="button"
+                      class="btn dropdown-toggle btn-light button-class-selected"
+                      data-toggle="dropdown"
+                      role="combobox"
+                      aria-owns="bs-select-2"
+                      aria-haspopup="listbox"
+                      aria-expanded="false"
+                      title="chọn lớp"
+                    >
+                      <div class="filter-option">
+                        <div class="filter-option-inner">
+                          <div class="filter-option-inner-inner class-result">Chọn Lớp</div>
+                        </div>
+                      </div>
+                    </button>
+                    <div
+                      class="dropdown-menu"
+                      x-placement="bottom-start"
+                      style="max-height: 182px; overflow: hidden; min-width: 393px; position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 36px, 0px);"
+                    >
+                      <div
+                        class="inner show"
+                        role="listbox"
+                        id="bs-select-2"
+                        tabindex="-1"
+                        aria-activedescendant="bs-select-2-1"
+                        style="max-height: 156px; overflow-y: auto;"
+                      >
+                        <ul
+                          class="dropdown-menu inner show"
+                          role="presentation"
+                          style="margin-top: 0px; margin-bottom: 0px;"
+                          id="class-select"
+                        >
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-datetime-local-input" class="col-2 col-form-label">Mã học sinh</label>
                 <div class="col-10">
-                  <input class="form-control" type="number"
+                  <input class="form-control" type="number" name="IDstudent"
+                    id="student-id-input">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="example-datetime-local-input" class="col-2 col-form-label">Trạng thái</label>
+                <div class="col-10">
+                  <input class="form-control" type="number" name="status"
                     id="student-id-input">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-date-input" class="col-2 col-form-label">Ảnh đại diện</label>
                 <div class="col-10">
-                  <input class="form-control" type="file" id="image-input">
+                  <input class="form-control" type="file" id="image-input" name="image">
                 </div>
               </div>
             </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel-button">Hủy</button>
+              <button type="submit" class="btn btn-primary" id="confirm-button">Xác nhận</button>
+          </div>
           </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel-button">Hủy</button>
-          <button type="button" class="btn btn-primary" id="confirm-button">Xác nhận</button>
-        </div>
+        </div>   
       </div>
     </div>
   </div>
