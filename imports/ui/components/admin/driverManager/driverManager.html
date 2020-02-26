@@ -41,8 +41,8 @@
                 <!--begin::Section-->
                 <div class="kt-section">
                   <div class="kt-section__content">
-                    <button type="button" class="btn btn-outline-brand mb-4" data-toggle="modal" data-target="#editStudentModal">Thêm mới</button>
-                    <table class="table table-bordered table-hover">
+                    <button type="button" class="btn btn-outline-brand mb-4" id="add-button" data-toggle="modal" data-target="#editDriverModal">Thêm mới</button>
+                    <table class="table table-bordered table-hover" id="table-driver">
                       <thead class="thead-light">
                         <tr>
                           <th>#</th>
@@ -55,28 +55,11 @@
                           <th>Ngày cấp</th>
                           <th>Giấy phép lái xe</th>
                           <th>Ngày cấp</th>
-                          <th>Trạng thái</th>
                           <th></th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <th scope="row">1</th>
-                          <td>Larry</td>
-                          <td>the Bird</td>
-                          <td>0123456789</td>
-                          <td>abc@gmail.com</td>
-                          <td>hà nội</td>
-                          <td>CCCD</td>
-                          <td>Ngày cấp</td>
-                          <td>Giấy phép lái xe</td>
-                          <td>Ngày cấp</td>
-                          <td>0</td>
-                          <td>
-                            <button type="button" class="btn btn-outline-brand" data-toggle="modal" data-target="#editStudentModal">Sửa</button>
-                            <button type="button" class="btn btn-outline-danger">Xóa</button>
-                          </td>
-                        </tr>
+                        
                       </tbody>
                     </table>
                   </div>
@@ -94,76 +77,81 @@
   
   
   <template name="editDriverModal">
-    <div class="modal fade" id="editStudentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    <div class="modal fade" id="editDriverModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+          <h5 class="modal-title" id="exampleModalLabel"></h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           </button>
         </div>
         <div class="modal-body">
           <form class="kt-form kt-form--label-right">
+            <input type="hidden" value="" id="driver-id">
             <div class="kt-portlet__body">
               <div class="form-group row">
                 <label for="example-text-input" class="col-2 col-form-label">Họ và tên</label>
                 <div class="col-10">
-                  <input class="form-control" type="text" value="Artisanal kale" id="example-text-input">
+                  <input class="form-control" type="text" value="" id="driver-name" placeholder="Tên tài xế">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-search-input" class="col-2 col-form-label">Số điện thoại</label>
                 <div class="col-10">
-                  <input class="form-control" type="search" value="How do I shoot web" id="example-search-input">
+                  <input class="form-control" type="tel" value="" id="driver-phone" placeholder="Số điện thoại">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-email-input" class="col-2 col-form-label">Email</label>
                 <div class="col-10">
-                  <input class="form-control" type="email" value="bootstrap@example.com" id="example-email-input">
+                  <input class="form-control" type="email" value="" id="driver-email" placeholder="Email">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-url-input" class="col-2 col-form-label">Địa chỉ</label>
                 <div class="col-10">
-                  <input class="form-control" type="url" value="https://getbootstrap.com" id="example-url-input">
+                  <input class="form-control" type="text" value="" id="driver-address" placeholder="Địa chỉ">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-url-input" class="col-2 col-form-label">CCCD</label>
                 <div class="col-10">
-                  <input class="form-control" type="url" value="https://getbootstrap.com" id="example-url-input">
+                  <input class="form-control" type="text" value="" id="driver-IDNumber" placeholder="Căn cước công dân">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-url-input" class="col-2 col-form-label">Ngày cấp</label>
                 <div class="col-10">
-                  <input class="form-control" type="url" value="https://getbootstrap.com" id="example-url-input">
+                  <input class="form-control" type="date" value="" id="driver-IDIssueDate" placeholder="Ngày cấp">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="example-url-input" class="col-2 col-form-label">Nơi cấp</label>
+                <div class="col-10">
+                  <input class="form-control" type="text" value="" id="driver-IDIssueBy" placeholder="Nơi cấp">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-url-input" class="col-2 col-form-label">Giấy phép lái xe</label>
                 <div class="col-10">
-                  <input class="form-control" type="url" value="https://getbootstrap.com" id="example-url-input">
+                  <input class="form-control" type="text" value="" id="driver-DLNumber" placeholder="Giấy phép lái xe">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-url-input" class="col-2 col-form-label">Ngày cấp</label>
                 <div class="col-10">
-                  <input class="form-control" type="url" value="https://getbootstrap.com" id="example-url-input">
-                </div>
-              </div>
-              <div class="form-group row">
-                <label for="example-tel-input" class="col-2 col-form-label">Trạng thái</label>
-                <div class="col-10">
-                  <input class="form-control" type="tel" value="1-(555)-555-5555" id="example-tel-input">
+                  <input class="form-control" type="date" value="" id="driver-DLIssueDate" placeholder="Ngày cấp">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-date-input" class="col-2 col-form-label">Ảnh đại diện</label>
                 <div class="col-10">
-                  <input class="form-control" type="file" value="2011-08-19" id="example-date-input">
+                  <div class="custom-file">
+                    <input type="file" class="form control custom-file-input" id="driver-image">
+                    <label class="custom-file-label" for="customFile" style="text-align: left">Chọn File</label>
+                  </div>
+                  
                 </div>
               </div>
             </div>
@@ -171,7 +159,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-          <button type="button" class="btn btn-primary">Xác nhận</button>
+          <button type="button" class="btn btn-primary submit-button"></button>
         </div>
       </div>
     </div>
