@@ -41,7 +41,6 @@ import '../../ui/components/parent/sendFeedback/parentFeedback.js';
 import '../../ui/components/parent/parrentRequest/parrentRequest.js';
 import '../../ui/components/parent/absentHistory/absentHistory.js';
 import '../../ui/components/parent/historyTrip/historyTrip.js';
-import '../../ui/components/parent/carStop/carStop.js';
 // nanny template
 import '../../ui/components/nanny/tripHistory/tripHistory.js';
 import '../../ui/components/nanny/tripListStudent/tripListStudent.js';
