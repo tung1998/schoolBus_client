@@ -51,7 +51,6 @@
                         <th>Số điện thoại</th>
                         <th>Email</th>
                         <th>Trường</th>
-                        <th>Lớp</th>
                         <th>Hành động</th>
                       </tr>
                     </thead>
@@ -117,15 +116,56 @@
               </div>
             </div>
             <div class="form-group row">
-              <label for="example-password-input" class="col-2 col-form-label">Trường</label>
+              <label class="col-2 col-form-label"
+                >Trường</label
+              >
               <div class="col-10">
-                <input class="form-control" type="text" id="example-password-input" name=school>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="example-number-input" class="col-2 col-form-label">Lớp</label>
-              <div class="col-10">
-                <input class="form-control" type="text" id="example-number-input" name="class">
+                <div class="dropdown bootstrap-select form-control kt-">
+                  <select
+                    class="form-control kt-selectpicker"
+                    data-size="4"
+                    tabindex="-98"
+                  >
+                    <option>Mustard</option> </select
+                  ><button
+                    type="button"
+                    class="btn dropdown-toggle btn-light button-school-selected"
+                    data-toggle="dropdown"
+                    role="combobox"
+                    aria-owns="bs-select-2"
+                    aria-haspopup="listbox"
+                    aria-expanded="false"
+                    title="chọn trường"
+                  >
+                    <div class="filter-option">
+                      <div class="filter-option-inner">
+                        <div class="filter-option-inner-inner school-result">Chọn Trường</div>
+                      </div>
+                    </div>
+                  </button>
+                  <div
+                    class="dropdown-menu"
+                    x-placement="bottom-start"
+                    style="max-height: 182px; overflow: hidden; min-width: 393px; position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 36px, 0px);"
+                  >
+                    <div
+                      class="inner show"
+                      role="listbox"
+                      id="bs-select-2"
+                      tabindex="-1"
+                      aria-activedescendant="bs-select-2-1"
+                      style="max-height: 156px; overflow-y: auto;"
+                    >
+                      <ul
+                        class="dropdown-menu inner show"
+                        role="presentation"
+                        style="margin-top: 0px; margin-bottom: 0px;"
+                        id="school-select"
+                      >
+                      </ul>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="form-group row">

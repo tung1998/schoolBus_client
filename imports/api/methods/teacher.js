@@ -21,6 +21,14 @@ if (Meteor.isServer) {
         'teacher.create': createTeacher,
         'teacher.update': updateTeacher,
         'teacher.delete': deleteTeacher,
+        'teacher.getBySchool': getBySchoolID
+    });
+}
+
+function getBySchoolID(data, accessToken = ''){
+    let url = `${AUTH_TEACHER}/bySchool?schoolID=${data._id}`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
     });
 }
 
