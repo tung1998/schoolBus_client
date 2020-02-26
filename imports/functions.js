@@ -5,7 +5,9 @@ import {
 export {
     MeteorCall,
     handleError,
-    redirectLogin
+    handleSuccess,
+    handleConfirm,
+    redirectLogin,
 }
 
 function MeteorCall(method = "", data = null, accessToken = "") {
@@ -26,15 +28,39 @@ function handleError(error) {
         toast: true,
         position: 'top',
         showConfirmButton: false,
-        timer: 5000,
+        timer: 3000,
         timerProgressBar: true,
         onOpen: (toast) => {
             toast.addEventListener('mouseenter', Swal.stopTimer),
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
         },
         icon: 'error',
-        title: 'Có lỗi xảy ra'
+        title: 'Có lỗi xảy ra',
+        width: '20rem'
     });
+}
+
+function handleSuccess(type, name) {
+    let title = type + " " + name + " thành công";
+    return Swal.fire({
+        icon: 'success',
+        title: title,
+        showConfirmButton: false,
+        width: "25rem",
+        timer: 3000
+    });
+}
+
+function handleConfirm(title = "Bạn đã chắc chắn chưa?") {
+    return Swal.fire({
+        title,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Đồng ý',
+        cancelButtonText: 'Hủy'
+    })
 }
 
 

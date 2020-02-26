@@ -346,3 +346,13 @@ FlowRouter.route('/teacher/chat', {
         });
     },
 });
+
+FlowRouter.route('/routeManager', {
+    name: 'route',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'chatParent',
+        });
+    },
+});

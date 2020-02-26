@@ -24,7 +24,7 @@ if (Meteor.isServer) {
     });
 }
 
-function getAllClass(accessToken = '') {
+function getAllClass(data, accessToken = '') {
     let url = `${AUTH_CLASS}`
     return httpDefault(METHOD.get, url, {
         token: accessToken

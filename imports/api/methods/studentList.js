@@ -24,7 +24,7 @@ if (Meteor.isServer) {
     });
 }
 
-function getAllStudentList(accessToken = '') {
+function getAllStudentList(data, accessToken = '') {
     let url = `${AUTH_STUDENT_LIST}`
     return httpDefault(METHOD.get, url, { token: accessToken });
 }

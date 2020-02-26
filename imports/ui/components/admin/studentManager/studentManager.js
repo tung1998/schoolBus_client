@@ -8,9 +8,8 @@ import { MeteorCall, handleError } from "../../../../functions";
 import { _METHODS } from "../../../../variableConst";
 
 let accessToken;
-let studentManagerData;
+
 Template.studentManager.onCreated(() => {
-  console.log("created");
   accessToken = Cookies.get("accessToken");
 });
 
