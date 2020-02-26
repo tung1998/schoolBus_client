@@ -1,0 +1,113 @@
+<template name="studentListInfo">
+  <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+    <!-- begin:: Subheader -->
+    <div class="kt-subheader   kt-grid__item" id="kt_subheader">
+      <div class="kt-container  kt-container--fluid ">
+        <div class="kt-subheader__main">
+          <h3 class="kt-subheader__title">
+
+            Quản lý học </h3>
+
+          <span class="kt-subheader__separator kt-hidden"></span>
+          <div class="kt-subheader__breadcrumbs">
+            <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
+            <span class="kt-subheader__breadcrumbs-separator"></span>
+            <a href="" class="kt-subheader__breadcrumbs-link">
+              SchoolBus </a>
+            <span class="kt-subheader__breadcrumbs-separator"></span>
+            <a href="" class="kt-subheader__breadcrumbs-link">
+              Quản lý danh sách học sinh</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end:: Subheader -->
+
+    <!-- begin:: Content -->
+    <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+      <div class="row" id="listStudentPortlet">
+        <div class="col">
+          <div class="kt-portlet">
+            <div class="kt-portlet__head">
+              <div class="kt-portlet__head-label">
+                <h3 class="kt-portlet__head-title">
+                  Danh sách học sinh
+                </h3>
+              </div>
+            </div>
+            <div class="kt-portlet__body">
+              <!--begin::Section-->
+              <div class="kt-section">
+                <div class="kt-section__content">
+                  <button type="button" class="btn btn-outline-brand mb-4" data-toggle="modal"
+                    data-target="#editStudentListModal">Chỉnh sửa</button>
+                  <table class="table table-bordered table-hover">
+                    <thead class="thead-light">
+                      <tr>
+                        <th>#</th>
+                        <th>Mã học sinh</th>
+                        <th>Họ tên</th>
+                        <th>Lớp</th>
+                        <th>Email</th>
+                        <th>Số điện thoại</th>
+                      </tr>
+                    </thead>
+                    <tbody id="studentTable">
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <!--end::Section-->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end:: Content -->
+  </div>
+  {{> editStudentListModal}}
+</template>
+<template name="editStudentListModal">
+  <div class="modal fade" id="editStudentListModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Thêm học sinh</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          </button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-group">
+              <label>Chọn lớp học</label>
+              <div></div>
+              <select class="custom-select form-control" id="classSelect">
+              </select>
+            </div>
+            <table class="table table-bordered table-hover">
+              <thead class="thead-light">
+                <tr>
+                  <th>#</th>
+                  <th>Mã học sinh</th>
+                  <th>Họ tên</th>
+                  <th>Lớp</th>
+                  <th>Email</th>
+                  <th>Số điện thoại</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="modalStudentTable">
+
+              </tbody>
+            </table>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+          <!-- <button type="button" class="btn btn-outline-primary" id="addStudentButton">Add</button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

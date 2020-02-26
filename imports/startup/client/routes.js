@@ -71,3 +71,11 @@ FlowRouter.route('/profile', {
         });
     },
 });
+
+FlowRouter.notFound = {
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_notFound'
+        });
+    },
+};

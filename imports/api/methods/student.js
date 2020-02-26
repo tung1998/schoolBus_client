@@ -18,13 +18,14 @@ if (Meteor.isServer) {
     Meteor.methods({
         'student.getAll': getAllStudent,
         'student.getByID': getStudentByID,
+        'student.getByClass': getStudentByClass,
         'student.create': createStudent,
         'student.update': updateStudent,
         'student.delete': deleteStudent,
     });
 }
 
-function getAllStudent(accessToken = '') {
+function getAllStudent(data, accessToken = '') {
     let url = `${AUTH_STUDENT}`
     return httpDefault(METHOD.get, url, {
         token: accessToken
@@ -33,6 +34,15 @@ function getAllStudent(accessToken = '') {
 
 function getStudentByID(data, accessToken = '') {
     let url = `${AUTH_STUDENT}/${data._id}`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
+}
+
+function getStudentByClass(data, accessToken = '') {
+    let url = `${AUTH_STUDENT}/byClass?`
+    if (data.classID) url += `classID=${data.classID}`
+    if (data.extra) url += `extra=${data.extra}`
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });

@@ -4,9 +4,10 @@ export {
 }
 
 const _METHODS = {
-    students: {
+    student: {
         GetAll: 'student.getAll',
         GetById: 'student.getByID',
+        GetByClass: 'student.getByClass',
         Create: 'student.create',
         Update: 'student.update',
         Delete: 'student.delete',
@@ -147,6 +148,8 @@ const _METHODS = {
         Create: 'studentList.create',
         Update: 'studentList.update',
         Delete: 'studentList.delete',
+        AddStudentIDs: 'studentList.addStudentIDs',
+        RemoveStudentIDs: 'studentList.removeStudentIDs',
     },
     studentTrip: {
         GetAll: 'studentTrip.getAll',
