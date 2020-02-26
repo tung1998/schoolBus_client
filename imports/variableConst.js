@@ -4,7 +4,7 @@ export {
 }
 
 const _METHODS = {
-    students: {
+    student: {
         GetAll: 'student.getAll',
         GetById: 'student.getByID',
         Create: 'student.create',

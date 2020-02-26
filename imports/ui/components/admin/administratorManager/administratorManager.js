@@ -42,6 +42,7 @@ function ClickModifyButton(event) {
 
 function ClickAddmoreButton(event) {
   $("#editAdministratorModal").attr("adminID", "");
+  $(' input[name="password"]').parent().parent().show();
   $(".modal-title").html("Thêm Mới");
   $(".confirm-button").html("Thêm");
   $("#editAdministratorModal").modal("show");
@@ -182,4 +183,5 @@ function clearForm() {
   $("#phonenumber-input").val("");
   $("#email-input").val("");
   $("#admintype-input").val("");
+  $("#username-input").val("");
 }

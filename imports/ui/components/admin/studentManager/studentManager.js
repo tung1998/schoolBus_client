@@ -8,9 +8,8 @@ import { MeteorCall, handleError } from "../../../../functions";
 import { _METHODS } from "../../../../variableConst";
 
 let accessToken;
-let studentManagerData;
+
 Template.studentManager.onCreated(() => {
-  console.log("created");
   accessToken = Cookies.get("accessToken");
 });
 
@@ -152,7 +151,7 @@ function deleteRow(data) {
 }
 
 async function reloadTable() {
-  MeteorCall(_METHODS.students.GetAll, {}, accessToken).then(result => {
+  MeteorCall(_METHODS.student.GetAll, {}, accessToken).then(result => {
     let html = result.data.map(htmlRow);
     $("#table-body").html(html.join(" "));
   });
@@ -223,7 +222,7 @@ function ClickAddMoreButton(e) {
 
 function ClickDeleteButton(event) {
   let data = $(event.currentTarget).data("json");
-  MeteorCall(_METHODS.students.Delete, data, accessToken)
+  MeteorCall(_METHODS.student.Delete, data, accessToken)
     .then(result => {
         deleteRow(data);
     })
@@ -247,7 +246,7 @@ function SubmitForm(event) {
   let modify = $("#editStudentModal").attr("studentID");
   console.log(modify);
   if (modify == "") {
-    MeteorCall(_METHODS.students.Create, data, accessToken)
+    MeteorCall(_METHODS.student.Create, data, accessToken)
       .then(result => {
         $("#editStudentModal").modal("hide");
         addToTable(data, result)
