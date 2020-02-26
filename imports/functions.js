@@ -6,7 +6,7 @@ export {
     MeteorCall,
     handleError,
     handleSuccess,
-    handleDelete,
+    handleConfirm,
     redirectLogin,
 }
 
@@ -22,7 +22,7 @@ function MeteorCall(method = "", data = null, accessToken = "") {
 
 
 
-function handleError(error) {
+function handleError(error, title = "Có lỗi xảy ra") {
     console.log(error);
     return Swal.fire({
         toast: true,
@@ -31,11 +31,11 @@ function handleError(error) {
         timer: 3000,
         timerProgressBar: true,
         onOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer),
+            toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)
         },
         icon: 'error',
-        title: 'Có lỗi xảy ra',
+        title,
         width: '20rem'
     });
 }
@@ -43,25 +43,31 @@ function handleError(error) {
 function handleSuccess(type, name) {
     let title = type + " " + name + " thành công";
     return Swal.fire({
-        icon: 'success',
-        title: title,
+        toast: true,
+        position: 'top',
         showConfirmButton: false,
-        width: "25rem",
-        timer: 3000
+        timer: 3000,
+        timerProgressBar: true,
+        onOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        },
+        icon: 'success',
+        title,
+        width: '20rem'
     });
 }
 
-function handleDelete() {
+function handleConfirm(title = "Bạn đã chắc chắn chưa?") {
     return Swal.fire({
-        title: 'Bạn đã chắc chắn chưa?',
-        text: "Bạn sẽ không thể khôi phục sau khi xóa!",
+        title,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Đồng ý',
-        cancelButtonText : 'Hủy'
-      })
+        cancelButtonText: 'Hủy'
+    })
 }
 
 
