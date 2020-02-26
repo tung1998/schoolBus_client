@@ -8,6 +8,8 @@ const Cookies = require('js-cookie')
 import {
     MeteorCall,
     handleError,
+    handleSuccess,
+    handleDelete
 
 } from '../../../../functions'
 
@@ -65,12 +67,14 @@ function submitButton(e) {
             reloadTable()
             clearForm()
             console.log("đã thêm mới");
+            handleSuccess("Thêm", "module")
         }).catch(handleError)
     }
     else {
         MeteorCall(_METHODS.modules.Update, data, accessToken).then(result => {
             reloadTable()
             clearForm()
+            handleSuccess("Cập nhật", "module")
             console.log("đã update");
         }).catch(handleError)
     }
@@ -91,12 +95,25 @@ function clickEditButton(event) {
 }
 
 function submitDelButton(event) {
-    let data = $(event.currentTarget).data("json");
-
-    MeteorCall(_METHODS.modules.Delete, data, accessToken).then(result => {
+    handleDelete().then(result => {
         console.log(result);
-        reloadTable()
-    }).catch(handleError)
+        if(result.value) {
+            let data = $(event.currentTarget).data("json");
+            MeteorCall(_METHODS.modules.Delete, data, accessToken).then(result => {
+                console.log(result);
+                Swal.fire({
+                    icon: "success",
+                    text: "Đã xóa thành công", 
+                    timer: 3000
+                })
+                reloadTable()
+            }).catch(handleError)
+        }
+        else {
+
+        }
+    })
+    
 }
 
 
@@ -134,6 +151,12 @@ function clearForm() {
     $('#module-permission').val('').trigger('change')
 }
 
+function insertRow(data, result) {
+    data._id = result._id;
+
+
+}
+
 function reloadTable() {
     MeteorCall(_METHODS.modules.GetAll, null, accessToken).then(result => {
         let routes = []
@@ -146,7 +169,7 @@ function reloadTable() {
                 parentRoutes.push(key.route)
             }
 
-            return `<tr>
+            return `<tr id="${key._id}">
                         <th scope="row">${index + 1}</th>
                         <td>${key.name}</td>
                         <td>${key.description}</td>
@@ -158,7 +181,7 @@ function reloadTable() {
                                 data-toggle="modal" id="edit-module" data-target="#editModuleModal" data-json=\'${JSON.stringify(key)}\'>Sửa</button>
                             <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(key)}\'>Xóa</button>
                         </td>
-                        </tr>`
+                    </tr>`
         })
         table.find("tbody").html(row.join(""))
 
