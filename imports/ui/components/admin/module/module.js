@@ -9,7 +9,7 @@ import {
     MeteorCall,
     handleError,
     handleSuccess,
-    handleDelete
+    handleConfirm
 
 } from '../../../../functions'
 
@@ -64,6 +64,7 @@ function submitButton(e) {
     let data = getInputData()
     if (!data._id) {
         MeteorCall(_METHODS.modules.Create, data, accessToken).then(result => {
+            console.log(result);
             reloadTable()
             clearForm()
             console.log("đã thêm mới");
@@ -95,7 +96,7 @@ function clickEditButton(event) {
 }
 
 function submitDelButton(event) {
-    handleDelete().then(result => {
+    handleConfirm().then(result => {
         console.log(result);
         if(result.value) {
             let data = $(event.currentTarget).data("json");

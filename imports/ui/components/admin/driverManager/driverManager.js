@@ -11,7 +11,7 @@ import {
     MeteorCall,
     handleError,
     handleSuccess,
-    handleDelete
+    handleConfirm
 
 } from '../../../../functions'
 
@@ -26,8 +26,7 @@ Template.driverManager.onCreated(() => {
 });
 
 Template.driverManager.onRendered(() => {
-
-    // reloadTable()
+    reloadTable()
 })
 
 Template.driverManager.events({
@@ -36,31 +35,79 @@ Template.driverManager.events({
         $('.modal-footer').find('.btn.btn-primary').html("Thêm mới")
         clearForm()
     },
-    'click .submit-button': submitButton,
-    'click #delete-buton': submitDelButton, 
+    'click #edit-button': clickEditButton,
+    'click .submit-button': clickSubmitButton,
+    'click .delete-button': clickDelButton, 
 })
 
-function submitButton() {
-    let data = getInputData()
+function clickEditButton(event) {
+    //fill data
+    let data = $(event.currentTarget).data("json");
+    $('#driver-name').val(data.name),
+    $('#driver-phone').val(data.phone),
+    $('#driver-email').val(data.email),
+    $('#driver-address').val(data.address),
+    $('#driver-IDNumber').val(data.IDNumber),
+    $('#driver-IDIssueDate').val(data.IDIssueDate),
+    $('#driver-IDIssueBy').val(data.IDIssueBy),
+    $('#driver-DLNumber').val(data.DLNumber),
+    $('#driver-DLIssueDate').val(data.DLIssueDate),
+    $(".custom-file-label").html(data.image)
 
-    data.username = data.phone
-    data.password = "12345678"
+    $('#driver-id').val(data._id)
+    //edit modal
+    $('.modal-title').html(`Cập nhật thông tin lái xe: ${data.name}`);
+    $('.modal-footer').find('.btn.btn-primary').html("Cập nhật")
+}
+
+function clickSubmitButton() {
+    let data = getInputData()
+    console.log(data);
 
     if (!data._id) {
-        
+        MeteorCall(_METHODS.driver.Create, data, accessToken).then(result => {
+            reloadTable()
+            clearForm()
+            console.log("đã thêm mới");
+            handleSuccess("Thêm",  `tài xế ${data.name}`)
+        }).catch(handleError)
     }
     else {
-
+        MeteorCall(_METHODS.driver.Update, data, accessToken).then(result => {
+            reloadTable()
+            clearForm()
+            handleSuccess("Cập nhật",  `tài xế ${data.name}`)
+            console.log("đã update");
+        }).catch(handleError)
     }
 
 }
 
-function submitDelButton() {
+function clickDelButton(event) {
+    handleConfirm().then(result => {
+        if(result.value) {
+            let data = $(event.currentTarget).data("json");
+            MeteorCall(_METHODS.driver.Delete, data, accessToken).then(result => {
+                console.log(result);
+                Swal.fire({
+                    icon: "success",
+                    text: "Đã xóa thành công", 
+                    timer: 3000
+                })
+                reloadTable()
+            }).catch(handleError)
+        }
+        else {
 
+        }
+    })
 }
 
 function getInputData() {
     let input = {
+        username: $('#driver-phone').val(),
+        password: '12345678',
+        image: '',
         name: $('#driver-name').val(),
         phone: $('#driver-phone').val(),
         email: $('#driver-email').val(),
@@ -73,7 +120,7 @@ function getInputData() {
         status: 0
     }
     if ($('#driver-id').val()) {
-        input._id = $('#module-id').val()
+        input._id = $('#driver-id').val()
     }
 
     let image = $('#driver-image').val().replace("C:\\fakepath\\", "")
@@ -92,6 +139,7 @@ function clearForm() {
     $('#driver-IDIssueBy').val(''),
     $('#driver-DLNumber').val(''),
     $('#driver-DLIssueDate').val(''),
+    $('#driver-id').val('')
     //reset image
     $(".custom-file-label").html('')
 
@@ -99,31 +147,43 @@ function clearForm() {
 }
 
 function reloadTable() {
-    // MeteorCall(_METHODS.drive.GetAll, null, accessToken).then(result => {
-    //     let table = $('#table-module')
-    //     dataModule = result.data;
-    //     let row = dataModule.map((key, index) => {
-    //         routes.push(key.route)
-    //         if (key.level === 0) {
-    //             parentRoutes.push(key.route)
-    //         }
-
-    //         return `<tr id="${key._id}">
-    //                     <th scope="row">${index + 1}</th>
-    //                     <td>${key.name}</td>
-    //                     <td>${key.description}</td>
-    //                     <td>${key.route}</td>
-    //                     <td>${key.permission}</td>
-    //                     <td>${key.createdTime}</td>
-    //                     <td>
-    //                         <button type="button" class="btn btn-outline-brand"
-    //                             data-toggle="modal" id="edit-module" data-target="#editModuleModal" data-json=\'${JSON.stringify(key)}\'>Sửa</button>
-    //                         <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(key)}\'>Xóa</button>
-    //                     </td>
-    //                 </tr>`
-    //     })
-    //     table.find("tbody").html(row.join(""))
-    // }).catch(handleError)
+    MeteorCall(_METHODS.driver.GetAll, null, accessToken).then(result => {
+        let table = $('#table-driver')
+        let dataDriver = result.data
+        let row = dataDriver.map((key, index) => {
+            let driver = {
+                _id: key._id,
+                image: key.user.image,
+                name: key.user.name,
+                phone: key.user.phone,
+                email: key.user.email,
+                address: key.address,
+                IDNumber: key.IDNumber,
+                IDIssueDate: key.IDIssueDate,
+                IDIssueBy: key.IDIssueBy,
+                DLNumber: key.DLNumber,
+                DLIssueDate: key.DLIssueDate,
+            }
+            return `<tr id="${key._id}">
+                        <th scope="row">${index + 1}</th>
+                        <td>${key.user.name}</td>
+                        <td>${key.user.username}</td>
+                        <td>${key.user.phone}</td>
+                        <td>${key.user.email}</td>
+                        <td>${key.address}</td>
+                        <td>${key.IDNumber}</td>
+                        <td>${key.IDIssueDate}</td>
+                        <td>${key.DLNumber}</td>
+                        <td>${key.DLIssueDate}</td>
+                        <td>
+                            <button type="button" class="btn btn-outline-brand"
+                                data-toggle="modal" id="edit-button" data-target="#editDriverModal" data-json=\'${JSON.stringify(driver)}\'>Sửa</button>
+                            <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(driver)}\'>Xóa</button>
+                        </td>
+                    </tr>`
+        })
+        table.find("tbody").html(row.join(""))
+    }).catch(handleError)
 }
 
 

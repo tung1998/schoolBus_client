@@ -6,7 +6,5 @@ Template.editDriverModal.events({
 
 function editChooseFileName() {
     var filename = $("#driver-image").val();
-    $(".custom-file-label").html(filename.replace("C:\\fakepath\\", "")); 
+    $(".custom-file-label").html(filename.replace("C:\\fakepath\\", ""));
 }
-
-function clearForm() {}

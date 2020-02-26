@@ -36,16 +36,16 @@ function getDriverbyId(data, accessToken = '') {
 //THÊM
 function createDriver(data, accessToken = '') {
     let url = AUTH_DRIVER;
-    return httpDefault(METHOD.post, url, { token: accessToken });
+    return httpDefault(METHOD.post, url, {body: data, token: accessToken });
 }
 
 //SỬA
 function updateDriver(data, accessToken = '') {
     let url = `${AUTH_DRIVER}/${data._id}`;
-    return httpDefault(METHOD.put, url, { token: accessToken });
+    return httpDefault(METHOD.put, url, {body: data, token: accessToken });
 }
 //XÓA
 function deleteDriver(data, accessToken = '') {
     let url = `${AUTH_DRIVER}/${data._id}`;
-    return httpDefault(METHOD.del, url, { token: accessToken });
+    return httpDefault(METHOD.del, url, {body: data, token: accessToken });
 }
