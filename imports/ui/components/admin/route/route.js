@@ -29,9 +29,9 @@ Template.route.events({
 })
 
 function initSelect2() {
-    // initCarSelect2()
-    // initDriverSelect2()
-    // initNannySelect2()
+    initCarSelect2()
+    initDriverSelect2()
+    initNannySelect2()
     initStudentListSelect2()
 }
 
@@ -39,10 +39,10 @@ function initCarSelect2() {
     MeteorCall(_METHODS.car.GetAll, null, accessToken).then(result => {
         console.log(result)
         if (result.data) {
-            let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.name}</option>`)
+            let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.numberPlate}</option>`)
             $('#carSelect').html(htmlClassOption.join('')).select2({
                 width: '100%',
-                placeholder: "Select class"
+                placeholder: "Select car"
             })
         }
     }).catch(handleError)
@@ -52,23 +52,23 @@ function initDriverSelect2() {
     MeteorCall(_METHODS.driver.GetAll, null, accessToken).then(result => {
         console.log(result)
         if (result.data) {
-            let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.name}</option>`)
+            let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.user.name}</option>`)
             $('#driverSelect').html(htmlClassOption.join('')).select2({
                 width: '100%',
-                placeholder: "Select class"
+                placeholder: "Select driver"
             })
         }
     }).catch(handleError)
 }
 
 function initNannySelect2() {
-    MeteorCall(_METHODS.nanny.GetAll, null, accessToken).then(result => {
+    MeteorCall(_METHODS.Nanny.GetAll, {extra: "user"}, accessToken).then(result => {
         console.log(result)
         if (result.data) {
-            let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.name}</option>`)
+            let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.user.name}</option>`)
             $('#nannySelect').html(htmlClassOption.join('')).select2({
                 width: '100%',
-                placeholder: "Select class"
+                placeholder: "Select nanny"
             })
         }
     }).catch(handleError)
@@ -81,7 +81,7 @@ function initStudentListSelect2() {
             let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.name}</option>`)
             $('#studentListSelect').html(htmlClassOption.join('')).select2({
                 width: '100%',
-                placeholder: "Select class"
+                placeholder: "Select student"
             })
         }
     }).catch(handleError)
@@ -100,13 +100,15 @@ function reloadTable() {
 function htmlRow(data) {
     let item = {
         _id: data._id,
-        name: data.name,
+        carName: data.car.numberPlate,
+        driverName: data.driver.user.name,
+        nannyName: data.nanny.user.name,
     }
     return ` <tr id=${item._id}>
                 <td>${item.name}</td>
-                <td>${item.car}</td>
-                <td>${item.driver}</td>
-                <td>${item.nanny}</td>
+                <td>${item.carName}</td>
+                <td>${item.driverName}</td>
+                <td>${item.nannyName}</td>
                 <td>
                 <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(item)}\'>Sửa</button>
                 <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(item)}\'>Xóa</button>
@@ -127,6 +129,7 @@ function clickEditListModalSubmit() {
         nannyID: $('#nannySelect').val(),
         studentListID: $('#studentListSelect').val(),
     }
+    console.log(data)
     if (!data.name) {
         handleError(null, 'Vui lòng điền tên chuyến đi')
         return

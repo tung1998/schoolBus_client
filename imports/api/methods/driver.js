@@ -22,7 +22,7 @@ if (Meteor.isServer) {
 }
 
 //XEM
-function getDrivers(accessToken = '') {
+function getDrivers(data, accessToken = '') {
     let url = AUTH_DRIVER;
     return httpDefault(METHOD.get, url, { token: accessToken })
 }

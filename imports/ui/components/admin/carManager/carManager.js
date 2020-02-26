@@ -74,7 +74,7 @@ function ClickModifyButton(event) {
     $(".button-model-selected").attr("title", carData.modelName);
     $(".model-result").attr("carModelID", carData.carModelID);
     $(".model-result").html(carData.modelName);
-    $('input[name="licensePlate-input"]').val(carData.licensePlate);
+    $('input[name="licensePlate-input"]').val(carData.numberPlate);
     $('input[name="status-input"]').val(carData.status);
 
 }
@@ -94,8 +94,8 @@ function SubmitForm(event) {
     let data = {
         carModelID: $(".model-result").attr("carModelID"),
         status: $('input[name="status-input"]').val(),
-        modelName: $(".model-result").html()
-        // licensePlate: $('input[name="licensePlate-input"]').val()
+        modelName: $(".model-result").html(),
+        numberPlate: $('input[name="licensePlate-input"]').val()
     };
 
     let modify = $("#editCarManagerModal").attr("carID");
@@ -122,7 +122,7 @@ function addToTable(data, result) {
     $("#table-body").prepend(`<tr id=${data._id}>
                                 <th scope="row"></th>
                                 <td>${data.modelName}</td>
-                                <td>${data.licensePlate}</td>
+                                <td>${data.numberPlate}</td>
                                 <td>${data.status}</td>
                                 <td>
                                 <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
@@ -135,7 +135,7 @@ function addToTable(data, result) {
 function modifyTable(data) {
     $(`#${data._id}`).html(`<th scope="row"></th>
                             <td>${data.modelName}</td>
-                            <td>${data.licensePlate}</td>
+                            <td>${data.numberPlate}</td>
                             <td>${data.status}</td>
                             <td>
                             <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
@@ -166,7 +166,7 @@ function htmlRow(data) {
     return `<tr id=${data._id}>
                 <th scope="row"></th>
                 <td>${data.modelName}</td>
-                <td>${data.licensePlate}</td>
+                <td>${data.numberPlate}</td>
                 <td>${data.status}</td>
                 <td>
                 <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
