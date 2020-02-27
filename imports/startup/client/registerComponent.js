@@ -32,7 +32,11 @@ import '../../ui/components/admin/carManager/carManager.js';
 import '../../ui/components/admin/carStopManager/carStop.js';
 import '../../ui/components/admin/carStopList/carStopList.js';
 import '../../ui/components/admin/tripMannager/tripMannager.js';
+<<<<<<< HEAD
+import '../../ui/components/admin/tripMannager/tripDetail.js';
+=======
 import '../../ui/components/admin/monitoring/monitoring.js';
+>>>>>>> 56e57bf25c8cf09f2a962f5c0a54597200b59fa6
 
 // import '../../ui/components/admin/admin/admin.js';
 // driver template
