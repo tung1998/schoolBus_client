@@ -59,6 +59,7 @@ function SubmitForm(event) {
         routeID: $("#routeSelect").val()
     }
     let modify = $('#editTripMannagerModal').attr("modify");
+    console.log(data)
     if (modify == "") {
         MeteorCall(_METHODS.trip.Create, data, accessToken).then(result => {
             reloadTable();
