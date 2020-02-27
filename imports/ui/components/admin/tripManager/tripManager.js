@@ -23,7 +23,7 @@ Template.tripManager.onRendered(() => {
 Template.tripManager.events({
     'submit form': SubmitForm,
     'click .modify-button': ClickModifyButton,
-    'click add-more': ClickAddMoreButton
+    'click .add-more': ClickAddMoreButton
 })
 
 function renderRouteSelect() {
