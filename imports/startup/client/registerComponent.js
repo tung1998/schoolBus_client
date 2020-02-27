@@ -30,6 +30,7 @@ import '../../ui/components/admin/studentListManager/studentListInfo/studentList
 import '../../ui/components/admin/module/module.js';
 import '../../ui/components/admin/carManager/carManager.js';
 import '../../ui/components/admin/tripMannager/tripMannager.js';
+import '../../ui/components/admin/tripMannager/tripDetail.js';
 
 // import '../../ui/components/admin/admin/admin.js';
 // driver template

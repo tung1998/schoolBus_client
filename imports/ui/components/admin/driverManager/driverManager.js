@@ -170,15 +170,15 @@ function reloadTable() {
             }
             return `<tr id="${key._id}">
                         <th scope="row">${index + 1}</th>
-                        <td>${key.user.name}</td>
-                        <td>${key.user.username}</td>
-                        <td>${key.user.phone}</td>
-                        <td>${key.user.email}</td>
-                        <td>${key.address}</td>
-                        <td>${key.IDNumber}</td>
-                        <td>${key.IDIssueDate}</td>
-                        <td>${key.DLNumber}</td>
-                        <td>${key.DLIssueDate}</td>
+                        <td>${driver.name}</td>
+                        <td>${driver.username}</td>
+                        <td>${driver.phone}</td>
+                        <td>${driver.email}</td>
+                        <td>${driver.address}</td>
+                        <td>${driver.IDNumber}</td>
+                        <td>${driver.IDIssueDate}</td>
+                        <td>${driver.DLNumber}</td>
+                        <td>${driver.DLIssueDate}</td>
                         <td>
                             <button type="button" class="btn btn-outline-brand"
                                 data-toggle="modal" id="edit-button" data-target="#editDriverModal" data-json=\'${JSON.stringify(driver)}\'>Sửa</button>

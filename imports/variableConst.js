@@ -183,6 +183,7 @@ const _METHODS = {
         Create: 'trip.create',
         Update: 'trip.update',
         Delete: 'trip.delete',
+        Attendace: 'trip.attendance',
     },
     tripLocation: {
         GetAll: 'tripLocation.getAll',
