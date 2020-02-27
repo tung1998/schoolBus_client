@@ -21,6 +21,8 @@ if (Meteor.isServer) {
         'studentList.create': createStudentList,
         'studentList.update': updateStudentList,
         'studentList.delete': deleteStudentList,
+        'studentList.addStudentIDs': addStudentIDs,
+        'studentList.removeStudentIDs': removeStudentIDs,
     });
 }
 
@@ -57,6 +59,22 @@ function updateStudentList(data, accessToken = '') {
 function deleteStudentList(data, accessToken = '') {
     let url = `${AUTH_STUDENT_LIST}/${data._id}`
     return httpDefault(METHOD.del, url, {
+        token: accessToken
+    });
+}
+
+function addStudentIDs(data, accessToken = '') {
+    let url = `${AUTH_STUDENT_LIST}/${data._id}/studentIDs/add`
+    return httpDefault(METHOD.put, url, {
+        body: data, 
+        token: accessToken
+    });
+}
+
+function removeStudentIDs(data, accessToken = '') {
+    let url = `${AUTH_STUDENT_LIST}/${data._id}/studentIDs/remove`
+    return httpDefault(METHOD.put, url, {
+        body: data,
         token: accessToken
     });
 }

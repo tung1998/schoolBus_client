@@ -1,0 +1,143 @@
+<template name="carStopList">
+    <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+        <!-- begin:: Subheader -->
+        <div class="kt-subheader   kt-grid__item" id="kt_subheader">
+            <div class="kt-container  kt-container--fluid ">
+                <div class="kt-subheader__main">
+                    <h3 class="kt-subheader__title">
+
+                        Quản trị viên </h3>
+
+                    <span class="kt-subheader__separator kt-hidden"></span>
+                    <div class="kt-subheader__breadcrumbs">
+                        <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
+                        <span class="kt-subheader__breadcrumbs-separator"></span>
+                        <a href="" class="kt-subheader__breadcrumbs-link">
+                            SchoolBus </a>
+                        <span class="kt-subheader__breadcrumbs-separator"></span>
+                        <a href="" class="kt-subheader__breadcrumbs-link">
+                            Quản lí điểm dừng</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end:: Subheader -->
+
+        <!-- begin:: Content -->
+        <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+            <div class="row">
+                <div class="col">
+
+                    <div class="kt-portlet">
+                        <div class="kt-portlet__head">
+                            <div class="kt-portlet__head-label">
+                                <h3 class="kt-portlet__head-title">
+                                    Danh sách quản trị viên
+                                </h3>
+                            </div>
+                        </div>
+
+                        <div class="kt-portlet__body">
+                            <!--begin::Section-->
+                            <div class="kt-section">
+                                <div class="kt-section__content">
+                                    <a href="/carStop"><button type="button" class="btn btn-outline-brand mb-4 add-more"
+                                            data-toggle="modal" data-target="#editStudentModal">Thêm mới</button></a>
+                                    <table class="table table-bordered table-hover">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Loại điểm dừng</th>
+                                                <th>Tên điểm dừng</th>
+                                                <th>Địa chỉ</th>
+                                                <th>Hành động</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="table-body">
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!--end::Section-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end:: Content -->
+    </div>
+    {{> editCarStopModal}}
+</template>
+
+<template name="editCarStopModal">
+    <div class="modal fade" id="editCarStopModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Thêm mới</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                        <div class="row">
+                            <div class="col-lg-6 col-xl-5 order-lg-1 order-xl-1 heightAnchor">
+                                <div class="kt-portlet">
+                                    <form class="kt-form">
+                                        <div class="kt-portlet__body anchorHeight">
+                                            <div class="kt-section kt-section--first">
+                                                <div class="form-group">
+                                                    <label>Vị trí:</label>
+                                                    <input type="text" class="form-control position"
+                                                        placeholder="Vị trí" name="location" id="location">
+                                                    <span class="form-text text-muted"></span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Đặt tên điểm dừng:</label>
+                                                    <input type="text" class="form-control"
+                                                        placeholder="Nhập tên điểm dừng" name="stopName" id="stopName">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Loại điểm dừng:</label>
+                                                    <input type="text" class="form-control" placeholder="Loại điểm dừng"
+                                                        name="stopType" id="stopType">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Địa chỉ:</label>
+                                                    <input type="text" class="form-control" placeholder="Enter email"
+                                                        name="address" id="address">
+                                                </div>
+                                                <div class="kt-form__actions">
+                                                    <button type="submit"
+                                                        class="btn btn-primary confirm-button">Gửi</button>
+                                                    <button type="submit" class="btn btn-secondary">Xem danh sách điểm
+                                                        dừng</button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-xl-7 order-lg-1 order-xl-1">
+                                <div class="kt-portlet">
+                                    <div class="kt-portlet__body">
+                                        <div class="kt-section kt-section--first">
+                                            {{>micromap}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="micromap">
+    <div id="micromap" style="padding: 0px; z-index: 0;"></div>
+</template>

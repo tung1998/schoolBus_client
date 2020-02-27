@@ -29,6 +29,7 @@ import '../../ui/components/admin/studentListManager/studentListManager.js';
 import '../../ui/components/admin/studentListManager/studentListInfo/studentListInfo.js';
 import '../../ui/components/admin/module/module.js';
 import '../../ui/components/admin/carManager/carManager.js';
+import '../../ui/components/admin/tripMannager/tripMannager.js';
 
 // import '../../ui/components/admin/admin/admin.js';
 // driver template
@@ -41,7 +42,6 @@ import '../../ui/components/parent/sendFeedback/parentFeedback.js';
 import '../../ui/components/parent/parrentRequest/parrentRequest.js';
 import '../../ui/components/parent/absentHistory/absentHistory.js';
 import '../../ui/components/parent/historyTrip/historyTrip.js';
-import '../../ui/components/parent/carStop/carStop.js';
 // nanny template
 import '../../ui/components/nanny/tripHistory/tripHistory.js';
 import '../../ui/components/nanny/tripListStudent/tripListStudent.js';
