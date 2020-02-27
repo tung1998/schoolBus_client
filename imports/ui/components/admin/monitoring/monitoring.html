@@ -1,0 +1,55 @@
+<template name="monitoring">
+    <div class="kt-subheader   kt-grid__item" id="kt_subheader">
+        <div class="kt-container  kt-container--fluid ">
+            <div class="kt-subheader__main">
+
+                <h3 class="kt-subheader__title">
+                    Admin
+                </h3>
+                <span class="kt-subheader__separator kt-subheader__separator--v"></span>
+                <div class="kt-subheader__group" id="kt_subheader_search">
+                    <span class="kt-subheader__desc" id="kt_subheader_total">
+                        Theo dõi xe </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-12 col-lg-12 order-lg-3 order-xl-1" style="padding: 0px !important">
+        <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid"
+            style="padding: 0px !important;">
+            <button data-toggle="collapse" data-target=".collapse" class="floatingContent btn btn-primary btn-sm"><i
+                    class="fas fa-bus"></i>Xem danh sách xe</button>
+            <div id="demo" class="collapse">
+                <div class="kt-section">
+					<div class="kt-section__content">
+						<table class="table">
+						  	<thead>
+						    	<tr>
+						      		<th>#</th>
+                                      <th>Biển số xe</th>
+                                      <th>Vận tốc</th>
+						    	</tr>
+						  	</thead>
+						  	<tbody>
+						    	<tr class="id">
+							      	<th scope="row">1</th>
+                                      <td>29A-77764</td>
+                                      <td>0</td>
+						    	</tr>
+						  	</tbody>
+						</table>
+					</div>
+				</div>
+            </div>
+            {{>monitor_map}}
+        </div>
+    </div>
+</template>
+
+<template name="monitor_map">
+    <div id="monitormap" style="padding: 0px; z-index: 0;"></div>
+</template>
+
+<template name="monitoring-list">
+
+</template>
