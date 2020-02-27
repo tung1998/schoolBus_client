@@ -100,6 +100,7 @@ function reloadTable() {
 function htmlRow(data) {
     let item = {
         _id: data._id,
+        name: data.name,
         carName: data.car.numberPlate,
         driverName: data.driver.user.name,
         nannyName: data.nanny.user.name,
