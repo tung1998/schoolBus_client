@@ -79,6 +79,16 @@ FlowRouter.route('/carStopList', {
     },
 });
 
+FlowRouter.route('/monitoring', {
+    name: 'App.home',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'monitoring',
+        });
+    },
+});
+
 FlowRouter.route('/nannyManager', {
     name: 'App.home',
     action() {
@@ -279,10 +289,10 @@ FlowRouter.route('/carMaintenanceReport', {
 FlowRouter.route('/carManager', {
     name: 'App.home',
     action() {
-            BlazeLayout.render('App_body', {
-                main: 'App_home',
-                content: 'carManager',
-            });
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'carManager',
+        });
     },
 });
 
