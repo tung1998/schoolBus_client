@@ -31,6 +31,7 @@ import '../../ui/components/admin/module/module.js';
 import '../../ui/components/admin/carManager/carManager.js';
 import '../../ui/components/admin/carStopManager/carStop.js';
 import '../../ui/components/admin/carStopList/carStopList.js';
+import '../../ui/components/admin/tripMannager/tripMannager.js';
 
 // import '../../ui/components/admin/admin/admin.js';
 // driver template
