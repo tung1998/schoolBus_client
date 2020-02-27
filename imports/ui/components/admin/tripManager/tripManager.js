@@ -1,4 +1,4 @@
-import './tripMannager.html'
+import './tripManager.html'
 
 import {
     MeteorCall,
@@ -11,19 +11,19 @@ import {
 
 let accessToken;
 
-Template.tripMannager.onCreated(() => {
+Template.tripManager.onCreated(() => {
     accessToken = Cookies.get('accessToken')
 })
 
-Template.tripMannager.onRendered(() => {
+Template.tripManager.onRendered(() => {
     reloadTable();
     renderRouteSelect();
 })
 
-Template.tripMannager.events({
+Template.tripManager.events({
     'submit form': SubmitForm,
     'click .modify-button': ClickModifyButton,
-    'click add-more': ClickAddMoreButton
+    'click .add-more': ClickAddMoreButton
 })
 
 function renderRouteSelect() {
@@ -42,13 +42,13 @@ function ClickModifyButton(event) {
     // console.log(moment(data.startTime).format("MMMM DD YYYY, h:mm"))
     $("#routeSelect").val(data.route._id);
 
-    $('#editTripMannagerModal').modal('show')
+    $('#editTripManagerModal').modal('show')
     // console.log($("#routeSelect").val())
-    $('#editTripMannagerModal').attr("modify", data._id)
+    $('#editTripManagerModal').attr("modify", data._id)
 }
 
 function ClickAddMoreButton(event) {
-    $('#editTripMannagerModal').attr("modify", "")
+    $('#editTripManagerModal').attr("modify", "")
 }
 
 function SubmitForm(event) {
@@ -58,12 +58,11 @@ function SubmitForm(event) {
         startTime: moment($("#start-time").val(), "YYYY/MM/DD HH:mm").valueOf(),
         routeID: $("#routeSelect").val()
     }
-    let modify = $('#editTripMannagerModal').attr("modify");
-    console.log(data)
+    let modify = $('#editTripManagerModal').attr("modify");
     if (modify == "") {
         MeteorCall(_METHODS.trip.Create, data, accessToken).then(result => {
             reloadTable();
-            $('#editTripMannagerModal').modal('hide')
+            $('#editTripManagerModal').modal('hide')
         }).catch(handleError)
     } else {
         console.log(modify)
@@ -72,7 +71,7 @@ function SubmitForm(event) {
         MeteorCall(_METHODS.trip.Update, data, accessToken).then(result => {
             
             reloadTable();
-            $('#editTripMannagerModal').modal('hide')
+            $('#editTripManagerModal').modal('hide')
         })
     }
 
@@ -130,7 +129,7 @@ function htmlRow(data) {
                                     <div class="fa-pull-right">
                                         <button type="button" class="btn btn-danger btn-sm modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
                                         <span></span>
-                                        <a href="tripMannager/${data._id}"><button type="button" class="btn btn-success btn-sm">Xem thông tin</button></a>
+                                        <a href="tripManager/${data._id}"><button type="button" class="btn btn-success btn-sm">Xem thông tin</button></a>
                                     </div>
                                     
                                 </div>    

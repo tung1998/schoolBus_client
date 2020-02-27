@@ -152,12 +152,22 @@ FlowRouter.route('/tripLocation', {
     },
 });
 
-FlowRouter.route('/tripMannager', {
-    name: 'tripMannager',
+FlowRouter.route('/tripManager', {
+    name: 'tripManager',
     action() {
         BlazeLayout.render('App_body', {
             main: 'App_home',
-            content: 'tripMannager',
+            content: 'tripManager',
+        });
+    },
+});
+
+FlowRouter.route('/tripManager/:tripID', {
+    name: 'tripManager',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'tripDetail',
         });
     },
 });

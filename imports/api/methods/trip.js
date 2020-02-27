@@ -21,6 +21,7 @@ if (Meteor.isServer) {
         'trip.create': createTrip,
         'trip.update': updateTrip,
         'trip.delete': deleteTrip,
+        'trip.attendance': attendanceTrip,
     });
 }
 
@@ -58,4 +59,12 @@ function deleteTrip(data, accessToken = '') {
     return httpDefault(METHOD.del, url, {
         token: accessToken
     });
+}
+
+function attendanceTrip(data, accessToken = '') {
+    let url = `${AUTH_TRIP}/${data.tripID}/student/${data.studentID}`
+    return httpDefault(METHOD.put, url, {
+        body: data.status,
+        token: accessToken
+    })
 }
