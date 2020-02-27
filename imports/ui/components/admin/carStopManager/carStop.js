@@ -1,9 +1,13 @@
 import './carStop.html'
-import { Meteor } from 'meteor/meteor';
-import { Tracker } from 'meteor/tracker'
+
 const Cookies = require("js-cookie");
-import { MeteorCall, handleError } from "../../../../functions";
-import { _METHODS } from "../../../../variableConst";
+import {
+    MeteorCall,
+    handleError
+} from "../../../../functions";
+import {
+    _METHODS
+} from "../../../../variableConst";
 let accessToken;
 //let position = [0, 0];
 Template.carStop.onCreated(() => {
@@ -14,10 +18,13 @@ Template.carStop.onRendered(() => {
     //reloadTable();
 });
 
-Template.minimap.onRendered(function() {
+Template.minimap.onRendered(function () {
     setMapHeight()
     L.Icon.Default.imagePath = '/packages/bevanhunt_leaflet/images/';
-    let minimap = L.map('minimap', { drawControl: true, zoomControl: false }).setView([21.0388, 105.7886], 19);
+    let minimap = L.map('minimap', {
+        drawControl: true,
+        zoomControl: false
+    }).setView([21.0388, 105.7886], 19);
     L.tileLayer('https://apis.wemap.asia/raster-tiles/styles/osm-bright/{z}/{x}/{y}@2x.png?key=vpstPRxkBBTLaZkOaCfAHlqXtCR', {
         maxZoom: 18,
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
@@ -27,12 +34,12 @@ Template.minimap.onRendered(function() {
     }).addTo(minimap);
 
     let marker = L.marker([21.03709858, 105.78349972]).addTo(minimap);
-    minimap.on('move', function() {
+    minimap.on('move', function () {
         marker.setLatLng(minimap.getCenter());
     });
 
     //Dragend event of map for update marker position
-    minimap.on('dragend', function(e) {
+    minimap.on('dragend', function (e) {
         let cnt = minimap.getCenter();
         let position = marker.getLatLng();
         lat = Number(position['lat']).toFixed(5);
@@ -79,7 +86,7 @@ function setMapHeight() {
     if ($(window).width() < 1024) {
         topBarHeight = $("#kt_header_mobile").height();
         $("#minimap").css({
-            //"height": windowHeight - topBarHeight - sHeaderHeight - footerHeight
+            // "height": windowHeight - topBarHeight - sHeaderHeight - footerHeight
             "height": $(".col-lg-6").height()
         })
     } else {

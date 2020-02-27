@@ -25,10 +25,9 @@ if (Meteor.isServer) {
     });
 }
 
-function getAllTrip(accessToken = '') {
+function getAllTrip(data, accessToken = '') {
     let url = `${AUTH_TRIP}`
     return httpDefault(METHOD.get, url, {
-        body: data,
         token: accessToken
     });
 }
