@@ -69,14 +69,18 @@ function clickSubmitButton() {
             reloadTable()
             clearForm()
             console.log("đã thêm mới");
-            handleSuccess("Thêm",  `tài xế ${data.name}`)
+            handleSuccess("Thêm",  `tài xế ${data.name}`).then(() => {
+                $('#editDriverModal').modal("hide")
+            })
         }).catch(handleError)
     }
     else {
         MeteorCall(_METHODS.driver.Update, data, accessToken).then(result => {
             reloadTable()
             clearForm()
-            handleSuccess("Cập nhật",  `tài xế ${data.name}`)
+            handleSuccess("Cập nhật",  `tài xế ${data.name}`).then(() => {
+                $('#editDriverModal').modal("hide")
+            })
             console.log("đã update");
         }).catch(handleError)
     }
