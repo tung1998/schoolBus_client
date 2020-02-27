@@ -206,6 +206,9 @@ const _METHODS = {
         Create: 'sms.createSMS',
         Update: 'sms.updateSMS',
         Delete: 'sms.deleteSMS',
+    },
+    gps: {
+        getLast: 'monitoring.getLastgps'
     }
 }
 
