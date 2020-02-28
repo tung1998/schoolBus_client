@@ -19,20 +19,6 @@ Blaze._allowJavascriptUrls()
 
 // Set up all routes in the app
 
-<<<<<<< HEAD
-/*FlowRouter.triggers.enter([function (context, redirect) {
-    let accessToken = Cookies.get('accessToken');
-    if (!accessToken) FlowRouter.go('/login');
-    else {
-        MeteorCall(_METHODS.user.GetCurrentInfor, null, accessToken).then(result => {}).catch(e => {
-            Cookies.remove('accessToken');
-            FlowRouter.redirect('/login');
-        });
-    }
-}], {
-    except: ["App.login"]
-});*/
-=======
 // FlowRouter.triggers.enter([function (context, redirect) {
 //     let accessToken = Cookies.get('accessToken');
 //     if (!accessToken) FlowRouter.go('/login');
@@ -45,7 +31,6 @@ Blaze._allowJavascriptUrls()
 // }], {
 //     except: ["App.login"]
 // });
->>>>>>> 60b279d421aa19b398f8180ab7665290689f2397
 
 
 FlowRouter.route('/', {

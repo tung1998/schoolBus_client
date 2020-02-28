@@ -29,15 +29,11 @@ Template.monitor_map.onRendered(function() {
     }).addTo(monitormap);
     window.markerGroup = L.layerGroup().addTo(monitormap);
     MeteorCall(_METHODS.gps.getLast, null, accessToken).then(result => {
-            console.log(markerGroup)
             let htmlTable = result.map(htmlRow);
             $("#table-body").html(htmlTable.join(" "));
         })
         .catch(handleError)
-        //console.log(layer._leaflet_id)
-    setInterval(() => {
-        let newLatLng = new L.LatLng(21.0388, 105.7886);
-    }, 5000)
+
 })
 
 Template.monitor_map.onRendered(() => {
@@ -69,7 +65,6 @@ function setMapHeight() {
             "padding-bottom": 0
         })
     } else {
-
         $("#monitormap").css({
             "height": windowHeight - topBarHeight - sHeaderHeight - footerHeight
         })
@@ -80,9 +75,9 @@ function setMapHeight() {
     }
 }
 
-function setMarker(lat, lng, monitormap) {
+function setMarker(lat, lng, json) {
     let mark = L.marker([lat, lng]).addTo(markerGroup);
-    let popup = contentInfoMarker({})
+    let popup = contentInfoMarker(lat, lng, json)
     mark.bindPopup(popup, {
         minWidth: 301
     });
@@ -93,13 +88,21 @@ function setViewCar(marker, lat, lng) {
     window.monitormap.setView([lat, lng], 25);
 }
 
-function contentInfoMarker(json) {
-    const fullDate = moment(Number(json.timestamp)).format('HH:mm:ss DD/MM/YYYY');
+function contentInfoMarker(lat, lng, json) {
+    const adr = getAddress(lat, lng);
+    //console.log(adr)
+    const fullDate = moment(Number(json.updatedTime)).format('HH:mm:ss DD/MM/YYYY');
     return `
         <div class="font-14">
             <dl class="row mr-0 mb-0">
-                <dt class="col-sm-5">Biển số:${json.car.numberPlate}</dt>
-                <dt class="col-sm-5"></dt>
+                <dt class="col-sm-5">Biển số: </dt>
+                <dt class="col-sm-7">${json.car.numberPlate}</dt>
+                <dt class="col-sm-5">Vị trí: </dt>
+                <dt class="col-sm-7">${adr}</dt>
+                <dt class="col-sm-5">Thời điểm cập nhật: </dt>
+                <dt class="col-sm-7">${fullDate}</dt>
+                <dt class="col-sm-5">Vận tốc: </dt>
+                <dt class="col-sm-7">N/A</dt>
             </dl>
         </div>
     `
@@ -114,8 +117,7 @@ function htmlRow(data, index) {
     markers_id.push(47 + 2 * index)
     let lat = data.location[0],
         lng = data.location[1];
-    setMarker(lat, lng, monitormap)
-        //console.log(markers_id)
+    setMarker(lat, lng, data)
     return ` <tr id = ${index}>
                 <th scope="row">${index}</th>
                 <td>${item.numberPlate}</td>
@@ -127,22 +129,44 @@ function appendLatlng(data, markerID) {
     let lat = data.location[0],
         lng = data.location[1];
     markerGroup._layers[markerID].setLatLng([lat, lng])
+    contentInfoMarker(lat, lng, data)
 }
 
 function reUpdate() {
     setInterval(() => {
         MeteorCall(_METHODS.gps.getLast, null, accessToken).then(result => {
-                //let marker_id = 47; 
-                console.log(markers_id)
-                    //markerGroup.clearLayers()
-                    //console.log(result)
                 let htmlTable = result.map((data, index) => {
                     appendLatlng(data, markers_id[index]);
-                    //dconsole.log(marker_id)
-
                 })
             })
             .catch(handleError)
     }, 5000)
 }
-//event triggered => get orderNumber => setViewCar(lat,lng,markers[orderNumber])
+
+function getAddress(lat, lng) {
+    let latLng = {
+        lat: lat,
+        lng: lng
+    }
+    let address = ' '
+    MeteorCall(_METHODS.wemap.getAddress, latLng, accessToken).then(result => {
+        let props = result.features[0].properties;
+        let addressElement = {
+            name: props.name,
+            housenumber: props.housenumber,
+            street: props.street,
+            city: props.city,
+            district: props.district,
+            state: props.state
+        }
+
+        address = addressElement.name + ', ' +
+            addressElement.housenumber + ', ' +
+            addressElement.street + ', ' +
+            addressElement.city + ', ' +
+            addressElement.district + ', ' +
+            addressElement.state + ', ';
+        //console.log(address)
+        return address
+    }).catch(handleError)
+}

@@ -212,6 +212,9 @@ const _METHODS = {
     },
     gps: {
         getLast: 'monitoring.getLastgps'
+    },
+    wemap: {
+        getAddress: 'wemap.getAddress'
     }
 }
 
@@ -221,20 +224,20 @@ const _SESSION = {
 }
 
 const _TRIP_STUDENT = {
-    status : {
-        undefined:{
+    status: {
+        undefined: {
             text: "Chưa xác nhận",
             number: 0
         },
-        pickUp:{
+        pickUp: {
             text: "Trên xe",
             number: 1
         },
-        getOff:{
+        getOff: {
             text: "Xuống xe",
             number: 2
         },
-        absent:{
+        absent: {
             text: "Vắng mặt",
             number: 3
         }
