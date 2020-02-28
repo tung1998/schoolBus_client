@@ -75,9 +75,11 @@ function deleteTrip(data, accessToken = '') {
 }
 
 function attendanceTrip(data, accessToken = '') {
-    let url = `${AUTH_TRIP}/${data.tripID}/student/${data.studentID}`
+    let url = `${AUTH_TRIP}/${data.tripID}/student/${data.studentID}/status`
     return httpDefault(METHOD.put, url, {
-        body: data.status,
+        body: {
+            status: data.status
+        },
         token: accessToken
     })
 }
