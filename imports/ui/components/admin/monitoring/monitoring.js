@@ -77,10 +77,8 @@ function setMapHeight() {
 
 function setMarker(lat, lng, json) {
     let mark = L.marker([lat, lng]).addTo(markerGroup);
-    let popup = contentInfoMarker(lat, lng, json)
-    mark.bindPopup(popup, {
-        minWidth: 301
-    });
+    contentInfoMarker(lat, lng, json, mark)
+
 }
 
 function setViewCar(marker, lat, lng) {
@@ -88,24 +86,28 @@ function setViewCar(marker, lat, lng) {
     window.monitormap.setView([lat, lng], 25);
 }
 
-function contentInfoMarker(lat, lng, json) {
+function contentInfoMarker(lat, lng, json, mark) {
     const adr = getAddress(lat, lng);
-    //console.log(adr)
     const fullDate = moment(Number(json.updatedTime)).format('HH:mm:ss DD/MM/YYYY');
-    return `
+    adr.then((result) => {
+        let popup = `
         <div class="font-14">
             <dl class="row mr-0 mb-0">
-                <dt class="col-sm-5">Biển số: </dt>
-                <dt class="col-sm-7">${json.car.numberPlate}</dt>
-                <dt class="col-sm-5">Vị trí: </dt>
-                <dt class="col-sm-7">${adr}</dt>
-                <dt class="col-sm-5">Thời điểm cập nhật: </dt>
-                <dt class="col-sm-7">${fullDate}</dt>
-                <dt class="col-sm-5">Vận tốc: </dt>
-                <dt class="col-sm-7">N/A</dt>
+                <dt class="col-sm-6">Biển số: </dt>
+                <dt class="col-sm-6">${json.car.numberPlate}</dt>
+                <dt class="col-sm-6">Vị trí: </dt>
+                <dt class="col-sm-6">${result}</dt>
+                <dt class="col-sm-6">Thời điểm cập nhật: </dt>
+                <dt class="col-sm-6">${fullDate}</dt>
+                <dt class="col-sm-6">Vận tốc: </dt>
+                <dt class="col-sm-6">N/A</dt>
             </dl>
         </div>
     `
+        mark.bindPopup(popup, {
+            minWidth: 301
+        });
+    })
 }
 
 function htmlRow(data, index) {
@@ -129,7 +131,7 @@ function appendLatlng(data, markerID) {
     let lat = data.location[0],
         lng = data.location[1];
     markerGroup._layers[markerID].setLatLng([lat, lng])
-    contentInfoMarker(lat, lng, data)
+    contentInfoMarker(lat, lng, data, markerGroup._layers[markerID])
 }
 
 function reUpdate() {
@@ -143,13 +145,10 @@ function reUpdate() {
     }, 5000)
 }
 
-function getAddress(lat, lng) {
-    let latLng = {
-        lat: lat,
-        lng: lng
-    }
-    let address = ' '
-    MeteorCall(_METHODS.wemap.getAddress, latLng, accessToken).then(result => {
+async function getAddress(lat, lng) {
+    try {
+        let result = await MeteorCall(_METHODS.wemap.getAddress, { lat: lat, lng: lng }, accessToken);
+        //console.log(result)
         let props = result.features[0].properties;
         let addressElement = {
             name: props.name,
@@ -160,7 +159,7 @@ function getAddress(lat, lng) {
             state: props.state
         }
 
-        address = addressElement.name + ', ' +
+        let address = addressElement.name + ', ' +
             addressElement.housenumber + ', ' +
             addressElement.street + ', ' +
             addressElement.city + ', ' +
@@ -168,5 +167,7 @@ function getAddress(lat, lng) {
             addressElement.state + ', ';
         //console.log(address)
         return address
-    }).catch(handleError)
+    } catch (err) {
+        handleError(err)
+    }
 }
