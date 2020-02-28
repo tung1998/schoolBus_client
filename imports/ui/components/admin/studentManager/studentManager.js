@@ -1,11 +1,20 @@
 import "./studentManager.html";
-import { Session } from "meteor/session";
+import {
+  Session
+} from "meteor/session";
 
 const Cookies = require("js-cookie");
 
-import { MeteorCall, handleError } from "../../../../functions";
+import {
+  MeteorCall,
+  handleError,
+  handleSuccess,
+  handleConfirm
+} from "../../../../functions";
 
-import { _METHODS } from "../../../../variableConst";
+import {
+  _METHODS
+} from "../../../../variableConst";
 
 let accessToken;
 
@@ -16,35 +25,25 @@ Template.studentManager.onCreated(() => {
 Template.studentManager.onRendered(() => {
   reloadTable();
   renderSchoolName();
+  renderCarStopID();
+  initSelect2()
 });
 
 Template.studentManager.events({
   "click .modify-button": ClickModifyButton,
   "click .delete-button": ClickDeleteButton,
   "click .add-more": ClickAddMoreButton,
-  "click .school-option": ClickSelectSchoolOption,
-  "click .class-option": ClickSelectClassOption,
-  "submit form": SubmitForm
+  "submit form": SubmitForm,
+  "change #student-school": renderClassName
 });
 
 function renderSchoolName() {
   MeteorCall(_METHODS.school.GetAll, {}, accessToken)
     .then(result => {
-      let optionSelects = result.data.map(res => {
-        return `<li>
-                        <a
-                          role="option"
-                          class="dropdown-item school-option"
-                          id=${res._id}
-                          tabindex="0"
-                          aria-setsize="6"
-                          aria-posinset="1"
-                          ><span class="text">${res.name}</span></a
-                        >
-                      </li>`;
+      let optionSelects = result.data.map((key) => {
+        return `<option value="${key._id}">${key.name}</option>`;
       });
-      $("#school-select").html(optionSelects.join(" "));
-      renderClassName();
+      $("#student-school").append(optionSelects.join(""));
     })
     .catch(handleError);
 }
@@ -52,52 +51,53 @@ function renderSchoolName() {
 function renderClassName() {
   MeteorCall(_METHODS.class.GetAll, {}, accessToken)
     .then(result => {
-      let optionSelects = result.data.map(res => {
-        if (res.schoolID == $(".school-option").attr("id")) {
-          return `<li>
-                        <a
-                          role="option"
-                          class="dropdown-item class-option"
-                          id=${res._id}
-                          tabindex="0"
-                          aria-setsize="6"
-                          aria-posinset="1"
-                          ><span class="text">${res.name}</span></a
-                        >
-                      </li>`;
+      let optionSelects = result.data.map((key) => {
+        if (key.schoolID === $('#student-school').val()) {
+          return `<option value="${key._id}">${key.name}</option>`;
         }
       });
-      $("#class-select").html(optionSelects.join(" "));
+
+      $("#student-class").html('<option></option>').append(optionSelects.join(" "));
     })
     .catch(handleError);
 }
 
+function renderCarStopID() {
+  MeteorCall(_METHODS.carStop.GetAll, {}, accessToken).then(result => {
+    let select = $('#student-carStopID')
+
+    let optionSelects = result.data.map((key) => {
+      return `<option value="${key._id}">${key.name}</option>`
+    })
+    select.append(optionSelects.join(""))
+  })
+}
+
 function addToTable(dt, result) {
   let data = {
-      _id: result._id,
-      user: {
-          name: dt.name,
-          phone: dt.phone,
-          email: dt.email
-      },
-      class: {
-          school: {
-            name: dt.schoolName
-          },
-          name: dt.className
-      },
-      address: dt.address,
-      IDStudent: dt.IDStudent
+    _id: result._id,
+    name: dt.name,
+    phone: dt.phone,
+    email: dt.email,
+    classID: dt.classID,
+    schooID: dt.schoolID,
+    className: $('#select2-student-class-container').text(),
+    schoolName: $('#select2-student-school-container').text(),
+    carStop: $('#select2-student-carStopID-container').text(),
+    address: dt.address,
+    IDStudent: dt.IDStudent,
+    status: dt.status
   }
   $("#table-body").prepend(`<tr id=${data._id}>
                                 <td scope="row"></td>
-                                <td>${data.user.name}</td>
+                                <td>${data.name}</td>
                                 <td>${data.address}</td>
-                                <td>${data.user.phone}</td>
-                                <td>${data.user.email}</td>
-                                <td>${data.class.school.name}</td>
-                                <td>${data.class.name}</td>
+                                <td>${data.phone}</td>
+                                <td>${data.email}</td>
+                                <td>${data.schoolName}</td>
+                                <td>${data.className}</td>
                                 <td>${data.IDStudent}</td>
+                                <td>${data.carStop}</td>
                                 <td>
                                 <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
                                 data
@@ -110,31 +110,29 @@ function addToTable(dt, result) {
 }
 
 function modifyTable(dt) {
-    let data = {
-        _id: dt._id,
-        user: {
-            name: dt.name,
-            phone: dt.phone,
-            email: dt.email
-        },
-        class: {
-            school: {
-              name: dt.schoolName
-            },
-            name: dt.className
-        },
-        address: dt.address,
-        IDStudent: dt.IDStudent
-    }
+  let data = {
+    _id: dt._id,
+    name: dt.name,
+    phone: dt.phone,
+    email: dt.email,
+    classID: dt.classID,
+    schooID: dt.schoolID,
+    className: $('#select2-student-class-container').text(),
+    schoolName: $('#select2-student-school-container').text(),
+    carStop: $('#select2-student-carStopID-container').text(),
+    address: dt.address,
+    IDStudent: dt.IDStudent,
+    status: dt.status
+  }
   $(`#${data._id}`).html(`    
-                            <td scope="row"></td>
-                            <td>${data.user.name}</td>
+                            <td>${data.name}</td>
                             <td>${data.address}</td>
-                            <td>${data.user.phone}</td>
-                            <td>${data.user.email}</td>
-                            <td>${data.class.school.name}</td>
-                            <td>${data.class.name}</td>
+                            <td>${data.phone}</td>
+                            <td>${data.email}</td>
+                            <td>${data.schoolName}</td>
+                            <td>${data.className}</td>
                             <td>${data.IDStudent}</td>
+                            <td>${data.carStop}</td>
                             <td>
                             <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
                             data
@@ -142,8 +140,7 @@ function modifyTable(dt) {
                             <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(
                             data
                             )}\'>Xóa</button>
-                            </td>`
-                        );
+                            </td>`);
 }
 
 function deleteRow(data) {
@@ -153,20 +150,36 @@ function deleteRow(data) {
 async function reloadTable() {
   MeteorCall(_METHODS.student.GetAll, {}, accessToken).then(result => {
     let html = result.data.map(htmlRow);
+
     $("#table-body").html(html.join(" "));
   });
 }
 
-function htmlRow(data) {
+function htmlRow(result) {
+  let data = {
+    _id: result._id,
+    name: result.user.name,
+    address: result.address,
+    phone: result.user.phone,
+    email: result.user.email,
+    schoolID: result.class.school._id,
+    schoolName: result.class.school.name,
+    classID: result.class._id,
+    className: result.class.name,
+    IDStudent: result.IDStudent,
+    carStopID: result.carStopID,
+    carStop: result.carStop.name,
+    status: result.status
+  }
   return `<tr id=${data._id}>
-            <td scope="row"></td>
-            <td>${data.user.name}</td>
+            <td>${data.name}</td>
             <td>${data.address}</td>
-            <td>${data.user.phone}</td>
-            <td>${data.user.email}</td>
-            <td>${data.class.school.name}</td>
-            <td>${data.class.name}</td>
+            <td>${data.phone}</td>
+            <td>${data.email}</td>
+            <td>${data.schoolName}</td>
+            <td>${data.className}</td>
             <td>${data.IDStudent}</td>
+            <td>${data.carStop}</td>
             <td>
             <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
               data
@@ -178,22 +191,6 @@ function htmlRow(data) {
         </tr>`;
 }
 
-function ClickSelectSchoolOption(e) {
-  let id = $(e.currentTarget).attr("id");
-  let school = $(e.currentTarget).text();
-  $(".school-result").html(school);
-  $(".button-school-selected").attr("title", school);
-  $(".school-result").attr("schoolID", id);
-}
-
-function ClickSelectClassOption(e) {
-  let id = $(e.currentTarget).attr("id");
-  let school = $(e.currentTarget).text();
-  $(".class-result").html(school);
-  $(".button-class-selected").attr("title", school);
-  $(".class-result").attr("classID", id);
-}
-
 function ClickModifyButton(e) {
   let studentData = $(e.currentTarget).data("json");
   $("#editStudentModal").modal("show");
@@ -203,13 +200,12 @@ function ClickModifyButton(e) {
 
   $('input[name="IDstudent"]').val(studentData.IDStudent);
   $('input[name="address"]').val(studentData.address);
-  $('input[name="name"]').val(studentData.user.name);
-  $('input[name="email"]').val(studentData.user.email);
-  $('input[name="phone"]').val(studentData.user.phone);
-  $(".class-result").attr("classID", studentData.class._id);
-  $(".class-result").html(studentData.class.name);
-  $(".school-result").attr("schoolID", studentData.class.school._id);
-  $(".school-result").html(studentData.class.school.name);
+  $('input[name="name"]').val(studentData.name);
+  $('input[name="email"]').val(studentData.email);
+  $('input[name="phone"]').val(studentData.phone);
+  $('#student-school').val(studentData.schoolID).trigger('change')
+  // $('#student-class').val(studentData.classID).trigger('change')
+  $('#student-carStopID').val(studentData.carStopID).trigger('change')
   $('input[name="status"]').val(studentData.status);
 }
 
@@ -221,12 +217,23 @@ function ClickAddMoreButton(e) {
 }
 
 function ClickDeleteButton(event) {
-  let data = $(event.currentTarget).data("json");
-  MeteorCall(_METHODS.student.Delete, data, accessToken)
-    .then(result => {
-        deleteRow(data);
-    })
-    .catch(handleError);
+  handleConfirm().then(result => {
+    console.log(result);
+    if (result.value) {
+      let data = $(event.currentTarget).data("json");
+      MeteorCall(_METHODS.student.Delete, data, accessToken).then(result => {
+        console.log(result);
+        Swal.fire({
+          icon: "success",
+          text: "Đã xóa thành công",
+          timer: 3000
+        })
+        deleteRow(data)
+      }).catch(handleError)
+    } else {
+
+    }
+  })
 }
 
 function SubmitForm(event) {
@@ -237,26 +244,29 @@ function SubmitForm(event) {
     name: $('input[name="name"]').val(),
     email: $('input[name="email"]').val(),
     phone: $('input[name="phone"]').val(),
-    classID: $(".class-result").attr("classID"),
     status: $('input[name="status"]').val(),
-    className: $(".class-result").text(),
-    schoolName: $(".school-result").text()
+    carStopID: $('#student-carStopID').val(),
+    classID: $('#student-class').val(),
+    schoolID: $('#student-school').val()
   };
-
   let modify = $("#editStudentModal").attr("studentID");
-  console.log(modify);
+
   if (modify == "") {
     MeteorCall(_METHODS.student.Create, data, accessToken)
       .then(result => {
-        $("#editStudentModal").modal("hide");
+        handleSuccess("Thêm", "học sinh").then(() => {
+          $("#editStudentModal").modal("hide");
+        })
         addToTable(data, result)
       })
       .catch(handleError);
   } else {
     data._id = modify;
-    MeteorCall(_METHODS.students.Update, data, accessToken)
+    MeteorCall(_METHODS.student.Update, data, accessToken)
       .then(result => {
-        $("#editStudentModal").modal("hide");
+        handleSuccess("Cập nhật", "học sinh").then(() => {
+          $("#editStudentModal").modal("hide");
+        })
         modifyTable(data)
       })
       .catch(handleError);
@@ -265,13 +275,36 @@ function SubmitForm(event) {
 
 function clearForm() {
   $('input[name="IDstudent"]').val("");
-  $('input[name="address"]').val("");
   $('input[name="name"]').val("");
+  $('input[name="address"]').val("");
   $('input[name="email"]').val("");
   $('input[name="phone"]').val("");
-  $(".class-result").attr("classID", "");
-  $(".class-result").html("Lớp");
-  $(".school-result").attr("schoolID", "");
-  $(".school-result").html("Trường");
+  $('#student-school').val("").trigger('change')
+  $('#student-class').val("").trigger('change')
+  $('#student-carStopID').val("").trigger('change')
   $('input[name="status"]').val("");
+}
+
+function initSelect2() {
+  let initSelect2 = [{
+      id: 'student-school',
+      name: 'Chọn trường'
+    },
+    {
+      id: 'student-class',
+      name: 'Chọn lớp'
+    },
+    {
+      id: 'student-carStopID',
+      name: 'Chọn điểm đón, trả'
+    }
+  ]
+  initSelect2.map((key) => {
+    $(`#${key.id}`).select2({
+      placeholder: key.name,
+      width: '100%'
+    })
+  })
+
+
 }
