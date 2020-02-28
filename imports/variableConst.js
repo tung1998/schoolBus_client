@@ -90,6 +90,11 @@ const _METHODS = {
         Update: 'feedback.update',
         Delete: 'feedback.delete',
     },
+    image:{
+        GetAll: 'image.getAll',
+        GetById: 'image.getByID',
+        Import: 'image.import',
+    },
     log: {
         GetAll: 'log.getAll',
         GetById: 'log.getByID',
