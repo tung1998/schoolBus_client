@@ -12,6 +12,7 @@ export {
 
 function MeteorCall(method = "", data = null, accessToken = "") {
     return new Promise((resolve, reject) => {
+        console.log(method)
         Meteor.call(method, data, accessToken, (err, result) => {
             if (result && result.error) reject(result)
             else if (err) reject(err);
