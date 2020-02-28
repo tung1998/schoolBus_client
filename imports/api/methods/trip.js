@@ -22,6 +22,7 @@ if (Meteor.isServer) {
         'trip.update': updateTrip,
         'trip.delete': deleteTrip,
         'trip.attendance': attendanceTrip,
+        'trip.getByTime': getTripByTime
     });
 }
 
@@ -34,6 +35,18 @@ function getAllTrip(data, accessToken = '') {
 
 function getTripByID(data, accessToken = '') {
     let url = `${AUTH_TRIP}/${data._id}`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
+}
+
+function getTripByTime(data, accessToken = '') {
+    let url = `${AUTH_TRIP}/byTime?`;
+    if (data.startTime) url += `startTime=${data.startTime}`
+    if (data.endTime) url += `&endTime=${data.endTime}`
+    if (data.extra) url += `extra=${data.extra}`
+    console.log(data)
+    console.log(url)
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });

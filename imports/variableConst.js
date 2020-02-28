@@ -181,6 +181,7 @@ const _METHODS = {
     trip: {
         GetAll: 'trip.getAll',
         GetById: 'trip.getByID',
+        GetByTime: 'trip.getByTime',
         Create: 'trip.create',
         Update: 'trip.update',
         Delete: 'trip.delete',
