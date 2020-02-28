@@ -1,4 +1,9 @@
 import './route.html';
+
+import {
+    FlowRouter
+} from 'meteor/kadira:flow-router';
+
 import {
     MeteorCall,
     handleError,
@@ -26,6 +31,7 @@ Template.route.events({
     'click #routeModalSubmit': clickEditListModalSubmit,
     'click #routeData .modify-button': clickEditRouteButton,
     'click #routeData .delete-button': clickDeleteRouteButton,
+    'click #routeData tr': clickRouteRow,
 })
 
 function initSelect2() {
@@ -37,7 +43,6 @@ function initSelect2() {
 
 function initCarSelect2() {
     MeteorCall(_METHODS.car.GetAll, null, accessToken).then(result => {
-        console.log(result)
         if (result.data) {
             let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.numberPlate}</option>`)
             $('#carSelect').html(htmlClassOption.join('')).select2({
@@ -50,7 +55,6 @@ function initCarSelect2() {
 
 function initDriverSelect2() {
     MeteorCall(_METHODS.driver.GetAll, null, accessToken).then(result => {
-        console.log(result)
         if (result.data) {
             let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.user.name}</option>`)
             $('#driverSelect').html(htmlClassOption.join('')).select2({
@@ -62,8 +66,9 @@ function initDriverSelect2() {
 }
 
 function initNannySelect2() {
-    MeteorCall(_METHODS.Nanny.GetAll, {extra: "user"}, accessToken).then(result => {
-        console.log(result)
+    MeteorCall(_METHODS.Nanny.GetAll, {
+        extra: "user"
+    }, accessToken).then(result => {
         if (result.data) {
             let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.user.name}</option>`)
             $('#nannySelect').html(htmlClassOption.join('')).select2({
@@ -76,7 +81,6 @@ function initNannySelect2() {
 
 function initStudentListSelect2() {
     MeteorCall(_METHODS.studentList.GetAll, null, accessToken).then(result => {
-        console.log(result)
         if (result.data) {
             let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.name}</option>`)
             $('#studentListSelect').html(htmlClassOption.join('')).select2({
@@ -89,8 +93,7 @@ function initStudentListSelect2() {
 
 function reloadTable() {
     MeteorCall(_METHODS.route.GetAll, null, accessToken).then(result => {
-        console.log(result)
-        if(result.data){
+        if (result.data) {
             let htmlTable = result.data.map(htmlRow);
             $("#routeData").html(htmlTable.join(" "));
         }
@@ -105,7 +108,7 @@ function htmlRow(data) {
         driverName: data.driver.user.name,
         nannyName: data.nanny.user.name,
     }
-    return ` <tr id=${item._id}>
+    return ` <tr routeID=${item._id}>
                 <td>${item.name}</td>
                 <td>${item.carName}</td>
                 <td>${item.driverName}</td>
@@ -181,3 +184,9 @@ function clickDeleteRouteButton(e) {
     })
     return false
 }
+
+
+function clickRouteRow(e) {
+    let routeID = e.currentTarget.getAttribute("routeID")
+    FlowRouter.go(`/routeManager/${routeID}`)
+}                                                              

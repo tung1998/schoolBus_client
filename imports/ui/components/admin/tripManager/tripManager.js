@@ -16,18 +16,22 @@ Template.tripManager.onCreated(() => {
 })
 
 Template.tripManager.onRendered(() => {
-    reloadTable();
     renderRouteSelect();
+    reloadTable();
 })
 
 Template.tripManager.events({
     'submit form': SubmitForm,
     'click .modify-button': ClickModifyButton,
-    'click .add-more': ClickAddMoreButton
+    'click .add-more': ClickAddMoreButton,
+    'click .updateTimeButton': ClickUpdateTimeButton
 })
 
 function renderRouteSelect() {
     $("#start-time").datetimepicker({});
+    $("#select_date").datepicker({});
+    $("#select_date").val(moment(Date.now()).format("MM/DD/YYYY"))
+
     MeteorCall(_METHODS.route.GetAll, null, accessToken).then(result => {
         let options = result.data.map(route => {
             return `<option value="${route._id}">${route.name}</option>`
@@ -69,20 +73,43 @@ function SubmitForm(event) {
         console.log(data)
         data._id = modify;
         MeteorCall(_METHODS.trip.Update, data, accessToken).then(result => {
-            
             reloadTable();
             $('#editTripManagerModal').modal('hide')
-        })
+        }).catch(handleError)
     }
 
 }
 
+function ClickUpdateTimeButton(){
+    reloadTable();
+}
+
+function getDayFilter() {
+    let date = moment($("#select_date").val(), "MM/DD/YYYY").lang("vn").valueOf();
+    let startTime = date
+    let endTime = startTime + 86400000;
+    let range = {
+        startTime: startTime,
+        endTime: endTime
+    }
+    console.log(moment(date).locale("vi").format("L"))
+    console.log(moment(startTime).locale("vi").format("LLLL"))
+    console.log(moment(endTime).locale("vi").format("LLLL"))
+    return range;
+}
+
 function reloadTable() {
-    MeteorCall(_METHODS.trip.GetAll, null, accessToken).then(result => {
-        console.log(result);
-        let html = result.data.map(htmlRow);
-        $(".trip_list").html(html.join(" "));
-    })
+    let data = getDayFilter();
+    MeteorCall(_METHODS.trip.GetByTime, data, accessToken).then(result => {
+         console.log(result);
+        if(result!=[]) {
+            let html = result.map(htmlRow);
+            $(".trip_list").html(html.join(" "));
+        } else {
+            $(".trip_list").html("<span>Không có dữ liệu</span>");
+        }
+        
+    }).catch(handleError)
 }
 
 function htmlRow(data) {
