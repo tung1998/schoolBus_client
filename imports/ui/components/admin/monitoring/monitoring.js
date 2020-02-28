@@ -13,7 +13,7 @@ Template.monitoring.onCreated(() => {
     accessToken = Cookies.get("accessToken");
 });
 
-Template.monitor_map.onRendered(function() {
+Template.monitor_map.onRendered(function () {
     setMapHeight()
     L.Icon.Default.imagePath = '/packages/bevanhunt_leaflet/images/';
     window.monitormap = L.map('monitormap', {
@@ -34,13 +34,15 @@ Template.monitor_map.onRendered(function() {
             $("#table-body").html(htmlTable.join(" "));
         })
         .catch(handleError)
-        //console.log(layer._leaflet_id)
+    //console.log(layer._leaflet_id)
     setInterval(() => {
         let newLatLng = new L.LatLng(21.0388, 105.7886);
     }, 5000)
 })
 
-Template.monitor_map.rendered = reUpdate()
+Template.monitor_map.onRendered(() => {
+    reUpdate()
+})
 
 Template.monitoring.events({
     'click tr': (event) => {
@@ -78,7 +80,9 @@ function setMapHeight() {
 function setMarker(lat, lng, monitormap) {
     let mark = L.marker([lat, lng]).addTo(markerGroup);
     let popup = contentInfoMarker({})
-    mark.bindPopup(popup, { minWidth: 301 });
+    mark.bindPopup(popup, {
+        minWidth: 301
+    });
     markers.push(mark);
 }
 
