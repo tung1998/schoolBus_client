@@ -27,3 +27,4 @@ import '../../api/methods/studentTrip';
 import '../../api/methods/studentList';
 import '../../api/methods/student';
 import '../../api/methods/carStopTrip';
+import '../../api/methods/gps';
