@@ -23,7 +23,7 @@ Template.tripMannager.onRendered(() => {
 Template.tripMannager.events({
     'submit form': SubmitForm,
     'click .modify-button': ClickModifyButton,
-    'click add-more': ClickAddMoreButton
+    'click .add-more': ClickAddMoreButton
 })
 
 function renderRouteSelect() {
@@ -129,7 +129,7 @@ function htmlRow(data) {
                                     <div class="fa-pull-right">
                                         <button type="button" class="btn btn-danger btn-sm modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
                                         <span></span>
-                                        <a href="tripMannager/${data._id}"><button type="button" class="btn btn-success btn-sm">Xem thông tin</button></a>
+                                        <a href="/tripManager/${data._id}"><button type="button" class="btn btn-success btn-sm">Xem thông tin</button></a>
                                     </div>
                                     
                                 </div>    
