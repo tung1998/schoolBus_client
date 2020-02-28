@@ -37,9 +37,23 @@
                             <!--begin::Section-->
                             <div class="kt-section">
                                 <div class="kt-section__content">
-                                    <button type="button" class="btn btn-outline-brand mb-4 add-more"
-                                        data-toggle="modal" data-target="#editTripManagerModal">Thêm
-                                        mới</button>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <button type="button" class="btn btn-outline-brand mb-4 fa-pull-left add-more"
+                                            data-toggle="modal" data-target="#editTripManagerModal">Thêm
+                                            mới</button>
+                                            <div class="selectTime fa-pull-right">
+                                                <div class="input-group" >
+                                                    <input type="text" id="select_date" class="form-control" placeholder="Select date range">
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text"><i class="la la-calendar-check-o"></i></span>
+                                                    </div>
+                                                    <button type="button" class="btn btn-danger btn-sm updateTimeButton">Tìm</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
                                     <div class="kt-portlet__body trip_list">
 
                                     </div>
