@@ -32,7 +32,6 @@ Blaze._allowJavascriptUrls()
     except: ["App.login"]
 });*/
 
-
 FlowRouter.route('/', {
     name: 'App.home',
     action() {

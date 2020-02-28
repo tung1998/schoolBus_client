@@ -3,8 +3,14 @@ export {
     AUTH_PATH
 }
 
+<<<<<<< HEAD
 //const BASE = 'http://192.168.100.69:3000'
 //const AUTH_PATH = 'http://192.168.100.69:2999'
+=======
+// const BASE = 'http://192.168.100.69:3000'
+// const AUTH_PATH = 'http://192.168.100.69:2999'
+
+>>>>>>> 13d8a71df1c744278d374ddc2c287379aca0dbb9
 
 const AUTH_PATH = 'http://192.168.100.69:3000';
 const BASE = 'http://192.168.100.69:2999';
