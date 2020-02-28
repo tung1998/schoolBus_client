@@ -24,7 +24,7 @@ if (Meteor.isServer) {
     });
 }
 
-function getAllCarStopTrip(accessToken = '') {
+function getAllCarStopTrip(data, accessToken = '') {
     let url = `${AUTH_CARSTOPTRIP}`
     return httpDefault(METHOD.get, url, {
         body: data,

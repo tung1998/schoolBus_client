@@ -90,6 +90,11 @@ const _METHODS = {
         Update: 'feedback.update',
         Delete: 'feedback.delete',
     },
+    image:{
+        GetAll: 'image.getAll',
+        GetById: 'image.getByID',
+        Import: 'image.import',
+    },
     log: {
         GetAll: 'log.getAll',
         GetById: 'log.getByID',
@@ -240,6 +245,27 @@ const _TRIP_STUDENT = {
         absent: {
             text: "Vắng mặt",
             number: 3
+        }
+    }
+}
+
+const _TRIP = {
+    status : {
+        ready: {
+            text: "Đã sẵn sàng",
+            number: 0
+        },
+        moving: {
+            text: "Đang di chuyển",
+            number: 1
+        },
+        finish: {
+            text: "Đã kết thúc",
+            number: 3
+        },
+        accident: {
+            text: "Gặp sự cố",
+            number: 4
         }
     }
 }
