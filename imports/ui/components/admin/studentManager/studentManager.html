@@ -46,7 +46,7 @@
                   <table class="table table-bordered table-hover">
                     <thead class="thead-light">
                       <tr>
-                        <th></th>
+                        
                         <th>Họ tên</th>
                         <th>Địa chỉ</th>
                         <th>Số điện thoại</th>
@@ -54,11 +54,12 @@
                         <th>Trường</th>
                         <th>Lớp</th>
                         <th>Mã học sinh</th>
+                        <th>Điểm đón, trả</th>
                         <th></th>
                       </tr>
                     </thead>
                     <tbody id="table-body">
-                      
+
                     </tbody>
                   </table>
                 </div>
@@ -113,116 +114,34 @@
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-2 col-form-label"
-                  >Trường</label
-                >
+                <label class="col-2 col-form-label">Trường</label>
                 <div class="col-10">
-                  <div class="dropdown bootstrap-select form-control kt-">
-                    <select
-                      class="form-control kt-selectpicker"
-                      data-size="4"
-                      tabindex="-98"
-                    >
-                      <option>Mustard</option> </select
-                    ><button
-                      type="button"
-                      class="btn dropdown-toggle btn-light button-school-selected"
-                      data-toggle="dropdown"
-                      role="combobox"
-                      aria-owns="bs-select-2"
-                      aria-haspopup="listbox"
-                      aria-expanded="false"
-                      title="chọn trường"
-                    >
-                      <div class="filter-option">
-                        <div class="filter-option-inner">
-                          <div class="filter-option-inner-inner school-result">Chọn Trường</div>
-                        </div>
-                      </div>
-                    </button>
-                    <div
-                      class="dropdown-menu"
-                      x-placement="bottom-start"
-                      style="max-height: 182px; overflow: hidden; min-width: 393px; position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 36px, 0px);"
-                    >
-                      <div
-                        class="inner show"
-                        role="listbox"
-                        id="bs-select-2"
-                        tabindex="-1"
-                        aria-activedescendant="bs-select-2-1"
-                        style="max-height: 156px; overflow-y: auto;"
-                      >
-                        <ul
-                          class="dropdown-menu inner show"
-                          role="presentation"
-                          style="margin-top: 0px; margin-bottom: 0px;"
-                          id="school-select"
-                        >
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
+                    <select id="student-school" class="form-control">
+                      <option></option>
+                    </select>
+                  
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-2 col-form-label"
-                  >Lớp</label
-                >
+                <label class="col-2 col-form-label">Lớp</label>
                 <div class="col-10">
-                  <div class="dropdown bootstrap-select form-control kt-">
-                    <select
-                      class="form-control kt-selectpicker"
-                      data-size="4"
-                      tabindex="-98"
-                    >
-                      <option>Mustard</option> </select
-                    ><button
-                      type="button"
-                      class="btn dropdown-toggle btn-light button-class-selected"
-                      data-toggle="dropdown"
-                      role="combobox"
-                      aria-owns="bs-select-2"
-                      aria-haspopup="listbox"
-                      aria-expanded="false"
-                      title="chọn lớp"
-                    >
-                      <div class="filter-option">
-                        <div class="filter-option-inner">
-                          <div class="filter-option-inner-inner class-result">Chọn Lớp</div>
-                        </div>
-                      </div>
-                    </button>
-                    <div
-                      class="dropdown-menu"
-                      x-placement="bottom-start"
-                      style="max-height: 182px; overflow: hidden; min-width: 393px; position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 36px, 0px);"
-                    >
-                      <div
-                        class="inner show"
-                        role="listbox"
-                        id="bs-select-2"
-                        tabindex="-1"
-                        aria-activedescendant="bs-select-2-1"
-                        style="max-height: 156px; overflow-y: auto;"
-                      >
-                        <ul
-                          class="dropdown-menu inner show"
-                          role="presentation"
-                          style="margin-top: 0px; margin-bottom: 0px;"
-                          id="class-select"
-                        >
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
+                  <select id="student-class" class="form-control">
+                  </select>
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-datetime-local-input" class="col-2 col-form-label">Mã học sinh</label>
                 <div class="col-10">
-                  <input class="form-control" type="number" name="IDstudent"
-                    id="student-id-input">
+                  <input class="form-control" type="number" name="IDstudent" id="student-id-input">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="example-datetime-local-input" class="col-2 col-form-label">Điểm đón, trả</label>
+                <div class="col-10">
+                  <select id="student-carStopID" class="form-control">
+                    <option></option>
+
+                  </select>
                 </div>
               </div>
               <div class="form-group row">
@@ -241,9 +160,9 @@
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel-button">Hủy</button>
               <button type="submit" class="btn btn-primary" id="confirm-button">Xác nhận</button>
-          </div>
+            </div>
           </form>
-        </div>   
+        </div>
       </div>
     </div>
   </div>

@@ -20,6 +20,7 @@ import '../../ui/components/admin/parentManager/parentManager.js'
 import '../../ui/components/admin/nannyManager/nannyManager.js'
 import '../../ui/components/admin/carModelManager/carModelManager.js'
 import '../../ui/components/admin/route/route.js'
+import '../../ui/components/admin/route/routeInfo/routeInfo.js'
 import '../../ui/components/admin/tripLocation/tripLocation.js';
 import '../../ui/components/admin/carFuel/carFuel.js';
 import '../../ui/components/admin/feedback/feedback.js';

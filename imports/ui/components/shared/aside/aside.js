@@ -17,7 +17,7 @@ Template.aside.onCreated(() => {
 
 Template.aside.onRendered(() => {
     MeteorCall(_METHODS.modules.GetAll, null, accessToken).then(result => {
-        console.log(result)
+        //console.log(result)
         if (result.data)
             renderAside(result.data)
     }).catch(handleError)

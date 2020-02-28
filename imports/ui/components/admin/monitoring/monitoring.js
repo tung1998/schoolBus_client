@@ -8,12 +8,12 @@ import {
     _METHODS
 } from "../../../../variableConst";
 let accessToken;
-var markers = [];
+var markers_id = [];
 Template.monitoring.onCreated(() => {
     accessToken = Cookies.get("accessToken");
 });
 
-Template.monitor_map.onRendered(function () {
+Template.monitor_map.onRendered(function() {
     setMapHeight()
     L.Icon.Default.imagePath = '/packages/bevanhunt_leaflet/images/';
     window.monitormap = L.map('monitormap', {
@@ -34,7 +34,7 @@ Template.monitor_map.onRendered(function () {
             $("#table-body").html(htmlTable.join(" "));
         })
         .catch(handleError)
-    //console.log(layer._leaflet_id)
+        //console.log(layer._leaflet_id)
     setInterval(() => {
         let newLatLng = new L.LatLng(21.0388, 105.7886);
     }, 5000)
@@ -46,8 +46,11 @@ Template.monitor_map.onRendered(() => {
 
 Template.monitoring.events({
     'click tr': (event) => {
-        console.log($(event.currentTarget))
-        setViewCar(21.0388, 105.7886, markers[0])
+        let indx = parseInt($(event.currentTarget).attr("id"));
+        let tarMark = markerGroup._layers[markers_id[indx]]
+        let latval = tarMark._latlng.lat;
+        let lngval = tarMark._latlng.lng;
+        setViewCar(tarMark, latval, lngval)
     },
 })
 
@@ -83,12 +86,11 @@ function setMarker(lat, lng, monitormap) {
     mark.bindPopup(popup, {
         minWidth: 301
     });
-    markers.push(mark);
 }
 
-function setViewCar(lat, lng, marker) {
+function setViewCar(marker, lat, lng) {
     marker.openPopup();
-    window.monitormap.setView([lat, lng], 20);
+    window.monitormap.setView([lat, lng], 25);
 }
 
 function contentInfoMarker(json) {
@@ -96,8 +98,8 @@ function contentInfoMarker(json) {
     return `
         <div class="font-14">
             <dl class="row mr-0 mb-0">
-                <dt class="col-sm-5">Biển số:</dt>
-               
+                <dt class="col-sm-5">Biển số:${json.car.numberPlate}</dt>
+                <dt class="col-sm-5"></dt>
             </dl>
         </div>
     `
@@ -109,9 +111,11 @@ function htmlRow(data, index) {
         numberPlate: data.car.numberPlate,
         velocity: 0
     }
+    markers_id.push(47 + 2 * index)
     let lat = data.location[0],
         lng = data.location[1];
     setMarker(lat, lng, monitormap)
+        //console.log(markers_id)
     return ` <tr id = ${index}>
                 <th scope="row">${index}</th>
                 <td>${item.numberPlate}</td>
@@ -119,20 +123,24 @@ function htmlRow(data, index) {
             </tr>`;
 }
 
-function appendLatlng(data) {
-
+function appendLatlng(data, markerID) {
     let lat = data.location[0],
         lng = data.location[1];
-    setMarker(lat, lng, monitormap)
+    markerGroup._layers[markerID].setLatLng([lat, lng])
 }
 
 function reUpdate() {
     setInterval(() => {
         MeteorCall(_METHODS.gps.getLast, null, accessToken).then(result => {
-                console.log(markerGroup)
-                markerGroup.clearLayers()
-                console.log(result)
-                let htmlTable = result.map(appendLatlng)
+                //let marker_id = 47; 
+                console.log(markers_id)
+                    //markerGroup.clearLayers()
+                    //console.log(result)
+                let htmlTable = result.map((data, index) => {
+                    appendLatlng(data, markers_id[index]);
+                    //dconsole.log(marker_id)
+
+                })
             })
             .catch(handleError)
     }, 5000)

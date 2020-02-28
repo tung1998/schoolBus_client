@@ -132,12 +132,23 @@ FlowRouter.route('/studentListManager/:id([0-9a-fA-F]{24})', {
 
 
 //ROUTE
-FlowRouter.route('/route', {
+FlowRouter.route('/routeManager', {
     name: 'App.home',
     action() {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'route',
+        });
+    },
+
+});
+
+FlowRouter.route('/routeManager/:id([0-9a-fA-F]{24})', {
+    name: 'App.home',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'routeInfo',
         });
     },
 });
