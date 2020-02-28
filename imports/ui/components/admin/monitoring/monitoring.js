@@ -9,7 +9,7 @@ import {
 } from "../../../../variableConst";
 let accessToken;
 var markers = [];
-Template.carStop.onCreated(() => {
+Template.monitoring.onCreated(() => {
     accessToken = Cookies.get("accessToken");
 });
 
@@ -27,14 +27,26 @@ Template.monitor_map.onRendered(function() {
             'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         id: 'mapbox.streets'
     }).addTo(monitormap);
-    setMarker(21.0388, 105.7886, monitormap)
+    window.markerGroup = L.layerGroup().addTo(monitormap);
+    MeteorCall(_METHODS.gps.getLast, null, accessToken).then(result => {
+            console.log(markerGroup)
+            let htmlTable = result.map(htmlRow);
+            $("#table-body").html(htmlTable.join(" "));
+        })
+        .catch(handleError)
+        //console.log(layer._leaflet_id)
+    setInterval(() => {
+        let newLatLng = new L.LatLng(21.0388, 105.7886);
+    }, 5000)
 })
+
+Template.monitor_map.rendered = reUpdate()
 
 Template.monitoring.events({
     'click tr': (event) => {
-        console.log(event.currentTarget)
+        console.log($(event.currentTarget))
         setViewCar(21.0388, 105.7886, markers[0])
-    }
+    },
 })
 
 function setMapHeight() {
@@ -64,7 +76,7 @@ function setMapHeight() {
 }
 
 function setMarker(lat, lng, monitormap) {
-    let mark = L.marker([lat, lng]).addTo(window.monitormap);
+    let mark = L.marker([lat, lng]).addTo(markerGroup);
     let popup = contentInfoMarker({})
     mark.bindPopup(popup, { minWidth: 301 });
     markers.push(mark);
@@ -86,3 +98,39 @@ function contentInfoMarker(json) {
         </div>
     `
 }
+
+function htmlRow(data, index) {
+    let item = {
+        _id: data._id,
+        numberPlate: data.car.numberPlate,
+        velocity: 0
+    }
+    let lat = data.location[0],
+        lng = data.location[1];
+    setMarker(lat, lng, monitormap)
+    return ` <tr id = ${index}>
+                <th scope="row">${index}</th>
+                <td>${item.numberPlate}</td>
+                <td>${item.velocity}</td>
+            </tr>`;
+}
+
+function appendLatlng(data) {
+
+    let lat = data.location[0],
+        lng = data.location[1];
+    setMarker(lat, lng, monitormap)
+}
+
+function reUpdate() {
+    setInterval(() => {
+        MeteorCall(_METHODS.gps.getLast, null, accessToken).then(result => {
+                console.log(markerGroup)
+                markerGroup.clearLayers()
+                console.log(result)
+                let htmlTable = result.map(appendLatlng)
+            })
+            .catch(handleError)
+    }, 5000)
+}
+//event triggered => get orderNumber => setViewCar(lat,lng,markers[orderNumber])

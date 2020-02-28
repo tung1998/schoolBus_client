@@ -1,6 +1,7 @@
 export {
     _METHODS,
     _SESSION,
+    _TRIP_STUDENT
 }
 
 const _METHODS = {
@@ -207,10 +208,34 @@ const _METHODS = {
         Create: 'sms.createSMS',
         Update: 'sms.updateSMS',
         Delete: 'sms.deleteSMS',
+    },
+    gps: {
+        getLast: 'monitoring.getLastgps'
     }
 }
 
 const _SESSION = {
     accessToken: 'accessToken',
     userID: 'userID'
+}
+
+const _TRIP_STUDENT = {
+    status : {
+        undefined:{
+            text: "Chưa xác nhận",
+            number: 0
+        },
+        pickUp:{
+            text: "Trên xe",
+            number: 1
+        },
+        getOff:{
+            text: "Xuống xe",
+            number: 2
+        },
+        absent:{
+            text: "Vắng mặt",
+            number: 3
+        }
+    }
 }
