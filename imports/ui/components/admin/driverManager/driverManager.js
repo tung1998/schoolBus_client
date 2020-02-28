@@ -159,6 +159,7 @@ function reloadTable() {
                 _id: key._id,
                 image: key.user.image,
                 name: key.user.name,
+                username: key.user.username,
                 phone: key.user.phone,
                 email: key.user.email,
                 address: key.address,
