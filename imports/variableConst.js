@@ -240,3 +240,24 @@ const _TRIP_STUDENT = {
         }
     }
 }
+
+const _TRIP = {
+    status : {
+        ready: {
+            text: "Đã sẵn sàng",
+            number: 0
+        },
+        moving: {
+            text: "Đang di chuyển",
+            number: 1
+        },
+        finish: {
+            text: "Đã kết thúc",
+            number: 3
+        },
+        accident: {
+            text: "Gặp sự cố",
+            number: 4
+        }
+    }
+}
