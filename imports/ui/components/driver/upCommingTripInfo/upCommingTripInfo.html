@@ -1,48 +1,75 @@
 <template name="upCommingTripInfo">
+    <div style="z-index: 1000; margin: 5px;">
+        <div class="fa-pull-right">
+            <button type="button" class="btn btn-success" id="studentListShowButton">
+                Xem Danh sách học sinh
+            </button>
+        </div>
+    </div>
     <div id="map"></div>
     <div class="student-info">
         {{> displayStudentInfoInUpCommingTrip}}
     </div>
+    <div class="student-list">
+        {{> displayStudentListInUpCommingTrip}}
+    </div>
 </template>
 
 <template name="displayStudentInfoInUpCommingTrip">
+    <div id="displayStudentInfoInUpCommingTrip">
+        
+    </div>
+
+</template>
+
+<template name="displayStudentListInUpCommingTrip">
     <div class="kt-portlet">
+        <div class="kt-portlet__head">
+            <div class="kt-portlet__head-label">
+                <h3 class="kt-portlet__head-title">
+                    Lịch sử
+                </h3>
+            </div>
+        </div>
         <div class="kt-portlet__body">
-            <div class="kt-widget kt-widget--user-profile-3">
-                <div class="kt-widget__top">
-                    <div class="kt-widget__media kt-hidden-">
-                        <img src="./assets/media/users/100_1.jpg" alt="image">
-                    </div>
-                    <div class="kt-widget__pic kt-widget__pic--danger kt-font-danger kt-font-boldest kt-font-light kt-hidden">
-                        JM
-                    </div>
-                    <div class="kt-widget__content">
-                        <div class="kt-widget__head">
-                            <a href="#" class="kt-widget__username" id="studentName">
-                                Jason Muller    
-                                <!-- <i class="flaticon2-correct kt-font-success"></i>   -->
-                                                    
-                            </a>
-                            <span id="status" style="color: red; padding-bottom: 0.6rem;"><b>Chưa lên xe</b></span> 
-    
-                            <div class="kt-widget__action">
-                                <button type="button" class="btn btn-label-success btn-sm btn-upper" id="confirmPickedUp">Đã đón</button>&nbsp;
-                                <button type="button" class="btn btn-brand btn-sm btn-upper" id="confirmDroppedOut">Đã xuống xe</button>
-                            </div>
-                        </div>
-    
-                        <div class="kt-widget__subhead">
-                            <div><i class="flaticon2-new-email" ></i>&nbsp;Email:&nbsp;<a id="email">jason@siastudio.com</a></div>
-                            <div><i class="flaticon2-calendar-3" ></i>&nbsp;Sđt:&nbsp;<a id="phoneNumber">0975122358</a></div>
-                            <div><i class="flaticon2-placeholder" ></i>&nbsp;Địa chỉ đón:&nbsp;<a id="pickupAddress">Melbourne</a></div>
-                            <div><i class="flaticon2-calendar-3" ></i>&nbsp;Sđt phụ huynh:&nbsp;<a id="parentsPhoneNumber">0975122358</a></div>
-                        </div>
-    
-                        <div class="kt-widget__info">
-                        </div>
-                    </div>
+            <!--begin::Section-->
+            <div class="kt-section">
+                <span class="kt-section__info">
+                </span>
+                <div class="kt-section__content">
+                    <table class="table table-sm table-head-bg-brand">
+                        <thead class="thead-inverse">
+                            <tr>
+                                <th>#</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Username</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>Jhon</td>
+                                <td>Stone</td>
+                                <td>@jhon</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">2</th>
+                                <td>Lisa</td>
+                                <td>Nilson</td>
+                                <td>@lisa</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">3</th>
+                                <td>Larry</td>
+                                <td>the Bird</td>
+                                <td>@twitter</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
+            <!--end::Section-->
         </div>
     </div>
 </template>

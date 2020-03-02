@@ -19,7 +19,7 @@ Blaze._allowJavascriptUrls()
 
 // Set up all routes in the app
 
-/*FlowRouter.triggers.enter([function (context, redirect) {
+FlowRouter.triggers.enter([function (context, redirect) {
     let accessToken = Cookies.get('accessToken');
     if (!accessToken) FlowRouter.go('/login');
     else {
@@ -30,7 +30,7 @@ Blaze._allowJavascriptUrls()
     }
 }], {
     except: ["App.login"]
-});*/
+});
 
 FlowRouter.route('/', {
     name: 'App.home',

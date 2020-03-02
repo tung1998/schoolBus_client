@@ -28,3 +28,4 @@ import '../../api/methods/studentList';
 import '../../api/methods/student';
 import '../../api/methods/carStopTrip';
 import '../../api/methods/gps';
+import '../../api/methods/wemap';

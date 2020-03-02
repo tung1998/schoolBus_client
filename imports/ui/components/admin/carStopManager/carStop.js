@@ -18,7 +18,7 @@ Template.carStop.onRendered(() => {
     //reloadTable();
 });
 
-Template.minimap.onRendered(function () {
+Template.minimap.onRendered(function() {
     setMapHeight()
     L.Icon.Default.imagePath = '/packages/bevanhunt_leaflet/images/';
     let minimap = L.map('minimap', {
@@ -34,17 +34,40 @@ Template.minimap.onRendered(function () {
     }).addTo(minimap);
 
     let marker = L.marker([21.03709858, 105.78349972]).addTo(minimap);
-    minimap.on('move', function () {
+    minimap.on('move', function() {
         marker.setLatLng(minimap.getCenter());
     });
 
     //Dragend event of map for update marker position
-    minimap.on('dragend', function (e) {
+    minimap.on('dragend', function(e) {
         let cnt = minimap.getCenter();
         let position = marker.getLatLng();
-        lat = Number(position['lat']).toFixed(5);
-        lng = Number(position['lng']).toFixed(5);
-        $('.position').val(lat + ' ' + lng);
+        lat = Number(position['lat']);
+        lng = Number(position['lng']);
+        let adr = getAddress(lat, lng);
+        console.log(adr)
+
+        MeteorCall(_METHODS.wemap.getAddress, { lat: lat, lng: lng }, accessToken).then(result => {
+            let props = result.features[0].properties;
+            let cor = result.features[0].geometry.coordinates;
+            let addressElement = {
+                name: props.name,
+                housenumber: props.housenumber,
+                street: props.street,
+                city: props.city,
+                district: props.district,
+                state: props.state
+            }
+
+            address = addressElement.name + ', ' +
+                addressElement.housenumber + ', ' +
+                addressElement.street + ', ' +
+                addressElement.city + ', ' +
+                addressElement.district + ', ' +
+                addressElement.state + ', ';
+            $('.position').val(cor[1] + ' ' + cor[0]);
+            $('.address').val(address)
+        }).catch(handleError)
     });
 })
 
@@ -103,4 +126,31 @@ function getLatLng(string) {
     LatLng[0] = parseFloat(LatLng[0]);
     LatLng[1] = parseFloat(LatLng[1]);
     return LatLng;
+}
+
+async function getAddress(lat, lng) {
+    try {
+        let result = await MeteorCall(_METHODS.wemap.getAddress, { lat: lat, lng: lng }, accessToken);
+        console.log(result)
+        let props = result.features[0].properties;
+        let addressElement = {
+            name: props.name,
+            housenumber: props.housenumber,
+            street: props.street,
+            city: props.city,
+            district: props.district,
+            state: props.state
+        }
+
+        let address = addressElement.name + ', ' +
+            addressElement.housenumber + ', ' +
+            addressElement.street + ', ' +
+            addressElement.city + ', ' +
+            addressElement.district + ', ' +
+            addressElement.state + ', ';
+        //console.log(address)
+        return address
+    } catch (err) {
+        handleError(err)
+    }
 }
