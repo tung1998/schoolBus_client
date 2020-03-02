@@ -64,26 +64,26 @@ function clickSubmitButton() {
     let data = getInputData()
     console.log(data);
 
-    if (!data._id) {
-        MeteorCall(_METHODS.driver.Create, data, accessToken).then(result => {
-            reloadTable()
-            clearForm()
-            console.log("đã thêm mới");
-            handleSuccess("Thêm",  `tài xế ${data.name}`).then(() => {
-                $('#editDriverModal').modal("hide")
-            })
-        }).catch(handleError)
-    }
-    else {
-        MeteorCall(_METHODS.driver.Update, data, accessToken).then(result => {
-            reloadTable()
-            clearForm()
-            handleSuccess("Cập nhật",  `tài xế ${data.name}`).then(() => {
-                $('#editDriverModal').modal("hide")
-            })
-            console.log("đã update");
-        }).catch(handleError)
-    }
+    // if (!data._id) {
+    //     MeteorCall(_METHODS.driver.Create, data, accessToken).then(result => {
+    //         reloadTable()
+    //         clearForm()
+    //         console.log("đã thêm mới");
+    //         handleSuccess("Thêm",  `tài xế ${data.name}`).then(() => {
+    //             $('#editDriverModal').modal("hide")
+    //         })
+    //     }).catch(handleError)
+    // }
+    // else {
+    //     MeteorCall(_METHODS.driver.Update, data, accessToken).then(result => {
+    //         reloadTable()
+    //         clearForm()
+    //         handleSuccess("Cập nhật",  `tài xế ${data.name}`).then(() => {
+    //             $('#editDriverModal').modal("hide")
+    //         })
+    //         console.log("đã update");
+    //     }).catch(handleError)
+    // }
 
 }
 

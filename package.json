@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.7.6",
+    "base-64": "^0.1.0",
     "js-cookie": "^2.2.1",
     "leaflet-routing-machine": "^3.2.12",
     "meteor-node-stubs": "^1.0.0",
