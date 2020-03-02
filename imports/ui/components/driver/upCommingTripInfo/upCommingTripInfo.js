@@ -1,13 +1,27 @@
 import './upCommingTripInfo.html';
 
+import {
+    MeteorCall,
+    handleError
+} from '../../../../functions'
+
+import {
+    _METHODS
+} from '../../../../variableConst'
+
+let accessToken;
 
 Template.upCommingTripInfo.onCreated(() => {
-
+    accessToken = Cookies.get('accessToken')
 })
 
 Template.upCommingTripInfo.onRendered(() => {
     $(document).ready(() => {
         $(".kt-footer").hide();
+        $("#map").show();
+        $(".student-info").show();
+        $(".student-list").hide();
+        $("#studentListShowButton").html("Xem danh sách học sinh");
         setMapHeight();
     })
 
@@ -43,36 +57,7 @@ function setMapHeight() {
 }
 
 function renderMap() {
-    let testData = [{
-        location: {
-            lat: 21.028751,
-            lng: 105.813189
-        },
-        info: {
-            name: "Trịnh Minh Hoàng",
-            age: "20",
-            email: "abc@gmail.com",
-            phoneNumber: "0658412666",
-            parentsPhoneNumber: "08716262625",
-            pickupAddress: "hà nội"
-        }
-    },
-    {
-        location: {
-            lat: 21.008561,
-            lng: 105.826406
-        },
-        info: {
-            name: "Lê Ngọc nLinh",
-            age: "20",
-            email: "abc@gmail.com",
-            phoneNumber: "0658412666",
-            parentsPhoneNumber: "08716262625",
-            pickupAddress: "hà nội"
-        }
-    },
-    ]
-    let map = L.map('map').setView([testData[0].location.lat, testData[0].location.lng], 16);
+    let map = L.map('map').setView([21.030674, 105.800443], 16);
     map.locate({ setView: true, maxZoom: 16 });
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -81,11 +66,38 @@ function renderMap() {
         accessToken: 'pk.eyJ1IjoibGluaGxuIiwiYSI6ImNrMTZpZ2R5ZDAzcXMzbmt3cGZ5ejlxaXEifQ.egi3vPgOfYIKA1psvosktg'
     }).addTo(map);
 
-    renderStudentLocation(testData, map);
+    let driverID = "5e58c859ffabd92d6d68dbb5";
+    MeteorCall(_METHODS.trip.GetAll, null, accessToken).then(result => {
+        let data = result.data.map(trip => {
+            if(trip.driver._id == driverID){
+                let students = trip.students;
+                let studentData = students.map(student => {
+                    let location = student.student.carStop.location;
+                    let data = {
+                        location: {
+                            lat: location[0],
+                            lng: location[1]
+                        },
+                        info: {
+                            name: student.student.user.name,
+                            age: "20",
+                            email: student.student.user.email,
+                            phoneNumber: student.student.user.phone,
+                            parentsPhoneNumber: "08716262625",
+                            pickupAddress: student.student.carStop.address
+                        }
+                    }
+
+                    return data
+                })
+                renderStudentLocation(studentData, map)
+            }
+        })
+    })
 }
 
 function renderStudentLocation(dt, map) {
-    dt.forEach((item, index) => {
+    dt.map((item, index) => {
         let marker = L.marker([item.location.lat, item.location.lng]).addTo(map);
         marker._icon.classList.add(`map-marker${index}`);
         $(".leaflet-marker-icon").attr("src", "/img/black-marker.png");
