@@ -91,12 +91,11 @@ function getBase64(file) {
     });
 }
 
-function makeID(length = 20) {
-    let result = ''
+function makeID(text = "", length = 15) {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
     const charactersLength = characters.length
     for (let i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength))
+        text += characters.charAt(Math.floor(Math.random() * charactersLength))
     }
-    return result
+    return text
 }

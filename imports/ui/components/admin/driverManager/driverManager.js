@@ -65,7 +65,7 @@ async function clickSubmitButton() {
     try {
         let data = getInputData()
         if ($('#driver-image').val()) {
-            let imageId = makeID()
+            let imageId = makeID("user")
             let BASE64 = await getBase64($('#driver-image')[0].files[0])
             console.log(imageId, BASE64)
             let importImage = await MeteorCall(_METHODS.image.Import, {
