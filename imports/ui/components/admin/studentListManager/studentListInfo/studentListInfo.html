@@ -22,42 +22,33 @@
       </div>
     </div>
     <!-- end:: Subheader -->
-
     <!-- begin:: Content -->
     <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-      <div class="row" id="listStudentPortlet">
-        <div class="col">
-          <div class="kt-portlet">
-            <div class="kt-portlet__head">
-              <div class="kt-portlet__head-label">
-                <h3 class="kt-portlet__head-title">
-                  Danh sách học sinh
-                </h3>
-              </div>
+      <div class="kt-portlet kt-portlet--tabs">
+        <div class="kt-portlet__head">
+          <div class="kt-portlet__head-toolbar">
+            <ul class="nav nav-tabs nav-tabs-space-xl nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand"
+              role="tablist">
+              <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#studentList" role="tab">
+                  <i class="fa fa-home"></i> Danh sách học sinh
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#carStopList" role="tab">
+                  <i class="fa fa-user"></i> Quản lý điểm dừng
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="kt-portlet__body">
+          <div class="tab-content">
+            <div class="tab-pane active" id="studentList" role="tabpanel">
+              {{> studentList_studentListInfo}}
             </div>
-            <div class="kt-portlet__body">
-              <!--begin::Section-->
-              <div class="kt-section">
-                <div class="kt-section__content">
-                  <button type="button" class="btn btn-outline-brand mb-4" data-toggle="modal"
-                    data-target="#editStudentListModal">Chỉnh sửa</button>
-                  <table class="table table-bordered table-hover">
-                    <thead class="thead-light">
-                      <tr>
-                        <th>#</th>
-                        <th>Mã học sinh</th>
-                        <th>Họ tên</th>
-                        <th>Lớp</th>
-                        <th>Email</th>
-                        <th>Số điện thoại</th>
-                      </tr>
-                    </thead>
-                    <tbody id="studentTable">
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              <!--end::Section-->
+            <div class="tab-pane" id="carStopList" role="tabpanel">
+              {{> carStopList_studentListInfo}}
             </div>
           </div>
         </div>
@@ -67,6 +58,87 @@
   </div>
   {{> editStudentListModal}}
 </template>
+
+<template name="studentList_studentListInfo">
+  <div class="kt-section">
+    <div class="kt-section__content">
+      <button type="button" class="btn btn-outline-brand mb-4" data-toggle="modal"
+        data-target="#editStudentListModal">Chỉnh sửa</button>
+      <table class="table table-bordered table-hover">
+        <thead class="thead-light">
+          <tr>
+            <th>#</th>
+            <th>Mã học sinh</th>
+            <th>Họ tên</th>
+            <th>Lớp</th>
+            <th>Email</th>
+            <th>Số điện thoại</th>
+          </tr>
+        </thead>
+        <tbody id="studentTable">
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
+
+<template name="carStopList_studentListInfo">
+  <!--begin::Section-->
+  <div class="kt-section">
+    <div class="kt-section__content">
+      <div class="row">
+        <div class="col-6">
+          <div class="ui-sortable" id="kt_sortable_portlets">
+            <div class="kt-portlet kt-portlet--mobile kt-portlet--sortable">
+              <div class="kt-portlet__head ui-sortable-handle">
+                <div class="kt-portlet__head-label">
+                  <h3 class="kt-portlet__head-title">
+                    Portlet Title
+                  </h3>
+                </div>
+              </div>
+
+            </div>
+            <div class="kt-portlet kt-portlet--mobile kt-portlet--sortable">
+              <div class="kt-portlet__head ui-sortable-handle">
+                <div class="kt-portlet__head-label">
+                  <h3 class="kt-portlet__head-title">
+                    Portlet Title
+                  </h3>
+                </div>
+              </div>
+
+            </div>
+            <div class="kt-portlet kt-portlet--mobile kt-portlet--sortable">
+              <div class="kt-portlet__head ui-sortable-handle">
+                <div class="kt-portlet__head-label">
+                  <h3 class="kt-portlet__head-title">
+                    Portlet Title
+                  </h3>
+                </div>
+              </div>
+
+            </div>
+            <div class="kt-portlet kt-portlet--mobile kt-portlet--sortable kt-bg-dark">
+              <div class="kt-portlet__head ui-sortable-handle">
+                <div class="kt-portlet__head-label">
+                  <h3 class="kt-portlet__head-title">
+                    Portlet Title
+                  </h3>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--end::Section-->
+</template>
+
 <template name="editStudentListModal">
   <div class="modal fade" id="editStudentListModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     style="display: none;" aria-hidden="true">
