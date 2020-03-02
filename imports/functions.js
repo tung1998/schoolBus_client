@@ -8,6 +8,8 @@ export {
     handleSuccess,
     handleConfirm,
     redirectLogin,
+    getBase64,
+    makeID
 }
 
 function MeteorCall(method = "", data = null, accessToken = "") {
@@ -78,4 +80,23 @@ function redirectLogin() {
     localStorage.removeItem('modules');
     FlowRouter.redirect('/login');
     Push.setUser();
+}
+
+function getBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
+
+function makeID(length = 10) {
+    let result = ''
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    const charactersLength = characters.length
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength))
+    }
+    return result
 }
