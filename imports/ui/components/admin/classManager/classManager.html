@@ -110,52 +110,9 @@
                   >Trường</label
                 >
                 <div class="col-10">
-                  <div class="dropdown bootstrap-select form-control kt-">
-                    <select
-                      class="form-control kt-selectpicker"
-                      data-size="4"
-                      tabindex="-98"
-                    >
-                      <option>Mustard</option> </select
-                    ><button
-                      type="button"
-                      class="btn dropdown-toggle btn-light button-school-selected"
-                      data-toggle="dropdown"
-                      role="combobox"
-                      aria-owns="bs-select-2"
-                      aria-haspopup="listbox"
-                      aria-expanded="false"
-                      title="chọn trường"
-                    >
-                      <div class="filter-option">
-                        <div class="filter-option-inner">
-                          <div class="filter-option-inner-inner school-result">Chọn Trường</div>
-                        </div>
-                      </div>
-                    </button>
-                    <div
-                      class="dropdown-menu"
-                      x-placement="bottom-start"
-                      style="max-height: 182px; overflow: hidden; min-width: 393px; position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 36px, 0px);"
-                    >
-                      <div
-                        class="inner show"
-                        role="listbox"
-                        id="bs-select-2"
-                        tabindex="-1"
-                        aria-activedescendant="bs-select-2-1"
-                        style="max-height: 156px; overflow-y: auto;"
-                      >
-                        <ul
-                          class="dropdown-menu inner show"
-                          role="presentation"
-                          style="margin-top: 0px; margin-bottom: 0px;"
-                          id="school-select"
-                        >
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
+                  <select id="school-select" class="form-control">
+                    <option value=""></option>
+                  </select>
                 </div>
               </div>
               <div class="form-group row">
@@ -163,52 +120,9 @@
                   >Giáo Viên</label
                 >
                 <div class="col-10">
-                  <div class="dropdown bootstrap-select form-control kt-">
-                    <select
-                      class="form-control kt-selectpicker"
-                      data-size="4"
-                      tabindex="-98"
-                    >
-                      <option>Mustard</option> </select
-                    ><button
-                      type="button"
-                      class="btn dropdown-toggle btn-light button-teacher-selected"
-                      data-toggle="dropdown"
-                      role="combobox"
-                      aria-owns="bs-select-2"
-                      aria-haspopup="listbox"
-                      aria-expanded="false"
-                      title="chọn lớp"
-                    >
-                      <div class="filter-option">
-                        <div class="filter-option-inner">
-                          <div class="filter-option-inner-inner teacher-result">Chọn Giáo Viên</div>
-                        </div>
-                      </div>
-                    </button>
-                    <div
-                      class="dropdown-menu"
-                      x-placement="bottom-start"
-                      style="max-height: 182px; overflow: hidden; min-width: 393px; position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 36px, 0px);"
-                    >
-                      <div
-                        class="inner show"
-                        role="listbox"
-                        id="bs-select-2"
-                        tabindex="-1"
-                        aria-activedescendant="bs-select-2-1"
-                        style="max-height: 156px; overflow-y: auto;"
-                      >
-                        <ul
-                          class="dropdown-menu inner show"
-                          role="presentation"
-                          style="margin-top: 0px; margin-bottom: 0px;"
-                          id="teacher-select"
-                        >
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
+                  <select id="teacher-select" class="form-control">
+                    <option value=""></option>
+                  </select>
                 </div>
               </div>
               <div class="form-group row">
@@ -216,7 +130,7 @@
                   >Lớp</label
                 >
                 <div class="col-10">
-                  <input class="form-control" type="text" id="example-url-input" name="className">
+                  <input class="form-control" type="text" id="class-name" name="className">
                 </div>
               </div>
             </div>

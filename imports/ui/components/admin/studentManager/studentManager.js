@@ -89,7 +89,6 @@ function addToTable(dt, result) {
     status: dt.status
   }
   $("#table-body").prepend(`<tr id=${data._id}>
-                                <td scope="row"></td>
                                 <td>${data.name}</td>
                                 <td>${data.address}</td>
                                 <td>${data.phone}</td>
@@ -134,12 +133,12 @@ function modifyTable(dt) {
                             <td>${data.IDStudent}</td>
                             <td>${data.carStop}</td>
                             <td>
-                            <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
-                            data
-                            )}\'>Sửa</button>
-                            <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(
-                            data
-                            )}\'>Xóa</button>
+                              <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
+                              data
+                              )}\'>Sửa</button>
+                              <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(
+                              data
+                              )}\'>Xóa</button>
                             </td>`);
 }
 
@@ -150,12 +149,11 @@ function deleteRow(data) {
 async function reloadTable() {
   MeteorCall(_METHODS.student.GetAll, {}, accessToken).then(result => {
     let html = result.data.map(htmlRow);
-
     $("#table-body").html(html.join(" "));
   });
 }
 
-function htmlRow(result) {
+function htmlRow(result, index) {
   let data = {
     _id: result._id,
     name: result.user.name,
@@ -255,9 +253,10 @@ function SubmitForm(event) {
     MeteorCall(_METHODS.student.Create, data, accessToken)
       .then(result => {
         handleSuccess("Thêm", "học sinh").then(() => {
-          $("#editStudentModal").modal("hide");
+          // $("#editStudentModal").modal("hide");
         })
         addToTable(data, result)
+        clearForm()
       })
       .catch(handleError);
   } else {
@@ -268,6 +267,7 @@ function SubmitForm(event) {
           $("#editStudentModal").modal("hide");
         })
         modifyTable(data)
+        
       })
       .catch(handleError);
   }
@@ -286,7 +286,8 @@ function clearForm() {
 }
 
 function initSelect2() {
-  let initSelect2 = [{
+  let initSelect2 = [
+    {
       id: 'student-school',
       name: 'Chọn trường'
     },
