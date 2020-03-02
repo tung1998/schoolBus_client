@@ -11,7 +11,8 @@ import {
     handleError,
     handleSuccess,
     handleConfirm,
-    getBase64
+    getBase64,
+    makeID
 
 } from '../../../../functions'
 
@@ -60,33 +61,37 @@ function clickEditButton(event) {
     $('.modal-footer').find('.btn.btn-primary').html("Cập nhật")
 }
 
-function clickSubmitButton() {
-    let data = getInputData()
-    // console.log(data);
-
-
-
-    // if (!data._id) {
-    //     MeteorCall(_METHODS.driver.Create, data, accessToken).then(result => {
-    //         reloadTable()
-    //         clearForm()
-    //         console.log("đã thêm mới");
-    //         handleSuccess("Thêm",  `tài xế ${data.name}`).then(() => {
-    //             $('#editDriverModal').modal("hide")
-    //         })
-    //     }).catch(handleError)
-    // }
-    // else {
-    //     MeteorCall(_METHODS.driver.Update, data, accessToken).then(result => {
-    //         reloadTable()
-    //         clearForm()
-    //         handleSuccess("Cập nhật",  `tài xế ${data.name}`).then(() => {
-    //             $('#editDriverModal').modal("hide")
-    //         })
-    //         console.log("đã update");
-    //     }).catch(handleError)
-    // }
-
+async function clickSubmitButton() {
+    try {
+        let data = getInputData()
+        if ($('#driver-image').val()) {
+            let imageId = makeID()
+            let BASE64 = await getBase64($('#driver-image')[0].files[0])
+            console.log(imageId, BASE64)
+            let importImage = await MeteorCall(_METHODS.image.Import, {
+                imageId,
+                BASE64: [BASE64]
+            }, accessToken)
+            if (importImage.error)
+                handleError(result, "Không tải được ảnh lên server!")
+            else data.image = imageId
+        }
+        if (!data._id) {
+            await MeteorCall(_METHODS.driver.Create, data, accessToken)
+            console.log("đã thêm mới");
+            handleSuccess("Thêm", `tài xế ${data.name}`)
+            $('#editDriverModal').modal("hide")
+        } else {
+            await MeteorCall(_METHODS.driver.Update, data, accessToken)
+            handleSuccess("Cập nhật", `tài xế ${data.name}`)
+            $('#editDriverModal').modal("hide")
+            console.log("đã update");
+        }
+        reloadTable()
+        clearForm()
+    } catch (error) {
+        handleError(error)
+    }
 }
 
 function clickDelButton(event) {
@@ -106,7 +111,7 @@ function clickDelButton(event) {
     })
 }
 
-async function getInputData() {
+function getInputData() {
     let input = {
         username: $('#driver-phone').val(),
         password: '12345678',
@@ -125,30 +130,22 @@ async function getInputData() {
     if ($('#driver-id').val()) {
         input._id = $('#driver-id').val()
     }
-    if ($('#driver-image').val()) {
-        console.log($('#driver-image')[0].files[0])
-        let data = await getBase64($('#driver-image')[0].files[0])
-        console.log(data)
-    }
-    let image = $('#driver-image').val().replace("C:\\fakepath\\", "")
-    input.image = image
-
     return input
 }
 
 function clearForm() {
-    $('#driver-name').val(''),
-        $('#driver-phone').val(''),
-        $('#driver-email').val(''),
-        $('#driver-address').val(''),
-        $('#driver-IDNumber').val(''),
-        $('#driver-IDIssueDate').val(''),
-        $('#driver-IDIssueBy').val(''),
-        $('#driver-DLNumber').val(''),
-        $('#driver-DLIssueDate').val(''),
-        $('#driver-id').val('')
+    $('#driver-name').val('')
+    $('#driver-phone').val('')
+    $('#driver-email').val('')
+    $('#driver-address').val('')
+    $('#driver-IDNumber').val('')
+    $('#driver-IDIssueDate').val('')
+    $('#driver-IDIssueBy').val('')
+    $('#driver-DLNumber').val('')
+    $('#driver-DLIssueDate').val('')
+    $('#driver-id').val('')
     //reset image
-    $(".custom-file-label").html('')
+    $('#driver-image').val('')
 
 
 }
@@ -174,7 +171,6 @@ function reloadTable() {
             return `<tr id="${key._id}">
                         <th scope="row">${index + 1}</th>
                         <td>${driver.name}</td>
-                        <td>${driver.username}</td>
                         <td>${driver.phone}</td>
                         <td>${driver.email}</td>
                         <td>${driver.address}</td>

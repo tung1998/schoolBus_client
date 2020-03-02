@@ -91,7 +91,7 @@ function getBase64(file) {
     });
 }
 
-function makeID(length = 10) {
+function makeID(length = 20) {
     let result = ''
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
     const charactersLength = characters.length
