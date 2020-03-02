@@ -119,13 +119,14 @@ function ClickDeleteButton(event) {
   handleConfirm().then(result => {
     if (result.value) {
       let data = $(event.currentTarget).data("json");
-      MMeteorCall(_METHODS.class.Delete, data, accessToken)
+      MeteorCall(_METHODS.class.Delete, data, accessToken)
       .then(() => {
         Swal.fire({
           icon: "success",
           text: "Đã xóa thành công",
           timer: 3000
         })
+        reloadTable()
       }).catch(handleError)
     } else {
 
