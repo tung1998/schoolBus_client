@@ -9,7 +9,8 @@ import {
   MeteorCall,
   handleError,
   handleSuccess,
-  handleConfirm
+  handleConfirm,
+  addRequiredInputLabel
 } from "../../../../functions";
 
 import {
@@ -27,6 +28,7 @@ Template.studentManager.onRendered(() => {
   renderSchoolName();
   renderCarStopID();
   initSelect2()
+  addRequiredInputLabel();
 });
 
 Template.studentManager.events({
@@ -100,11 +102,11 @@ function addToTable(dt, result) {
                                 <td>${data.carStop}</td>
                                 <td>
                                 <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
-                                data
-                                )}\'>Sửa</button>
+    data
+  )}\'>Sửa</button>
                                 <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(
-                                data
-                                )}\'>Xóa</button>
+    data
+  )}\'>Xóa</button>
                                 </td>
                             </tr>`);
 }
@@ -135,11 +137,11 @@ function modifyTable(dt) {
                             <td>${data.carStop}</td>
                             <td>
                             <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
-                            data
-                            )}\'>Sửa</button>
+    data
+  )}\'>Sửa</button>
                             <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(
-                            data
-                            )}\'>Xóa</button>
+    data
+  )}\'>Xóa</button>
                             </td>`);
 }
 
@@ -182,11 +184,11 @@ function htmlRow(result) {
             <td>${data.carStop}</td>
             <td>
             <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
-              data
-            )}\'>Sửa</button>
+    data
+  )}\'>Sửa</button>
             <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(
-              data
-            )}\'>Xóa</button>
+    data
+  )}\'>Xóa</button>
             </td>
         </tr>`;
 }
@@ -238,39 +240,66 @@ function ClickDeleteButton(event) {
 
 function SubmitForm(event) {
   event.preventDefault();
-  let data = {
-    IDStudent: $('input[name="IDstudent"]').val(),
-    address: $('input[name="address"]').val(),
-    name: $('input[name="name"]').val(),
-    email: $('input[name="email"]').val(),
-    phone: $('input[name="phone"]').val(),
-    status: $('input[name="status"]').val(),
-    carStopID: $('#student-carStopID').val(),
-    classID: $('#student-class').val(),
-    schoolID: $('#student-school').val()
-  };
-  let modify = $("#editStudentModal").attr("studentID");
+  if (checkInput()) {
+    let data = {
+      IDStudent: $('input[name="IDstudent"]').val(),
+      address: $('input[name="address"]').val(),
+      name: $('input[name="name"]').val(),
+      email: $('input[name="email"]').val(),
+      phone: $('input[name="phone"]').val(),
+      status: $('input[name="status"]').val(),
+      carStopID: $('#student-carStopID').val(),
+      classID: $('#student-class').val(),
+      schoolID: $('#student-school').val()
+    };
+    let modify = $("#editStudentModal").attr("studentID");
 
-  if (modify == "") {
-    MeteorCall(_METHODS.student.Create, data, accessToken)
-      .then(result => {
-        handleSuccess("Thêm", "học sinh").then(() => {
-          $("#editStudentModal").modal("hide");
+    if (modify == "") {
+      MeteorCall(_METHODS.student.Create, data, accessToken)
+        .then(result => {
+          handleSuccess("Thêm", "học sinh").then(() => {
+            $("#editStudentModal").modal("hide");
+          })
+          addToTable(data, result)
         })
-        addToTable(data, result)
-      })
-      .catch(handleError);
-  } else {
-    data._id = modify;
-    MeteorCall(_METHODS.student.Update, data, accessToken)
-      .then(result => {
-        handleSuccess("Cập nhật", "học sinh").then(() => {
-          $("#editStudentModal").modal("hide");
+        .catch(handleError);
+    } else {
+      data._id = modify;
+      MeteorCall(_METHODS.student.Update, data, accessToken)
+        .then(result => {
+          handleSuccess("Cập nhật", "học sinh").then(() => {
+            $("#editStudentModal").modal("hide");
+          })
+          modifyTable(data)
         })
-        modifyTable(data)
-      })
-      .catch(handleError);
+        .catch(handleError);
+    }
   }
+
+}
+
+function checkInput() {
+  let IDstudent = $('input[name="IDstudent"]').val();
+  let name = $('input[name="name"]').val();
+  let address = $('input[name="address"]').val();
+  // let email = $('input[name="email"]').val();
+  let phone = $('input[name="phone"]').val();
+  let school = $('#student-school').val();
+  let className = $('#student-class').val();
+  let carStopID = $('#student-carStopID').val();
+  let status = $('input[name="status"]').val();
+
+  if (!IDstudent || !name || !address || !phone || !school || !className || !carStopID || !status) {
+    Swal.fire({
+      icon: "error",
+      text: "Làm ơn điền đầy đủ thông tin",
+      timer: 3000
+    })
+    return false;
+  } else {
+    return true;
+  }
+
 }
 
 function clearForm() {
@@ -287,17 +316,17 @@ function clearForm() {
 
 function initSelect2() {
   let initSelect2 = [{
-      id: 'student-school',
-      name: 'Chọn trường'
-    },
-    {
-      id: 'student-class',
-      name: 'Chọn lớp'
-    },
-    {
-      id: 'student-carStopID',
-      name: 'Chọn điểm đón, trả'
-    }
+    id: 'student-school',
+    name: 'Chọn trường'
+  },
+  {
+    id: 'student-class',
+    name: 'Chọn lớp'
+  },
+  {
+    id: 'student-carStopID',
+    name: 'Chọn điểm đón, trả'
+  }
   ]
   initSelect2.map((key) => {
     $(`#${key.id}`).select2({

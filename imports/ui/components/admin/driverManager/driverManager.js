@@ -11,7 +11,8 @@ import {
     MeteorCall,
     handleError,
     handleSuccess,
-    handleConfirm
+    handleConfirm,
+    addRequiredInputLabel
 
 } from '../../../../functions'
 
@@ -27,6 +28,7 @@ Template.driverManager.onCreated(() => {
 
 Template.driverManager.onRendered(() => {
     reloadTable()
+    addRequiredInputLabel()
 })
 
 Template.driverManager.events({
@@ -37,22 +39,22 @@ Template.driverManager.events({
     },
     'click #edit-button': clickEditButton,
     'click .submit-button': clickSubmitButton,
-    'click .delete-button': clickDelButton, 
+    'click .delete-button': clickDelButton,
 })
 
 function clickEditButton(event) {
     //fill data
     let data = $(event.currentTarget).data("json");
     $('#driver-name').val(data.name),
-    $('#driver-phone').val(data.phone),
-    $('#driver-email').val(data.email),
-    $('#driver-address').val(data.address),
-    $('#driver-IDNumber').val(data.IDNumber),
-    $('#driver-IDIssueDate').val(data.IDIssueDate),
-    $('#driver-IDIssueBy').val(data.IDIssueBy),
-    $('#driver-DLNumber').val(data.DLNumber),
-    $('#driver-DLIssueDate').val(data.DLIssueDate),
-    $(".custom-file-label").html(data.image)
+        $('#driver-phone').val(data.phone),
+        $('#driver-email').val(data.email),
+        $('#driver-address').val(data.address),
+        $('#driver-IDNumber').val(data.IDNumber),
+        $('#driver-IDIssueDate').val(data.IDIssueDate),
+        $('#driver-IDIssueBy').val(data.IDIssueBy),
+        $('#driver-DLNumber').val(data.DLNumber),
+        $('#driver-DLIssueDate').val(data.DLIssueDate),
+        $(".custom-file-label").html(data.image)
 
     $('#driver-id').val(data._id)
     //edit modal
@@ -63,39 +65,41 @@ function clickEditButton(event) {
 function clickSubmitButton() {
     let data = getInputData()
     console.log(data);
+    if (checkInput()) {
+        if (!data._id) {
+            MeteorCall(_METHODS.driver.Create, data, accessToken).then(result => {
+                reloadTable()
+                clearForm()
+                console.log("đã thêm mới");
+                handleSuccess("Thêm", `tài xế ${data.name}`).then(() => {
+                    $('#editDriverModal').modal("hide")
+                })
+            }).catch(handleError)
+        }
+        else {
+            MeteorCall(_METHODS.driver.Update, data, accessToken).then(result => {
+                reloadTable()
+                clearForm()
+                handleSuccess("Cập nhật", `tài xế ${data.name}`).then(() => {
+                    $('#editDriverModal').modal("hide")
+                })
+                console.log("đã update");
+            }).catch(handleError)
+        }
+    }
 
-    if (!data._id) {
-        MeteorCall(_METHODS.driver.Create, data, accessToken).then(result => {
-            reloadTable()
-            clearForm()
-            console.log("đã thêm mới");
-            handleSuccess("Thêm",  `tài xế ${data.name}`).then(() => {
-                $('#editDriverModal').modal("hide")
-            })
-        }).catch(handleError)
-    }
-    else {
-        MeteorCall(_METHODS.driver.Update, data, accessToken).then(result => {
-            reloadTable()
-            clearForm()
-            handleSuccess("Cập nhật",  `tài xế ${data.name}`).then(() => {
-                $('#editDriverModal').modal("hide")
-            })
-            console.log("đã update");
-        }).catch(handleError)
-    }
 
 }
 
 function clickDelButton(event) {
     handleConfirm().then(result => {
-        if(result.value) {
+        if (result.value) {
             let data = $(event.currentTarget).data("json");
             MeteorCall(_METHODS.driver.Delete, data, accessToken).then(result => {
                 console.log(result);
                 Swal.fire({
                     icon: "success",
-                    text: "Đã xóa thành công", 
+                    text: "Đã xóa thành công",
                     timer: 3000
                 })
                 reloadTable()
@@ -133,17 +137,40 @@ function getInputData() {
     return input
 }
 
+function checkInput() {
+    let name = $('#driver-name').val('');
+    let phone = $('#driver-phone').val('');
+    let email = $('#driver-email').val('');
+    let address = $('#driver-address').val('');
+    let IDNumber = $('#driver-IDNumber').val('');
+    let IDIssueDate = $('#driver-IDIssueDate').val('');
+    let IDIssueBy = $('#driver-IDIssueBy').val('');
+    let DLNumber = $('#driver-DLNumber').val('');
+    let  DLIssueDate = $('#driver-DLIssueDate').val('');
+    let id = $('#driver-id').val('');
+    if (!name || !address) {
+        Swal.fire({
+            icon: "error",
+            text: "Làm ơn điền đầy đủ thông tin",
+            timer: 3000
+        })
+        return false;
+    } else {
+        return true;
+    }
+}
+
 function clearForm() {
     $('#driver-name').val(''),
-    $('#driver-phone').val(''),
-    $('#driver-email').val(''),
-    $('#driver-address').val(''),
-    $('#driver-IDNumber').val(''),
-    $('#driver-IDIssueDate').val(''),
-    $('#driver-IDIssueBy').val(''),
-    $('#driver-DLNumber').val(''),
-    $('#driver-DLIssueDate').val(''),
-    $('#driver-id').val('')
+        $('#driver-phone').val(''),
+        $('#driver-email').val(''),
+        $('#driver-address').val(''),
+        $('#driver-IDNumber').val(''),
+        $('#driver-IDIssueDate').val(''),
+        $('#driver-IDIssueBy').val(''),
+        $('#driver-DLNumber').val(''),
+        $('#driver-DLIssueDate').val(''),
+        $('#driver-id').val('')
     //reset image
     $(".custom-file-label").html('')
 

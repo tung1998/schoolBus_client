@@ -8,6 +8,7 @@ export {
     handleSuccess,
     handleConfirm,
     redirectLogin,
+    addRequiredInputLabel,
 }
 
 function MeteorCall(method = "", data = null, accessToken = "") {
@@ -79,3 +80,7 @@ function redirectLogin() {
     FlowRouter.redirect('/login');
     Push.setUser();
 }
+
+function addRequiredInputLabel(){
+    $(".required-input-label").append(`&nbsp;<span style="color: red;">*</span>`)
+  }
