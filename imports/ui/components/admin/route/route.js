@@ -92,7 +92,8 @@ function initStudentListSelect2() {
 }
 
 function reloadTable() {
-    MeteorCall(_METHODS.route.GetAll, null, accessToken).then(result => {
+    MeteorCall(_METHODS.route.GetAll, {}, accessToken).then(result => {
+        console.log(result);
         if (result.data) {
             let htmlTable = result.data.map(htmlRow);
             $("#routeData").html(htmlTable.join(" "));

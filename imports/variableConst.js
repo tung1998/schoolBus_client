@@ -1,13 +1,15 @@
 export {
     _METHODS,
     _SESSION,
-    _TRIP_STUDENT
+    _TRIP_STUDENT,
+    LIMIT_DOCUMENT_PAGE
 }
 
 const _METHODS = {
     student: {
         GetAll: 'student.getAll',
         GetById: 'student.getByID',
+        GetByPage: 'student.getByPage',
         GetByClass: 'student.getByClass',
         Create: 'student.create',
         Update: 'student.update',
@@ -174,7 +176,6 @@ const _METHODS = {
         Create: 'teacher.create',
         Update: 'teacher.update',
         Delete: 'teacher.delete',
-        Delete: 'teacher.delete',
     },
     token: {
         GetAll: 'token.getAll',
@@ -269,3 +270,5 @@ const _TRIP = {
         }
     }
 }
+
+const LIMIT_DOCUMENT_PAGE = 10;
