@@ -371,7 +371,7 @@ FlowRouter.route('/trip/listStudent', {
 
 //teacher
 //xem danh sách học sinh
-FlowRouter.route('/teacher/listClass', {
+FlowRouter.route('/teacher/class', {
     name: 'teacher',
     action() {
         BlazeLayout.render('App_body', {
@@ -381,7 +381,7 @@ FlowRouter.route('/teacher/listClass', {
     },
 });
 
-FlowRouter.route('/teacher/listClass/class/:idClass', {
+FlowRouter.route('/teacher/class/:idClass([0-9a-fA-F]{24})', {
     name: 'teacher',
     action() {
         BlazeLayout.render('App_body', {

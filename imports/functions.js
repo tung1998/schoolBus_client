@@ -8,6 +8,7 @@ export {
     handleSuccess,
     handleConfirm,
     redirectLogin,
+    showLoading,
     getBase64,
     makeID
 }
@@ -71,6 +72,18 @@ function handleConfirm(title = "Bạn đã chắc chắn chưa?") {
         confirmButtonText: 'Đồng ý',
         cancelButtonText: 'Hủy'
     })
+}
+
+function showLoading() {
+    return Swal.fire({
+        title: 'Now loading',
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        
+        onBeforeOpen: () => {
+          swal.showLoading();
+        }
+      })
 }
 
 
