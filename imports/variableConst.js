@@ -92,7 +92,7 @@ const _METHODS = {
         Update: 'feedback.update',
         Delete: 'feedback.delete',
     },
-    image:{
+    image: {
         GetAll: 'image.getAll',
         GetById: 'image.getByID',
         Import: 'image.import',
@@ -206,7 +206,8 @@ const _METHODS = {
         Create: 'user.create',
         Update: 'user.update',
         Delete: 'user.delete',
-        GetCurrentInfor: 'user.getCurrentInfor'
+        GetCurrentInfor: 'user.getCurrentInfor',
+        UpdatePassword: 'user.updatePassword'
     },
     sms: {
         GetAll: 'sms.getSMS',
@@ -226,7 +227,8 @@ const _METHODS = {
 
 const _SESSION = {
     accessToken: 'accessToken',
-    userID: 'userID'
+    userID: 'userID',
+    username: 'username'
 }
 
 const _TRIP_STUDENT = {
@@ -251,7 +253,7 @@ const _TRIP_STUDENT = {
 }
 
 const _TRIP = {
-    status : {
+    status: {
         ready: {
             text: "Đã sẵn sàng",
             number: 0
