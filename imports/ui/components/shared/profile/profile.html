@@ -95,13 +95,13 @@
                       <div class="form-group row">
                         <label class="col-xl-3 col-lg-3 col-form-label">Họ tên</label>
                         <div class="col-lg-9 col-xl-6">
-                          <input class="form-control" type="text" disabled value="Nick">
+                          <input class="form-control name" type="text" disabled>
                         </div>
                       </div>
-                      <div class="form-group row">
+                      <div class="form-group row school_section">
                         <label class="col-xl-3 col-lg-3 col-form-label">Tên trường</label>
                         <div class="col-lg-9 col-xl-6">
-                          <input disabled class="form-control" type="text" value="Loop Inc.">
+                          <input disabled class="form-control schoolName" type="text">
                         </div>
                       </div>
                       <div class="form-group row">
@@ -110,7 +110,7 @@
                           <div class="input-group">
                             <div class="input-group-prepend"><span class="input-group-text"><i
                                   class="la la-phone"></i></span></div>
-                            <input disabled type="text" class="form-control" value="+35278953712" placeholder="Phone"
+                            <input disabled type="text" class="form-control phone" placeholder="Phone"
                               aria-describedby="basic-addon1">
                           </div>
                         </div>
@@ -121,8 +121,8 @@
                           <div class="input-group">
                             <div class="input-group-prepend"><span class="input-group-text"><i
                                   class="la la-at"></i></span></div>
-                            <input disabled type="text" class="form-control" value="nick.bold@loop.com" placeholder="Email"
-                              aria-describedby="basic-addon1">
+                            <input disabled type="text" class="form-control email"
+                              placeholder="Email" aria-describedby="basic-addon1">
                           </div>
                         </div>
                       </div>
@@ -142,36 +142,39 @@
                           <h3 class="kt-section__title kt-section__title-sm">Đổi mật khẩu</h3>
                         </div>
                       </div>
-                      <div class="form-group row">
-                        <label class="col-xl-3 col-lg-3 col-form-label">Mật khẩu hiện tại</label>
-                        <div class="col-lg-9 col-xl-6">
-                          <input type="password" class="form-control" value="" placeholder="Current password">
+                      <form>
+                        <div class="form-group row">
+                          <label class="col-xl-3 col-lg-3 col-form-label">Mật khẩu hiện tại</label>
+                          <div class="col-lg-9 col-xl-6">
+                            <input type="password" class="form-control oldPass" value="" placeholder="Mật khẩu hiện tại" name="currentPass">
+                          </div>
                         </div>
-                      </div>
-                      <div class="form-group row">
-                        <label class="col-xl-3 col-lg-3 col-form-label">Mật khẩu mới</label>
-                        <div class="col-lg-9 col-xl-6">
-                          <input type="password" class="form-control" value="" placeholder="New password">
+                        <div class="form-group row">
+                          <label class="col-xl-3 col-lg-3 col-form-label">Mật khẩu mới</label>
+                          <div class="col-lg-9 col-xl-6">
+                            <input type="password" class="form-control newPass" value="" placeholder="Mật khẩu mới" name="newPass">
+                          </div>
                         </div>
-                      </div>
-                      <div class="form-group form-group-last row">
-                        <label class="col-xl-3 col-lg-3 col-form-label">Xác nhận mật khẩu mới</label>
-                        <div class="col-lg-9 col-xl-6">
-                          <input type="password" class="form-control" value="" placeholder="Verify password">
+                        <div class="form-group form-group-last row">
+                          <label class="col-xl-3 col-lg-3 col-form-label">Xác nhận mật khẩu mới</label>
+                          <div class="col-lg-9 col-xl-6">
+                            <input type="password" class="form-control confirmation" value=""
+                              placeholder="Xác nhận mật khẩu mới" name="confirmation">
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                        <div class="kt-separator kt-separator--space-lg kt-separator--fit kt-separator--border-solid">
+                        </div>
 
-                <div class="kt-separator kt-separator--space-lg kt-separator--fit kt-separator--border-solid"></div>
-
-                <div class="kt-form__actions">
-                  <div class="row">
-                    <div class="col-xl-3"></div>
-                    <div class="col-lg-9 col-xl-6">
-                      <a href="#" class="btn btn-label-brand btn-bold">Xác nhận</a>
-                      <a href="#" class="btn btn-clean btn-bold">Hủy</a>
+                        <div class="kt-form__actions">
+                          <div class="row">
+                            <div class="col-xl-3"></div>
+                            <div class="col-lg-9 col-xl-6">
+                              <button type="submit" class="btn btn-label-brand btn-bold confirm-button">Xác nhận</button>
+                              <button class="btn btn-clean btn-bold">Hủy</button>
+                            </div>
+                          </div>
+                        </div>
+                      </form>
                     </div>
                   </div>
                 </div>
