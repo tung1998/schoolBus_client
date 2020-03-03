@@ -33,7 +33,7 @@ import '../../ui/components/admin/carManager/carManager.js';
 import '../../ui/components/admin/carStopManager/carStop.js';
 import '../../ui/components/admin/carStopList/carStopList.js';
 import '../../ui/components/admin/tripManager/tripManager.js';
-import '../../ui/components/admin/tripManager/tripDetail.js';
+import '../../ui/components/admin/tripManager/tripInfo/tripInfo';
 import '../../ui/components/admin/monitoring/monitoring.js';
 
 // import '../../ui/components/admin/admin/admin.js';

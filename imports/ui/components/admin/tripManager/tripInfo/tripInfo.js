@@ -1,4 +1,5 @@
-import './tripDetail.html'
+import './tripInfo.html'
+
 
 import {
     FlowRouter
@@ -11,12 +12,12 @@ import {
     handleError,
     handleConfirm,
     handleSuccess
-} from '../../../../functions';
+} from '../../../../../functions';
 
 import {
     _METHODS,
     _TRIP_STUDENT
-} from '../../../../variableConst';
+} from '../../../../../variableConst';
 
 let accessToken
 let tripID
@@ -27,6 +28,11 @@ Template.tripDetail.onCreated(() => {
 
 Template.tripDetail.onRendered(() => {
     reloadData()
+    console.log(qrScanner)
+    qrScanner.on('scan', (err, message) => {
+        if (message)
+            alert(message)
+    })
 })
 
 Template.tripDetail.events({
@@ -49,8 +55,9 @@ function clickStatusButton(e) {
     }).catch(handleError)
 }
 
+
 function reloadData() {
-    
+
     MeteorCall(_METHODS.trip.GetById, {
         _id: tripID
     }, accessToken).then(result => {
@@ -75,23 +82,23 @@ function reloadData() {
         //data học sinh
         let dataStudent = result.students
         let table = $('#table-studentList')
-        let row = dataStudent.map(htmlRow)
-        table.find("tbody").html(row.join(""))
+        // let row = dataStudent.map(htmlRow)
+        // table.find("tbody").html(row.join(""))
 
     }).catch(handleError)
 }
 
 
-function htmlRow(key, index){
+function htmlRow(key, index) {
     let studentInfo = {
         _id: key.studentID,
-        IDStudent: key.student.IDStudent,
+        IDStudent: key.student ? key.student.IDStudent : '',
         name: key.student.user.name,
         phone: key.student.user.phone,
-        class: key.student.class.name,
-        teacher: key.student.class.teacher.user.name,
-        school: key.student.class.school.name,
-        schoolAddress: key.student.class.school.address,
+        class: key.student.class ? key.student.class.name : '',
+        teacher: key.student.class ? key.student.class.teacher.user.name : '',
+        school: key.student.class ? key.student.class.school.name : '',
+        schoolAddress: key.student.class ? key.student.class.school.address : '',
         status: key.status
     }
 
