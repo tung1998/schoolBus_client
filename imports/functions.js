@@ -2,15 +2,21 @@ import {
     Meteor
 } from "meteor/meteor"
 
+import {
+    LIMIT_DOCUMENT_PAGE
+} from './variableConst'
+
 export {
     MeteorCall,
     handleError,
     handleSuccess,
     handleConfirm,
     redirectLogin,
-    showLoading,
+    addRequiredInputLabel,
+    passChangeHandleError,
     getBase64,
-    makeID
+    makeID,
+    tablePaging
 }
 
 function MeteorCall(method = "", data = null, accessToken = "") {
@@ -44,7 +50,25 @@ function handleError(error, title = "Có lỗi xảy ra") {
     });
 }
 
-function handleSuccess(type, name) {
+function passChangeHandleError(error, title = "") {
+    console.log(error);
+    return Swal.fire({
+        toast: true,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        onOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        },
+        icon: 'error',
+        title,
+        width: '30rem'
+    });
+}
+
+function handleSuccess(type, name = "") {
     let title = type + " " + name + " thành công";
     return Swal.fire({
         toast: true,
@@ -95,6 +119,9 @@ function redirectLogin() {
     Push.setUser();
 }
 
+function addRequiredInputLabel() {
+    $(".required-input-label").append(`&nbsp;<span style="color: red;">*</span>`)
+}
 function getBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -111,4 +138,47 @@ function makeID(text = "", length = 15) {
         text += characters.charAt(Math.floor(Math.random() * charactersLength))
     }
     return text
+}
+
+function tablePaging(tag = '.tablePaging', count, page = 1, limit = LIMIT_DOCUMENT_PAGE) {
+    let totalPage = Math.ceil(count / limit);
+    let start = page == 1 ? 'kt-datatable__pager-link--disabled disabledPaging' : ''
+    let previous = page == 1 ? 'kt-datatable__pager-link--disabled disabledPaging' : ''
+    let end = page == totalPage ? 'kt-datatable__pager-link--disabled disabledPaging' : ''
+    let next = page == totalPage ? 'kt-datatable__pager-link--disabled disabledPaging' : ''
+    let html = `
+    <li>
+        <a title="Về đầu" class="kt-datatable__pager-link kt-datatable__pager-link--first ${start}" data-page="1">
+            <i class="flaticon2-fast-back"></i>
+        </a>
+    </li>
+    <li>
+        <a title="Về trước" class="kt-datatable__pager-link kt-datatable__pager-link--prev ${previous}">
+            <i class="flaticon2-back"></i>
+        </a>
+    </li>
+    `
+    let pages = [page - 2, page - 1, page, page + 1, page + 2]
+    pages.forEach(item => {
+        if (item > 0 && item <= totalPage) {
+            let current = item == page ? 'kt-datatable__pager-link--active' : ''
+            html += `<li>
+                        <a class="kt-datatable__pager-link kt-datatable__pager-link-number ${current}" data-page=${item} title=${item}>${item}</a>
+                    </li>`
+        }
+    })
+    html += `
+    <li>
+        <a title="Tiếp theo" class="kt-datatable__pager-link kt-datatable__pager-link--next ${next}" data-page=${page}>
+            <i class="flaticon2-next"></i>
+        </a>
+    </li>
+    <li>
+        <a title="Về cuối" class="kt-datatable__pager-link kt-datatable__pager-link--last ${end}" data-page=${totalPage}>
+            <i class="flaticon2-fast-next"></i>
+        </a>
+    </li>
+    `
+    $(tag).html(html);
+    $(".disabledPaging").attr("disabled", "disabled");
 }

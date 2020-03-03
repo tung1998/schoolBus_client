@@ -1,13 +1,15 @@
 export {
     _METHODS,
     _SESSION,
-    _TRIP_STUDENT
+    _TRIP_STUDENT,
+    LIMIT_DOCUMENT_PAGE
 }
 
 const _METHODS = {
     student: {
         GetAll: 'student.getAll',
         GetById: 'student.getByID',
+        GetByPage: 'student.getByPage',
         GetByClass: 'student.getByClass',
         Create: 'student.create',
         Update: 'student.update',
@@ -90,7 +92,7 @@ const _METHODS = {
         Update: 'feedback.update',
         Delete: 'feedback.delete',
     },
-    image:{
+    image: {
         GetAll: 'image.getAll',
         GetById: 'image.getByID',
         Import: 'image.import',
@@ -204,7 +206,8 @@ const _METHODS = {
         Create: 'user.create',
         Update: 'user.update',
         Delete: 'user.delete',
-        GetCurrentInfor: 'user.getCurrentInfor'
+        GetCurrentInfor: 'user.getCurrentInfor',
+        UpdatePassword: 'user.updatePassword'
     },
     sms: {
         GetAll: 'sms.getSMS',
@@ -224,7 +227,8 @@ const _METHODS = {
 
 const _SESSION = {
     accessToken: 'accessToken',
-    userID: 'userID'
+    userID: 'userID',
+    username: 'username'
 }
 
 const _TRIP_STUDENT = {
@@ -249,7 +253,7 @@ const _TRIP_STUDENT = {
 }
 
 const _TRIP = {
-    status : {
+    status: {
         ready: {
             text: "Đã sẵn sàng",
             number: 0
@@ -268,3 +272,5 @@ const _TRIP = {
         }
     }
 }
+
+const LIMIT_DOCUMENT_PAGE = 10;

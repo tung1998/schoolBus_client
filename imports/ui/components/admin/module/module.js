@@ -9,7 +9,8 @@ import {
     MeteorCall,
     handleError,
     handleSuccess,
-    handleConfirm
+    handleConfirm,
+    addRequiredInputLabel
 
 } from '../../../../functions'
 
@@ -32,6 +33,7 @@ Template.moduleManager.onRendered(() => {
     });
 
     reloadTable()
+    addRequiredInputLabel()
 });
 
 
@@ -62,23 +64,26 @@ Template.moduleManager.events({
 
 function submitButton(e) {
     let data = getInputData()
-    if (!data._id) {
-        MeteorCall(_METHODS.modules.Create, data, accessToken).then(result => {
-            console.log(result);
-            reloadTable()
-            clearForm()
-            console.log("đã thêm mới");
-            handleSuccess("Thêm", "module")
-        }).catch(handleError)
+    if (checkInput()) {
+        if (!data._id) {
+            MeteorCall(_METHODS.modules.Create, data, accessToken).then(result => {
+                console.log(result);
+                reloadTable()
+                clearForm()
+                console.log("đã thêm mới");
+                handleSuccess("Thêm", "module")
+            }).catch(handleError)
+        }
+        else {
+            MeteorCall(_METHODS.modules.Update, data, accessToken).then(result => {
+                reloadTable()
+                clearForm()
+                handleSuccess("Cập nhật", "module")
+                console.log("đã update");
+            }).catch(handleError)
+        }
     }
-    else {
-        MeteorCall(_METHODS.modules.Update, data, accessToken).then(result => {
-            reloadTable()
-            clearForm()
-            handleSuccess("Cập nhật", "module")
-            console.log("đã update");
-        }).catch(handleError)
-    }
+
 }
 
 function clickEditButton(event) {
@@ -98,13 +103,13 @@ function clickEditButton(event) {
 function submitDelButton(event) {
     handleConfirm().then(result => {
         console.log(result);
-        if(result.value) {
+        if (result.value) {
             let data = $(event.currentTarget).data("json");
             MeteorCall(_METHODS.modules.Delete, data, accessToken).then(result => {
                 console.log(result);
                 Swal.fire({
                     icon: "success",
-                    text: "Đã xóa thành công", 
+                    text: "Đã xóa thành công",
                     timer: 3000
                 })
                 reloadTable()
@@ -114,7 +119,7 @@ function submitDelButton(event) {
 
         }
     })
-    
+
 }
 
 
@@ -140,6 +145,28 @@ function getInputData() {
     }
 
     return input;
+}
+
+function checkInput() {
+    let name = $('#module-name').val()
+    let description = $('#module-description').val()
+    let route = $('#module-route').val()
+    let parentRoute = $('#module-parent-route').val()
+    let icon = $('#module-icon').val()
+    let id = $('#module-id').val()
+    let permission = $('#module-permission').val()
+
+    if (!name || !route || !icon || !permission) {
+        Swal.fire({
+            icon: "error",
+            text: "Làm ơn điền đầy đủ thông tin",
+            timer: 3000
+        })
+        return false;
+    } else {
+        return true;
+    }
+
 }
 
 function clearForm() {
@@ -221,6 +248,6 @@ function initSelect2() {
     });
 }
 
-function formatText (icon) {
+function formatText(icon) {
     return $('<span><i class="fas ' + $(icon.element).data('icon') + '"></i> ' + icon.text + '</span>');
 };

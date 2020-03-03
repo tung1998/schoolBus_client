@@ -77,12 +77,11 @@ function reloadTable() {
 }
 
 function htmlRow(data, index, type = false) {
-    console.log(studentIDs)
     return ` <tr studentID="${data._id}">
                 <th scope="row">${index}</th>
                 <td>${data.IDStudent}</td>
                 <td>${data.user.name}</td>
-                <td>${data.class.name}</td>
+                <td>${data.class?data.class.name:""}</td>
                 <td>${data.user.email}</td>
                 <td>${data.user.phone}</td>
                 

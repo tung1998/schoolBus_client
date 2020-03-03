@@ -4,7 +4,8 @@ const Cookies = require('js-cookie');
 
 import {
     MeteorCall,
-    handleError
+    handleError,
+    addRequiredInputLabel
 } from '../../../../functions'
 
 import {
@@ -17,8 +18,9 @@ Template.schoolManager.onCreated(() => {
     accessToken = Cookies.get('accessToken')
 })
 
-Template.schoolManager.onRendered(()=>{
+Template.schoolManager.onRendered(() => {
     reloadTable();
+    addRequiredInputLabel();
 })
 
 Template.schoolManager.events({
@@ -28,48 +30,51 @@ Template.schoolManager.events({
     'click .delete-button': ClickDeleteButton,
 })
 
-function ClickModifyButton(e){
+function ClickModifyButton(e) {
     let schoolData = $(e.currentTarget).data("json");
     $("#editSchoolModal").attr("schoolID", schoolData._id);
     $(".modal-title").html("Chỉnh Sửa");
     $(".confirm-button").html("Sửa")
-    $("#name-input").val(schoolData.name) ;
+    $("#name-input").val(schoolData.name);
     $("#address-input").val(schoolData.address);
     $("#editSchoolModal").modal("show");
 }
 
-function ClickAddmoreButton(e){
+function ClickAddmoreButton(e) {
     $("#editSchoolModal").attr("schoolID", "");
     $(".modal-title").html("Thêm Mới");
     $(".confirm-button").html("Thêm")
     clearForm();
 }
 
-function ClickConfirmButton(){
-    let data = {
-        name: $("#name-input").val(),
-        address:  $("#address-input").val(),
-        status: 0
+function ClickConfirmButton() {
+    if (checkInput()) {
+        let data = {
+            name: $("#name-input").val(),
+            address: $("#address-input").val(),
+            status: 0
+        }
+        let modify = $("#editSchoolModal").attr("schoolID");
+        if (modify == "") {
+            MeteorCall(_METHODS.school.Create, data, accessToken).then(result => {
+                console.log(result);
+                // console.log(data);
+                $("#editSchoolModal").modal("hide");
+                addToTable(data, result);
+            }).catch(handleError)
+        } else {
+            data._id = modify;
+            MeteorCall(_METHODS.school.Update, data, accessToken).then(result => {
+                // console.log(result);
+                $("#editSchoolModal").modal("hide");
+                modifyTable(data);
+            }).catch(handleError)
+        }
     }
-    let modify = $("#editSchoolModal").attr("schoolID");
-    if (modify == "") {
-        MeteorCall(_METHODS.school.Create, data, accessToken).then(result => {
-            console.log(result);
-            // console.log(data);
-            $("#editSchoolModal").modal("hide");
-            addToTable(data, result);
-        }).catch(handleError)
-    } else {
-        data._id = modify;
-        MeteorCall(_METHODS.school.Update, data, accessToken).then(result => {
-            // console.log(result);
-            $("#editSchoolModal").modal("hide");
-            modifyTable(data);
-        }).catch(handleError)
-    }
+
 }
 
-function ClickDeleteButton(e){
+function ClickDeleteButton(e) {
     let data = $(e.currentTarget).data("json");
     // console.log(data._id)
     MeteorCall(_METHODS.school.Delete, data, accessToken).then(result => {
@@ -78,43 +83,43 @@ function ClickDeleteButton(e){
     }).catch(handleError)
 }
 
-function addToTable(data, result){
+function addToTable(data, result) {
     data._id = result._id;
     $("#table-body").prepend(`<tr id=${result._id}>
                                 <td>${data.name}</td>
                                 <td>${data.address}</td>
                                 <td>
                                     <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
-                                        data
-                                    )}\'>Sửa</button>
+        data
+    )}\'>Sửa</button>
                                     <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(
-                                        data
-                                    )}\'>Xóa</button>
+        data
+    )}\'>Xóa</button>
                                 </td>
                             </tr>`
     )
 }
 
-function modifyTable(data){
+function modifyTable(data) {
     $(`#${data._id}`).html(`    
                                 <td>${data.name}</td>
                                 <td>${data.address}</td>
                                 <td>
                                     <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
-                                        data
-                                    )}\'>Sửa</button>
+        data
+    )}\'>Sửa</button>
                                     <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(
-                                        data
-                                    )}\'>Xóa</button>
+        data
+    )}\'>Xóa</button>
                                 </td>`
-        )
+    )
 }
 
-function deleteRow(data){
+function deleteRow(data) {
     $(`#${data._id}`).remove();
 }
 
-function reloadTable(){
+function reloadTable() {
     MeteorCall(_METHODS.school.GetAll, null, accessToken).then(result => {
         console.log(result)
         let htmlTable = result.data.map(htmlRow);
@@ -122,13 +127,13 @@ function reloadTable(){
     }).catch(handleError)
 }
 
-function htmlRow(data){
-        let item = {
-            _id: data._id,
-            name: data.name,
-            address: data.address
-        }
-        return ` <tr id=${item._id}>
+function htmlRow(data) {
+    let item = {
+        _id: data._id,
+        name: data.name,
+        address: data.address
+    }
+    return ` <tr id=${item._id}>
                     <td>${item.name}</td>
                     <td>${item.address}</td>
                     <td>
@@ -138,7 +143,22 @@ function htmlRow(data){
                 </tr>`
 }
 
-function clearForm(){
+function checkInput() {
+    let name = $("#name-input").val();
+    let address = $("#address-input").val();
+    if (!name || !address) {
+        Swal.fire({
+            icon: "error",
+            text: "Làm ơn điền đầy đủ thông tin",
+            timer: 3000
+        })
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function clearForm() {
     $("#name-input").val("");
     $("#address-input").val("");
 }
