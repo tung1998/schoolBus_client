@@ -22,6 +22,7 @@ if (Meteor.isServer) {
         'user.create': createUser,
         'user.update': updateUser,
         'user.delete': deleteUser,
+        'user.updatePassword': updatePassword
     });
 }
 
@@ -35,7 +36,7 @@ function getAllUser(accessToken = '') {
 
 function getUserByID(data, accessToken = '') {
     let url = `${AUTH_USER}/${data._id}`
-    return httpDefault(METHOD.get, url, { 
+    return httpDefault(METHOD.get, url, {
         token: accessToken
     });
 }
@@ -67,4 +68,12 @@ function deleteUser(data, accessToken = '') {
     return httpDefault(METHOD.del, url, {
         token: accessToken
     });
+}
+
+function updatePassword(data, accessToken = '') {
+    let url = `${AUTH_USER}/password`
+    return httpDefault(METHOD.put, url, {
+        body: data,
+        token: accessToken
+    })
 }

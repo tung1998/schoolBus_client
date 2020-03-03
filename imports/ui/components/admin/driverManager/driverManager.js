@@ -11,6 +11,7 @@ import {
     handleError,
     handleSuccess,
     handleConfirm,
+    addRequiredInputLabel,
     getBase64,
     makeID
 
@@ -28,6 +29,7 @@ Template.driverManager.onCreated(() => {
 
 Template.driverManager.onRendered(() => {
     reloadTable()
+    addRequiredInputLabel()
 })
 
 Template.driverManager.events({
@@ -63,32 +65,34 @@ function clickEditButton(event) {
 
 async function clickSubmitButton() {
     try {
-        let data = getInputData()
-        if ($('#driver-image').val()) {
-            let imageId = makeID("user")
-            let BASE64 = await getBase64($('#driver-image')[0].files[0])
-            console.log(imageId, BASE64)
-            let importImage = await MeteorCall(_METHODS.image.Import, {
-                imageId,
-                BASE64: [BASE64]
-            }, accessToken)
-            if (importImage.error)
-                handleError(result, "Không tải được ảnh lên server!")
-            else data.image = imageId
+        if (checkInput()) {
+            let data = getInputData()
+            if ($('#driver-image').val()) {
+                let imageId = makeID("user")
+                let BASE64 = await getBase64($('#driver-image')[0].files[0])
+                console.log(imageId, BASE64)
+                let importImage = await MeteorCall(_METHODS.image.Import, {
+                    imageId,
+                    BASE64: [BASE64]
+                }, accessToken)
+                if (importImage.error)
+                    handleError(result, "Không tải được ảnh lên server!")
+                else data.image = imageId
+            }
+            if (!data._id) {
+                await MeteorCall(_METHODS.driver.Create, data, accessToken)
+                console.log("đã thêm mới");
+                handleSuccess("Thêm", `tài xế ${data.name}`)
+                $('#editDriverModal').modal("hide")
+            } else {
+                await MeteorCall(_METHODS.driver.Update, data, accessToken)
+                handleSuccess("Cập nhật", `tài xế ${data.name}`)
+                $('#editDriverModal').modal("hide")
+                console.log("đã update");
+            }
+            reloadTable()
+            clearForm()
         }
-        if (!data._id) {
-            await MeteorCall(_METHODS.driver.Create, data, accessToken)
-            console.log("đã thêm mới");
-            handleSuccess("Thêm", `tài xế ${data.name}`)
-            $('#editDriverModal').modal("hide")
-        } else {
-            await MeteorCall(_METHODS.driver.Update, data, accessToken)
-            handleSuccess("Cập nhật", `tài xế ${data.name}`)
-            $('#editDriverModal').modal("hide")
-            console.log("đã update");
-        }
-        reloadTable()
-        clearForm()
     } catch (error) {
         handleError(error)
     }
@@ -131,6 +135,29 @@ function getInputData() {
         input._id = $('#driver-id').val()
     }
     return input
+}
+
+function checkInput() {
+    let name = $('#driver-name').val('');
+    let phone = $('#driver-phone').val('');
+    let email = $('#driver-email').val('');
+    let address = $('#driver-address').val('');
+    let IDNumber = $('#driver-IDNumber').val('');
+    let IDIssueDate = $('#driver-IDIssueDate').val('');
+    let IDIssueBy = $('#driver-IDIssueBy').val('');
+    let DLNumber = $('#driver-DLNumber').val('');
+    let DLIssueDate = $('#driver-DLIssueDate').val('');
+    let id = $('#driver-id').val('');
+    if (!name || !address) {
+        Swal.fire({
+            icon: "error",
+            text: "Làm ơn điền đầy đủ thông tin",
+            timer: 3000
+        })
+        return false;
+    } else {
+        return true;
+    }
 }
 
 function clearForm() {
