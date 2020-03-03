@@ -11,7 +11,7 @@ import {
     METHOD
 } from '../checkAPI';
 
-const AUTH_IMAGE = `${AUTH_PATH}/Image`
+const AUTH_IMAGE = `${AUTH_PATH}/Images`
 
 if (Meteor.isServer) {
     Meteor.methods({
@@ -36,7 +36,7 @@ function getImageByID(data, accessToken) {
 }
 
 function importImage(data, accessToken) {
-    let url = `${AUTH_IMAGE}/${data._id}`;
+    let url = `${AUTH_IMAGE}`;
     return httpDefault(METHOD.post, url, {
         body: data,
         token: accessToken

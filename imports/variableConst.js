@@ -174,7 +174,6 @@ const _METHODS = {
         Create: 'teacher.create',
         Update: 'teacher.update',
         Delete: 'teacher.delete',
-        Delete: 'teacher.delete',
     },
     token: {
         GetAll: 'token.getAll',

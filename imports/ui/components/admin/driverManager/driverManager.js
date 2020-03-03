@@ -1,5 +1,4 @@
 import './driverManager.html'
-import './addDriver.js'
 
 import {
     Session
@@ -11,7 +10,9 @@ import {
     MeteorCall,
     handleError,
     handleSuccess,
-    handleConfirm
+    handleConfirm,
+    getBase64,
+    makeID
 
 } from '../../../../functions'
 
@@ -37,22 +38,22 @@ Template.driverManager.events({
     },
     'click #edit-button': clickEditButton,
     'click .submit-button': clickSubmitButton,
-    'click .delete-button': clickDelButton, 
+    'click .delete-button': clickDelButton,
 })
 
 function clickEditButton(event) {
     //fill data
     let data = $(event.currentTarget).data("json");
     $('#driver-name').val(data.name),
-    $('#driver-phone').val(data.phone),
-    $('#driver-email').val(data.email),
-    $('#driver-address').val(data.address),
-    $('#driver-IDNumber').val(data.IDNumber),
-    $('#driver-IDIssueDate').val(data.IDIssueDate),
-    $('#driver-IDIssueBy').val(data.IDIssueBy),
-    $('#driver-DLNumber').val(data.DLNumber),
-    $('#driver-DLIssueDate').val(data.DLIssueDate),
-    $(".custom-file-label").html(data.image)
+        $('#driver-phone').val(data.phone),
+        $('#driver-email').val(data.email),
+        $('#driver-address').val(data.address),
+        $('#driver-IDNumber').val(data.IDNumber),
+        $('#driver-IDIssueDate').val(data.IDIssueDate),
+        $('#driver-IDIssueBy').val(data.IDIssueBy),
+        $('#driver-DLNumber').val(data.DLNumber),
+        $('#driver-DLIssueDate').val(data.DLIssueDate),
+        $(".custom-file-label").html(data.image)
 
     $('#driver-id').val(data._id)
     //edit modal
@@ -60,49 +61,52 @@ function clickEditButton(event) {
     $('.modal-footer').find('.btn.btn-primary').html("Cập nhật")
 }
 
-function clickSubmitButton() {
-    let data = getInputData()
-    console.log(data);
-
-    if (!data._id) {
-        MeteorCall(_METHODS.driver.Create, data, accessToken).then(result => {
-            reloadTable()
-            clearForm()
+async function clickSubmitButton() {
+    try {
+        let data = getInputData()
+        if ($('#driver-image').val()) {
+            let imageId = makeID("user")
+            let BASE64 = await getBase64($('#driver-image')[0].files[0])
+            console.log(imageId, BASE64)
+            let importImage = await MeteorCall(_METHODS.image.Import, {
+                imageId,
+                BASE64: [BASE64]
+            }, accessToken)
+            if (importImage.error)
+                handleError(result, "Không tải được ảnh lên server!")
+            else data.image = imageId
+        }
+        if (!data._id) {
+            await MeteorCall(_METHODS.driver.Create, data, accessToken)
             console.log("đã thêm mới");
-            handleSuccess("Thêm",  `tài xế ${data.name}`).then(() => {
-                $('#editDriverModal').modal("hide")
-            })
-        }).catch(handleError)
-    }
-    else {
-        MeteorCall(_METHODS.driver.Update, data, accessToken).then(result => {
-            reloadTable()
-            clearForm()
-            handleSuccess("Cập nhật",  `tài xế ${data.name}`).then(() => {
-                $('#editDriverModal').modal("hide")
-            })
+            handleSuccess("Thêm", `tài xế ${data.name}`)
+            $('#editDriverModal').modal("hide")
+        } else {
+            await MeteorCall(_METHODS.driver.Update, data, accessToken)
+            handleSuccess("Cập nhật", `tài xế ${data.name}`)
+            $('#editDriverModal').modal("hide")
             console.log("đã update");
-        }).catch(handleError)
+        }
+        reloadTable()
+        clearForm()
+    } catch (error) {
+        handleError(error)
     }
-
 }
 
 function clickDelButton(event) {
     handleConfirm().then(result => {
-        if(result.value) {
+        if (result.value) {
             let data = $(event.currentTarget).data("json");
             MeteorCall(_METHODS.driver.Delete, data, accessToken).then(result => {
                 console.log(result);
                 Swal.fire({
                     icon: "success",
-                    text: "Đã xóa thành công", 
+                    text: "Đã xóa thành công",
                     timer: 3000
                 })
                 reloadTable()
             }).catch(handleError)
-        }
-        else {
-
         }
     })
 }
@@ -126,26 +130,22 @@ function getInputData() {
     if ($('#driver-id').val()) {
         input._id = $('#driver-id').val()
     }
-
-    let image = $('#driver-image').val().replace("C:\\fakepath\\", "")
-    input.image = image
-
     return input
 }
 
 function clearForm() {
-    $('#driver-name').val(''),
-    $('#driver-phone').val(''),
-    $('#driver-email').val(''),
-    $('#driver-address').val(''),
-    $('#driver-IDNumber').val(''),
-    $('#driver-IDIssueDate').val(''),
-    $('#driver-IDIssueBy').val(''),
-    $('#driver-DLNumber').val(''),
-    $('#driver-DLIssueDate').val(''),
+    $('#driver-name').val('')
+    $('#driver-phone').val('')
+    $('#driver-email').val('')
+    $('#driver-address').val('')
+    $('#driver-IDNumber').val('')
+    $('#driver-IDIssueDate').val('')
+    $('#driver-IDIssueBy').val('')
+    $('#driver-DLNumber').val('')
+    $('#driver-DLIssueDate').val('')
     $('#driver-id').val('')
     //reset image
-    $(".custom-file-label").html('')
+    $('#driver-image').val('')
 
 
 }
@@ -159,6 +159,7 @@ function reloadTable() {
                 _id: key._id,
                 image: key.user.image,
                 name: key.user.name,
+                username: key.user.username,
                 phone: key.user.phone,
                 email: key.user.email,
                 address: key.address,
@@ -171,7 +172,6 @@ function reloadTable() {
             return `<tr id="${key._id}">
                         <th scope="row">${index + 1}</th>
                         <td>${driver.name}</td>
-                        <td>${driver.username}</td>
                         <td>${driver.phone}</td>
                         <td>${driver.email}</td>
                         <td>${driver.address}</td>
@@ -189,5 +189,3 @@ function reloadTable() {
         table.find("tbody").html(row.join(""))
     }).catch(handleError)
 }
-
-
