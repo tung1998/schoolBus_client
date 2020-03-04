@@ -37,20 +37,27 @@
                             <!--begin::Section-->
                             <div class="kt-section">
                                 <div class="kt-section__content">
-                                    <button type="button" class="btn btn-outline-brand mb-4" id="addRouteButton">Thêm mới</button>
-                                    <table class="table table-bordered table-hover">
-                                        <thead class="thead-light">
-                                            <tr>
-                                                <th>Tên cung đường</th>
-                                                <th>Xe</th>
-                                                <th>Tài xế</th>
-                                                <th>Bảo mẫu</th>
-                                                <th>Nhóm học sinh</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="routeData">
-                                        </tbody>
-                                    </table>
+                                    <button type="button" class="btn btn-outline-brand mb-4" id="addRouteButton">Thêm
+                                        mới</button>
+
+                                    <div class="kt-datatable kt-datatable--default kt-datatable--brand">
+                                        <p id="empty-data" class="text-muted font-14 d-none">
+                                            Không có dữ liệu
+                                        </p>
+                                        <table class="table table-bordered table-hover">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th>Tên cung đường</th>
+                                                    <th>Xe</th>
+                                                    <th>Tài xế</th>
+                                                    <th>Bảo mẫu</th>
+                                                    <th>Nhóm học sinh</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="routeData">
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                             <!--end::Section-->
@@ -77,29 +84,29 @@
                 <div class="modal-body">
                     <form>
                         <div class="form-group">
-                            <label for="route-name" class="form-control-label">Tên cung đường:</label>
+                            <label for="route-name" class="form-control-label required-input-label">Tên cung đường:</label>
                             <input type="text" class="form-control" id="route-name">
                         </div>
                         <div class="form-group">
-                            <label>Gán xe</label>
+                            <label class="required-input-label">Gán xe</label>
                             <div></div>
                             <select class="custom-select form-control" id="carSelect">
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Gán tài xế</label>
+                            <label class="required-input-label">Gán tài xế</label>
                             <div></div>
                             <select class="custom-select form-control" id="driverSelect">
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Gán bảo mẫu</label>
+                            <label class="required-input-label">Gán bảo mẫu</label>
                             <div></div>
                             <select class="custom-select form-control" id="nannySelect">
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Chọn nhóm học sinh</label>
+                            <label class="required-input-label">Chọn nhóm học sinh</label>
                             <div></div>
                             <select class="custom-select form-control" id="studentListSelect">
                             </select>

@@ -34,7 +34,7 @@ function getAllStudent(data, accessToken = '') {
 }
 
 function getStudentByPage(data, accessToken = '') {
-    let url = `${AUTH_STUDENT}?page=${data.page}`
+    let url = `${AUTH_STUDENT}/${data.page}?limit=${data.limit}`
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });

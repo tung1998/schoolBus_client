@@ -5,20 +5,26 @@ const Cookies = require('js-cookie');
 import {
     MeteorCall,
     handleError,
-    addRequiredInputLabel
+    addRequiredInputLabel,
+	addPaging,
+	tablePaging
 } from '../../../../functions'
 
 import {
-    _METHODS
+    _METHODS,
+    LIMIT_DOCUMENT_PAGE
 } from '../../../../variableConst'
 
 let accessToken;
+let currentPage = 1;
 
 Template.schoolManager.onCreated(() => {
     accessToken = Cookies.get('accessToken')
 })
 
 Template.schoolManager.onRendered(() => {
+    addPaging();
+	getLimitDocPerPage();
     reloadTable();
     addRequiredInputLabel();
 })
@@ -28,6 +34,15 @@ Template.schoolManager.events({
     'click .confirm-button': ClickConfirmButton,
     'click .add-more': ClickAddmoreButton,
     'click .delete-button': ClickDeleteButton,
+    "click .kt-datatable__pager-link": (e) => {
+		reloadTable(parseInt($(e.currentTarget).data('page')), getLimitDocPerPage());
+		$(".kt-datatable__pager-link").removeClass("kt-datatable__pager-link--active");
+		$(e.currentTarget).addClass("kt-datatable__pager-link--active")
+		currentPage = parseInt($(e.currentTarget).data('page'));
+	},
+	"change #limit-doc": (e) => {
+		reloadTable(1, getLimitDocPerPage());
+	}
 })
 
 function ClickModifyButton(e) {
@@ -60,14 +75,14 @@ function ClickConfirmButton() {
                 console.log(result);
                 // console.log(data);
                 $("#editSchoolModal").modal("hide");
-                addToTable(data, result);
+                reloadTable(1, getLimitDocPerPage())
             }).catch(handleError)
         } else {
             data._id = modify;
             MeteorCall(_METHODS.school.Update, data, accessToken).then(result => {
                 // console.log(result);
                 $("#editSchoolModal").modal("hide");
-                modifyTable(data);
+                reloadTable(currentPage, getLimitDocPerPage())
             }).catch(handleError)
         }
     }
@@ -79,68 +94,8 @@ function ClickDeleteButton(e) {
     // console.log(data._id)
     MeteorCall(_METHODS.school.Delete, data, accessToken).then(result => {
         // console.log(result);
-        deleteRow(data);
+        reloadTable(currentPage, getLimitDocPerPage());
     }).catch(handleError)
-}
-
-function addToTable(data, result) {
-    data._id = result._id;
-    $("#table-body").prepend(`<tr id=${result._id}>
-                                <td>${data.name}</td>
-                                <td>${data.address}</td>
-                                <td>
-                                    <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
-        data
-    )}\'>Sửa</button>
-                                    <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(
-        data
-    )}\'>Xóa</button>
-                                </td>
-                            </tr>`
-    )
-}
-
-function modifyTable(data) {
-    $(`#${data._id}`).html(`    
-                                <td>${data.name}</td>
-                                <td>${data.address}</td>
-                                <td>
-                                    <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
-        data
-    )}\'>Sửa</button>
-                                    <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(
-        data
-    )}\'>Xóa</button>
-                                </td>`
-    )
-}
-
-function deleteRow(data) {
-    $(`#${data._id}`).remove();
-}
-
-function reloadTable() {
-    MeteorCall(_METHODS.school.GetAll, null, accessToken).then(result => {
-        console.log(result)
-        let htmlTable = result.data.map(htmlRow);
-        $("#table-body").html(htmlTable.join(" "));
-    }).catch(handleError)
-}
-
-function htmlRow(data) {
-    let item = {
-        _id: data._id,
-        name: data.name,
-        address: data.address
-    }
-    return ` <tr id=${item._id}>
-                    <td>${item.name}</td>
-                    <td>${item.address}</td>
-                    <td>
-                    <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(item)}\'>Sửa</button>
-                    <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(item)}\'>Xóa</button>
-                    </td>
-                </tr>`
 }
 
 function checkInput() {
@@ -161,4 +116,87 @@ function checkInput() {
 function clearForm() {
     $("#name-input").val("");
     $("#address-input").val("");
+}
+
+function getLimitDocPerPage(){
+	return parseInt($("#limit-doc").val());
+}
+
+function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
+	let table = $('#table-body');
+    let emptyWrapper = $('#empty-data');
+	table.html('');
+	MeteorCall(_METHODS.school.GetByPage, {page: page, limit: limitDocPerPage}, accessToken).then(result => {
+		console.log(result)
+		tablePaging(".tablePaging", result.count, page, limitDocPerPage)
+		$("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
+		if (result.count === 0) {
+            $('.tablePaging').addClass('d-none');
+            table.parent().addClass('d-none');
+            emptyWrapper.removeClass('d-none');
+        } else if (result.count > limitDocPerPage) {
+            $('.tablePaging').removeClass('d-none');
+            table.parent().removeClass('d-none');
+            emptyWrapper.addClass('d-none');
+            // update số bản ghi
+        } else {
+            $('.tablePaging').addClass('d-none');
+            table.parent().removeClass('d-none');
+            emptyWrapper.addClass('d-none');
+		}
+		createTable(table, result, limitDocPerPage)
+	})
+
+}
+
+function renderTable(data, page = 1) {
+	let table = $('#table-body');
+	let emptyWrapper = $('#empty-data');
+	table.html('');
+	tablePaging('.tablePaging', data.count, page);
+	if (carStops.count === 0) {
+		$('.tablePaging').addClass('d-none');
+		table.parent().addClass('d-none');
+		emptyWrapper.removeClass('d-none');
+	} else {
+		$('.tablePaging').addClass('d-none');
+		table.parent().removeClass('d-none');
+		emptyWrapper.addClass('d-none');
+	}
+
+	createTable(table, data);
+}
+
+function createTable(table, result, limitDocPerPage) {
+	result.data.forEach((key, index) => {
+		key.index = index + (result.page - 1) * limitDocPerPage;
+		const row = createRow(key);
+		table.append(row);
+	});
+}
+
+function createRow(data) {
+	const data_row = dataRow(data);
+	// _id is tripID
+	return `
+        <tr id="${data._id}">
+          ${data_row}
+        </tr>
+        `
+}
+
+function dataRow(result) {
+	let item = {
+        _id: result._id,
+        name: result.name,
+        address: result.address
+    }
+    return `
+                    <td>${item.name}</td>
+                    <td>${item.address}</td>
+                    <td>
+                    <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(item)}\'>Sửa</button>
+                    <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(item)}\'>Xóa</button>
+                    </td>
+                `
 }

@@ -18,6 +18,7 @@ if (Meteor.isServer) {
     Meteor.methods({
         'school.getAll': getAllSchool,
         'school.getByID': getSchoolByID,
+        'school.getByPage': getSchoolByPage,
         'school.create': createSchool,
         'school.update': updateSchool,
         'school.delete': deleteSchool,
@@ -33,6 +34,13 @@ function getAllSchool(data, accessToken = '') {
 
 function getSchoolByID(data, accessToken = '') {
     let url = `${AUTH_SCHOOL}/${data._id}`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
+}
+
+function getSchoolByPage(data, accessToken = '') {
+    let url = `${AUTH_SCHOOL}/${data.page}?limit=${data.limit}`
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });
