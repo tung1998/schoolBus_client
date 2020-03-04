@@ -15,6 +15,7 @@ if (Meteor.isServer) {
     Meteor.methods({
         'driver.getAll': getDrivers,
         'driver.getByID': getDriverbyId,
+        'driver.getByPage': getDriverByPage,
         'driver.create': createDriver,
         'driver.update': updateDriver,
         'driver.delete': deleteDriver,
@@ -31,6 +32,13 @@ function getDrivers(data, accessToken = '') {
 function getDriverbyId(data, accessToken = '') {
     let url = `${AUTH_DRIVER}/${data._id}`;
     return httpDefault(METHOD.get, url, { token: accessToken })
+}
+
+function getDriverByPage(data, accessToken = '') {
+    let url = `${AUTH_DRIVER}/${data.page}?limit=${data.limit}`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
 }
 
 //THÊM

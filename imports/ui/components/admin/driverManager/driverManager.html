@@ -42,6 +42,10 @@
                 <div class="kt-section">
                   <div class="kt-section__content">
                     <button type="button" class="btn btn-outline-brand mb-4" id="add-button" data-toggle="modal" data-target="#editDriverModal">Thêm mới</button>
+                    <div class="kt-datatable kt-datatable--default kt-datatable--brand">
+                      <p id="empty-data" class="text-muted font-14 d-none">
+                        Không có dữ liệu
+                      </p>
                     <table class="table table-bordered table-hover" id="table-driver">
                       <thead class="thead-light">
                         <tr>
@@ -57,10 +61,11 @@
                           <th></th>
                         </tr>
                       </thead>
-                      <tbody>
+                      <tbody id="table-body">
                         
                       </tbody>
                     </table>
+                    </div>
                   </div>
                 </div>
                 <!--end::Section-->

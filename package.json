@@ -11,6 +11,7 @@
     "js-cookie": "^2.2.1",
     "leaflet-routing-machine": "^3.2.12",
     "meteor-node-stubs": "^1.0.0",
+    "qrcode": "^1.4.4",
     "xlsx": "^0.15.5"
   },
   "devDependencies": {

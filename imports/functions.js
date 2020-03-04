@@ -16,6 +16,7 @@ export {
     passChangeHandleError,
     getBase64,
     makeID,
+    addPaging,
     tablePaging
 }
 
@@ -140,6 +141,27 @@ function makeID(text = "", length = 15) {
     return text
 }
 
+function addPaging(tag = '.kt-datatable'){
+    $(tag).append(`
+        <div class="kt-datatable__pager">
+            <ul class="kt-datatable__pager-nav tablePaging">
+
+            </ul>
+            <div class="kt-datatable__pager-info">
+                <select id="limit-doc" data-width="60px" data-selected="10" tabindex="-98">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+                <span class="kt-datatable__pager-detail" id="paging-detail">Hiển thị 10 bản ghi</span>
+            </div>
+        </div>
+    `)
+    console.log("paging added")
+}
+
 function tablePaging(tag = '.tablePaging', count, page = 1, limit = LIMIT_DOCUMENT_PAGE) {
     let totalPage = Math.ceil(count / limit);
     let start = page == 1 ? 'kt-datatable__pager-link--disabled disabledPaging' : ''
@@ -148,12 +170,12 @@ function tablePaging(tag = '.tablePaging', count, page = 1, limit = LIMIT_DOCUME
     let next = page == totalPage ? 'kt-datatable__pager-link--disabled disabledPaging' : ''
     let html = `
     <li>
-        <a title="Về đầu" class="kt-datatable__pager-link kt-datatable__pager-link--first ${start}" data-page="1">
+        <a title="Trang đầu" class="kt-datatable__pager-link kt-datatable__pager-link--first ${start}" data-page="1">
             <i class="flaticon2-fast-back"></i>
         </a>
     </li>
     <li>
-        <a title="Về trước" class="kt-datatable__pager-link kt-datatable__pager-link--prev ${previous}">
+        <a title="Trang trước" class="kt-datatable__pager-link kt-datatable__pager-link--prev ${previous}" data-page=${page-1}>
             <i class="flaticon2-back"></i>
         </a>
     </li>
@@ -169,12 +191,12 @@ function tablePaging(tag = '.tablePaging', count, page = 1, limit = LIMIT_DOCUME
     })
     html += `
     <li>
-        <a title="Tiếp theo" class="kt-datatable__pager-link kt-datatable__pager-link--next ${next}" data-page=${page}>
+        <a title="Trang sau" class="kt-datatable__pager-link kt-datatable__pager-link--next ${next}" data-page=${page+1}>
             <i class="flaticon2-next"></i>
         </a>
     </li>
     <li>
-        <a title="Về cuối" class="kt-datatable__pager-link kt-datatable__pager-link--last ${end}" data-page=${totalPage}>
+        <a title="Trang cuối" class="kt-datatable__pager-link kt-datatable__pager-link--last ${end}" data-page=${totalPage}>
             <i class="flaticon2-fast-next"></i>
         </a>
     </li>
