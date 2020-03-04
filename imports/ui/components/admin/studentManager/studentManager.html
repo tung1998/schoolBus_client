@@ -79,6 +79,7 @@
     <!-- end:: Content -->
   </div>
   {{> editStudentModal}}
+  {{> QRModal}}
 </template>
 
 
@@ -171,6 +172,24 @@
               <button type="submit" class="btn btn-primary" id="confirm-button">Xác nhận</button>
             </div>
           </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="QRModal">
+  <div class="modal fade" id="QRModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content QR-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Mã QR</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          </button>
+        </div>
+        <div class="modal-body" id="QR-modal-body">
+          <img style="width: 70%" src="" alt="">
         </div>
       </div>
     </div>

@@ -1,4 +1,7 @@
 import "./studentManager.html";
+
+import QRCode from 'qrcode';
+
 import {
 	Session
 } from "meteor/session";
@@ -38,6 +41,7 @@ Template.studentManager.onRendered(() => {
 });
 
 Template.studentManager.events({
+	"click .table-row": ClickTableRow,
 	"click .modify-button": ClickModifyButton,
 	"click .delete-button": ClickDeleteButton,
 	"click .add-more": ClickAddMoreButton,
@@ -88,6 +92,25 @@ function renderCarStopID() {
 		})
 		select.append(optionSelects.join(""))
 	})
+}
+
+function ClickTableRow(event){
+	let id = $(event.currentTarget).attr("id")
+	QRCode.toDataURL(id)
+		.then(url => {
+			console.log(url)
+			$(".modal-content.QR-content").css({
+				"height": "85vh"
+			})
+			$("#QR-modal-body").css({
+				"text-align": "center"
+			})
+			$("#QR-modal-body").html(`<img style="width: 70%" src=${url} alt="">`)
+			$("#QRModal").modal("show");
+		})
+		.catch(err => {
+			console.error(err)
+		})
 }
 
 function ClickModifyButton(e) {
@@ -158,7 +181,7 @@ function SubmitForm(event) {
 						$("#editStudentModal").modal("hide");
 						reloadTable(1, getLimitDocPerPage())
 					})
-					
+
 				})
 				.catch(handleError);
 		} else {
@@ -168,7 +191,7 @@ function SubmitForm(event) {
 					handleSuccess("Cập nhật", "học sinh").then(() => {
 						$("#editStudentModal").modal("hide");
 						reloadTable(currentPage, getLimitDocPerPage())
-					})	
+					})
 				})
 				.catch(handleError);
 		}
@@ -236,31 +259,31 @@ function initSelect2() {
 
 }
 
-function getLimitDocPerPage(){
+function getLimitDocPerPage() {
 	return parseInt($("#limit-doc").val());
 }
 
 function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
 	let table = $('#table-body');
-    let emptyWrapper = $('#empty-data');
+	let emptyWrapper = $('#empty-data');
 	table.html('');
-	MeteorCall(_METHODS.student.GetByPage, {page: page, limit: limitDocPerPage}, accessToken).then(result => {
+	MeteorCall(_METHODS.student.GetByPage, { page: page, limit: limitDocPerPage }, accessToken).then(result => {
 		console.log(result)
 		tablePaging(".tablePaging", result.count, page, limitDocPerPage)
 		$("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
 		if (result.count === 0) {
-            $('.tablePaging').addClass('d-none');
-            table.parent().addClass('d-none');
-            emptyWrapper.removeClass('d-none');
-        } else if (result.count > limitDocPerPage) {
-            $('.tablePaging').removeClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
-            // update số bản ghi
-        } else {
-            $('.tablePaging').addClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
+			$('.tablePaging').addClass('d-none');
+			table.parent().addClass('d-none');
+			emptyWrapper.removeClass('d-none');
+		} else if (result.count > limitDocPerPage) {
+			$('.tablePaging').removeClass('d-none');
+			table.parent().removeClass('d-none');
+			emptyWrapper.addClass('d-none');
+			// update số bản ghi
+		} else {
+			$('.tablePaging').addClass('d-none');
+			table.parent().removeClass('d-none');
+			emptyWrapper.addClass('d-none');
 		}
 		createTable(table, result, limitDocPerPage)
 	})
@@ -297,7 +320,7 @@ function createRow(data) {
 	const data_row = dataRow(data);
 	// _id is tripID
 	return `
-        <tr id="${data._id}">
+        <tr id="${data._id}" class="table-row">
           ${data_row}
         </tr>
         `
