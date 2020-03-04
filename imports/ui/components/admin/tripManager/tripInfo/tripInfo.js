@@ -1,12 +1,10 @@
 import './tripInfo.html'
-
-
+import './instascan.js'
 import {
     FlowRouter
 } from 'meteor/kadira:flow-router';
 
 const Cookies = require('js-cookie');
-
 import {
     MeteorCall,
     handleError,
@@ -19,8 +17,14 @@ import {
     _TRIP_STUDENT
 } from '../../../../../variableConst';
 
+export {
+    checkStudentInfo
+}
+
 let accessToken
 let tripID
+let studentList = []
+
 Template.tripDetail.onCreated(() => {
     accessToken = Cookies.get('accessToken')
     tripID = FlowRouter.getParam('tripID')
@@ -28,17 +32,21 @@ Template.tripDetail.onCreated(() => {
 
 Template.tripDetail.onRendered(() => {
     reloadData()
-    console.log(qrScanner)
-    qrScanner.on('scan', (err, message) => {
-        if (message)
-            alert(message)
-    })
 })
 
 Template.tripDetail.events({
     'click .status-btn': clickStatusButton,
-
+    'click #openScannerModal': clickOpenScannerModal,
 })
+
+Template.tripDetail.onDestroyed(() => {
+    studentList = null
+    tripID = null
+})
+
+function checkStudentInfo(studentID) {
+    console.log(studentList, studentID)
+}
 
 function clickStatusButton(e) {
     let target = e.currentTarget
@@ -55,6 +63,9 @@ function clickStatusButton(e) {
     }).catch(handleError)
 }
 
+function clickOpenScannerModal() {
+    $('#instascannerModal').modal('show')
+}
 
 function reloadData() {
 
@@ -80,10 +91,10 @@ function reloadData() {
         $('#start-time').html(dataTrip.startTime)
 
         //data học sinh
-        let dataStudent = result.students
+        studentList = result.students
         let table = $('#table-studentList')
-        // let row = dataStudent.map(htmlRow)
-        // table.find("tbody").html(row.join(""))
+        let row = studentList.map(htmlRow)
+        table.find("tbody").html(row.join(""))
 
     }).catch(handleError)
 }
