@@ -17,6 +17,7 @@ const AUTH_STUDENT = `${AUTH_PATH}/Student`
 if (Meteor.isServer) {
     Meteor.methods({
         'student.getAll': getAllStudent,
+        'student.getByPage': getStudentByPage,
         'student.getByID': getStudentByID,
         'student.getByClass': getStudentByClass,
         'student.create': createStudent,
@@ -27,6 +28,13 @@ if (Meteor.isServer) {
 
 function getAllStudent(data, accessToken = '') {
     let url = `${AUTH_STUDENT}`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
+}
+
+function getStudentByPage(data, accessToken = '') {
+    let url = `${AUTH_STUDENT}/${data.page}?limit=${data.limit}`
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });

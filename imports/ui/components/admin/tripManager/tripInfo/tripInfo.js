@@ -1,25 +1,30 @@
-import './tripDetail.html'
-
+import './tripInfo.html'
+import './instascan.js'
 import {
     FlowRouter
 } from 'meteor/kadira:flow-router';
 
 const Cookies = require('js-cookie');
-
 import {
     MeteorCall,
     handleError,
     handleConfirm,
     handleSuccess
-} from '../../../../functions';
+} from '../../../../../functions';
 
 import {
     _METHODS,
     _TRIP_STUDENT
-} from '../../../../variableConst';
+} from '../../../../../variableConst';
+
+export {
+    checkStudentInfo
+}
 
 let accessToken
 let tripID
+let studentList = []
+
 Template.tripDetail.onCreated(() => {
     accessToken = Cookies.get('accessToken')
     tripID = FlowRouter.getParam('tripID')
@@ -31,8 +36,17 @@ Template.tripDetail.onRendered(() => {
 
 Template.tripDetail.events({
     'click .status-btn': clickStatusButton,
-
+    'click #openScannerModal': clickOpenScannerModal,
 })
+
+Template.tripDetail.onDestroyed(() => {
+    studentList = null
+    tripID = null
+})
+
+function checkStudentInfo(studentID) {
+    console.log(studentList, studentID)
+}
 
 function clickStatusButton(e) {
     let target = e.currentTarget
@@ -49,8 +63,12 @@ function clickStatusButton(e) {
     }).catch(handleError)
 }
 
+function clickOpenScannerModal() {
+    $('#instascannerModal').modal('show')
+}
+
 function reloadData() {
-    
+
     MeteorCall(_METHODS.trip.GetById, {
         _id: tripID
     }, accessToken).then(result => {
@@ -73,25 +91,25 @@ function reloadData() {
         $('#start-time').html(dataTrip.startTime)
 
         //data học sinh
-        let dataStudent = result.students
+        studentList = result.students
         let table = $('#table-studentList')
-        let row = dataStudent.map(htmlRow)
+        let row = studentList.map(htmlRow)
         table.find("tbody").html(row.join(""))
 
     }).catch(handleError)
 }
 
 
-function htmlRow(key, index){
+function htmlRow(key, index) {
     let studentInfo = {
         _id: key.studentID,
-        IDStudent: key.student.IDStudent,
+        IDStudent: key.student ? key.student.IDStudent : '',
         name: key.student.user.name,
         phone: key.student.user.phone,
-        class: key.student.class.name,
-        teacher: key.student.class.teacher.user.name,
-        school: key.student.class.school.name,
-        schoolAddress: key.student.class.school.address,
+        class: key.student.class ? key.student.class.name : '',
+        teacher: key.student.class ? key.student.class.teacher.user.name : '',
+        school: key.student.class ? key.student.class.school.name : '',
+        schoolAddress: key.student.class ? key.student.class.school.address : '',
         status: key.status
     }
 

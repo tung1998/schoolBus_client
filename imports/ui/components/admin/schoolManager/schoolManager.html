@@ -41,19 +41,25 @@
               <!--begin::Section-->
               <div class="kt-section">
                 <div class="kt-section__content">
-                  <button type="button" class="btn btn-outline-brand mb-4 add-more" data-toggle="modal" data-target="#editSchoolModal" >Thêm mới</button>
-                  <table class="table table-bordered table-hover">
-                    <thead class="thead-light">
-                      <tr>
-                        <th>Tên trường</th>
-                        <th>Địa chỉ</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody id="table-body">
-          
-                    </tbody>
-                  </table>
+                  <button type="button" class="btn btn-outline-brand mb-4 add-more" data-toggle="modal"
+                    data-target="#editSchoolModal">Thêm mới</button>
+                  <div class="kt-datatable kt-datatable--default kt-datatable--brand">
+                    <p id="empty-data" class="text-muted font-14 d-none">
+                      Không có dữ liệu
+                    </p>
+                    <table class="table table-bordered table-hover">
+                      <thead class="thead-light">
+                        <tr>
+                          <th>Tên trường</th>
+                          <th>Địa chỉ</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody id="table-body">
+
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
               <!--end::Section-->
@@ -69,38 +75,38 @@
 
 
 <template name="editSchoolModal">
-<div class="modal fade" id="editSchoolModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-  style="display: none;" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">New message</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        </button>
-      </div>
-      <div class="modal-body">
-        <form class="kt-form kt-form--label-right">
-          <div class="kt-portlet__body">
-            <div class="form-group row">
-              <label for="example-text-input" class="col-2 col-form-label">Tên trường</label>
-              <div class="col-10">
-                <input class="form-control" type="text" value="Artisanal kale" id="name-input">
+  <div class="modal fade" id="editSchoolModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          </button>
+        </div>
+        <div class="modal-body">
+          <form class="kt-form kt-form--label-right">
+            <div class="kt-portlet__body">
+              <div class="form-group row">
+                <label for="example-text-input" class="col-2 col-form-label required-input-label">Tên trường</label>
+                <div class="col-10">
+                  <input class="form-control" type="text" value="Artisanal kale" id="name-input">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="example-search-input" class="col-2 col-form-label required-input-label">Địa chỉ</label>
+                <div class="col-10">
+                  <input class="form-control" type="search" value="How do I shoot web" id="address-input">
+                </div>
               </div>
             </div>
-            <div class="form-group row">
-              <label for="example-search-input" class="col-2 col-form-label">Địa chỉ</label>
-              <div class="col-10">
-                <input class="form-control" type="search" value="How do I shoot web" id="address-input">
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary confirm-button" >Xác nhận</button>
-        <button type="button" class="btn btn-secondary cancel-button" data-dismiss="modal">Hủy</button> 
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary confirm-button">Xác nhận</button>
+          <button type="button" class="btn btn-secondary cancel-button" data-dismiss="modal">Hủy</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 </template>

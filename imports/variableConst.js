@@ -1,13 +1,15 @@
 export {
     _METHODS,
     _SESSION,
-    _TRIP_STUDENT
+    _TRIP_STUDENT,
+    LIMIT_DOCUMENT_PAGE
 }
 
 const _METHODS = {
     student: {
         GetAll: 'student.getAll',
         GetById: 'student.getByID',
+        GetByPage: 'student.getByPage',
         GetByClass: 'student.getByClass',
         Create: 'student.create',
         Update: 'student.update',
@@ -23,6 +25,7 @@ const _METHODS = {
     car: {
         GetAll: 'car.getAll',
         GetById: 'car.getByID',
+        GetByPage: 'car.getByPage',
         Create: 'car.create',
         Update: 'car.update',
         Delete: 'car.delete',
@@ -44,6 +47,7 @@ const _METHODS = {
     carModel: {
         GetAll: 'carModel.getAll',
         GetById: 'carModel.getByID',
+        GetByPage: 'carModel.getByPage',
         Create: 'carModel.create',
         Update: 'carModel.update',
         Delete: 'carModel.delete',
@@ -64,10 +68,11 @@ const _METHODS = {
     },
     class: {
         GetAll: 'class.getAll',
-            GetById: 'class.getByID',
-            Create: 'class.create',
-            Update: 'class.update',
-            Delete: 'class.delete',
+        GetByPage: 'class.getByPage',
+        GetById: 'class.getByID',
+        Create: 'class.create',
+        Update: 'class.update',
+        Delete: 'class.delete',
     },
     config: {
         GetAll: 'config.getAll',
@@ -79,6 +84,7 @@ const _METHODS = {
     driver: {
         GetAll: 'driver.getAll',
         GetById: 'driver.getByID',
+        GetByPage: 'driver.getByPage',
         Create: 'driver.create',
         Update: 'driver.update',
         Delete: 'driver.delete',
@@ -137,6 +143,7 @@ const _METHODS = {
     route: {
         GetAll: 'route.getAll',
         GetById: 'route.getByID',
+        GetByPage: 'route.getByPage',
         Create: 'route.create',
         Update: 'route.update',
         Delete: 'route.delete',
@@ -144,6 +151,7 @@ const _METHODS = {
     school: {
         GetAll: 'school.getAll',
         GetById: 'school.getByID',
+        GetByPage: 'school.getByPage',
         Create: 'school.create',
         Update: 'school.update',
         Delete: 'school.delete',
@@ -171,6 +179,7 @@ const _METHODS = {
         GetAll: 'teacher.getAll',
         GetById: 'teacher.getByID',
         GetBySchoolID: 'teacher.getBySchool',
+        GetByPage: 'teacher.getByPage',
         Create: 'teacher.create',
         Update: 'teacher.update',
         Delete: 'teacher.delete',
@@ -272,3 +281,5 @@ const _TRIP = {
         }
     }
 }
+
+const LIMIT_DOCUMENT_PAGE = 10;

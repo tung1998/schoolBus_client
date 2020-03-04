@@ -18,6 +18,7 @@ if (Meteor.isServer) {
     Meteor.methods({
         'class.getAll': getAllClass,
         'class.getByID': getClassByID,
+        'class.getByPage': getClassByPage,
         'class.create': createClass,
         'class.update': updateClass,
         'class.delete': deleteClass,
@@ -37,6 +38,14 @@ function getClassByID(data, accessToken = '') {
         token: accessToken
     });
 }
+
+function getClassByPage(data, accessToken = '') {
+    let url = `${AUTH_CLASS}/${data.page}?limit=${data.limit}`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
+}
+
 
 function createClass(data, accessToken = '') {
     let url = `${AUTH_CLASS}`

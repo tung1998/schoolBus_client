@@ -8,14 +8,19 @@ import {
     MeteorCall,
     handleError,
     handleConfirm,
-    handleSuccess
+    handleSuccess,
+    addRequiredInputLabel,
+	addPaging,
+	tablePaging
 } from '../../../../functions';
 
 import {
-    _METHODS
+    _METHODS,
+    LIMIT_DOCUMENT_PAGE
 } from '../../../../variableConst';
 
-let accessToken
+let accessToken;
+let currentPage = 1;
 
 Template.route.onCreated(() => {
     accessToken = Cookies.get('accessToken');
@@ -23,7 +28,9 @@ Template.route.onCreated(() => {
 
 Template.route.onRendered(() => {
     initSelect2();
-    reloadTable();
+    addRequiredInputLabel();
+	addPaging();
+    reloadTable(1);
 });
 
 Template.route.events({
@@ -32,6 +39,15 @@ Template.route.events({
     'click #routeData .modify-button': clickEditRouteButton,
     'click #routeData .delete-button': clickDeleteRouteButton,
     'click #routeData tr': clickRouteRow,
+    "click .kt-datatable__pager-link": (e) => {
+		reloadTable(parseInt($(e.currentTarget).data('page')), getLimitDocPerPage());
+		$(".kt-datatable__pager-link").removeClass("kt-datatable__pager-link--active");
+		$(e.currentTarget).addClass("kt-datatable__pager-link--active")
+		currentPage = parseInt($(e.currentTarget).data('page'));
+	},
+	"change #limit-doc": (e) => {
+		reloadTable(1, getLimitDocPerPage());
+	}
 })
 
 function initSelect2() {
@@ -91,39 +107,10 @@ function initStudentListSelect2() {
     }).catch(handleError)
 }
 
-function reloadTable() {
-    MeteorCall(_METHODS.route.GetAll, {}, accessToken).then(result => {
-        console.log(result);
-        if (result.data) {
-            let htmlTable = result.data.map(htmlRow);
-            $("#routeData").html(htmlTable.join(" "));
-        }
-    }).catch(handleError)
-}
-
-function htmlRow(data) {
-    let item = {
-        _id: data._id,
-        name: data.name,
-        carName: data.car.numberPlate,
-        driverName: data.driver.user.name,
-        nannyName: data.nanny.user.name,
-    }
-    return ` <tr routeID=${item._id}>
-                <td>${item.name}</td>
-                <td>${item.carName}</td>
-                <td>${item.driverName}</td>
-                <td>${item.nannyName}</td>
-                <td>
-                <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(item)}\'>Sửa</button>
-                <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(item)}\'>Xóa</button>
-                </td>
-            </tr>`
-}
-
 function clickAddRouteButton() {
     $('#routeModalSubmit').html('Thêm mới')
     $('#routeModal').removeAttr('routeID').modal('show')
+    
 }
 
 function clickEditListModalSubmit() {
@@ -145,7 +132,7 @@ function clickEditListModalSubmit() {
             if (result.dismiss) return
             data._id = routeID
             MeteorCall(_METHODS.route.Update, data, accessToken).then(result => {
-                reloadTable()
+                reloadTable(currentPage, getLimitDocPerPage())
                 handleSuccess('Cập nhật', "Danh sách")
                 $('#routeModal').modal('hide')
             }).catch(handleError)
@@ -154,7 +141,7 @@ function clickEditListModalSubmit() {
         handleConfirm('Bạn muốn thêm mới danh sách?').then(result => {
             if (result.dismiss) return
             MeteorCall(_METHODS.route.Create, data, accessToken).then(result => {
-                reloadTable()
+                reloadTable(1, getLimitDocPerPage())
                 $('#routeModal').modal('hide')
                 handleSuccess('Thêm mới', "Danh sách")
             }).catch(handleError)
@@ -179,7 +166,7 @@ function clickDeleteRouteButton(e) {
         MeteorCall(_METHODS.route.Delete, {
             _id: routeID
         }, accessToken).then(result => {
-            reloadTable()
+            reloadTable(currentPage, getLimitDocPerPage())
             handleSuccess('Xóa', "Danh sách")
         }).catch(handleError)
     })
@@ -191,3 +178,89 @@ function clickRouteRow(e) {
     let routeID = e.currentTarget.getAttribute("routeID")
     FlowRouter.go(`/routeManager/${routeID}`)
 }                                                              
+
+function getLimitDocPerPage(){
+	return parseInt($("#limit-doc").val());
+}
+
+function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
+	let table = $('#routeData');
+    let emptyWrapper = $('#empty-data');
+	table.html('');
+	MeteorCall(_METHODS.route.GetByPage, {page: page, limit: limitDocPerPage}, accessToken).then(result => {
+		console.log(result)
+		tablePaging(".tablePaging", result.count, page, limitDocPerPage)
+		$("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
+		if (result.count === 0) {
+            $('.tablePaging').addClass('d-none');
+            table.parent().addClass('d-none');
+            emptyWrapper.removeClass('d-none');
+        } else if (result.count > limitDocPerPage) {
+            $('.tablePaging').removeClass('d-none');
+            table.parent().removeClass('d-none');
+            emptyWrapper.addClass('d-none');
+            // update số bản ghi
+        } else {
+            $('.tablePaging').addClass('d-none');
+            table.parent().removeClass('d-none');
+            emptyWrapper.addClass('d-none');
+		}
+		createTable(table, result, limitDocPerPage)
+	})
+
+}
+
+function renderTable(data, page = 1) {
+	let table = $('#routeData');
+	let emptyWrapper = $('#empty-data');
+	table.html('');
+	tablePaging('.tablePaging', data.count, page);
+	if (carStops.count === 0) {
+		$('.tablePaging').addClass('d-none');
+		table.parent().addClass('d-none');
+		emptyWrapper.removeClass('d-none');
+	} else {
+		$('.tablePaging').addClass('d-none');
+		table.parent().removeClass('d-none');
+		emptyWrapper.addClass('d-none');
+	}
+
+	createTable(table, data);
+}
+
+function createTable(table, result, limitDocPerPage) {
+	result.data.forEach((key, index) => {
+		key.index = index + (result.page - 1) * limitDocPerPage;
+		const row = createRow(key);
+		table.append(row);
+	});
+}
+
+function createRow(data) {
+	const data_row = dataRow(data);
+	// _id is tripID
+	return `
+        <tr id="${data._id}">
+          ${data_row}
+        </tr>
+        `
+}
+
+function dataRow(data) {
+	let item = {
+        _id: data._id,
+        name: data.name,
+        carName: data.car.numberPlate,
+        driverName: data.driver.user.name,
+        nannyName: data.nanny.user.name,
+    }
+    return ` 
+                <td>${item.name}</td>
+                <td>${item.carName}</td>
+                <td>${item.driverName}</td>
+                <td>${item.nannyName}</td>
+                <td>
+                <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(item)}\'>Sửa</button>
+                <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(item)}\'>Xóa</button>
+                </td>`
+}

@@ -65,7 +65,7 @@ Template.carStopList_studentListInfo.onRendered(() => {
     }).addTo(carStopmap);
     setInterval(() => { carStopmap.invalidateSize(); }, 0)
     window.markerGroup = L.layerGroup().addTo(carStopmap);
-    window.polyGroup = L.LayerGroup("a", { width: 1, height: 1 }).addTo(carStopmap);
+    //window.polyGroup = L.LayerGroup("a", { width: 1, height: 1 }).addTo(carStopmap);
     setMarker([21.040276, 105.782988]); //school
     setMarker([21.030443, 105.835688]); //startPoint
 })
@@ -222,5 +222,7 @@ function setSortableData(str) {
 }
 
 function addPoly(point1, point2) {
+    
     let poly = L.polyline([point1, point2], { color: 'blue', weight: 8, opacity: 0.5, smoothFactor: 1 }).addTo(markerGroup);
+    console.log(markerGroup);
 }

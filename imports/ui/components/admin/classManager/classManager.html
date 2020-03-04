@@ -1,154 +1,125 @@
 <template name="classManager">
-  <div
-    class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor"
-    id="kt_content"
-  >
-    <!-- begin:: Subheader -->
-    <div class="kt-subheader   kt-grid__item" id="kt_subheader">
-      <div class="kt-container  kt-container--fluid ">
-        <div class="kt-subheader__main">
-          <h3 class="kt-subheader__title">
-            Quản lý lớp học
-          </h3>
+	<div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+		<!-- begin:: Subheader -->
+		<div class="kt-subheader   kt-grid__item" id="kt_subheader">
+			<div class="kt-container  kt-container--fluid ">
+				<div class="kt-subheader__main">
+					<h3 class="kt-subheader__title">
+						Quản lý lớp học
+					</h3>
 
-          <span class="kt-subheader__separator kt-hidden"></span>
-          <div class="kt-subheader__breadcrumbs">
-            <a href="#" class="kt-subheader__breadcrumbs-home"
-              ><i class="flaticon2-shelter"></i
-            ></a>
-            <span class="kt-subheader__breadcrumbs-separator"></span>
-            <a href="" class="kt-subheader__breadcrumbs-link"> SchoolBus </a>
-            <span class="kt-subheader__breadcrumbs-separator"></span>
-            <a href="" class="kt-subheader__breadcrumbs-link">
-              Quản lý lớp học</a
-            >
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- end:: Subheader -->
+					<span class="kt-subheader__separator kt-hidden"></span>
+					<div class="kt-subheader__breadcrumbs">
+						<a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
+						<span class="kt-subheader__breadcrumbs-separator"></span>
+						<a href="" class="kt-subheader__breadcrumbs-link"> SchoolBus </a>
+						<span class="kt-subheader__breadcrumbs-separator"></span>
+						<a href="" class="kt-subheader__breadcrumbs-link">
+							Quản lý lớp học</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- end:: Subheader -->
 
-    <!-- begin:: Content -->
-    <div
-      class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid"
-    >
-      <div class="row">
-        <div class="col">
-          <div class="kt-portlet">
-            <div class="kt-portlet__head">
-              <div class="kt-portlet__head-label">
-                <h3 class="kt-portlet__head-title">
-                  Danh sách lớp học
-                </h3>
-              </div>
-            </div>
+		<!-- begin:: Content -->
+		<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+			<div class="row">
+				<div class="col">
+					<div class="kt-portlet">
+						<div class="kt-portlet__head">
+							<div class="kt-portlet__head-label">
+								<h3 class="kt-portlet__head-title">
+									Danh sách lớp học
+								</h3>
+							</div>
+						</div>
 
-            <div class="kt-portlet__body">
-              <!--begin::Section-->
-              <div class="kt-section">
-                <div class="kt-section__content">
-                  <button
-                    type="button"
-                    class="btn btn-outline-brand mb-4 add-more"
-                    data-toggle="modal"
-                    data-target="#editClassModal"
-                  >
-                    Thêm mới
-                  </button>
-                  <table class="table table-bordered table-hover">
-                    <thead class="thead-light">
-                      <tr>
-                        <th>#</th>
-                        <th>Trường</th>
-                        <th>Lớp</th>
-                        <th>Giáo viên</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody id="table-body">
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              <!--end::Section-->
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- end:: Content -->
-  </div>
-  {{> editClassModal}}
+						<div class="kt-portlet__body">
+							<!--begin::Section-->
+							<div class="kt-section">
+								<div class="kt-section__content">
+									<div class="kt-datatable kt-datatable--default kt-datatable--brand">
+										<button type="button" class="btn btn-outline-brand mb-4 add-more"
+											data-toggle="modal" data-target="#editClassModal">
+											Thêm mới
+										</button>
+										<p id="empty-data" class="text-muted font-14 d-none">
+											Không có dữ liệu
+										  </p>
+										<table class="table table-bordered table-hover">
+											<thead class="thead-light">
+												<tr>
+													<th>#</th>
+													<th>Trường</th>
+													<th>Lớp</th>
+													<th>Giáo viên</th>
+													<th></th>
+												</tr>
+											</thead>
+											<tbody id="table-body">
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+							<!--end::Section-->
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- end:: Content -->
+	</div>
+	{{> editClassModal}}
 </template>
 
 <template name="editClassModal">
-  <div
-    class="modal fade"
-    id="editClassModal"
-    tabindex="-1"
-    role="dialog"
-    aria-labelledby="exampleModalLabel"
-    style="display: none;"
-    aria-hidden="true"
-  >
-    <div class="modal-dialog modal-lg" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">New message</h5>
-          <button
-            type="button"
-            class="close"
-            data-dismiss="modal"
-            aria-label="Close"
-          ></button>
-        </div>
-        <div class="modal-body">
-          <form class="kt-form kt-form--label-right">
-            <div class="kt-portlet__body">
-              <div class="form-group row">
-                <label class="col-2 col-form-label"
-                  >Trường</label
-                >
-                <div class="col-10">
-                  <select id="school-select" class="form-control">
-                    <option value=""></option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-group row">
-                <label class="col-2 col-form-label"
-                  >Giáo Viên</label
-                >
-                <div class="col-10">
-                  <select id="teacher-select" class="form-control">
-                    <option value=""></option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-group row">
-                <label for="example-date-input" class="col-2 col-form-label"
-                  >Lớp</label
-                >
-                <div class="col-10">
-                  <input class="form-control" type="text" id="class-name" name="className">
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary cancel-button"
-                data-dismiss="modal"
-              >
-                Hủy
-              </button>
-              <button type="submit" class="btn btn-primary confirm-button">
-                Xác nhận
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
+	<div class="modal fade" id="editClassModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+		style="display: none;" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">New message</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form class="kt-form kt-form--label-right">
+						<div class="kt-portlet__body">
+							<div class="form-group row">
+								<label class="col-2 col-form-label required-input-label" >Trường</label>
+								<div class="col-10">
+									<select id="school-select" class="form-control">
+										<option value=""></option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label class="col-2 col-form-label required-input-label">Giáo Viên</label>
+								<div class="col-10">
+									<select id="teacher-select" class="form-control">
+										<option value=""></option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="example-date-input" class="col-2 col-form-label required-input-label">Lớp</label>
+								<div class="col-10">
+									<input class="form-control" type="text" id="class-name" name="className">
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary cancel-button" data-dismiss="modal">
+								Hủy
+							</button>
+							<button type="submit" class="btn btn-primary confirm-button">
+								Xác nhận
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 </template>

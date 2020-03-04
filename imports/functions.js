@@ -2,15 +2,22 @@ import {
     Meteor
 } from "meteor/meteor"
 
+import {
+    LIMIT_DOCUMENT_PAGE
+} from './variableConst'
+
 export {
     MeteorCall,
     handleError,
     handleSuccess,
     handleConfirm,
     redirectLogin,
+    addRequiredInputLabel,
     passChangeHandleError,
     getBase64,
-    makeID
+    makeID,
+    addPaging,
+    tablePaging
 }
 
 function MeteorCall(method = "", data = null, accessToken = "") {
@@ -101,6 +108,9 @@ function redirectLogin() {
     Push.setUser();
 }
 
+function addRequiredInputLabel() {
+    $(".required-input-label").append(`&nbsp;<span style="color: red;">*</span>`)
+}
 function getBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -117,4 +127,68 @@ function makeID(text = "", length = 15) {
         text += characters.charAt(Math.floor(Math.random() * charactersLength))
     }
     return text
+}
+
+function addPaging(tag = '.kt-datatable'){
+    $(tag).append(`
+        <div class="kt-datatable__pager">
+            <ul class="kt-datatable__pager-nav tablePaging">
+
+            </ul>
+            <div class="kt-datatable__pager-info">
+                <select id="limit-doc" data-width="60px" data-selected="10" tabindex="-98">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+                <span class="kt-datatable__pager-detail" id="paging-detail">Hiển thị 10 bản ghi</span>
+            </div>
+        </div>
+    `)
+    console.log("paging added")
+}
+
+function tablePaging(tag = '.tablePaging', count, page = 1, limit = LIMIT_DOCUMENT_PAGE) {
+    let totalPage = Math.ceil(count / limit);
+    let start = page == 1 ? 'kt-datatable__pager-link--disabled disabledPaging' : ''
+    let previous = page == 1 ? 'kt-datatable__pager-link--disabled disabledPaging' : ''
+    let end = page == totalPage ? 'kt-datatable__pager-link--disabled disabledPaging' : ''
+    let next = page == totalPage ? 'kt-datatable__pager-link--disabled disabledPaging' : ''
+    let html = `
+    <li>
+        <a title="Trang đầu" class="kt-datatable__pager-link kt-datatable__pager-link--first ${start}" data-page="1">
+            <i class="flaticon2-fast-back"></i>
+        </a>
+    </li>
+    <li>
+        <a title="Trang trước" class="kt-datatable__pager-link kt-datatable__pager-link--prev ${previous}" data-page=${page-1}>
+            <i class="flaticon2-back"></i>
+        </a>
+    </li>
+    `
+    let pages = [page - 2, page - 1, page, page + 1, page + 2]
+    pages.forEach(item => {
+        if (item > 0 && item <= totalPage) {
+            let current = item == page ? 'kt-datatable__pager-link--active' : ''
+            html += `<li>
+                        <a class="kt-datatable__pager-link kt-datatable__pager-link-number ${current}" data-page=${item} title=${item}>${item}</a>
+                    </li>`
+        }
+    })
+    html += `
+    <li>
+        <a title="Trang sau" class="kt-datatable__pager-link kt-datatable__pager-link--next ${next}" data-page=${page+1}>
+            <i class="flaticon2-next"></i>
+        </a>
+    </li>
+    <li>
+        <a title="Trang cuối" class="kt-datatable__pager-link kt-datatable__pager-link--last ${end}" data-page=${totalPage}>
+            <i class="flaticon2-fast-next"></i>
+        </a>
+    </li>
+    `
+    $(tag).html(html);
+    $(".disabledPaging").attr("disabled", "disabled");
 }

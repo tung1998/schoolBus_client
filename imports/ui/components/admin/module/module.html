@@ -43,22 +43,24 @@
                                 <div class="kt-section__content">
                                     <button type="button" id="add-module" class="btn btn-outline-brand mb-4" data-toggle="modal"
                                         data-target="#editModuleModal">Thêm mới</button>
-                                    <table class="table table-bordered table-hover" id="table-module">
-                                        <thead class="thead-light">
-                                            <tr>
-                                                <th>ID</th>
-                                                <th>Tên module</th>
-                                                <th>Mô tả</th>
-                                                <th>Đường dẫn</th>
-                                                <th>Cấp phép cho</th>
-                                                <th>Thời gian khởi tạo</th>
-                                                <th>Hành động</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            
-                                        </tbody>
-                                    </table>
+                                    <div class="kt-datatable kt-datatable--default kt-datatable--brand kt-datatable--loaded">
+                                        <table class="table table-bordered table-hover" id="table-module">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Tên module</th>
+                                                    <th>Mô tả</th>
+                                                    <th>Đường dẫn</th>
+                                                    <th>Cấp phép cho</th>
+                                                    <th>Thời gian khởi tạo</th>
+                                                    <th>Hành động</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                             <!--end::Section-->
@@ -89,7 +91,7 @@
                         <div class="kt-portlet__body">
                             <input type="hidden" id="module-id" value="">
                             <div class="form-group row">
-                                <label for="module-name" class="col-3 col-form-label">Tên Module</label>
+                                <label for="module-name" class="col-3 col-form-label required-input-label" >Tên Module</label>
                                 <div class="col-9">
                                     <input class="form-control" type="text" value="" id="module-name" name="module-name"
                                         placeholder="Tên Module">
@@ -103,7 +105,7 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label for="module-route" class="col-3 col-form-label">Đường dẫn</label>
+                                <label for="module-route" class="col-3 col-form-label required-input-label">Đường dẫn</label>
                                 <div class="col-9">
                                     <input class="form-control" type="text" value="" id="module-route"
                                         name="module-route" placeholder="Đường dẫn">
@@ -123,7 +125,7 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label for="module-icon" class="col-3 col-form-label">Icon</label>
+                                <label for="module-icon" class="col-3 col-form-label required-input-label">Icon</label>
                                 <div class="col-9">
                                     <select id="module-icon" class="form-control">
                                         <option></option>
@@ -136,7 +138,7 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label for="module-permission" class="col-3 col-form-label">Chọn quyền</label>
+                                <label for="module-permission" class="col-3 col-form-label required-input-label">Chọn quyền</label>
                                 <div class="col-9">
                                     <select id="module-permission" class="form-control" multiple="multiple" >
                                         <option value="admin">Quản trị viên</option>
