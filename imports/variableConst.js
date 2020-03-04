@@ -219,14 +219,16 @@ const _METHODS = {
         getLast: 'monitoring.getLastgps'
     },
     wemap: {
-        getAddress: 'wemap.getAddress'
+        getAddress: 'wemap.getAddress',
+        getDrivePath: 'wemap.getDrivePath'
     }
 }
 
 const _SESSION = {
     accessToken: 'accessToken',
     userID: 'userID',
-    username: 'username'
+    username: 'username',
+    mapHeight: 'mapHeight'
 }
 
 const _TRIP_STUDENT = {
