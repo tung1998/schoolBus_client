@@ -18,6 +18,7 @@ if (Meteor.isServer) {
     Meteor.methods({
         'car.getAll': getAllCar,
         'car.getByID': getCarByID,
+        'car.getByPage': getCarByPage,
         'car.create': createCar,
         'car.update': updateCar,
         'car.delete': deleteCar,
@@ -33,6 +34,13 @@ function getAllCar(data, accessToken = '') {
 
 function getCarByID(data, accessToken = '') {
     let url = `${AUTH_CAR}/${data._id}`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
+}
+
+function getCarByPage(data, accessToken = '') {
+    let url = `${AUTH_CAR}/${data.page}?limit=${data.limit}`
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });

@@ -18,6 +18,7 @@ if (Meteor.isServer) {
     Meteor.methods({
         'teacher.getAll': getAllTeacher,
         'teacher.getByID': getTeacherByID,
+        'teacher.getByPage': getTeacherByPage,
         'teacher.create': createTeacher,
         'teacher.update': updateTeacher,
         'teacher.delete': deleteTeacher,
@@ -41,6 +42,13 @@ function getAllTeacher(data, accessToken = '') {
 
 function getTeacherByID(data, accessToken = '') {
     let url = `${AUTH_TEACHER}/${data._id}`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
+}
+
+function getTeacherByPage(data, accessToken = '') {
+    let url = `${AUTH_TEACHER}/${data.page}?limit=${data.limit}`
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });

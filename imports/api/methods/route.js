@@ -18,6 +18,7 @@ if (Meteor.isServer) {
     Meteor.methods({
         'route.getAll': getAllRoute,
         'route.getByID': getRouteByID,
+        'route.getByPage': getRouteByPage,
         'route.create': createRoute,
         'route.update': updateRoute,
         'route.delete': deleteRoute,
@@ -33,6 +34,13 @@ function getAllRoute(data, accessToken = '') {
 
 function getRouteByID(data, accessToken = '') {
     let url = `${AUTH_ROUTE}/${data._id}`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
+}
+
+function getRouteByPage(data, accessToken = '') {
+    let url = `${AUTH_ROUTE}/${data.page}?limit=${data.limit}`
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });

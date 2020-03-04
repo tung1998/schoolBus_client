@@ -1,4 +1,7 @@
 import "./studentManager.html";
+
+import QRCode from 'qrcode';
+
 import {
 	Session
 } from "meteor/session";
@@ -11,6 +14,7 @@ import {
 	handleSuccess,
 	handleConfirm,
 	addRequiredInputLabel,
+	addPaging,
 	tablePaging
 } from "../../../../functions";
 
@@ -20,30 +24,34 @@ import {
 } from "../../../../variableConst";
 
 let accessToken;
+let currentPage = 1;
 
 Template.studentManager.onCreated(() => {
 	accessToken = Cookies.get("accessToken");
 });
 
 Template.studentManager.onRendered(() => {
-	reloadTable();
 	renderSchoolName();
 	renderCarStopID();
 	initSelect2()
 	addRequiredInputLabel();
+	addPaging();
 	getLimitDocPerPage();
+	reloadTable();
 });
 
 Template.studentManager.events({
+	"click .table-row": ClickTableRow,
 	"click .modify-button": ClickModifyButton,
 	"click .delete-button": ClickDeleteButton,
 	"click .add-more": ClickAddMoreButton,
 	"submit form": SubmitForm,
 	"change #student-school": renderClassName,
 	"click .kt-datatable__pager-link": (e) => {
-		reloadTable(parseInt($(e.currentTarget).data('page')));
+		reloadTable(parseInt($(e.currentTarget).data('page')), getLimitDocPerPage());
 		$(".kt-datatable__pager-link").removeClass("kt-datatable__pager-link--active");
 		$(e.currentTarget).addClass("kt-datatable__pager-link--active")
+		currentPage = parseInt($(e.currentTarget).data('page'));
 	},
 	"change #limit-doc": (e) => {
 		reloadTable(1, getLimitDocPerPage());
@@ -86,6 +94,25 @@ function renderCarStopID() {
 	})
 }
 
+function ClickTableRow(event){
+	let id = $(event.currentTarget).attr("id")
+	QRCode.toDataURL(id)
+		.then(url => {
+			console.log(url)
+			$(".modal-content.QR-content").css({
+				"height": "85vh"
+			})
+			$("#QR-modal-body").css({
+				"text-align": "center"
+			})
+			$("#QR-modal-body").html(`<img style="width: 70%" src=${url} alt="">`)
+			$("#QRModal").modal("show");
+		})
+		.catch(err => {
+			console.error(err)
+		})
+}
+
 function ClickModifyButton(e) {
 	let studentData = $(e.currentTarget).data("json");
 	$("#editStudentModal").modal("show");
@@ -123,7 +150,7 @@ function ClickDeleteButton(event) {
 					text: "Đã xóa thành công",
 					timer: 3000
 				})
-				reloadTable(1, getLimitDocPerPage())
+				reloadTable(currentPage, getLimitDocPerPage())
 			}).catch(handleError)
 		} else {
 
@@ -152,8 +179,9 @@ function SubmitForm(event) {
 				.then(result => {
 					handleSuccess("Thêm", "học sinh").then(() => {
 						$("#editStudentModal").modal("hide");
+						reloadTable(1, getLimitDocPerPage())
 					})
-					reloadTable(1, getLimitDocPerPage())
+
 				})
 				.catch(handleError);
 		} else {
@@ -162,8 +190,8 @@ function SubmitForm(event) {
 				.then(result => {
 					handleSuccess("Cập nhật", "học sinh").then(() => {
 						$("#editStudentModal").modal("hide");
+						reloadTable(currentPage, getLimitDocPerPage())
 					})
-					reloadTable(1, getLimitDocPerPage())
 				})
 				.catch(handleError);
 		}
@@ -231,34 +259,35 @@ function initSelect2() {
 
 }
 
-function getLimitDocPerPage(){
+function getLimitDocPerPage() {
 	return parseInt($("#limit-doc").val());
 }
 
 function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
 	let table = $('#table-body');
-    let emptyWrapper = $('#empty-data');
+	let emptyWrapper = $('#empty-data');
 	table.html('');
-	MeteorCall(_METHODS.student.GetByPage, {page: page}, accessToken).then(result => {
+	MeteorCall(_METHODS.student.GetByPage, { page: page, limit: limitDocPerPage }, accessToken).then(result => {
 		console.log(result)
 		tablePaging(".tablePaging", result.count, page, limitDocPerPage)
+		$("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
 		if (result.count === 0) {
-            $('.tablePaging').addClass('d-none');
-            table.parent().addClass('d-none');
-            emptyWrapper.removeClass('d-none');
-        } else if (result.count > limitDocPerPage) {
-            $('.tablePaging').removeClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
-            // update số bản ghi
-        } else {
-            $('.tablePaging').addClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
+			$('.tablePaging').addClass('d-none');
+			table.parent().addClass('d-none');
+			emptyWrapper.removeClass('d-none');
+		} else if (result.count > limitDocPerPage) {
+			$('.tablePaging').removeClass('d-none');
+			table.parent().removeClass('d-none');
+			emptyWrapper.addClass('d-none');
+			// update số bản ghi
+		} else {
+			$('.tablePaging').addClass('d-none');
+			table.parent().removeClass('d-none');
+			emptyWrapper.addClass('d-none');
 		}
-		
 		createTable(table, result, limitDocPerPage)
 	})
+
 }
 
 function renderTable(data, page = 1) {
@@ -291,7 +320,7 @@ function createRow(data) {
 	const data_row = dataRow(data);
 	// _id is tripID
 	return `
-        <tr id="${data._id}">
+        <tr id="${data._id}" class="table-row">
           ${data_row}
         </tr>
         `
@@ -313,7 +342,7 @@ function dataRow(result) {
 		carStop: result.carStop.name,
 		status: result.status
 	}
-	return `<tr id=${data._id}>
+	return `
             <td>${data.name}</td>
             <td>${data.address}</td>
             <td>${data.phone}</td>
@@ -330,5 +359,5 @@ function dataRow(result) {
 		data
 	)}\'>Xóa</button>
             </td>
-        </tr>`;
+    `;
 }

@@ -43,7 +43,7 @@
                 <div class="kt-section__content">
                   <button type="button" class="btn btn-outline-brand mb-4 add-more" data-toggle="modal"
                     data-target="#editStudentModal">Thêm mới</button>
-                  <div class="kt-datatable kt-datatable--default kt-datatable--brand kt-datatable--loaded">
+                  <div class="kt-datatable kt-datatable--default kt-datatable--brand">
                     <p id="empty-data" class="text-muted font-14 d-none">
                       Không có dữ liệu
                     </p>
@@ -66,27 +66,6 @@
 
                       </tbody>
                     </table>
-          
-                    <div class="kt-datatable__pager kt-datatable--paging-loaded">
-                      <ul class="kt-datatable__pager-nav tablePaging">
-
-                      </ul>
-                      <div class="kt-datatable__pager-info fa-pull-right">
-                        <div class=" bootstrap-select kt-datatable__pager-size" style="width: 60px;">
-                          <select id="limit-doc"
-                            class="selectpicker kt-datatable__pager-size" title="Select page size" data-width="60px"
-                            data-selected="10" tabindex="-98">
-                            <option value="10">10</option>
-                            <option value="20">20</option>
-                            <option value="30">30</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                          </select>
-                
-                        </div><span class="kt-datatable__pager-detail">Showing 1 - 10 of 100</span>
-                      </div>
-                    </div>
-
                   </div>
 
                 </div>
@@ -100,6 +79,7 @@
     <!-- end:: Content -->
   </div>
   {{> editStudentModal}}
+  {{> QRModal}}
 </template>
 
 
@@ -192,6 +172,24 @@
               <button type="submit" class="btn btn-primary" id="confirm-button">Xác nhận</button>
             </div>
           </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="QRModal">
+  <div class="modal fade" id="QRModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content QR-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Mã QR</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          </button>
+        </div>
+        <div class="modal-body" id="QR-modal-body">
+          <img style="width: 70%" src="" alt="">
         </div>
       </div>
     </div>

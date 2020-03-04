@@ -42,6 +42,10 @@
                 <div class="kt-section">
                   <div class="kt-section__content">
                     <button type="button" class="btn btn-outline-brand mb-4 add-more" >Thêm mới</button>
+                    <div class="kt-datatable kt-datatable--default kt-datatable--brand">
+                      <p id="empty-data" class="text-muted font-14 d-none">
+                        Không có dữ liệu
+                      </p>
                     <table class="table table-bordered table-hover">
                       <thead class="thead-light">
                         <tr>
@@ -60,6 +64,7 @@
                       
                       </tbody>
                     </table>
+                    </div>
                   </div>
                 </div>
                 <!--end::Section-->
@@ -88,43 +93,43 @@
           <form class="kt-form kt-form--label-right">
             <div class="kt-portlet__body">
               <div class="form-group row">
-                <label for="example-text-input" class="col-2 col-form-label">Hãng xe</label>
+                <label for="example-text-input" class="col-2 col-form-label required-input-label" >Hãng xe</label>
                 <div class="col-10">
                   <input class="form-control" type="text" id="example-text-input" name="brand-input">
                 </div>
               </div>
               <div class="form-group row">
-                <label for="example-search-input" class="col-2 col-form-label">Model</label>
+                <label for="example-search-input" class="col-2 col-form-label required-input-label">Model</label>
                 <div class="col-10">
                   <input class="form-control" type="text" id="example-search-input" name="model-input">
                 </div>
               </div>
               <div class="form-group row">
-                <label for="example-email-input" class="col-2 col-form-label">Số ghế</label>
+                <label for="example-email-input" class="col-2 col-form-label required-input-label">Số ghế</label>
                 <div class="col-10">
                   <input class="form-control" type="number" id="example-email-input" name="seat-input">
                 </div>
               </div>
               <div class="form-group row">
-                <label for="example-url-input" class="col-2 col-form-label">Loại nhiên liệu</label>
+                <label for="example-url-input" class="col-2 col-form-label required-input-label">Loại nhiên liệu</label>
                 <div class="col-10">
                   <input class="form-control" type="text" id="example-url-input" name="fuelType-input">
                 </div>
               </div>
               <div class="form-group row">
-                <label for="example-tel-input" class="col-2 col-form-label">Dung tích</label>
+                <label for="example-tel-input" class="col-2 col-form-label required-input-label">Dung tích</label>
                 <div class="col-10">
                   <input class="form-control" type="text" id="example-tel-input" name="capacity-input">
                 </div>
               </div>
               <div class="form-group row">
-                <label for="example-tel-input" class="col-2 col-form-label">Ngày bảo trì</label>
+                <label for="example-tel-input" class="col-2 col-form-label required-input-label">Ngày bảo trì</label>
                 <div class="col-10">
                   <input class="form-control" type="text" name="maintenance-input">
                 </div>
               </div>
               <div class="form-group row">
-                <label for="example-date-input" class="col-2 col-form-label">Km bảo trì</label>
+                <label for="example-date-input" class="col-2 col-form-label required-input-label">Km bảo trì</label>
                 <div class="col-10">
                   <input class="form-control" type="text" id="example-date-i1nput" name="km-input">
                 </div>
