@@ -40,6 +40,11 @@ Template.profile.onRendered(() => {
         //})
     }).catch(handleError);
 });
+
+Template.profile.rendered = () => {
+    console.log($(".kt-portlet__body").height())
+    Session.set(_SESSION.mapHeight, $(".kt-portlet__body").height());
+}
 Template.profile.events({
     'submit form': appendNewPass,
 })
