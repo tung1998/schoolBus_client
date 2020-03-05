@@ -45,7 +45,13 @@ Template.tripDetail.onDestroyed(() => {
 })
 
 function checkStudentInfo(studentID) {
-    console.log(studentList, studentID)
+    let result = null;
+    studentList.map(student => {
+        if(student.studentID == studentID) {
+            result = student;
+        }
+    })
+    return result;
 }
 
 function clickStatusButton(e) {
@@ -60,6 +66,7 @@ function clickStatusButton(e) {
     }, accessToken).then(result => {
         handleSuccess('Cập nhật', "tình trạng học sinh")
         reloadData()
+        $("#studentInfoModal").modal("hide")
     }).catch(handleError)
 }
 

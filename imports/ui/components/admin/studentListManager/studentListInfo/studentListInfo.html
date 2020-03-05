@@ -23,7 +23,7 @@
     </div>
     <!-- end:: Subheader -->
     <!-- begin:: Content -->
-    <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+    <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid container_height">
       <div class="kt-portlet kt-portlet--tabs">
         <div class="kt-portlet__head">
           <div class="kt-portlet__head-toolbar">
@@ -87,51 +87,13 @@
   <div class="kt-section">
     <div class="kt-section__content">
       <div class="row">
-        <div class="col-6">
-          <div class="ui-sortable" id="kt_sortable_portlets">
-            <div class="kt-portlet kt-portlet--mobile kt-portlet--sortable">
-              <div class="kt-portlet__head ui-sortable-handle">
-                <div class="kt-portlet__head-label">
-                  <h3 class="kt-portlet__head-title">
-                    Portlet Title
-                  </h3>
-                </div>
-              </div>
-
-            </div>
-            <div class="kt-portlet kt-portlet--mobile kt-portlet--sortable">
-              <div class="kt-portlet__head ui-sortable-handle">
-                <div class="kt-portlet__head-label">
-                  <h3 class="kt-portlet__head-title">
-                    Portlet Title
-                  </h3>
-                </div>
-              </div>
-
-            </div>
-            <div class="kt-portlet kt-portlet--mobile kt-portlet--sortable">
-              <div class="kt-portlet__head ui-sortable-handle">
-                <div class="kt-portlet__head-label">
-                  <h3 class="kt-portlet__head-title">
-                    Portlet Title
-                  </h3>
-                </div>
-              </div>
-
-            </div>
-            <div class="kt-portlet kt-portlet--mobile kt-portlet--sortable kt-bg-dark">
-              <div class="kt-portlet__head ui-sortable-handle">
-                <div class="kt-portlet__head-label">
-                  <h3 class="kt-portlet__head-title">
-                    Portlet Title
-                  </h3>
-                </div>
-              </div>
-
-            </div>
+        <div class="col-4 anchorHeight" style="overflow: auto;">
+          <div class="ui-sortable carStopContainer" id="kt_sortable_portlets">
+            
           </div>
         </div>
-        <div class="col-6">
+        <div class="col-8">
+          {{>carStopmap}}
         </div>
       </div>
     </div>
@@ -182,4 +144,8 @@
       </div>
     </div>
   </div>
+</template>
+
+<template name="carStopmap">
+  <div id="carStopmap" style="padding: 0px; z-index: 0; height: 100%; width: 100%"></div>
 </template>
