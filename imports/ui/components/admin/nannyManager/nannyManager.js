@@ -2,9 +2,23 @@ import './nannyManager.html'
 
 const Cookies = require("js-cookie");
 
-import { MeteorCall, handleError } from "../../../../functions";
+import {
+    MeteorCall,
+    handleError,
+    handleSuccess,
+    handleConfirm,
+    addRequiredInputLabel,
+    addPaging,
+    tablePaging,
+    getBase64,
+    makeID
+} from "../../../../functions";
 
-import { _METHODS } from "../../../../variableConst";
+import {
+    _METHODS,
+    LIMIT_DOCUMENT_PAGE
+} from "../../../../variableConst";
+
 
 let accessToken;
 
@@ -43,15 +57,13 @@ function ClickModifyButton(event) {
 
     $("#name-input").val(nannyData.name);
     $("#phone-input").val(nannyData.phone);
-    $("#username-input").val(nannyData.username);
-    $("#password-input").parent().parent().hide();
     $("#email-input").val(nannyData.email);
     $("#address-input").val(nannyData.address);
     $("#identityCard-input").val(nannyData.IDNumber);
     $("#identityCardDate-input").val(nannyData.IDIssueDate);
     $("#identityCardBy-input").val(nannyData.IDIssueBy);
     $("#status-input").val(nannyData.status);
-    $("#image-input").val(nannyData.image);
+    // $("#image-input").val(nannyData.image);
 }
 
 function ClickDeleteButton(event) {
@@ -64,93 +76,93 @@ function ClickDeleteButton(event) {
         .catch(handleError);
 }
 
-function SubmitForm(event) {
-    event.preventDefault();
-    let data = {
-        name: $("#name-input").val(),
-        phone: $("#phone-input").val(),
-        email: $("#email-input").val(),
-        username: $("#username-input").val(),
-        password: $("#password-input").val(),
-        address: $("#address-input").val(),
-        IDNumber: $("#identityCard-input").val(),
-        IDIssueDate: $("#identityCardDate-input").val(),
-        IDIssueBy: $("#identityCardBy-input").val(),
-        status: $("#status-input").val(),
-        image: $("#image-input").val()
-    };
 
-    let modify = $("#editNannyModal").attr("nannyID");
-    if (modify == "") {
-        MeteorCall(_METHODS.Nanny.Create, data, accessToken)
-            .then(result => {
-                $("#editNannyModal").modal("hide");
-                addToTable(data, result)
-            })
-            .catch(handleError);
-    } else {
-        data._id = modify;
-        MeteorCall(_METHODS.Nanny.Update, data, accessToken)
-            .then(result => {
-                $("#editNannyModal").modal("hide");
-                modifyTable(data)
-            })
-            .catch(handleError);
+async function SubmitForm(event) {
+    try {
+        event.preventDefault();
+        if (checkInput()) {
+            let data = {
+                name: $("#name-input").val(),
+                phone: $("#phone-input").val(),
+                email: $("#email-input").val(),
+                username: $("#phone-input").val(),
+                password: "12345678",
+                address: $("#address-input").val(),
+                IDNumber: $("#identityCard-input").val(),
+                IDIssueDate: $("#identityCardDate-input").val(),
+                IDIssueBy: $("#identityCardBy-input").val(),
+                status: $("#status-input").val(),
+            }
+            if ($('#nanny-image').val()) {
+                let imageId = makeID("user")
+                let BASE64 = await getBase64($('#nanny-image')[0].files[0])
+                let importImage = await MeteorCall(_METHODS.image.Import, {
+                    imageId,
+                    BASE64: [BASE64]
+                }, accessToken)
+                if (importImage.error)
+                    handleError(result, "Không tải được ảnh lên server!")
+                else data.image = imageId
+            }
+
+            let modify = $("#editNannyModal").attr("nannyID");
+            if (modify == "") {
+                await MeteorCall(_METHODS.Nanny.Create, data, accessToken)
+                    .then(result => {
+                        handleSuccess("Thêm", "bảo mẫu").then(() => {
+                            $("#editNannyModal").modal("hide");
+                        })
+                        reloadTable()
+                    })
+                    .catch(handleError);
+            } else {
+                data._id = modify;
+                await MeteorCall(_METHODS.Nanny.Update, data, accessToken)
+                    .then(result => {
+                        handleSuccess("Thêm", "bảo mẫu").then(() => {
+                            $("#editNannyModal").modal("hide");
+                        })
+                        reloadTable()
+                    })
+                    .catch(handleError);
+            }
+        }
+    } catch (error) {
+        handleError(error)
     }
 }
 
-function addToTable(data, result) {
-    data._id = result._id;
-    $("#table-body").prepend(`<tr id=${data._id}>
-                                <th scope="row"></th>
-                                <td>${data.name}</td>
-                                <td>${data.username}</td>
-                                <td>${data.phone}</td>
-                                <td>${data.email}</td>
-                                <td>${data.address}</td>
-                                <td>${data.IDNumber}</td>
-                                <td>${data.IDIssueDate}</td>
-                                <td>${data.IDIssueBy}</td>
-                                <td>${data.status}</td>
-                                <td>
-                                    <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
-                                    <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
-                                </td>
-                            </tr>`
-    )
+function checkInput() {
+    let name = $("#name-input").val()
+    let phone = $("#phone-input").val()
+    let email = $("#email-input").val()
+    let address = $("#address-input").val()
+    let IDNumber = $("#identityCard-input").val()
+    let IDIssueDate = $("#identityCardDate-input").val()
+    let IDIssueBy = $("#identityCardBy-input").val()
+    if (!name || !phone || !email || !address || !IDNumber || !IDIssueBy || !IDIssueDate) {
+        Swal.fire({
+            icon: "error",
+            text: "Làm ơn điền đầy đủ thông tin",
+            timer: 3000
+        })
+        return false
+    } else {
+        return true
+    }
 }
 
-function modifyTable(data) {
-    $(`#${data._id}`).html(`<th scope="row"></th>
-                            <td>${data.name}</td>
-                            <td>${data.username}</td>
-                            <td>${data.phone}</td>
-                            <td>${data.email}</td>
-                            <td>${data.address}</td>
-                            <td>${data.IDNumber}</td>
-                            <td>${data.IDIssueDate}</td>
-                            <td>${data.IDIssueBy}</td>
-                            <td>${data.status}</td>
-                            <td>
-                                <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
-                                <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
-                            </td>`
-    )
-}
-
-function deleteRow(data) {
-    $(`#${data._id}`).remove();
-}
 
 async function reloadTable() {
     try {
-        let nannyData = await MeteorCall(_METHODS.Nanny.GetAll, {extra: "user"}, accessToken);
+        let nannyData = await MeteorCall(_METHODS.Nanny.GetAll, {
+            extra: "user"
+        }, accessToken);
         nannyData.data.map(nanny => {
             let html = htmlRow(nanny);
             $("#table-body").append(html);
         })
-    }
-    catch (err) {
+    } catch (err) {
         handleError(err)
     }
 }

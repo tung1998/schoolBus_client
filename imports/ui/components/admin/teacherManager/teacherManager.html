@@ -41,27 +41,28 @@
               <!--begin::Section-->
               <div class="kt-section">
                 <div class="kt-section__content">
-                  <button type="button" class="btn btn-outline-brand mb-4 add-more" data-toggle="modal" data-target="#editTeacherModal">Thêm mới</button>
+                  <button type="button" class="btn btn-outline-brand mb-4 add-more" data-toggle="modal"
+                    data-target="#editTeacherModal">Thêm mới</button>
                   <div class="kt-datatable kt-datatable--default kt-datatable--brand">
                     <p id="empty-data" class="text-muted font-14 d-none">
                       Không có dữ liệu
                     </p>
-                  <table class="table table-bordered table-hover">
-                    <thead class="thead-light">
-                      <tr>
-                        <th>#</th>
-                        <th>Họ tên</th>
-                        <th>Tên đang nhập</th>
-                        <th>Số điện thoại</th>
-                        <th>Email</th>
-                        <th>Trường</th>
-                        <th>Hành động</th>
-                      </tr>
-                    </thead>
-                    <tbody id="table-body">
-                      
-                    </tbody>
-                  </table>
+                    <table class="table table-bordered table-hover">
+                      <thead class="thead-light">
+                        <tr>
+                          <th>#</th>
+                          <th>Họ tên</th>
+                          <th>Tên đang nhập</th>
+                          <th>Số điện thoại</th>
+                          <th>Email</th>
+                          <th>Trường</th>
+                          <th>Hành động</th>
+                        </tr>
+                      </thead>
+                      <tbody id="table-body">
+
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
@@ -78,61 +79,61 @@
 
 
 <template name="editTeacherModal">
-<div class="modal fade" id="editTeacherModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-  style="display: none;" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title add-more" id="exampleModalLabel">Thêm mới</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        </button>
+  <div class="modal fade" id="editTeacherModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title add-more" id="exampleModalLabel">Thêm mới</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          </button>
+        </div>
+        <div class="modal-body">
+          <form class="kt-form kt-form--label-right form-input">
+            <div class="kt-portlet__body">
+              <div class="form-group row">
+                <label for="example-text-input" class="col-2 col-form-label required-input-label">Họ tên</label>
+                <div class="col-10">
+                  <input class="form-control" type="text" id="example-text-input" name="name">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="example-url-input" class="col-2 col-form-label required-input-label">Số điện thoại</label>
+                <div class="col-10">
+                  <input class="form-control" type="number" id="example-url-input" name=phoneNumber>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="example-tel-input" class="col-2 col-form-label">Email</label>
+                <div class="col-10">
+                  <input class="form-control" type="email" id="example-tel-input" name=email>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-2 col-form-label required-input-label">Trường</label>
+                <div class="col-10">
+                  <select id="school-select" class="form-control">
+                    <option value=""></option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="example-date-input" class="col-2 col-form-label">Ảnh đại diện</label>
+                <div class="col-10">
+                  <div class="custom-file">
+                    <input type="file" class="form control custom-file-input" id="teacher-image">
+                    <label class="custom-file-label" for="" style="text-align: left">Chọn File</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+              <button type="submit" class="btn btn-primary confirm-button">Xác nhận</button>
+            </div>
+          </form>
+        </div>
       </div>
-      <div class="modal-body">
-        <form class="kt-form kt-form--label-right form-input">
-          <div class="kt-portlet__body">
-            <div class="form-group row">
-              <label for="example-text-input" class="col-2 col-form-label required-input-label">Họ tên</label>
-              <div class="col-10">
-                <input class="form-control" type="text" id="example-text-input" name = "name">
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="example-url-input" class="col-2 col-form-label required-input-label">Số điện thoại</label>
-              <div class="col-10">
-                <input class="form-control" type="number" id="example-url-input" name=phoneNumber>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="example-tel-input" class="col-2 col-form-label">Email</label>
-              <div class="col-10">
-                <input class="form-control" type="email" id="example-tel-input" name=email>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label class="col-2 col-form-label required-input-label"
-                >Trường</label
-              >
-              <div class="col-10">
-               <select id="school-select" class="form-control">
-                  <option value=""></option>
-               </select>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="example-date-input" class="col-2 col-form-label">Ảnh đại diện</label>
-              <div class="col-10">
-                <input class="form-control" type="file" value="2011-08-19" id="example-date-input" name="avatar">
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-            <button type="submit" class="btn btn-primary confirm-button">Xác nhận</button>
-          </div>
-        </form>
-      </div>
-      
     </div>
   </div>
-</div>
 </template>

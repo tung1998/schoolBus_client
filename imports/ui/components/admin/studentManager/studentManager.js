@@ -15,7 +15,9 @@ import {
 	handleConfirm,
 	addRequiredInputLabel,
 	addPaging,
-	tablePaging
+	tablePaging,
+	getBase64,
+    makeID
 } from "../../../../functions";
 
 import {
@@ -156,44 +158,62 @@ function ClickDeleteButton(event) {
 	})
 }
 
-function SubmitForm(event) {
-	event.preventDefault();
-	if (checkInput()) {
-		let data = {
-			IDStudent: $('input[name="IDstudent"]').val(),
-			address: $('input[name="address"]').val(),
-			name: $('input[name="name"]').val(),
-			email: $('input[name="email"]').val(),
-			phone: $('input[name="phone"]').val(),
-			status: $('input[name="status"]').val(),
-			carStopID: $('#student-carStopID').val(),
-			classID: $('#student-class').val(),
-			schoolID: $('#student-school').val()
-		};
-		let modify = $("#editStudentModal").attr("studentID");
-
-		if (modify == "") {
-			MeteorCall(_METHODS.student.Create, data, accessToken)
-				.then(result => {
-					handleSuccess("Thêm", "học sinh").then(() => {
-						$("#editStudentModal").modal("hide");
-						reloadTable(1, getLimitDocPerPage())
+async function SubmitForm(event) {
+	try {
+		event.preventDefault();
+		if (checkInput()) {
+			let data = {
+				IDStudent: $('input[name="IDstudent"]').val(),
+				address: $('input[name="address"]').val(),
+				name: $('input[name="name"]').val(),
+				email: $('input[name="email"]').val(),
+				phone: $('input[name="phone"]').val(),
+				status: $('input[name="status"]').val(),
+				carStopID: $('#student-carStopID').val(),
+				classID: $('#student-class').val(),
+				schoolID: $('#student-school').val()
+			};
+	
+			if ($('#student-image').val()) {
+				let imageId = makeID("user")
+                let BASE64 = await getBase64($('#student-image')[0].files[0])
+                let importImage = await MeteorCall(_METHODS.image.Import, {
+                    imageId,
+                    BASE64: [BASE64]
+                }, accessToken)
+                if (importImage.error)
+                    handleError(result, "Không tải được ảnh lên server!")
+                else data.image = imageId
+			}
+			let modify = $("#editStudentModal").attr("studentID");
+			console.log(data);
+			if (modify == "") {
+				MeteorCall(_METHODS.student.Create, data, accessToken)
+					.then(result => {
+						handleSuccess("Thêm", "học sinh").then(() => {
+							$("#editStudentModal").modal("hide");
+							reloadTable(1, getLimitDocPerPage())
+						})
+	
 					})
-
-				})
-				.catch(handleError);
-		} else {
-			data._id = modify;
-			MeteorCall(_METHODS.student.Update, data, accessToken)
-				.then(result => {
-					handleSuccess("Cập nhật", "học sinh").then(() => {
-						$("#editStudentModal").modal("hide");
-						reloadTable(currentPage, getLimitDocPerPage())
+					.catch(handleError);
+			} else {
+				data._id = modify;
+				MeteorCall(_METHODS.student.Update, data, accessToken)
+					.then(result => {
+						handleSuccess("Cập nhật", "học sinh").then(() => {
+							$("#editStudentModal").modal("hide");
+							reloadTable(currentPage, getLimitDocPerPage())
+						})
 					})
-				})
-				.catch(handleError);
+					.catch(handleError);
+			}
 		}
+	} 
+	catch(error) {
+		handleError(error)
 	}
+	
 
 }
 

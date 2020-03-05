@@ -99,6 +99,18 @@ function handleConfirm(title = "Bạn đã chắc chắn chưa?") {
     })
 }
 
+function showLoading() {
+    return Swal.fire({
+        title: 'Now loading',
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        
+        onBeforeOpen: () => {
+          swal.showLoading();
+        }
+      })
+}
+
 
 function redirectLogin() {
     Cookies.remove('accessToken');
