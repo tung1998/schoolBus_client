@@ -99,13 +99,8 @@ function ClickTableRow(event){
 	QRCode.toDataURL(id)
 		.then(url => {
 			console.log(url)
-			$(".modal-content.QR-content").css({
-				"height": "85vh"
-			})
-			$("#QR-modal-body").css({
-				"text-align": "center"
-			})
-			$("#QR-modal-body").html(`<img style="width: 70%" src=${url} alt="">`)
+			$("#QR-title").html(`QR code`)
+			$("#QR-modal-body").html(`<img style="width: 60%" src=${url} alt="">`)
 			$("#QRModal").modal("show");
 		})
 		.catch(err => {
@@ -115,6 +110,8 @@ function ClickTableRow(event){
 
 function ClickModifyButton(e) {
 	let studentData = $(e.currentTarget).data("json");
+
+	 console.log("click button")
 	$("#editStudentModal").modal("show");
 	$("#editStudentModal").attr("studentID", studentData._id);
 	$(".modal-title").html("Chỉnh Sửa");
@@ -129,6 +126,7 @@ function ClickModifyButton(e) {
 	// $('#student-class').val(studentData.classID).trigger('change')
 	$('#student-carStopID').val(studentData.carStopID).trigger('change')
 	$('input[name="status"]').val(studentData.status);
+	return false
 }
 
 function ClickAddMoreButton(e) {
