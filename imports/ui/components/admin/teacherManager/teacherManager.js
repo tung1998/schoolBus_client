@@ -3,19 +3,22 @@ import { Session } from "meteor/session";
 const Cookies = require("js-cookie");
 
 import {
-  MeteorCall,
-  handleError,
-  handleSuccess,
-  handleConfirm,
-  addRequiredInputLabel,
-  addPaging,
-  tablePaging
+	MeteorCall,
+	handleError,
+	handleSuccess,
+	handleConfirm,
+	addRequiredInputLabel,
+	addPaging,
+	tablePaging,
+	getBase64,
+  makeID
 } from "../../../../functions";
 
 import {
-  _METHODS,
-  LIMIT_DOCUMENT_PAGE
+	_METHODS,
+	LIMIT_DOCUMENT_PAGE
 } from "../../../../variableConst";
+
 
 let accessToken;
 let currentPage = 1;
@@ -73,7 +76,7 @@ function ClickModifyButton(e) {
   $(' input[name="name"]').val(teacherData.name);
   $(' input[name="phoneNumber"]').val(teacherData.phone);
   $(' input[name="email"]').val(teacherData.email);
-  $(' input[name="school"]').val(teacherData.school);
+  $(' #school-select').val(teacherData.school).trigger('change');
   $(' input[name="class"]').val(teacherData.class);
 
   $("#school-select").val(teacherData.schoolID).trigger('change')
@@ -106,45 +109,63 @@ function ClickDeleteButton(event) {
   })
 }
 
-function SubmitForm(event) {
-  event.preventDefault();
-  const target = event.target;
-  if (checkInput()) {
-    let data = {
-      name: target.name.value,
-      username: target.phoneNumber.value,
-      // address: target.address.value,
-      phone: target.phoneNumber.value,
-      email: target.email.value,
-      password: "12345678",
-      schoolID: $("#school-select").val(),
-      schoolName: $('#select2-school-select-container').attr('title'),
-    };
-    let modify = $("#editTeacherModal").attr("teacherID");
-    if (modify == "") {
-      MeteorCall(_METHODS.teacher.Create, data, accessToken)
-        .then(result => {
-          // console.log(result);
-          handleSuccess("Thêm", "Giáo viên").then(() => {
-            $("#editTeacherModal").modal("hide");
-          })
-          reloadTable(1, getLimitDocPerPage())
-        })
-        .catch(handleError);
-    } else {
-      data._id = modify;
-      MeteorCall(_METHODS.teacher.Update, data, accessToken)
-        .then(result => {
-          // console.log(result);
-          handleSuccess("Cập nhật", "Giáo viên").then(() => {
-            $("#editTeacherModal").modal("hide");
-          })
-          reloadTable(currentPage, getLimitDocPerPage())
-        })
-        .catch(handleError);
+ async function SubmitForm(event) {
+  try {event.preventDefault();
+    if (checkInput()) {
+      const target = event.target;
+      if (checkInput()) {
+        let data = {
+          name: target.name.value,
+          username: target.phoneNumber.value,
+          // address: target.address.value,
+          phone: target.phoneNumber.value,
+          email: target.email.value,
+          password: "12345678",
+          schoolID: $("#school-select").val(),
+          schoolName: $('#select2-school-select-container').attr('title'),
+        };
+  
+        if ($('#teacher-image').val()) {
+          let imageId = makeID("user")
+          let BASE64 = await getBase64($('#teacher-image')[0].files[0])
+          let importImage = await MeteorCall(_METHODS.image.Import, {
+              imageId,
+              BASE64: [BASE64]
+          }, accessToken)
+          if (importImage.error)
+              handleError(result, "Không tải được ảnh lên server!")
+          else data.image = imageId
+        }
+        let modify = $("#editTeacherModal").attr("teacherID");
+        if (modify == "") {
+          await MeteorCall(_METHODS.teacher.Create, data, accessToken)
+            .then(result => {
+              // console.log(result);
+              handleSuccess("Thêm", "Giáo viên").then(() => {
+                $("#editTeacherModal").modal("hide");
+              })
+              reloadTable(1, getLimitDocPerPage())
+            })
+            .catch(handleError);
+        } else {
+          data._id = modify;
+          await MeteorCall(_METHODS.teacher.Update, data, accessToken)
+            .then(result => {
+              // console.log(result);
+              handleSuccess("Cập nhật", "Giáo viên").then(() => {
+                $("#editTeacherModal").modal("hide");
+              })
+              reloadTable(currentPage, getLimitDocPerPage())
+            })
+            .catch(handleError);
+        }
+      }
     }
   }
-
+  catch (error) {
+    handleError(error)
+  }
+  
 }
 
 function checkInput() {
@@ -153,7 +174,7 @@ function checkInput() {
   let email = $('input[name="email"]').val();
   let schoolID = $("#school-select").val();
 
-  if (!schoolID || !name || !phone) {
+  if (!schoolID || !name || !phone ||!email) {
     Swal.fire({
       icon: "error",
       text: "Làm ơn điền đầy đủ thông tin",

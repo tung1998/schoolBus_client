@@ -243,11 +243,11 @@ function initSelect2() {
     });
 
     $("#module-permission").select2({
+        placeholder: "-- Chọn quyền --",
         width: '100%',
-        placeholder: "Select a state"
     });
 }
 
 function formatText(icon) {
-    return $('<span><i class="fas ' + $(icon.element).data('icon') + '"></i> ' + icon.text + '</span>');
+    return $('<span><i class="' + $(icon.element).data('icon') + '"></i> ' + icon.text + '</span>');
 };
