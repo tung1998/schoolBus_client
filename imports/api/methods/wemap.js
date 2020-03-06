@@ -30,9 +30,18 @@ function getAddress(data, accessToken = '') {
 }
 
 function getDrivePath(data, accessToken = '') {
-    let url = `https://apis.wemap.asia/direction-api/route/v1/driving/${data.startLng}%2C${data.startLat}%3B${data.desLng}%2C${data.desLat}?geometries=polyline&steps=true&overview=full&key=vpstPRxkBBTLaZkOaCfAHlqXtCR`;
-    //console.log(url)
-    //let url = ""
+    let url = `https://apis.wemap.asia/direction-api/route/v1/driving/`;
+    let opt = `?geometries=polyline&steps=true&overview=full&key=vpstPRxkBBTLaZkOaCfAHlqXtCR`
+    for (let i = data.length - 1; i > 0; i--) {
+        let coor = data[i];
+        if (i == 1) {
+            url += `${coor[1]},${coor[0]}` + opt;
+        } else {
+            url += `${coor[1]},${coor[0]};`
+        }
+    }
+    console.log(url)
+        //let url = ""
     return httpDefault(METHOD.get, url, {
         token: accessToken
     })
