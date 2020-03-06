@@ -15,7 +15,10 @@ import {
 	handleConfirm,
 	addRequiredInputLabel,
 	addPaging,
-	tablePaging
+	tablePaging,
+	getBase64,
+	makeID,
+	initDropzone
 } from "../../../../functions";
 
 import {
@@ -38,6 +41,7 @@ Template.studentManager.onRendered(() => {
 	addPaging();
 	getLimitDocPerPage();
 	reloadTable();
+	initDropzone('.add-more', '.modify-button')
 });
 
 Template.studentManager.events({
@@ -99,13 +103,8 @@ function ClickTableRow(event){
 	QRCode.toDataURL(id)
 		.then(url => {
 			console.log(url)
-			$(".modal-content.QR-content").css({
-				"height": "85vh"
-			})
-			$("#QR-modal-body").css({
-				"text-align": "center"
-			})
-			$("#QR-modal-body").html(`<img style="width: 70%" src=${url} alt="">`)
+			$("#QR-title").html(`QR code`)
+			$("#QR-modal-body").html(`<img style="width: 60%" src=${url} alt="">`)
 			$("#QRModal").modal("show");
 		})
 		.catch(err => {
@@ -115,6 +114,8 @@ function ClickTableRow(event){
 
 function ClickModifyButton(e) {
 	let studentData = $(e.currentTarget).data("json");
+
+	 console.log("click button")
 	$("#editStudentModal").modal("show");
 	$("#editStudentModal").attr("studentID", studentData._id);
 	$(".modal-title").html("Chỉnh Sửa");
@@ -129,6 +130,12 @@ function ClickModifyButton(e) {
 	// $('#student-class').val(studentData.classID).trigger('change')
 	$('#student-carStopID').val(studentData.carStopID).trigger('change')
 	$('input[name="status"]').val(studentData.status);
+	$('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', `http://14.162.212.174:3000/images/${studentData.image}/0`)
+    $('div.dropzone-previews').find('div.dz-image-preview').remove()
+	$('div.dz-preview').show()
+	$('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
+
+	return false
 }
 
 function ClickAddMoreButton(e) {
@@ -156,46 +163,68 @@ function ClickDeleteButton(event) {
 
 		}
 	})
+	return false
 }
 
-function SubmitForm(event) {
-	event.preventDefault();
-	if (checkInput()) {
-		let data = {
-			IDStudent: $('input[name="IDstudent"]').val(),
-			address: $('input[name="address"]').val(),
-			name: $('input[name="name"]').val(),
-			email: $('input[name="email"]').val(),
-			phone: $('input[name="phone"]').val(),
-			status: $('input[name="status"]').val(),
-			carStopID: $('#student-carStopID').val(),
-			classID: $('#student-class').val(),
-			schoolID: $('#student-school').val()
-		};
-		let modify = $("#editStudentModal").attr("studentID");
-
-		if (modify == "") {
-			MeteorCall(_METHODS.student.Create, data, accessToken)
-				.then(result => {
-					handleSuccess("Thêm", "học sinh").then(() => {
-						$("#editStudentModal").modal("hide");
-						reloadTable(1, getLimitDocPerPage())
+async function SubmitForm(event) {
+	try {
+		event.preventDefault();
+		if (checkInput()) {
+			let data = {
+				IDStudent: $('input[name="IDstudent"]').val(),
+				address: $('input[name="address"]').val(),
+				name: $('input[name="name"]').val(),
+				email: $('input[name="email"]').val(),
+				phone: $('input[name="phone"]').val(),
+				status: $('input[name="status"]').val(),
+				carStopID: $('#student-carStopID').val(),
+				classID: $('#student-class').val(),
+				schoolID: $('#student-school').val()
+			};
+	
+			let imagePreview = $('div.dropzone-previews').find('div.dz-image-preview')
+            if (imagePreview.length) {
+                if (imagePreview.hasClass('dz-success')) {
+                    let imageId = makeID("user")
+                    let BASE64 = imagePreview.find('div.dz-image').find('img').attr('src')
+                    let importImage = await MeteorCall(_METHODS.image.Import, {
+                        imageId,
+                        BASE64: [BASE64]
+                    }, accessToken)
+                    if (importImage.error)
+                        handleError(result, "Không tải được ảnh lên server!")
+                    else data.image = imageId
+                }
+            }
+			let modify = $("#editStudentModal").attr("studentID");
+			console.log(data);
+			if (modify == "") {
+				MeteorCall(_METHODS.student.Create, data, accessToken)
+					.then(result => {
+						handleSuccess("Thêm", "học sinh").then(() => {
+							$("#editStudentModal").modal("hide");
+							reloadTable(1, getLimitDocPerPage())
+						})
+	
 					})
-
-				})
-				.catch(handleError);
-		} else {
-			data._id = modify;
-			MeteorCall(_METHODS.student.Update, data, accessToken)
-				.then(result => {
-					handleSuccess("Cập nhật", "học sinh").then(() => {
-						$("#editStudentModal").modal("hide");
-						reloadTable(currentPage, getLimitDocPerPage())
+					.catch(handleError);
+			} else {
+				data._id = modify;
+				MeteorCall(_METHODS.student.Update, data, accessToken)
+					.then(result => {
+						handleSuccess("Cập nhật", "học sinh").then(() => {
+							$("#editStudentModal").modal("hide");
+							reloadTable(currentPage, getLimitDocPerPage())
+						})
 					})
-				})
-				.catch(handleError);
+					.catch(handleError);
+			}
 		}
+	} 
+	catch(error) {
+		handleError(error)
 	}
+	
 
 }
 
@@ -233,6 +262,8 @@ function clearForm() {
 	$('#student-class').val("").trigger('change')
 	$('#student-carStopID').val("").trigger('change')
 	$('input[name="status"]').val("");
+	// remove ảnh
+    $('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', '')
 }
 
 function initSelect2() {
@@ -340,7 +371,8 @@ function dataRow(result) {
 		IDStudent: result.IDStudent,
 		carStopID: result.carStopID,
 		carStop: result.carStop.name,
-		status: result.status
+		status: result.status,
+		image: result.imageId
 	}
 	return `
             <td>${data.name}</td>

@@ -22,6 +22,7 @@ if (Meteor.isServer) {
         'trip.update': updateTrip,
         'trip.delete': deleteTrip,
         'trip.attendance': attendanceTrip,
+        'trip.image': imageTrip,
         'trip.getByTime': getTripByTime
     });
 }
@@ -79,6 +80,18 @@ function attendanceTrip(data, accessToken = '') {
     return httpDefault(METHOD.put, url, {
         body: {
             status: data.status
+        },
+        token: accessToken
+    })
+}
+
+function imageTrip(data, accessToken = '') {
+    let url = `${AUTH_TRIP}/${data.tripID}/student/${data.studentID}/image`
+    console.log(url);
+    console.log(data.image)
+    return httpDefault(METHOD.put, url, {
+        body: {
+            image: data.image
         },
         token: accessToken
     })

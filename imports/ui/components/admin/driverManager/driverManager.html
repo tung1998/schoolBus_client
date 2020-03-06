@@ -1,51 +1,52 @@
 <template name="driverManager">
-    <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-      <!-- begin:: Subheader -->
-      <div class="kt-subheader   kt-grid__item" id="kt_subheader">
-        <div class="kt-container  kt-container--fluid ">
-          <div class="kt-subheader__main">
-            <h3 class="kt-subheader__title">
-  
-              Quản lý tài xế </h3>
-  
-            <span class="kt-subheader__separator kt-hidden"></span>
-            <div class="kt-subheader__breadcrumbs">
-              <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
-              <span class="kt-subheader__breadcrumbs-separator"></span>
-              <a href="" class="kt-subheader__breadcrumbs-link">
-                SchoolBus </a>
-              <span class="kt-subheader__breadcrumbs-separator"></span>
-              <a href="" class="kt-subheader__breadcrumbs-link">
-                Quản lý tài xế</a>
-            </div>
+
+  <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+    <!-- begin:: Subheader -->
+    <div class="kt-subheader   kt-grid__item" id="kt_subheader">
+      <div class="kt-container  kt-container--fluid ">
+        <div class="kt-subheader__main">
+          <h3 class="kt-subheader__title">
+
+            Quản lý tài xế </h3>
+          <span class="kt-subheader__separator kt-hidden"></span>
+          <div class="kt-subheader__breadcrumbs">
+            <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
+            <span class="kt-subheader__breadcrumbs-separator"></span>
+            <a href="" class="kt-subheader__breadcrumbs-link">
+              SchoolBus </a>
+            <span class="kt-subheader__breadcrumbs-separator"></span>
+            <a href="" class="kt-subheader__breadcrumbs-link">
+              Quản lý tài xế</a>
           </div>
         </div>
       </div>
-      <!-- end:: Subheader -->
-  
-      <!-- begin:: Content -->
-      <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-        <div class="row">
-          <div class="col">
-  
-            <div class="kt-portlet">
-              <div class="kt-portlet__head">
-                <div class="kt-portlet__head-label">
-                  <h3 class="kt-portlet__head-title">
-                    Danh sách tài xế
-                  </h3>
-                </div>
+    </div>
+    <!-- end:: Subheader -->
+
+    <!-- begin:: Content -->
+    <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+      <div class="row">
+        <div class="col">
+
+          <div class="kt-portlet">
+            <div class="kt-portlet__head">
+              <div class="kt-portlet__head-label">
+                <h3 class="kt-portlet__head-title">
+                  Danh sách tài xế
+                </h3>
               </div>
-  
-              <div class="kt-portlet__body">
-                <!--begin::Section-->
-                <div class="kt-section">
-                  <div class="kt-section__content">
-                    <button type="button" class="btn btn-outline-brand mb-4" id="add-button" data-toggle="modal" data-target="#editDriverModal">Thêm mới</button>
-                    <div class="kt-datatable kt-datatable--default kt-datatable--brand">
-                      <p id="empty-data" class="text-muted font-14 d-none">
-                        Không có dữ liệu
-                      </p>
+            </div>
+
+            <div class="kt-portlet__body">
+              <!--begin::Section-->
+              <div class="kt-section">
+                <div class="kt-section__content">
+                  <button type="button" class="btn btn-outline-brand mb-4" id="add-button" data-toggle="modal"
+                    data-target="#editDriverModal">Thêm mới</button>
+                  <div class="kt-datatable kt-datatable--default kt-datatable--brand">
+                    <p id="empty-data" class="text-muted font-14 d-none">
+                      Không có dữ liệu
+                    </p>
                     <table class="table table-bordered table-hover" id="table-driver">
                       <thead class="thead-light">
                         <tr>
@@ -62,26 +63,26 @@
                         </tr>
                       </thead>
                       <tbody id="table-body">
-                        
+
                       </tbody>
                     </table>
-                    </div>
                   </div>
                 </div>
-                <!--end::Section-->
               </div>
+              <!--end::Section-->
             </div>
           </div>
         </div>
       </div>
-      <!-- end:: Content -->
     </div>
-    {{> editDriverModal}}
-  </template>
-  
-  
-  <template name="editDriverModal">
-    <div class="modal fade" id="editDriverModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    <!-- end:: Content -->
+  </div>
+  {{> editDriverModal}}
+</template>
+
+
+<template name="editDriverModal">
+  <div class="modal fade" id="editDriverModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
@@ -101,7 +102,8 @@
                 </div>
               </div>
               <div class="form-group row">
-                <label for="example-search-input" class="col-2 col-form-label required-input-label">Số điện thoại</label>
+                <label for="example-search-input" class="col-2 col-form-label required-input-label">Số điện
+                  thoại</label>
                 <div class="col-10">
                   <input class="form-control" type="tel" value="" id="driver-phone" placeholder="Số điện thoại">
                 </div>
@@ -137,7 +139,8 @@
                 </div>
               </div>
               <div class="form-group row">
-                <label for="example-url-input" class="col-2 col-form-label required-input-label">Giấy phép lái xe</label>
+                <label for="example-url-input" class="col-2 col-form-label required-input-label">Giấy phép lái
+                  xe</label>
                 <div class="col-10">
                   <input class="form-control" type="text" value="" id="driver-DLNumber" placeholder="Giấy phép lái xe">
                 </div>
@@ -150,12 +153,26 @@
               </div>
               <div class="form-group row">
                 <label for="example-date-input" class="col-2 col-form-label">Ảnh đại diện</label>
-                <div class="col-10">
-                  <div class="custom-file">
-                    <input type="file" class="form control custom-file-input" id="driver-image">
-                    <label class="custom-file-label" for="customFile" style="text-align: left">Chọn File</label>
+                <div class="col-5">
+                  <div class="dropzone dropzone-default dropzone-brand" id="kt_dropzone_1">
+                    <div class="dropzone-msg dz-message needsclick">
+                      <h3 class="dropzone-msg-title">Kéo ảnh hoặc click để chọn ảnh.</h3>
+                      <span class="dropzone-msg-desc"><strong>jpg, jpeg, png ...</strong></span>
+                    </div>
                   </div>
-                  
+                </div>
+                <div class="col-5">
+                  <div class="dropzone dropzone-default">
+                    <div class="dropzone-previews">
+                      <div class="dz-preview dz-file-preview">
+                        <div class="dz-image"><img data-dz-thumbnail="" alt="" src=""></div>
+                        <div class="dz-details">
+                          <div class="dz-filename"><span data-dz-name></span></div>
+                        </div>
+                        <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -168,4 +185,4 @@
       </div>
     </div>
   </div>
-  </template>
+</template>
