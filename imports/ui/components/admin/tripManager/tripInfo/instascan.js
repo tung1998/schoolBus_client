@@ -1,37 +1,44 @@
 import '/public/assets/module/instascan.min.js'
 
 import {
-    handleError
+    handleError, MeteorCall,
+    makeID
 } from '../../../../../functions'
 
 import {
     checkStudentInfo
 } from './tripInfo'
+import { _METHODS } from '../../../../../variableConst'
 
 export {
+    renderStudentInfoModal
 }
 
 let Scanner
 let Cameras
-
+let accessToken
 
 
 Template.instascannerModal.onCreated(() => {
-
+    accessToken = Cookies.get('accessToken')
 })
 
 Template.instascannerModal.onRendered(() => {
     initScanner()
-    $("#camera-list").select2()
+
 })
 
 Template.instascannerModal.events({
-    "change #camera-list": changeCamera,
+    "change .camera-list": changeCamera,
 })
 
 Template.instascannerModal.onDestroyed(() => {
     Scanner = null
     Cameras = null
+})
+
+Template.studentInfoModal.events({
+    "click #takePhoto": clickTakePhoto
 })
 
 function initScanner() {
@@ -52,7 +59,7 @@ function scanSuccess(content) {
         let studenInfo = checkStudentInfo(content);
         if (studenInfo) {
             console.log(studenInfo);
-            renderStudentInfoModal(studenInfo);
+            renderStudentInfoModal(content);
         } else {
             Swal.fire({
                 icon: "error",
@@ -70,14 +77,14 @@ function renderListCamera(cameras) {
         // danh sách camera
         Cameras = cameras
         cameras.map(cam => {
-            $("#camera-list").append(`
-                <option value="${cam._id}">${cam.name}</option>
+            $(".camera-list").append(`
+                <option value="${cam.id}">${cam.name}</option>
             `)
         })
         $("#instascannerModal").on('show.bs.modal', function () {
             Scanner.start(cameras[0]);
         })
-
+        
         $("#instascannerModal").on('hide.bs.modal', function () {
             Scanner.stop();
         })
@@ -87,7 +94,7 @@ function renderListCamera(cameras) {
 }
 
 function changeCamera(event) {
-    let camera = $("#camera-list").val();
+    let camera = $(".camera-list").val();
     Cameras.map(cam => {
         if (cam.id == camera) {
             Scanner.start(cam);
@@ -95,10 +102,51 @@ function changeCamera(event) {
     })
 }
 
-function renderStudentInfoModal(studenInfo) {
+function clickTakePhoto(e){
+    $("#studentInfoModal").modal("hide")
+    let tripID = $(e.currentTarget).attr("tripID");
+    let studentID = $(e.currentTarget).attr("studentID")
+    MeteorCamera.getPicture((err, data) => {
+        if(err){
+            console.log(err)
+        } else {
+            $(".photo-preview").css({
+                "width": "100% !important"
+            })
+            let dt = {
+                imageId: makeID("attendance"),
+                BASE64: [data]
+            }
+            console.log(dt)
+            MeteorCall(_METHODS.image.Import, dt, accessToken).then(result => {
+                console.log("success")
+            }).catch(handleError)
+
+
+            let imageDetail = {
+                tripID: tripID,
+                studentID: studentID,
+                image: dt.imageId
+            }
+            MeteorCall(_METHODS.trip.Image, imageDetail, accessToken)
+            .then(result => {
+                console.log(imageDetail)
+                console.log("added")
+            })
+            .catch(handleError)
+        }
+    });
+    
+    
+}
+
+function renderStudentInfoModal(studentID) {
     $("#studentInfoModal").modal("show")
     $('#instascannerModal').modal('hide')
     let tripID = FlowRouter.getParam('tripID')
+    let studenInfo = checkStudentInfo(studentID)
+
+    console.log(studenInfo)
     let buttonHtml = ''
     switch (studenInfo.status) {
         case 0:
@@ -117,14 +165,19 @@ function renderStudentInfoModal(studenInfo) {
         default:
             buttonHtml = ``
     }
+    let image
+    if(studenInfo.student.user.image){
+        image = `http://192.168.100.69:3000/images/${studenInfo.student.user.image}/0`
+    }else{
+        image = `/assets/media/users/user5.jpg`
+    }
 
     $(".studentInfoModal-body").html(`
         <div class="row">
-            <div class="col-12">
-                <div class="fa-pull-left">
-                    <img src="/assets/media/users/100_1.jpg" alt="image">
+                <div class="fa-pull-left col-3">
+                    <img style="width: 100px; height: 100px" src=${image} alt="image">
                 </div>
-                <div >
+                <div class="col-9">
                     <div class="row">
                         <div class="col-12">
                             <div class="fa-pull-left">
@@ -179,14 +232,37 @@ function renderStudentInfoModal(studenInfo) {
                             </div>
                         </div>
                     </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="fa-pull-left">
+                                <label for="teacherName" class="form-control-label"><b>Trường: </b></label>
+                            </div>
+                            <div class="fa-pull-right">
+                                <span class="teacherName">211131</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="fa-pull-left">
+                                <label for="teacherName" class="form-control-label"><b>Địa chỉ trường: </b></label>
+                            </div>
+                            <div class="fa-pull-right">
+                                <span class="teacherName">211131</span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-            </div>
         </div>
         <div></div>
         <div class="row">
             <div class="col-12">
                 <div class="fa-pull-right">
                     ${buttonHtml}
+                    <button type="button" class="btn btn-success" tripID="${tripID}" studentID="${studenInfo.studentID}" id="takePhoto">Chụp ảnh</button>
                 </div>
             </div>
         </div>

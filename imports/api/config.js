@@ -4,8 +4,8 @@ export {
 }
 
 
-// const BASE = 'http://14.162.212.174:3000'
-// const AUTH_PATH = 'http://14.162.212.174:2999'
+// const BASE = 'http://14.162.212.174:2999'
+// const AUTH_PATH = 'http://14.162.212.174:3000'
 
 const BASE = 'http://192.168.100.69:3000'
 const AUTH_PATH = 'http://192.168.100.69:2999'
