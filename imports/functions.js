@@ -17,7 +17,8 @@ export {
     getBase64,
     makeID,
     addPaging,
-    tablePaging
+    tablePaging, 
+    initDropzone
 }
 
 function MeteorCall(method = "", data = null, accessToken = "") {
@@ -203,4 +204,48 @@ function tablePaging(tag = '.tablePaging', count, page = 1, limit = LIMIT_DOCUME
     `
     $(tag).html(html);
     $(".disabledPaging").attr("disabled", "disabled");
+}
+
+function initDropzone(addButton='', editButton='') {
+    Dropzone.autoDiscover = false;
+    let myDropzone = new Dropzone('#kt_dropzone_1', {
+        url: "#", // Set the url for your upload script location
+        paramName: "file", // The name that will be used to transfer the file
+        maxFiles: 1,
+        maxFilesize: 5, // MB
+        addRemoveLinks: true,
+        acceptedFiles: "image/*",
+        previewsContainer: '.dropzone-previews',
+        previewTemplate: $('.dropzone-previews').html(),
+        dictUploadCanceled: "",
+        dictRemoveFile: `<hr/><button type="button" class="btn btn-outline-hover-dark btn-icon btn-circle"><i class="fas fa-trash"></i></button>`,
+    })
+
+    myDropzone.on("complete", function (file) {
+        if (addButton != '') {
+            $(`#${addButton}`).on('click', function () {
+                myDropzone.removeFile(file);
+                $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
+            });
+        }
+        if (editButton != '') {
+            $(`#${editButton}`).on('click', function () {
+                myDropzone.removeFile(file);
+                $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
+            });
+        }
+        $('.dropzone-msg-title').html("Đã chọn ảnh, xóa ảnh để chọn ảnh mới")
+
+        myDropzone.disable()
+
+    })
+
+    myDropzone.on('uploadprogress', function (file) {
+        $('.dropzone-previews').find('div:eq(0)').hide()
+    })
+
+    myDropzone.on("removedfile", function (file) {
+        myDropzone.enable()
+        $('.dropzone-previews').find('div:eq(0)').show()
+    })
 }
