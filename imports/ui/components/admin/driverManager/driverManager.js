@@ -71,7 +71,7 @@ function clickEditButton(event) {
     $('#driver-IDIssueBy').val(data.IDIssueBy)
     $('#driver-DLNumber').val(data.DLNumber)
     $('#driver-DLIssueDate').val(data.DLIssueDate)
-    $('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', `http://14.162.212.174:3000/images/${data.image}/0`)
+    $('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', `http://123.24.137.209:3000/images/${data.image}/0`)
     $('div.dropzone-previews').find('div.dz-image-preview').remove()
     $('div.dz-preview').show()
     $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
