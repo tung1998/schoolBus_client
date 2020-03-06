@@ -165,11 +165,17 @@ function renderStudentInfoModal(studentID) {
         default:
             buttonHtml = ``
     }
+    let image
+    if(studenInfo.student.user.image){
+        image = `http://192.168.100.69:3000/images/${studenInfo.student.user.image}/0`
+    }else{
+        image = `/assets/media/users/user5.jpg`
+    }
 
     $(".studentInfoModal-body").html(`
         <div class="row">
                 <div class="fa-pull-left col-3">
-                    <img style="width: 100px; height: 100px" src="http://192.168.100.69:3000/images/${studenInfo.student.user.image}/0" alt="image">
+                    <img style="width: 100px; height: 100px" src=${image} alt="image">
                 </div>
                 <div class="col-9">
                     <div class="row">
