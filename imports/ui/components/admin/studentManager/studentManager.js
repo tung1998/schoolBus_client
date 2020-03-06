@@ -17,7 +17,8 @@ import {
 	addPaging,
 	tablePaging,
 	getBase64,
-    makeID
+	makeID,
+	initDropzone
 } from "../../../../functions";
 
 import {
@@ -40,6 +41,7 @@ Template.studentManager.onRendered(() => {
 	addPaging();
 	getLimitDocPerPage();
 	reloadTable();
+	initDropzone('.add-more', '.modify-button')
 });
 
 Template.studentManager.events({
@@ -128,6 +130,11 @@ function ClickModifyButton(e) {
 	// $('#student-class').val(studentData.classID).trigger('change')
 	$('#student-carStopID').val(studentData.carStopID).trigger('change')
 	$('input[name="status"]').val(studentData.status);
+	$('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', `http://14.162.212.174:3000/images/${studentData.image}/0`)
+    $('div.dropzone-previews').find('div.dz-image-preview').remove()
+	$('div.dz-preview').show()
+	$('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
+
 	return false
 }
 
@@ -156,6 +163,7 @@ function ClickDeleteButton(event) {
 
 		}
 	})
+	return false
 }
 
 async function SubmitForm(event) {
@@ -174,17 +182,20 @@ async function SubmitForm(event) {
 				schoolID: $('#student-school').val()
 			};
 	
-			if ($('#student-image').val()) {
-				let imageId = makeID("user")
-                let BASE64 = await getBase64($('#student-image')[0].files[0])
-                let importImage = await MeteorCall(_METHODS.image.Import, {
-                    imageId,
-                    BASE64: [BASE64]
-                }, accessToken)
-                if (importImage.error)
-                    handleError(result, "Không tải được ảnh lên server!")
-                else data.image = imageId
-			}
+			let imagePreview = $('div.dropzone-previews').find('div.dz-image-preview')
+            if (imagePreview.length) {
+                if (imagePreview.hasClass('dz-success')) {
+                    let imageId = makeID("user")
+                    let BASE64 = imagePreview.find('div.dz-image').find('img').attr('src')
+                    let importImage = await MeteorCall(_METHODS.image.Import, {
+                        imageId,
+                        BASE64: [BASE64]
+                    }, accessToken)
+                    if (importImage.error)
+                        handleError(result, "Không tải được ảnh lên server!")
+                    else data.image = imageId
+                }
+            }
 			let modify = $("#editStudentModal").attr("studentID");
 			console.log(data);
 			if (modify == "") {
@@ -251,6 +262,8 @@ function clearForm() {
 	$('#student-class').val("").trigger('change')
 	$('#student-carStopID').val("").trigger('change')
 	$('input[name="status"]').val("");
+	// remove ảnh
+    $('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', '')
 }
 
 function initSelect2() {
@@ -358,7 +371,8 @@ function dataRow(result) {
 		IDStudent: result.IDStudent,
 		carStopID: result.carStopID,
 		carStop: result.carStop.name,
-		status: result.status
+		status: result.status,
+		image: result.imageId
 	}
 	return `
             <td>${data.name}</td>

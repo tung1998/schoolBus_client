@@ -36,7 +36,7 @@ Template.driverManager.onRendered(() => {
     addPaging();
     reloadTable(1, getLimitDocPerPage())
     addRequiredInputLabel()
-    initDropzone('add-button')
+    initDropzone('#add-button', '#edit-button')
 })
 
 Template.driverManager.events({
@@ -74,6 +74,7 @@ function clickEditButton(event) {
     $('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', `http://14.162.212.174:3000/images/${data.image}/0`)
     $('div.dropzone-previews').find('div.dz-image-preview').remove()
     $('div.dz-preview').show()
+    $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
     $('#driver-id').val(data._id)
     //edit modal
     $('.modal-title').html(`Cập nhật thông tin lái xe: ${data.name}`);
@@ -127,7 +128,6 @@ function clickDelButton(event) {
         if (result.value) {
             let data = $(event.currentTarget).data("json");
             MeteorCall(_METHODS.driver.Delete, data, accessToken).then(result => {
-                console.log(result);
                 Swal.fire({
                     icon: "success",
                     text: "Đã xóa thành công",
@@ -208,7 +208,6 @@ function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
         page: page,
         limit: limitDocPerPage
     }, accessToken).then(result => {
-        console.log(result)
         tablePaging(".tablePaging", result.count, page, limitDocPerPage)
         $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
         if (result.count === 0) {
@@ -267,7 +266,6 @@ function createRow(data) {
 }
 
 function dataRow(result) {
-    console.log(result)
     let driver = {
         _id: result._id,
         image: result.user.image,

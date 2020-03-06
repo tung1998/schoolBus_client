@@ -223,21 +223,27 @@ function initDropzone(addButton='', editButton='') {
 
     myDropzone.on("complete", function (file) {
         if (addButton != '') {
-            $(`#${addButton}`).on('click', function () {
+            $(`${addButton}`).on('click', function () {
                 myDropzone.removeFile(file);
                 $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
             });
         }
-        if (editButton != '') {
-            $(`#${editButton}`).on('click', function () {
-                myDropzone.removeFile(file);
-                $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
-            });
-        }
+        $('a.dz-remove').on('click', function(){
+            $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
+        })
         $('.dropzone-msg-title').html("Đã chọn ảnh, xóa ảnh để chọn ảnh mới")
 
         myDropzone.disable()
 
+    })
+
+    myDropzone.on('addedfile', function(file) {
+        if (editButton != '') {
+            $(`${editButton}`).on('click', function () {
+                myDropzone.removeFile(file);
+                $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
+            });
+        }
     })
 
     myDropzone.on('uploadprogress', function (file) {
@@ -248,4 +254,6 @@ function initDropzone(addButton='', editButton='') {
         myDropzone.enable()
         $('.dropzone-previews').find('div:eq(0)').show()
     })
+
+    
 }
