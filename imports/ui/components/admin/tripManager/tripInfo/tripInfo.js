@@ -17,6 +17,10 @@ import {
     _TRIP_STUDENT
 } from '../../../../../variableConst';
 
+import {
+    renderStudentInfoModal
+} from './instascan'
+
 export {
     checkStudentInfo
 }
@@ -37,6 +41,7 @@ Template.tripDetail.onRendered(() => {
 Template.tripDetail.events({
     'click .status-btn': clickStatusButton,
     'click #openScannerModal': clickOpenScannerModal,
+    'click .studentRow': clickStudentRow
 })
 
 Template.tripDetail.onDestroyed(() => {
@@ -44,8 +49,13 @@ Template.tripDetail.onDestroyed(() => {
     tripID = null
 })
 
+function clickStudentRow(e){
+    renderStudentInfoModal($(e.currentTarget).attr("id"))
+}
+
 function checkStudentInfo(studentID) {
     let result = null;
+    console.log(studentList)
     studentList.map(student => {
         if(student.studentID == studentID) {
             result = student;
@@ -59,14 +69,15 @@ function clickStatusButton(e) {
     let tripID = target.getAttribute('tripID')
     let studentID = target.getAttribute('studentID')
     let status = Number(target.getAttribute('status'))
+    console.log("reload data")
     MeteorCall(_METHODS.trip.Attendace, {
         tripID,
         status,
         studentID
-    }, accessToken).then(result => {
+    }, accessToken).then(async result => {
         handleSuccess('Cập nhật', "tình trạng học sinh")
-        reloadData()
-        $("#studentInfoModal").modal("hide")
+        await reloadData()
+        renderStudentInfoModal(studentID)
     }).catch(handleError)
 }
 
@@ -76,7 +87,7 @@ function clickOpenScannerModal() {
 
 function reloadData() {
 
-    MeteorCall(_METHODS.trip.GetById, {
+    return MeteorCall(_METHODS.trip.GetById, {
         _id: tripID
     }, accessToken).then(result => {
         //get info trip
@@ -102,7 +113,6 @@ function reloadData() {
         let table = $('#table-studentList')
         let row = studentList.map(htmlRow)
         table.find("tbody").html(row.join(""))
-
     }).catch(handleError)
 }
 
@@ -119,37 +129,15 @@ function htmlRow(key, index) {
         schoolAddress: key.student.class ? key.student.class.school.address : '',
         status: key.status
     }
+    // <td>${studentInfo.class}</td>
+    // <td>${studentInfo.teacher}</td>
+    // <td>${studentInfo.school}</td>
+    // <td>${studentInfo.schoolAddress}</td>
 
-    let buttonHtml = ''
-    switch (key.status) {
-        case 0:
-            buttonHtml = `<button type="button" class="btn btn-success status-btn" tripID="${tripID}" studentID="${key.studentID}" status="1" >Điểm danh</button>
-                            <button type="button" class="btn btn-danger status-btn" tripID="${tripID}" studentID="${key.studentID}" status="3">Vắng mặt</button>`
-            break
-        case 1:
-            buttonHtml = `<button type="button" class="btn btn-success status-btn" tripID="${tripID}" studentID="${key.studentID}" status="2">Xuống xe</button>`
-            break
-        case 2:
-            buttonHtml = `<span class="kt-badge kt-badge--success kt-badge--inline">Đã xuống xe</span>`
-            break
-        case 3:
-            buttonHtml = `<span class="kt-badge kt-badge--danger kt-badge--inline">Vắng mặt</span>`
-            break
-        default:
-            buttonHtml = ``
-    }
-
-    return `<tr id="${studentInfo._id}">
+    return `<tr id="${studentInfo._id}" class="studentRow">
                 <th scope="row">${index + 1}</th>
                 <td>${studentInfo.IDStudent}</td>
                 <td>${studentInfo.name}</td>
                 <td>${studentInfo.phone}</td>
-                <td>${studentInfo.class}</td>
-                <td>${studentInfo.teacher}</td>
-                <td>${studentInfo.school}</td>
-                <td>${studentInfo.schoolAddress}</td>
-                <td>
-                    ${buttonHtml}
-                </td>
         </tr>`
 }
