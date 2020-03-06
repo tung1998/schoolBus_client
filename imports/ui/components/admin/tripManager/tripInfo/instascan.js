@@ -119,29 +119,78 @@ function renderStudentInfoModal(studenInfo) {
     }
 
     $(".studentInfoModal-body").html(`
-        <form>
-            <div class="form-group">
-                <label for="studentID" class="form-control-label">Mã học sinh: </label>
-                <span class="studentID">${studenInfo.student.IDStudent}</span>
+        <div class="row">
+            <div class="col-12">
+                <div class="fa-pull-left">
+                    <img src="/assets/media/users/100_1.jpg" alt="image">
+                </div>
+                <div >
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="fa-pull-left">
+                                <label for="studentID" class="form-control-label"><b>Mã học sinh: </b></label>
+                            </div>
+                            <div class="fa-pull-right">
+                                <span class="studentID">${studenInfo.student.IDStudent}</span>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="fa-pull-left">
+                                <label for="studentName" class="form-control-label"><b>Tên học sinh: </b></label>
+                            </div>
+                            <div class="fa-pull-right">
+                                <span class="studentName">${studenInfo.student.user.name}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="fa-pull-left">
+                                <label for="phone" class="form-control-label"><b>Số điện thoại: </b></label>
+                            </div>
+                            <div class="fa-pull-right">
+                                <span class="phone">${studenInfo.student.user.phone}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="fa-pull-left">
+                                <label for="className" class="form-control-label"><b>Lớp: </b></label>
+                            </div>
+                            <div class="fa-pull-right">
+                                <span class="className">211131</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="fa-pull-left">
+                                <label for="teacherName" class="form-control-label"><b>Giáo viên: </b></label>
+                            </div>
+                            <div class="fa-pull-right">
+                                <span class="teacherName">211131</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="studentName" class="form-control-label">Tên học sinh: </label>
-                <span class="studentName">${studenInfo.student.user.name}</span>
+        </div>
+        <div></div>
+        <div class="row">
+            <div class="col-12">
+                <div class="fa-pull-right">
+                    ${buttonHtml}
+                </div>
             </div>
-            <div class="form-group">
-                <label for="phone" class="form-control-label">Số điện thoại: </label>
-                <span class="phone">${studenInfo.student.user.phone}</span>
-            </div>
-            <div class="form-group">
-                <label for="className" class="form-control-label">Lớp: </label>
-                <span class="className">211131</span>
-            </div>
-            <div class="form-group">
-                <label for="teacherName" class="form-control-label">Giáo viên: </label>
-                <span class="teacherName">211131</span>
-            </div>
-           ${buttonHtml}
-        </form>   
+        </div>
+        
     `)
 
 }
