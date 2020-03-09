@@ -18,6 +18,7 @@ if (Meteor.isServer) {
     Meteor.methods({
         'studentList.getAll': getAllStudentList,
         'studentList.getByID': getStudentListByID,
+        'studentList.getByPage': getStudentListByPage,
         'studentList.create': createStudentList,
         'studentList.update': updateStudentList,
         'studentList.delete': deleteStudentList,
@@ -35,6 +36,13 @@ function getAllStudentList(data, accessToken = '') {
 
 function getStudentListByID(data, accessToken = '') {
     let url = `${AUTH_STUDENT_LIST}/${data._id}`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
+}
+
+function getStudentListByPage(data, accessToken = '') {
+    let url = `${AUTH_STUDENT_LIST}/${data.page}?limit=${data.limit}`
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });
@@ -66,7 +74,7 @@ function deleteStudentList(data, accessToken = '') {
 function addStudentIDs(data, accessToken = '') {
     let url = `${AUTH_STUDENT_LIST}/${data._id}/studentIDs/add`
     return httpDefault(METHOD.put, url, {
-        body: data, 
+        body: data,
         token: accessToken
     });
 }

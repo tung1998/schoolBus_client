@@ -18,6 +18,7 @@ const _METHODS = {
     admin: {
         GetAll: 'admin.getAll',
         GetById: 'admin.getByID',
+        GetByPage: 'admin.getByPage',
         Create: 'admin.create',
         Update: 'admin.update',
         Delete: 'admin.delete',
@@ -68,11 +69,11 @@ const _METHODS = {
     },
     class: {
         GetAll: 'class.getAll',
-        GetByPage: 'class.getByPage',
-        GetById: 'class.getByID',
-        Create: 'class.create',
-        Update: 'class.update',
-        Delete: 'class.delete',
+            GetByPage: 'class.getByPage',
+            GetById: 'class.getByID',
+            Create: 'class.create',
+            Update: 'class.update',
+            Delete: 'class.delete',
     },
     config: {
         GetAll: 'config.getAll',
@@ -116,6 +117,7 @@ const _METHODS = {
     Nanny: {
         GetAll: 'Nanny.getAll',
         GetById: 'Nanny.getByID',
+        GetByPage: 'Nanny.getByPage',
         Create: 'Nanny.create',
         Update: 'Nanny.update',
         Delete: 'Nanny.delete',
@@ -159,6 +161,7 @@ const _METHODS = {
     studentList: {
         GetAll: 'studentList.getAll',
         GetById: 'studentList.getByID',
+        GetByPage: 'studentList.getByPage',
         Create: 'studentList.create',
         Update: 'studentList.update',
         Delete: 'studentList.delete',

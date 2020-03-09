@@ -17,6 +17,7 @@ if (Meteor.isServer) {
         'Nanny.create': createNanny,
         'Nanny.getAll': getNannys,
         'Nanny.getByID': getNannyByID,
+        'Nanny.getByPage': getNannyByPage,
         'Nanny.update': updateNanny,
         'Nanny.delete': deleteNanny,
     });
@@ -24,9 +25,9 @@ if (Meteor.isServer) {
 //THÊM
 function createNanny(data, accessToken = '') {
     let url = `${AUTH_Nanny}/`
-    return httpDefault(METHOD.post, url, { 
+    return httpDefault(METHOD.post, url, {
         body: data,
-        token: accessToken 
+        token: accessToken
     });
 }
 //XEM HẾT
@@ -38,6 +39,11 @@ function getNannys(data, accessToken = '') {
 //XEM THEO ID
 function getNannyByID(data, accessToken = '') {
     let url = `${AUTH_Nanny}/${data._id}`;
+    return httpDefault(METHOD.get, url, { token: accessToken });
+}
+
+function getNannyByPage(data, accessToken = '') {
+    let url = `${AUTH_Nanny}/${data.page}?limit=${data.limit}`;
     return httpDefault(METHOD.get, url, { token: accessToken });
 }
 //UPDATE 

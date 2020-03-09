@@ -76,7 +76,7 @@ function clickEditButton(event) {
     $('div.dz-preview').show()
     $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
     $('#driver-id').val(data._id)
-    //edit modal
+        //edit modal
     $('.modal-title').html(`Cập nhật thông tin lái xe: ${data.name}`);
     $('.modal-footer').find('.btn.btn-primary').html("Cập nhật")
 
@@ -192,7 +192,7 @@ function clearForm(e) {
     $('#driver-DLNumber').val('')
     $('#driver-DLIssueDate').val('')
     $('#driver-id').val('')
-    // remove ảnh
+        // remove ảnh
     $('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', '')
 }
 
@@ -281,7 +281,7 @@ function dataRow(result) {
         DLIssueDate: result.DLIssueDate,
     }
     return `
-                <th scope="row"></th>
+                <th scope="row">${result.index}</th>
                 <td>${driver.name}</td>
                 <td>${driver.phone}</td>
                 <td>${driver.email}</td>
@@ -317,7 +317,7 @@ function dataRow(result) {
 //         $('#add-button').on('click', function () {
 //             myDropzone.removeFile(file);
 //         });
-        
+
 //         $('.dropzone-msg-title').html("Đã chọn ảnh, xóa ảnh để chọn ảnh mới")
 
 //         myDropzone.disable()

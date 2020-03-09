@@ -6,7 +6,7 @@
     "test": "meteor test --once --driver-package meteortesting:mocha"
   },
   "dependencies": {
-    "@babel/runtime": "^7.7.6",
+    "@babel/runtime": "^7.8.7",
     "base-64": "^0.1.0",
     "js-cookie": "^2.2.1",
     "leaflet-routing-machine": "^3.2.12",

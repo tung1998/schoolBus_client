@@ -10,21 +10,28 @@ import {
     MeteorCall,
     handleError,
     handleConfirm,
-    handleSuccess
+    handleSuccess,
+    addRequiredInputLabel,
+    addPaging,
+    tablePaging,
 } from '../../../../functions';
 
 import {
-    _METHODS
+    _METHODS,
+    LIMIT_DOCUMENT_PAGE
 } from '../../../../variableConst';
 
 let accessToken;
+let currentPage = 1;
 
 Template.studentListManager.onCreated(() => {
     accessToken = Cookies.get('accessToken');
 });
 
 Template.studentListManager.onRendered(() => {
-    reloadTable()
+    addRequiredInputLabel();
+    addPaging();
+    reloadTable(1);
 });
 
 Template.studentListManager.events({
@@ -33,30 +40,16 @@ Template.studentListManager.events({
     'click #studentListData .modify-button': clickEditStudentListButton,
     'click #studentListData .delete-button': clickDeleteStudentListButton,
     'click #studentListData tr': clickStudentListRow,
-})
-
-function reloadTable() {
-    MeteorCall(_METHODS.studentList.GetAll, null, accessToken).then(result => {
-        let htmlTable = result.data.map(htmlRow);
-        $("#studentListData").html(htmlTable.join(" "));
-    }).catch(handleError)
-}
-
-function htmlRow(data, index) {
-    let item = {
-        _id: data._id,
-        name: data.name,
+    "click .kt-datatable__pager-link": (e) => {
+        reloadTable(parseInt($(e.currentTarget).data('page')), getLimitDocPerPage());
+        $(".kt-datatable__pager-link").removeClass("kt-datatable__pager-link--active");
+        $(e.currentTarget).addClass("kt-datatable__pager-link--active")
+        currentPage = parseInt($(e.currentTarget).data('page'));
+    },
+    "change #limit-doc": (e) => {
+        reloadTable(1, getLimitDocPerPage());
     }
-    return ` <tr id=${item._id}>
-                <td>${index}</td>
-                <td>${item.name}</td>
-                <td>${moment(item.createdTime).format('l')}</td>
-                <td>
-                <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(item)}\'>Sửa</button>
-                <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(item)}\'>Xóa</button>
-                </td>
-            </tr>`
-}
+})
 
 function clickAddStudentListButton() {
     $('#studentListModalSubmit').html('Thêm mới')
@@ -77,7 +70,7 @@ function clickEditListModalSubmit() {
             if (result.dismiss) return
             data._id = studentListID
             MeteorCall(_METHODS.studentList.Update, data, accessToken).then(result => {
-                reloadTable()
+                reloadTable(currentPage, getLimitDocPerPage())
                 handleSuccess('Cập nhật', "Danh sách")
                 $('#studentListModal').modal('hide')
             }).catch(handleError)
@@ -86,7 +79,7 @@ function clickEditListModalSubmit() {
         handleConfirm('Bạn muốn thêm mới danh sách?').then(result => {
             if (result.dismiss) return
             MeteorCall(_METHODS.studentList.Create, data, accessToken).then(result => {
-                reloadTable()
+                reloadTable(1, getLimitDocPerPage())
                 $('#studentListModal').modal('hide')
                 handleSuccess('Thêm mới', "Danh sách")
             }).catch(handleError)
@@ -111,7 +104,7 @@ function clickDeleteStudentListButton(e) {
         MeteorCall(_METHODS.studentList.Delete, {
             _id: studentListID
         }, accessToken).then(result => {
-            reloadTable()
+            reloadTable(currentPage, getLimitDocPerPage)
             handleSuccess('Xóa', "Danh sách")
         }).catch(handleError)
     })
@@ -122,4 +115,86 @@ function clickStudentListRow(e) {
     // e.preventDefault();
     let studentListID = $(e.currentTarget).attr('id')
     FlowRouter.go(`/studentlistManager/${studentListID}`)
+}
+
+function getLimitDocPerPage() {
+    return parseInt($("#limit-doc").val());
+}
+
+function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
+    let table = $('#studentListData');
+    let emptyWrapper = $('#empty-data');
+    table.html('');
+    MeteorCall(_METHODS.studentList.GetByPage, { page: page, limit: limitDocPerPage }, accessToken).then(result => {
+        console.log(result)
+        tablePaging(".tablePaging", result.count, page, limitDocPerPage)
+        $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
+        if (result.count === 0) {
+            $('.tablePaging').addClass('d-none');
+            table.parent().addClass('d-none');
+            emptyWrapper.removeClass('d-none');
+        } else if (result.count > limitDocPerPage) {
+            $('.tablePaging').removeClass('d-none');
+            table.parent().removeClass('d-none');
+            emptyWrapper.addClass('d-none');
+            // update số bản ghi
+        } else {
+            $('.tablePaging').addClass('d-none');
+            table.parent().removeClass('d-none');
+            emptyWrapper.addClass('d-none');
+        }
+        createTable(table, result, limitDocPerPage)
+    })
+
+}
+
+function renderTable(data, page = 1) {
+    let table = $('#studentListData');
+    let emptyWrapper = $('#empty-data');
+    table.html('');
+    tablePaging('.tablePaging', data.count, page);
+    if (carStops.count === 0) {
+        $('.tablePaging').addClass('d-none');
+        table.parent().addClass('d-none');
+        emptyWrapper.removeClass('d-none');
+    } else {
+        $('.tablePaging').addClass('d-none');
+        table.parent().removeClass('d-none');
+        emptyWrapper.addClass('d-none');
+    }
+
+    createTable(table, data);
+}
+
+function createTable(table, result, limitDocPerPage) {
+    result.data.forEach((key, index) => {
+        key.index = index + (result.page - 1) * limitDocPerPage;
+        const row = createRow(key);
+        table.append(row);
+    });
+}
+
+function createRow(data) {
+    const data_row = dataRow(data);
+    // _id is tripID
+    return `
+        <tr id="${data._id}" class="table-row">
+          ${data_row}
+        </tr>
+        `
+}
+
+function dataRow(data) {
+    let item = {
+        _id: data._id,
+        name: data.name,
+    }
+    return `
+                <td>${data.index}</td>
+                <td>${item.name}</td>
+                <td>${moment(item.createdTime).format('l')}</td>
+                <td>
+                <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(item)}\'>Sửa</button>
+                <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(item)}\'>Xóa</button>
+                </td>`
 }

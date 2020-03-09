@@ -34,14 +34,14 @@ Template.carModelManager.events({
     "click .add-more": ClickAddmoreButton,
     "click .delete-button": ClickDeleteButton,
     "click .kt-datatable__pager-link": (e) => {
-		reloadTable(parseInt($(e.currentTarget).data('page')), getLimitDocPerPage());
-		$(".kt-datatable__pager-link").removeClass("kt-datatable__pager-link--active");
-		$(e.currentTarget).addClass("kt-datatable__pager-link--active")
-		currentPage = parseInt($(e.currentTarget).data('page'));
-	},
-	"change #limit-doc": (e) => {
-		reloadTable(1, getLimitDocPerPage());
-	}
+        reloadTable(parseInt($(e.currentTarget).data('page')), getLimitDocPerPage());
+        $(".kt-datatable__pager-link").removeClass("kt-datatable__pager-link--active");
+        $(e.currentTarget).addClass("kt-datatable__pager-link--active")
+        currentPage = parseInt($(e.currentTarget).data('page'));
+    },
+    "change #limit-doc": (e) => {
+        reloadTable(1, getLimitDocPerPage());
+    }
 });
 
 function ClickAddmoreButton(event) {
@@ -76,7 +76,7 @@ function ClickDeleteButton(event) {
     console.log(data._id)
     MeteorCall(_METHODS.carModel.Delete, data, accessToken)
         .then(result => {
-           reloadTable(currentPage, getLimitDocPerPage())
+            reloadTable(currentPage, getLimitDocPerPage())
         })
         .catch(handleError);
 }
@@ -101,7 +101,7 @@ function SubmitForm(event) {
                 .then(result => {
                     console.log(result);
                     $("#editCarModelModal").modal("hide");
-                   reloadTable(1, getLimitDocPerPage())
+                    reloadTable(1, getLimitDocPerPage())
                 }).catch(handleError);
         } else {
             data._id = modify;
@@ -149,19 +149,19 @@ function checkInput() {
 
 }
 
-function getLimitDocPerPage(){
-	return parseInt($("#limit-doc").val());
+function getLimitDocPerPage() {
+    return parseInt($("#limit-doc").val());
 }
 
 function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
-	let table = $('#table-body');
+    let table = $('#table-body');
     let emptyWrapper = $('#empty-data');
-	table.html('');
-	MeteorCall(_METHODS.carModel.GetByPage, {page: page, limit: limitDocPerPage}, accessToken).then(result => {
-		console.log(result)
-		tablePaging(".tablePaging", result.count, page, limitDocPerPage)
-		$("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
-		if (result.count === 0) {
+    table.html('');
+    MeteorCall(_METHODS.carModel.GetByPage, { page: page, limit: limitDocPerPage }, accessToken).then(result => {
+        console.log(result)
+        tablePaging(".tablePaging", result.count, page, limitDocPerPage)
+        $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
+        if (result.count === 0) {
             $('.tablePaging').addClass('d-none');
             table.parent().addClass('d-none');
             emptyWrapper.removeClass('d-none');
@@ -174,42 +174,42 @@ function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
             $('.tablePaging').addClass('d-none');
             table.parent().removeClass('d-none');
             emptyWrapper.addClass('d-none');
-		}
-		createTable(table, result, limitDocPerPage)
-	})
+        }
+        createTable(table, result, limitDocPerPage)
+    })
 
 }
 
 function renderTable(data, page = 1) {
-	let table = $('#table-body');
-	let emptyWrapper = $('#empty-data');
-	table.html('');
-	tablePaging('.tablePaging', data.count, page);
-	if (carStops.count === 0) {
-		$('.tablePaging').addClass('d-none');
-		table.parent().addClass('d-none');
-		emptyWrapper.removeClass('d-none');
-	} else {
-		$('.tablePaging').addClass('d-none');
-		table.parent().removeClass('d-none');
-		emptyWrapper.addClass('d-none');
-	}
+    let table = $('#table-body');
+    let emptyWrapper = $('#empty-data');
+    table.html('');
+    tablePaging('.tablePaging', data.count, page);
+    if (carStops.count === 0) {
+        $('.tablePaging').addClass('d-none');
+        table.parent().addClass('d-none');
+        emptyWrapper.removeClass('d-none');
+    } else {
+        $('.tablePaging').addClass('d-none');
+        table.parent().removeClass('d-none');
+        emptyWrapper.addClass('d-none');
+    }
 
-	createTable(table, data);
+    createTable(table, data);
 }
 
 function createTable(table, result, limitDocPerPage) {
-	result.data.forEach((key, index) => {
-		key.index = index + (result.page - 1) * limitDocPerPage;
-		const row = createRow(key);
-		table.append(row);
-	});
+    result.data.forEach((key, index) => {
+        key.index = index + (result.page - 1) * limitDocPerPage;
+        const row = createRow(key);
+        table.append(row);
+    });
 }
 
 function createRow(data) {
-	const data_row = dataRow(data);
-	// _id is tripID
-	return `
+    const data_row = dataRow(data);
+    // _id is tripID
+    return `
         <tr id="${data._id}">
           ${data_row}
         </tr>
@@ -217,8 +217,8 @@ function createRow(data) {
 }
 
 function dataRow(result) {
-	return `
-        <th scope="row"></th>
+    return `
+        <th scope="row">${result.index}</th>
         <td>${result.brand}</td>
         <td>${result.model}</td>
         <td>${result.seatNumber}</td>
