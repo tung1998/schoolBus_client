@@ -1,22 +1,25 @@
 import "./teacherManager.html";
-import { Session } from "meteor/session";
+import {
+  Session
+} from "meteor/session";
 const Cookies = require("js-cookie");
 
 import {
-	MeteorCall,
-	handleError,
-	handleSuccess,
-	handleConfirm,
-	addRequiredInputLabel,
-	addPaging,
-	tablePaging,
-	getBase64,
-  makeID
+  MeteorCall,
+  handleError,
+  handleSuccess,
+  handleConfirm,
+  addRequiredInputLabel,
+  addPaging,
+  tablePaging,
+  getBase64,
+  makeID,
+  initDropzone
 } from "../../../../functions";
 
 import {
-	_METHODS,
-	LIMIT_DOCUMENT_PAGE
+  _METHODS,
+  LIMIT_DOCUMENT_PAGE
 } from "../../../../variableConst";
 
 
@@ -35,6 +38,7 @@ Template.teacherManager.onRendered(() => {
   reloadTable(1);
   renderSchoolName();
   initSelect2()
+  initDropzone(".add-more", ".modify-button")
 });
 
 Template.teacherManager.helpers({});
@@ -80,6 +84,11 @@ function ClickModifyButton(e) {
   $(' input[name="class"]').val(teacherData.class);
 
   $("#school-select").val(teacherData.schoolID).trigger('change')
+  //remove ảnh cũ
+  $('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', `http://123.24.137.209:3000/images/${studentData.image}/0`)
+  $('div.dropzone-previews').find('div.dz-image-preview').remove()
+  $('div.dz-preview').show()
+  $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
 }
 
 function ClickAddmoreButton(e) {
@@ -109,8 +118,9 @@ function ClickDeleteButton(event) {
   })
 }
 
- async function SubmitForm(event) {
-  try {event.preventDefault();
+async function SubmitForm(event) {
+  try {
+    event.preventDefault();
     if (checkInput()) {
       const target = event.target;
       if (checkInput()) {
@@ -124,17 +134,20 @@ function ClickDeleteButton(event) {
           schoolID: $("#school-select").val(),
           schoolName: $('#select2-school-select-container').attr('title'),
         };
-  
-        if ($('#teacher-image').val()) {
-          let imageId = makeID("user")
-          let BASE64 = await getBase64($('#teacher-image')[0].files[0])
-          let importImage = await MeteorCall(_METHODS.image.Import, {
+
+        let imagePreview = $('div.dropzone-previews').find('div.dz-image-preview')
+        if (imagePreview.length) {
+          if (imagePreview.hasClass('dz-success')) {
+            let imageId = makeID("user")
+            let BASE64 = imagePreview.find('div.dz-image').find('img').attr('src')
+            let importImage = await MeteorCall(_METHODS.image.Import, {
               imageId,
               BASE64: [BASE64]
-          }, accessToken)
-          if (importImage.error)
+            }, accessToken)
+            if (importImage.error)
               handleError(result, "Không tải được ảnh lên server!")
-          else data.image = imageId
+            else data.image = imageId
+          }
         }
         let modify = $("#editTeacherModal").attr("teacherID");
         if (modify == "") {
@@ -161,11 +174,10 @@ function ClickDeleteButton(event) {
         }
       }
     }
-  }
-  catch (error) {
+  } catch (error) {
     handleError(error)
   }
-  
+
 }
 
 function checkInput() {
@@ -174,7 +186,7 @@ function checkInput() {
   let email = $('input[name="email"]').val();
   let schoolID = $("#school-select").val();
 
-  if (!schoolID || !name || !phone ||!email) {
+  if (!schoolID || !name || !phone || !email) {
     Swal.fire({
       icon: "error",
       text: "Làm ơn điền đầy đủ thông tin",
@@ -195,6 +207,9 @@ function clearForm() {
   $(' input[name="avatar"]').val("");
 
   $('#school-select').val('').trigger('change')
+
+  // remove ảnh
+  $('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', '')
 }
 
 function initSelect2() {
@@ -205,67 +220,70 @@ function initSelect2() {
 }
 
 
-function getLimitDocPerPage(){
-	return parseInt($("#limit-doc").val());
+function getLimitDocPerPage() {
+  return parseInt($("#limit-doc").val());
 }
 
 function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
-	let table = $('#table-body');
-    let emptyWrapper = $('#empty-data');
-	table.html('');
-	MeteorCall(_METHODS.teacher.GetByPage, {page: page, limit: limitDocPerPage}, accessToken).then(result => {
-		console.log(result)
-		tablePaging(".tablePaging", result.count, page, limitDocPerPage)
-		$("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
-		if (result.count === 0) {
-            $('.tablePaging').addClass('d-none');
-            table.parent().addClass('d-none');
-            emptyWrapper.removeClass('d-none');
-        } else if (result.count > limitDocPerPage) {
-            $('.tablePaging').removeClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
-            // update số bản ghi
-        } else {
-            $('.tablePaging').addClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
-		}
-		createTable(table, result, limitDocPerPage)
-	})
+  let table = $('#table-body');
+  let emptyWrapper = $('#empty-data');
+  table.html('');
+  MeteorCall(_METHODS.teacher.GetByPage, {
+    page: page,
+    limit: limitDocPerPage
+  }, accessToken).then(result => {
+    console.log(result)
+    tablePaging(".tablePaging", result.count, page, limitDocPerPage)
+    $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
+    if (result.count === 0) {
+      $('.tablePaging').addClass('d-none');
+      table.parent().addClass('d-none');
+      emptyWrapper.removeClass('d-none');
+    } else if (result.count > limitDocPerPage) {
+      $('.tablePaging').removeClass('d-none');
+      table.parent().removeClass('d-none');
+      emptyWrapper.addClass('d-none');
+      // update số bản ghi
+    } else {
+      $('.tablePaging').addClass('d-none');
+      table.parent().removeClass('d-none');
+      emptyWrapper.addClass('d-none');
+    }
+    createTable(table, result, limitDocPerPage)
+  })
 
 }
 
 function renderTable(data, page = 1) {
-	let table = $('#table-body');
-	let emptyWrapper = $('#empty-data');
-	table.html('');
-	tablePaging('.tablePaging', data.count, page);
-	if (carStops.count === 0) {
-		$('.tablePaging').addClass('d-none');
-		table.parent().addClass('d-none');
-		emptyWrapper.removeClass('d-none');
-	} else {
-		$('.tablePaging').addClass('d-none');
-		table.parent().removeClass('d-none');
-		emptyWrapper.addClass('d-none');
-	}
+  let table = $('#table-body');
+  let emptyWrapper = $('#empty-data');
+  table.html('');
+  tablePaging('.tablePaging', data.count, page);
+  if (carStops.count === 0) {
+    $('.tablePaging').addClass('d-none');
+    table.parent().addClass('d-none');
+    emptyWrapper.removeClass('d-none');
+  } else {
+    $('.tablePaging').addClass('d-none');
+    table.parent().removeClass('d-none');
+    emptyWrapper.addClass('d-none');
+  }
 
-	createTable(table, data);
+  createTable(table, data);
 }
 
 function createTable(table, result, limitDocPerPage) {
-	result.data.forEach((key, index) => {
-		key.index = index + (result.page - 1) * limitDocPerPage;
-		const row = createRow(key);
-		table.append(row);
-	});
+  result.data.forEach((key, index) => {
+    key.index = index + (result.page - 1) * limitDocPerPage;
+    const row = createRow(key);
+    table.append(row);
+  });
 }
 
 function createRow(data) {
-	const data_row = dataRow(data);
-	// _id is tripID
-	return `
+  const data_row = dataRow(data);
+  // _id is tripID
+  return `
         <tr id="${data._id}">
           ${data_row}
         </tr>
@@ -273,7 +291,7 @@ function createRow(data) {
 }
 
 function dataRow(result) {
-	let data = {
+  let data = {
     _id: result._id,
     name: result.user.name,
     username: result.user.username,

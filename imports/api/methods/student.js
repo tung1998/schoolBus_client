@@ -67,6 +67,7 @@ function createStudent(data, accessToken = '') {
 function updateStudent(data, accessToken = '') {
     let url = `${AUTH_STUDENT}/${data._id}`
     return httpDefault(METHOD.put, url, {
+        body: data,
         token: accessToken
     });
 }

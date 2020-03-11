@@ -126,7 +126,7 @@ function ClickModifyButton(e) {
 	$('input[name="name"]').val(studentData.name);
 	$('input[name="email"]').val(studentData.email);
 	$('input[name="phone"]').val(studentData.phone);
-	$('#student-school').val(studentData.schoolID).trigger('change')
+	$('input[name="phone"]').trigger('change');
 	// $('#student-class').val(studentData.classID).trigger('change')
 	$('#student-carStopID').val(studentData.carStopID).trigger('change')
 	$('input[name="status"]').val(studentData.status);
