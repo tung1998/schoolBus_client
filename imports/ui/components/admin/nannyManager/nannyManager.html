@@ -43,7 +43,11 @@
                 <div class="kt-section__content">
                   <button type="button" class="btn btn-outline-brand mb-4 add-more" data-toggle="modal"
                     data-target="#editNannyModal">Thêm mới</button>
-                  <table class="table table-bordered table-hover">
+                    <div class="kt-datatable kt-datatable--default kt-datatable--brand">
+                      <p id="empty-data" class="text-muted font-14 d-none">
+                        Không có dữ liệu
+                      </p>
+                    <table class="table table-bordered table-hover">
                     <thead class="thead-light">
                       <tr>
                         <th>#</th>
@@ -63,6 +67,7 @@
 
                     </tbody>
                   </table>
+                  </div>
                 </div>
               </div>
               <!--end::Section-->
@@ -91,13 +96,13 @@
           <form class="kt-form kt-form--label-right">
             <div class="kt-portlet__body">
               <div class="form-group row">
-                <label for="example-text-input" class="col-2 col-form-label">Họ và tên</label>
+                <label for="example-text-input" class="col-2 col-form-label required-input-label">Họ và tên</label>
                 <div class="col-10">
                   <input class="form-control" type="text" id="name-input">
                 </div>
               </div>
               <div class="form-group row">
-                <label for="example-search-input" class="col-2 col-form-label">Số điện thoại</label>
+                <label for="example-search-input" class="col-2 col-form-label required-input-label">Số điện thoại</label>
                 <div class="col-10">
                   <input class="form-control" type="number" id="phone-input">
                 </div>
@@ -109,31 +114,31 @@
                 </div>
               </div>
               <div class="form-group row">
-                <label for="example-url-input" class="col-2 col-form-label">Địa chỉ</label>
+                <label for="example-url-input" class="col-2 col-form-label required-input-label">Địa chỉ</label>
                 <div class="col-10">
                   <input class="form-control" type="text" id="address-input">
                 </div>
               </div>
               <div class="form-group row">
-                <label for="example-url-input" class="col-2 col-form-label">CCCD</label>
+                <label for="example-url-input" class="col-2 col-form-label required-input-label">CCCD</label>
                 <div class="col-10">
                   <input class="form-control" type="text" id="identityCard-input">
                 </div>
               </div>
               <div class="form-group row">
-                <label for="example-url-input" class="col-2 col-form-label">Ngày cấp</label>
+                <label for="example-url-input" class="col-2 col-form-label required-input-label">Ngày cấp</label>
                 <div class="col-10">
                   <input class="form-control" type="text" id="identityCardDate-input">
                 </div>
               </div>
               <div class="form-group row">
-                <label for="example-url-input" class="col-2 col-form-label">Nơi cấp</label>
+                <label for="example-url-input" class="col-2 col-form-label required-input-label">Nơi cấp</label>
                 <div class="col-10">
                   <input class="form-control" type="text" id="identityCardBy-input">
                 </div>
               </div>
               <div class="form-group row">
-                <label for="example-tel-input" class="col-2 col-form-label">Trạng thái</label>
+                <label for="example-tel-input" class="col-2 col-form-label required-input-label">Trạng thái</label>
                 <div class="col-10">
                   <input class="form-control" type="text" id="status-input">
                 </div>

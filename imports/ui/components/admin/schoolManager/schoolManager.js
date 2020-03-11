@@ -144,10 +144,7 @@ function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
     let table = $('#table-body');
     let emptyWrapper = $('#empty-data');
     table.html('');
-    MeteorCall(_METHODS.school.GetByPage, {
-        page: page,
-        limit: limitDocPerPage
-    }, accessToken).then(result => {
+    MeteorCall(_METHODS.school.GetByPage, { page: page, limit: limitDocPerPage }, accessToken).then(result => {
         console.log(result)
         tablePaging(".tablePaging", result.count, page, limitDocPerPage)
         $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
@@ -213,6 +210,7 @@ function dataRow(result) {
         address: result.address
     }
     return `
+                    <td>${result.index}</td>
                     <td>${item.name}</td>
                     <td>${item.address}</td>
                     <td>

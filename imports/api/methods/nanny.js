@@ -29,6 +29,7 @@ if (Meteor.isServer) {
         'Nanny.create': createNanny,
         'Nanny.getAll': getNannys,
         'Nanny.getByID': getNannyByID,
+        'Nanny.getByPage': getNannyByPage,
         'Nanny.update': updateNanny,
         'Nanny.delete': deleteNanny,
     });
@@ -55,6 +56,11 @@ function getNannyByID(data, accessToken = '') {
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });
+}
+
+function getNannyByPage(data, accessToken = '') {
+    let url = `${AUTH_Nanny}/${data.page}?limit=${data.limit}`;
+    return httpDefault(METHOD.get, url, { token: accessToken });
 }
 //UPDATE 
 function updateNanny(data, accessToken = '') {

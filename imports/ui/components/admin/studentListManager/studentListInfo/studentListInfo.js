@@ -18,24 +18,51 @@ import {
 
 let accessToken;
 let studentIDs = [];
-let studentStopPoint = [];
-let htmlSortable = '';
+let studentStopPoint = []; //contains addressName, carStopCoordinates
+let stopPointCoors = []; //contains all carStopCoordinates
+let htmlSortable = ''; //contains all html dragable tabs
 let stopPointOrder = [];
+let defaultStopPoint;
+//array that contains order of stopPoints from 0 to studentSTopPoints.length
+//sorted by distance from anchor point to each individual stopPoints
+let polyID;
+//array that contains ID of polyline-layers in markerGroup
+let polyCoor = [];
 Template.studentListInfo.onCreated(() => {
     accessToken = Cookies.get('accessToken');
 });
 
 Template.studentListInfo.onRendered(() => {
     reloadTable().then(result => {
-        console.log($(".ui-sortable")[0])
-        setSortableData(htmlSortable)
         initClassSelect2()
         $(".anchorHeight").css({
-            "max-height": 400
-        })
-        console.log(stopPointOrder)
-    })
+                "max-height": 400
+            }) //set fixxed height of sortable tabs
+            //sort stopPointsCoor by distance to anchor point
+        defaultStopPoint = stopPointCoors;
+        stopPointCoors = DistanceAutoCal([21.040276, 105.782988], stopPointCoors);
+        drawPath(stopPointCoors)
+        console.log(stopPointCoors)
 
+
+        //}
+        //append HTML sortable tabs to tab-pane
+        for (let i = stopPointOrder.length - 1; i >= 0; i--) {
+            htmlSortable +=
+                `<div class="kt-portlet kt-portlet--mobile kt-portlet--sortable" id="${stopPointOrder[i]}">
+                    <div class="kt-portlet__head ui-sortable-handle">
+                        <div class="kt-portlet__head-label">
+                            <h3 class="kt-portlet__head-title title="${studentStopPoint[stopPointOrder[i]].address}">
+                                ${studentStopPoint[stopPointOrder[i]].name}        
+                            </h3>
+                        </div>
+                    </div>
+                    
+                </div>`
+                //<div class="kt-portlet__body">${studentStopPoint[stopPointOrder[i]].address}</div>
+        }
+        setSortableData(htmlSortable)
+    })
 });
 
 Template.studentListInfo.onDestroyed(() => {
@@ -44,10 +71,6 @@ Template.studentListInfo.onDestroyed(() => {
 
 Template.studentListInfo.events({
     'click input.student-checkbox': clickStudentCheckBox,
-})
-
-Template.carStopList_studentListInfo.onCreated(() => {
-
 })
 
 Template.carStopList_studentListInfo.onRendered(() => {
@@ -63,20 +86,19 @@ Template.carStopList_studentListInfo.onRendered(() => {
             'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         id: 'mapbox.streets'
     }).addTo(carStopmap);
-    setInterval(() => { carStopmap.invalidateSize(); }, 0)
-    window.markerGroup = L.layerGroup().addTo(carStopmap);
-    //window.polyGroup = L.LayerGroup("a", { width: 1, height: 1 }).addTo(carStopmap);
-    setMarker([21.040276, 105.782988]); //school
-    setMarker([21.030443, 105.835688]); //startPoint
+    setInterval(() => { carStopmap.invalidateSize(); }, 0) //invalidate Size of map
+    window.markerGroup = L.layerGroup().addTo(carStopmap); //create markerGroup
 })
 
 Template.carStopList_studentListInfo.events({
+    'mousemove .kt-portlet--sortable': function(event) {
+        console.log(1)
+    },
     'drag .kt-portlet--sortable': function(event, t) {
+        let targetID = event.target.getAttribute('id'),
+            ID_order = [],
+            modPos;
         if (event.drag.type === 'dragend') {
-            let targetID = event.target.getAttribute('id');
-            let ID_order = [];
-            let modPos;
-
             $('.carStopContainer').children('div').each(function() {
                 if ($(this).attr('id') != undefined) {
                     if ($(this).attr('id') != targetID) {
@@ -84,33 +106,19 @@ Template.carStopList_studentListInfo.events({
                     }
                 } else {
                     ID_order.push(targetID);
-                    modPos = ID_order.length - 1;
-                    //console.log(modPos)
+                    modPos = ID_order.length - 1; //điểm di chuyển
                 }
             })
-
-            //console.log(ID_order)
-            if (stopPointOrder != ID_order) {
-                //console.log(ID_order, modPos)
-                let fixPoint1 = ID_order[modPos + 1], //điểm sau điểm sửa
-                    fixPoint2 = ID_order[modPos - 1], //điểm trước điểm sửa 1
-                    fixPoint3 = ID_order[modPos - 2]; //điểm trước điểm sửa 2
-                //console.log(fixPoint1, fixPoint2, fixPoint3)
-                coordinates1 = studentStopPoint[fixPoint1];
-                coordinates2 = studentStopPoint[fixPoint2];
-                coordinates3 = studentStopPoint[fixPoint3];
-                //console.log(coordinates1, coordinates2, coordinates3)
-                let route = {
-                    startLat: coordinates1.location[0],
-                    startLng: coordinates1.location[1],
-                    desLat: coordinates2.location[0],
-                    desLng: coordinates2.location[1]
-                }
-                addPoly(coordinates1.location, coordinates2.location)
-                MeteorCall(_METHODS.wemap.getDrivePath, route, accessToken).then(result => {
-                    console.log(result)
-                }).catch(handleError)
+            if (ID_order != stopPointOrder) {
+                console.log(ID_order)
+                stopPointCoors = reArrange(defaultStopPoint, [], ID_order)
+                removeLayerByID(polyID)
+                console.log(stopPointCoors)
+                drawPath(stopPointCoors)
+            } else {
+                console.log(2)
             }
+
         }
     }
 })
@@ -146,23 +154,13 @@ function reloadTable() {
     return MeteorCall(_METHODS.studentList.GetById, {
         _id: studentListID
     }, accessToken).then(result => {
-        console.log(result);
+        //console.log(result);
         studentIDs = result.studentIDs;
         studentStopPoint = result.carStops;
         studentStopPoint.map((data, index) => {
             stopPointOrder.push(index);
-            setMarker(data.location)
-            htmlSortable +=
-                `<div class="kt-portlet kt-portlet--mobile kt-portlet--sortable" id="${index}">
-                    <div class="kt-portlet__head ui-sortable-handle">
-                        <div class="kt-portlet__head-label">
-                            <h3 class="kt-portlet__head-title">
-                                ${data.name}        
-                            </h3>
-                        </div>
-                    </div>
-                    <div class="kt-portlet__body">${data.address}</div>
-                </div>`
+            setMarker(data.location, data.name)
+            stopPointCoors.push(data.location);
         })
         renderStudentTable($('#studentTable'), result.students)
         return result
@@ -188,7 +186,6 @@ function htmlRow(data, index, type = false) {
                         </td>`:''}
             </tr>`
 }
-
 //event
 function clickStudentCheckBox(e) {
     let studentListID = FlowRouter.getParam("id")
@@ -213,16 +210,95 @@ function clickStudentCheckBox(e) {
 
 }
 
-function setMarker(arr) {
-    let mark = L.marker(arr).addTo(markerGroup);
+function setMarker(arr, des) {
+    let mark = L.marker(arr).bindTooltip(des, { permanent: false }).addTo(carStopmap);
 }
 
 function setSortableData(str) {
     document.getElementById("kt_sortable_portlets").innerHTML += str;
 }
 
-function addPoly(point1, point2) {
-    
-    let poly = L.polyline([point1, point2], { color: 'blue', weight: 8, opacity: 0.5, smoothFactor: 1 }).addTo(markerGroup);
-    console.log(markerGroup);
+function addPoly(arr) {
+    let poly = L.polyline(arr, { color: 'blue', weight: 4, opacity: 0.5, smoothFactor: 1 }).addTo(markerGroup);
+    console.log(markerGroup)
+    polyID = markerGroup.getLayerId(poly)
+}
+
+function swapPcs(arr){
+    let c=arr[1];
+    arr[1]=arr[0];
+    arr[0]=c;
+    return arr;
+}
+
+function removeLayerByID(id) {
+	markerGroup.eachLayer(function (layer) {
+		if (layer._leaflet_id === id){
+			markerGroup.removeLayer(layer)
+		}
+	});	
+}
+
+function reArrange(arr1, arr2, idxArr){
+    for (let i=0; i<idxArr.length; i++){
+        if (arr1[idxArr[i]]!=undefined){
+            arr2[i] = arr1[idxArr[i]];
+        }
+    }
+    return arr2;
+}
+
+function DistanceAutoCal(dest, coorArr){
+    let distance = [];
+    let distOrder = [];
+    let finalCoorOrder = [];
+    for (let i=0; i<coorArr.length; i++){
+        distance.push(getDistance(dest,coorArr[i]));
+        //console.log(getDistance(dest,coorArr[i]))
+        distOrder.push(i);
+    }
+
+    distOrder.sort(function (a, b) { return distance[a] < distance[b] ? -1 : distance[a] > distance[b] ? 1 : 0; });
+    stopPointOrder = distOrder;
+    for (let i=0; i<distOrder.length; i++){
+        finalCoorOrder.push(coorArr[distOrder[i]]);
+    }
+    //console.log(finalCoorOrder);
+    return finalCoorOrder;
+} //dest: [[lat,lng]] //coorArr: tập hợp các carStop
+
+function getDistance(origin, destination) {
+    // return distance in meters
+    var lon1 = toRadian(origin[1]),
+        lat1 = toRadian(origin[0]),
+        lon2 = toRadian(destination[1]),
+        lat2 = toRadian(destination[0]);
+
+    var deltaLat = lat2 - lat1;
+    var deltaLon = lon2 - lon1;
+
+    var a = Math.pow(Math.sin(deltaLat/2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(deltaLon/2), 2);
+    var c = 2 * Math.asin(Math.sqrt(a));
+    var EARTH_RADIUS = 6371;
+    return c * EARTH_RADIUS * 1000;
+}
+
+function toRadian(degree) {
+    return degree*Math.PI/180;
+}
+
+function drawPath(arr){
+    MeteorCall(_METHODS.wemap.getDrivePath, arr, accessToken).then(result => {
+        let pol = []
+        let a = result.routes[0].legs
+        for (let i = 0; i < a.length; i++) {
+            for (let j = 0; j < a[i].steps.length; j++) {
+                for (let k = 0; k < a[i].steps[j].intersections.length; k++) {
+                    pol.push(swapPcs(a[i].steps[j].intersections[k].location))
+                }
+            }
+        }
+        pol.push(arr[0])
+        addPoly(pol)
+    }).catch(handleError);
 }

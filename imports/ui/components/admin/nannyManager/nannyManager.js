@@ -30,6 +30,9 @@ Template.nannyManager.onCreated(() => {
 Template.nannyManager.onRendered(() => {
     reloadTable();
     initDropzone(".add-more", "modify-button")
+    addRequiredInputLabel()
+    addPaging()
+    reloadTable(1);
 });
 
 Template.nannyManager.events({
@@ -37,6 +40,15 @@ Template.nannyManager.events({
     "click .modify-button": ClickModifyButton,
     "click .add-more": ClickAddmoreButton,
     "click .delete-button": ClickDeleteButton,
+    "click .kt-datatable__pager-link": (e) => {
+        reloadTable(parseInt($(e.currentTarget).data('page')), getLimitDocPerPage());
+        $(".kt-datatable__pager-link").removeClass("kt-datatable__pager-link--active");
+        $(e.currentTarget).addClass("kt-datatable__pager-link--active")
+        currentPage = parseInt($(e.currentTarget).data('page'));
+    },
+    "change #limit-doc": (e) => {
+        reloadTable(1, getLimitDocPerPage());
+    }
 });
 
 function ClickAddmoreButton(event) {
@@ -79,7 +91,7 @@ function ClickDeleteButton(event) {
     console.log(data._id)
     MeteorCall(_METHODS.Nanny.Delete, data, accessToken)
         .then(result => {
-            deleteRow(data);
+            reloadTable(currentPage, getLimitDocPerPage())
         })
         .catch(handleError);
 }
@@ -123,7 +135,7 @@ async function SubmitForm(event) {
                         handleSuccess("Thêm", "bảo mẫu").then(() => {
                             $("#editNannyModal").modal("hide");
                         })
-                        reloadTable()
+                        reloadTable(1, getLimitDocPerPage())
                     })
                     .catch(handleError);
             } else {
@@ -133,7 +145,7 @@ async function SubmitForm(event) {
                         handleSuccess("Thêm", "bảo mẫu").then(() => {
                             $("#editNannyModal").modal("hide");
                         })
-                        reloadTable()
+                        reloadTable(currentPage, getLimitDocPerPage())
                     })
                     .catch(handleError);
             }
@@ -144,41 +156,109 @@ async function SubmitForm(event) {
 }
 
 function checkInput() {
-    let name = $("#name-input").val()
-    let phone = $("#phone-input").val()
-    let email = $("#email-input").val()
-    let address = $("#address-input").val()
-    let IDNumber = $("#identityCard-input").val()
-    let IDIssueDate = $("#identityCardDate-input").val()
-    let IDIssueBy = $("#identityCardBy-input").val()
-    if (!name || !phone || !email || !address || !IDNumber || !IDIssueBy || !IDIssueDate) {
+    let name = $("#name-input").val();
+    let phone = $("#phone-input").val();
+    let email = $("#email-input").val();
+    let address = $("#address-input").val();
+    let identityCard = $("#identityCard-input").val();
+    let identityCardDate = $("#identityCardDate-input").val();
+    let identityCardBy = $("#identityCardBy-input").val();
+    let status = $("#status-input").val();
+    $("#image-input").val();
+
+    if (!identityCard || !name || !address || !phone || !identityCardDate || !identityCardBy || !status) {
         Swal.fire({
             icon: "error",
             text: "Làm ơn điền đầy đủ thông tin",
             timer: 3000
         })
-        return false
+        return false;
     } else {
-        return true
+        return true;
     }
+
 }
 
-
-async function reloadTable() {
-    try {
-        let nannyData = await MeteorCall(_METHODS.Nanny.GetAll, {
-            extra: "user"
-        }, accessToken);
-        nannyData.data.map(nanny => {
-            let html = htmlRow(nanny);
-            $("#table-body").append(html);
-        })
-    } catch (err) {
-        handleError(err)
-    }
+function clearForm() {
+    $("#name-input").val("");
+    $("#phone-input").val("");
+    $("#email-input").val("");
+    $("#address-input").val("");
+    $("#identityCard-input").val("");
+    $("#identityCardDate-input").val("");
+    $("#identityCardBy-input").val("");
+    $("#status-input").val("");
+    $("#image-input").val("");
 }
 
-function htmlRow(data) {
+function getLimitDocPerPage() {
+    return parseInt($("#limit-doc").val());
+}
+
+function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
+    let table = $('#table-body');
+    let emptyWrapper = $('#empty-data');
+    table.html('');
+    MeteorCall(_METHODS.Nanny.GetByPage, { page: page, limit: limitDocPerPage }, accessToken).then(result => {
+        console.log(result)
+        tablePaging(".tablePaging", result.count, page, limitDocPerPage)
+        $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
+        if (result.count === 0) {
+            $('.tablePaging').addClass('d-none');
+            table.parent().addClass('d-none');
+            emptyWrapper.removeClass('d-none');
+        } else if (result.count > limitDocPerPage) {
+            $('.tablePaging').removeClass('d-none');
+            table.parent().removeClass('d-none');
+            emptyWrapper.addClass('d-none');
+            // update số bản ghi
+        } else {
+            $('.tablePaging').addClass('d-none');
+            table.parent().removeClass('d-none');
+            emptyWrapper.addClass('d-none');
+        }
+        createTable(table, result, limitDocPerPage)
+    })
+
+}
+
+function renderTable(data, page = 1) {
+    let table = $('#table-body');
+    let emptyWrapper = $('#empty-data');
+    table.html('');
+    tablePaging('.tablePaging', data.count, page);
+    if (carStops.count === 0) {
+        $('.tablePaging').addClass('d-none');
+        table.parent().addClass('d-none');
+        emptyWrapper.removeClass('d-none');
+    } else {
+        $('.tablePaging').addClass('d-none');
+        table.parent().removeClass('d-none');
+        emptyWrapper.addClass('d-none');
+    }
+
+    createTable(table, data);
+}
+
+function createTable(table, result, limitDocPerPage) {
+    result.data.forEach((key, index) => {
+        key.index = index + (result.page - 1) * limitDocPerPage;
+        const row = createRow(key);
+        table.append(row);
+    });
+}
+
+function createRow(data) {
+    const data_row = dataRow(data);
+    // _id is tripID
+    return `
+        <tr id="${data._id}" class="table-row">
+          ${data_row}
+        </tr>
+        `
+}
+
+function dataRow(data) {
     let dt = {
         _id: data._id,
         name: data.user.name,
@@ -192,8 +272,8 @@ function htmlRow(data) {
         status: data.status,
         image: data.image
     }
-    return `<tr id=${dt._id}>
-            <th scope="row"></th>
+    return `
+            <th scope="row">${data.index}</th>
             <td>${dt.name}</td>
             <td>${dt.username}</td>
             <td>${dt.phone}</td>

@@ -78,7 +78,7 @@ function setMapHeight() {
 function setMarker(lat, lng, json) {
     let mark = L.marker([lat, lng]).addTo(markerGroup);
     contentInfoMarker(lat, lng, json, mark)
-
+    markers_id.push(markerGroup.getLayerId(mark))
 }
 
 function setViewCar(marker, lat, lng) {
@@ -112,11 +112,11 @@ function contentInfoMarker(lat, lng, json, mark) {
 
 function htmlRow(data, index) {
     let item = {
-        _id: data._id,
-        numberPlate: data.car.numberPlate,
-        velocity: 0
-    }
-    markers_id.push(47 + 2 * index)
+            _id: data._id,
+            numberPlate: data.car.numberPlate,
+            velocity: 0
+        }
+        //markers_id.push(47 + 2 * index)
     let lat = data.location[0],
         lng = data.location[1];
     setMarker(lat, lng, data)
