@@ -128,12 +128,13 @@ const _METHODS = {
         Update: 'notification.update',
         Delete: 'notification.delete',
     },
-    Parrent: {
-        GetAll: 'Parrent.getAll',
-        GetById: 'Parrent.getByID',
-        Create: 'Parrent.create',
-        Update: 'Parrent.update',
-        Delete: 'Parrent.delete',
+    Parent: {
+        GetAll: 'Parent.getAll',
+        GetById: 'Parent.getByID',
+        GetByPage: 'Parent.getByPage',
+        Create: 'Parent.create',
+        Update: 'Parent.update',
+        Delete: 'Parent.delete',
     },
     ParrentRequest: {
         GetAll: 'ParrentRequest.getAll',

@@ -1,16 +1,28 @@
 // Methods related to links
 
-import { Meteor } from 'meteor/meteor';
-import { Mongo } from 'meteor/mongo';
+import {
+    Meteor
+} from 'meteor/meteor';
+import {
+    Mongo
+} from 'meteor/mongo';
 
-import { BASE, AUTH_PATH, } from '../config'
-import { METHOD, httpDefault } from '../checkAPI'
+import {
+    BASE,
+    AUTH_PATH,
+} from '../config'
+import {
+    METHOD,
+    httpDefault
+} from '../checkAPI'
 
 const BASE_Nanny = `${BASE}/Nanny`
 const AUTH_Nanny = `${AUTH_PATH}/Nanny`
 
 // render data truc tiep tu mongodb
-export const COLLECTION_Nanny = new Mongo.Collection('Nanny', { idGeneration: 'MONGO' });
+export const COLLECTION_Nanny = new Mongo.Collection('Nanny', {
+    idGeneration: 'MONGO'
+});
 
 if (Meteor.isServer) {
     Meteor.methods({
@@ -33,13 +45,17 @@ function createNanny(data, accessToken = '') {
 //XEM HẾT
 function getNannys(data, accessToken = '') {
     let url = `${AUTH_Nanny}?extra=${data.extra}`;
-    return httpDefault(METHOD.get, url, { token: accessToken });
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
 }
 
 //XEM THEO ID
 function getNannyByID(data, accessToken = '') {
     let url = `${AUTH_Nanny}/${data._id}`;
-    return httpDefault(METHOD.get, url, { token: accessToken });
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
 }
 
 function getNannyByPage(data, accessToken = '') {
@@ -49,11 +65,16 @@ function getNannyByPage(data, accessToken = '') {
 //UPDATE 
 function updateNanny(data, accessToken = '') {
     let url = `${AUTH_Nanny}/${data._id}`
-    return httpDefault(METHOD.put, url, { token: accessToken });
+    return httpDefault(METHOD.put, url, {
+        body: data,
+        token: accessToken
+    });
 }
 
 //XÓA
 function deleteNanny(data, accessToken = '') {
     let url = `${AUTH_Nanny}/${data._id}`
-    return httpDefault(METHOD.del, url, { token: accessToken });
+    return httpDefault(METHOD.del, url, {
+        token: accessToken
+    });
 }

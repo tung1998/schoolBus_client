@@ -19,18 +19,18 @@ Blaze._allowJavascriptUrls()
 
 // Set up all routes in the app
 
-FlowRouter.triggers.enter([function (context, redirect) {
-    let accessToken = Cookies.get('accessToken');
-    if (!accessToken) FlowRouter.go('/login');
-    else {
-        MeteorCall(_METHODS.user.GetCurrentInfor, null, accessToken).then(result => {}).catch(e => {
-            Cookies.remove('accessToken');
-            FlowRouter.redirect('/login');
-        });
-    }
-}], {
-    except: ["App.login"]
-});
+// FlowRouter.triggers.enter([function (context, redirect) {
+//     let accessToken = Cookies.get('accessToken');
+//     if (!accessToken) FlowRouter.go('/login');
+//     else {
+//         MeteorCall(_METHODS.user.GetCurrentInfor, null, accessToken).then(result => {}).catch(e => {
+//             Cookies.remove('accessToken');
+//             FlowRouter.redirect('/login');
+//         });
+//     }
+// }], {
+//     except: ["App.login"]
+// });
 
 FlowRouter.route('/', {
     name: 'App.home',
