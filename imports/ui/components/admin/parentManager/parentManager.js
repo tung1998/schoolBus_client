@@ -191,7 +191,7 @@ function clickEditButton(event) {
 
 }
 
-async function clickSubmitButton() {
+async function clickSubmitButton(event) {
   event.preventDefault();
   try {
     if (checkForm()) {

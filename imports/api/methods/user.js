@@ -59,6 +59,7 @@ function createUser(data, accessToken = '') {
 function updateUser(data, accessToken = '') {
     let url = `${AUTH_USER}/${data._id}`
     return httpDefault(METHOD.put, url, {
+        body: data,
         token: accessToken
     });
 }
