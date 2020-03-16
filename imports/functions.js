@@ -232,7 +232,6 @@ function initDropzone(addButton='', editButton='') {
             $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
         })
         $('.dropzone-msg-title').html("Đã chọn ảnh, xóa ảnh để chọn ảnh mới")
-
         myDropzone.disable()
 
     })

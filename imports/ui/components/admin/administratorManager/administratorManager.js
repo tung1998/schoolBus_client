@@ -8,6 +8,8 @@ import {
     handleError,
     addPaging,
     tablePaging,
+    initDropzone,
+    makeID,
 } from "../../../../functions";
 
 import {
@@ -26,12 +28,13 @@ Template.administratorManager.onRendered(() => {
     addPaging()
     addRequiredInputLabel()
     reloadTable(1);
+    initDropzone(".add-button", ".modify-button")
 });
 
 Template.administratorManager.events({
     "submit form": SubmitForm,
     "click .modify-button": ClickModifyButton,
-    "click .add-more": ClickAddmoreButton,
+    "click .add-button": ClickAddmoreButton,
     "click .delete-button": ClickDeleteButton,
     "click .kt-datatable__pager-link": (e) => {
         reloadTable(parseInt($(e.currentTarget).data('page')), getLimitDocPerPage());
@@ -70,21 +73,34 @@ function ClickAddmoreButton(event) {
     clearForm();
 }
 
-function SubmitForm(event) {
+async function SubmitForm(event) {
     event.preventDefault();
     const target = event.target;
     if (checkInput()) {
         let data = {
             name: target.name.value,
             username: target.username.value,
-            // dob: target.dob.value,
-            // address: target.address.value,
             phone: target.phoneNumber.value,
             email: target.email.value,
             adminType: target.adminType.value,
             password: target.password.value
-                //avatar: target.adminType
         };
+
+        let imagePreview = $('div.dropzone-previews').find('div.dz-image-preview')
+        if (imagePreview.length) {
+            if (imagePreview.hasClass('dz-success')) {
+                let imageId = makeID("user")
+                let BASE64 = imagePreview.find('div.dz-image').find('img').attr('src')
+                let importImage = await MeteorCall(_METHODS.image.Import, {
+                  imageId,
+                  BASE64: [BASE64]
+                }, accessToken)
+                if (importImage.error)
+                  handleError(result, "Không tải được ảnh lên server!")
+                else data.image = imageId
+              }
+        }
+
         let modify = $("#editAdministratorModal").attr("adminID");
         // console.log(modify);
         console.log(data)
@@ -92,7 +108,6 @@ function SubmitForm(event) {
             MeteorCall(_METHODS.admin.Create, data, accessToken)
                 .then(result => {
                     console.log(result);
-                    // renderTableRow();
                     $("#editAdministratorModal").modal("hide");
                     reloadTable(1, getLimitDocPerPage())
                 }).catch(handleError);
