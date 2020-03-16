@@ -113,24 +113,24 @@ function ClickTableRow(event) {
 }
 
 function ClickModifyButton(e) {
-    let studentData = $(e.currentTarget).data("json");
+	let studentData = $(e.currentTarget).data("json");
 
-    console.log("click button")
-    $("#editStudentModal").modal("show");
-    $("#editStudentModal").attr("studentID", studentData._id);
-    $(".modal-title").html("Chỉnh Sửa");
-    $(".confirm-button").html("Sửa");
+	 console.log("click button")
+	$("#editStudentModal").modal("show");
+	$("#editStudentModal").attr("studentID", studentData._id);
+	$(".modal-title").html("Chỉnh Sửa");
+	$(".confirm-button").html("Sửa");
 
-    $('input[name="IDstudent"]').val(studentData.IDStudent);
-    $('input[name="address"]').val(studentData.address);
-    $('input[name="name"]').val(studentData.name);
-    $('input[name="email"]').val(studentData.email);
-    $('input[name="phone"]').val(studentData.phone);
-    $('#student-school').val(studentData.schoolID).trigger('change')
-        // $('#student-class').val(studentData.classID).trigger('change')
-    $('#student-carStopID').val(studentData.carStopID).trigger('change')
-    $('input[name="status"]').val(studentData.status);
-    $('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', `http://14.162.212.174:3000/images/${studentData.image}/0`)
+	$('input[name="IDstudent"]').val(studentData.IDStudent);
+	$('input[name="address"]').val(studentData.address);
+	$('input[name="name"]').val(studentData.name);
+	$('input[name="email"]').val(studentData.email);
+	$('input[name="phone"]').val(studentData.phone);
+	$('input[name="phone"]').trigger('change');
+	// $('#student-class').val(studentData.classID).trigger('change')
+	$('#student-carStopID').val(studentData.carStopID).trigger('change')
+	$('input[name="status"]').val(studentData.status);
+	$('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', `http://123.24.137.209:3000/images/${studentData.image}/0`)
     $('div.dropzone-previews').find('div.dz-image-preview').remove()
     $('div.dz-preview').show()
     $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
@@ -241,7 +241,7 @@ function checkInput() {
     if (!IDstudent || !name || !address || !phone || !school || !className || !carStopID || !status) {
         Swal.fire({
             icon: "error",
-            text: "Làm ơn điền đầy đủ thông tin",
+            text: "Chưa đủ thông tin!",
             timer: 3000
         })
         return false;

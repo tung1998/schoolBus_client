@@ -12,25 +12,36 @@ import {
 
 import {
     _METHODS,
+    _URL_images,
 } from '../../variableConst'
 
 Blaze._allowJavascriptUrls()
 
-
+import {
+    _SESSION
+} from './../../variableConst'
 // Set up all routes in the app
 
-/*FlowRouter.triggers.enter([function (context, redirect) {
+FlowRouter.triggers.enter([function (context, redirect) {
     let accessToken = Cookies.get('accessToken');
     if (!accessToken) FlowRouter.go('/login');
     else {
-        MeteorCall(_METHODS.user.GetCurrentInfor, null, accessToken).then(result => {}).catch(e => {
+        console.log(accessToken)
+        MeteorCall(_METHODS.token.GetUserInfo, null, accessToken).then(result => {
+            localStorage.setItem(_SESSION.modules, JSON.stringify(result.modules))
+            Session.set(_SESSION.userID, result.userID)
+            Session.set(_SESSION.username, result.user.username)
+            Session.set(_SESSION.name, result.user.name)
+            Session.set(_SESSION.avata, `${_URL_images}/${result.user.image}/0`)
+        }).catch(e => {
+            console.log(e)
             Cookies.remove('accessToken');
             FlowRouter.redirect('/login');
         });
     }
 }], {
     except: ["App.login"]
-});*/
+});
 
 FlowRouter.route('/', {
     name: 'App.home',
@@ -43,17 +54,23 @@ FlowRouter.route('/login', {
     name: 'App.login',
     action() {
         let accessToken = Cookies.get('accessToken');
+        BlazeLayout.setRoot('body');
         if (accessToken) {
-            MeteorCall(_METHODS.user.GetCurrentInfor, null, accessToken).then(result => {
+            console.log(accessToken)
+            MeteorCall(_METHODS.token.GetUserInfo, null, accessToken).then(result => {
+                localStorage.setItem(_SESSION.modules, JSON.stringify(result.modules))
+                Session.set(_SESSION.userID, result.userID)
+                Session.set(_SESSION.username, result.user.username)
+                Session.set(_SESSION.name, result.user.name)
+                Session.set(_SESSION.avata, result.user.image)
                 FlowRouter.go('/profile')
             }).catch(e => {
-                BlazeLayout.setRoot('body');
+                console.log(e)
                 BlazeLayout.render('App_body', {
                     main: 'login'
                 });
             });
         } else {
-            BlazeLayout.setRoot('body');
             BlazeLayout.render('App_body', {
                 main: 'login'
             });

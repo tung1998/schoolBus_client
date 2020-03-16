@@ -18,11 +18,12 @@ if (Meteor.isServer) {
     Meteor.methods({
         'user.getAll': getAllUser,
         'user.getByID': getUserByID,
-        'user.getCurrentInfor': getCurrentUserInfor,
         'user.create': createUser,
         'user.update': updateUser,
         'user.delete': deleteUser,
-        'user.updatePassword': updatePassword
+        'user.updatePassword': updatePassword,
+        'user.getCurrentInfor': getCurrentUserInfor,
+        'user.isSuperadmin': isSuperadmin,
     });
 }
 
@@ -59,6 +60,7 @@ function createUser(data, accessToken = '') {
 function updateUser(data, accessToken = '') {
     let url = `${AUTH_USER}/${data._id}`
     return httpDefault(METHOD.put, url, {
+        body: data,
         token: accessToken
     });
 }
@@ -73,6 +75,14 @@ function deleteUser(data, accessToken = '') {
 function updatePassword(data, accessToken = '') {
     let url = `${AUTH_USER}/password`
     return httpDefault(METHOD.put, url, {
+        body: data,
+        token: accessToken
+    })
+}
+
+function isSuperadmin(data, accessToken = '') {
+    let url = `${AUTH_USER}/isSuperadmin`
+    return httpDefault(METHOD.get, url, {
         body: data,
         token: accessToken
     })

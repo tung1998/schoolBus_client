@@ -5,6 +5,8 @@ const Cookies = require('js-cookie');
 import {
     MeteorCall,
     handleError,
+    handleSuccess,
+    handleConfirm,
     addRequiredInputLabel,
     addPaging,
     tablePaging
@@ -74,14 +76,19 @@ function ClickConfirmButton() {
             MeteorCall(_METHODS.school.Create, data, accessToken).then(result => {
                 console.log(result);
                 // console.log(data);
-                $("#editSchoolModal").modal("hide");
+                handleSuccess("Thêm", "trường học").then(() => {
+                    $("#editSchoolModal").modal("hide");
+                })
+
                 reloadTable(1, getLimitDocPerPage())
             }).catch(handleError)
         } else {
             data._id = modify;
             MeteorCall(_METHODS.school.Update, data, accessToken).then(result => {
                 // console.log(result);
-                $("#editSchoolModal").modal("hide");
+                handleSuccess("Cập nhật", "trường học").then(() => {
+                    $("#editSchoolModal").modal("hide");
+                })
                 reloadTable(currentPage, getLimitDocPerPage())
             }).catch(handleError)
         }
@@ -90,12 +97,23 @@ function ClickConfirmButton() {
 }
 
 function ClickDeleteButton(e) {
-    let data = $(e.currentTarget).data("json");
-    // console.log(data._id)
-    MeteorCall(_METHODS.school.Delete, data, accessToken).then(result => {
-        // console.log(result);
-        reloadTable(currentPage, getLimitDocPerPage());
-    }).catch(handleError)
+    handleConfirm().then(result => {
+        if (result.value) {
+            let data = $(e.currentTarget).data("json");
+            // console.log(data._id)
+            MeteorCall(_METHODS.school.Delete, data, accessToken).then(result => {
+                // console.log(result);
+                Swal.fire({
+					icon: "success",
+					text: "Đã xóa thành công",
+					timer: 3000
+				})
+                reloadTable(currentPage, getLimitDocPerPage());
+            }).catch(handleError)
+        } else {
+
+        }
+    })
 }
 
 function checkInput() {
@@ -104,7 +122,7 @@ function checkInput() {
     if (!name || !address) {
         Swal.fire({
             icon: "error",
-            text: "Làm ơn điền đầy đủ thông tin",
+            text: "Chưa đủ thông tin!",
             timer: 3000
         })
         return false;

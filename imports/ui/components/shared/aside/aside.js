@@ -5,22 +5,13 @@ import {
 } from '../../../../functions'
 
 import {
-    _METHODS
+    _METHODS,
+    _SESSION
 } from '../../../../variableConst'
 
-let accessToken;
-
-Template.aside.onCreated(() => {
-    accessToken = Cookies.get('accessToken')
-
-});
-
 Template.aside.onRendered(() => {
-    MeteorCall(_METHODS.modules.GetAll, null, accessToken).then(result => {
-        //console.log(result)
-        if (result.data)
-            renderAside(result.data)
-    }).catch(handleError)
+    let modules = JSON.parse(localStorage.getItem(_SESSION.modules))
+    renderAside(modules)
 })
 
 function renderAside(data) {

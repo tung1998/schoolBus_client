@@ -11,7 +11,8 @@ import {
     addPaging,
     tablePaging,
     getBase64,
-    makeID
+    makeID,
+    initDropzone
 } from "../../../../functions";
 
 import {
@@ -27,6 +28,8 @@ Template.nannyManager.onCreated(() => {
 });
 
 Template.nannyManager.onRendered(() => {
+    reloadTable();
+    initDropzone(".add-more", "modify-button")
     addRequiredInputLabel()
     addPaging()
     reloadTable(1);
@@ -74,8 +77,14 @@ function ClickModifyButton(event) {
     $("#identityCardDate-input").val(nannyData.IDIssueDate);
     $("#identityCardBy-input").val(nannyData.IDIssueBy);
     $("#status-input").val(nannyData.status);
-    // $("#image-input").val(nannyData.image);
+
+    //remove ảnh cũ
+    $('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', `http://123.24.137.209:3000/images/${studentData.image}/0`)
+    $('div.dropzone-previews').find('div.dz-image-preview').remove()
+    $('div.dz-preview').show()
+    $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
 }
+
 
 function ClickDeleteButton(event) {
     let data = $(event.currentTarget).data("json");
@@ -104,16 +113,19 @@ async function SubmitForm(event) {
                 IDIssueBy: $("#identityCardBy-input").val(),
                 status: $("#status-input").val(),
             }
-            if ($('#nanny-image').val()) {
-                let imageId = makeID("user")
-                let BASE64 = await getBase64($('#nanny-image')[0].files[0])
-                let importImage = await MeteorCall(_METHODS.image.Import, {
-                    imageId,
-                    BASE64: [BASE64]
-                }, accessToken)
-                if (importImage.error)
-                    handleError(result, "Không tải được ảnh lên server!")
-                else data.image = imageId
+            let imagePreview = $('div.dropzone-previews').find('div.dz-image-preview')
+            if (imagePreview.length) {
+                if (imagePreview.hasClass('dz-success')) {
+                    let imageId = makeID("user")
+                    let BASE64 = imagePreview.find('div.dz-image').find('img').attr('src')
+                    let importImage = await MeteorCall(_METHODS.image.Import, {
+                        imageId,
+                        BASE64: [BASE64]
+                    }, accessToken)
+                    if (importImage.error)
+                        handleError(result, "Không tải được ảnh lên server!")
+                    else data.image = imageId
+                }
             }
 
             let modify = $("#editNannyModal").attr("nannyID");
@@ -157,7 +169,7 @@ function checkInput() {
     if (!identityCard || !name || !address || !phone || !identityCardDate || !identityCardBy || !status) {
         Swal.fire({
             icon: "error",
-            text: "Làm ơn điền đầy đủ thông tin",
+            text: "Chưa đủ thông tin!",
             timer: 3000
         })
         return false;
@@ -274,5 +286,21 @@ function dataRow(data) {
             <td>
                 <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(dt)}\'>Sửa</button>
                 <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(dt)}\'>Xóa</button>
-            </td>`
+            </td>
+        </tr>`
+}
+
+function clearForm() {
+    $("#name-input").val("");
+    $("#phone-input").val("");
+    $("#email-input").val("");
+    $("#address-input").val("");
+    $("#identityCard-input").val("");
+    $("#identityCardDate-input").val("");
+    $("#identityCardBy-input").val("");
+    $("#status-input").val("");
+    $("#image-input").val("");
+
+    // remove ảnh
+    $('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', '')
 }
