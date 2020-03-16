@@ -34,6 +34,7 @@ const _METHODS = {
     carFuel: {
         GetAll: 'carFuel.getAll',
         GetById: 'carFuel.getByID',
+        GetByPage: 'carFuel.getByPage',
         Create: 'carFuel.create',
         Update: 'carFuel.update',
         Delete: 'carFuel.delete',

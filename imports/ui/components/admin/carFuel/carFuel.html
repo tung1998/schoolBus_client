@@ -55,19 +55,8 @@
                                                 <th>Hành Động</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            <tr>
-                                                <th scope="row"></th>
-                                                <td>Biển số</td>
-                                                <td>Thể tích</td>
-                                                <td>Đơn giá</td>
-                                                <td>Thời gian</td>
-                                                <td>Thời gian cập nhật</td>
-                                                <td>
-                                                    <button type="button" class="btn btn-outline-brand modify-button">Sửa</button>
-                                                    <button type="button" class="btn btn-outline-danger delete-button">Xóa</button>
-                                                </td>
-                                            </tr>
+                                        <tbody id="table-body">
+                                    
                                         </tbody>
                                     </table>
                                 </div>
@@ -98,67 +87,22 @@
                     <form class="kt-form kt-form--label-right">
                         <div class="kt-portlet__body">
                             <div class="form-group row">
-                                <label class="col-2 col-form-label"
+                                <label class="col-2 col-form-label required-input-label"
                                   >Chọn xe</label
                                 >
                                 <div class="col-10">
-                                  <div class="dropdown bootstrap-select form-control kt-">
-                                    <select
-                                      class="form-control kt-selectpicker"
-                                      data-size="4"
-                                      tabindex="-98"
-                                    >
-                                      <option>Mustard</option> </select
-                                    ><button
-                                      type="button"
-                                      class="btn dropdown-toggle btn-light button-car-selected"
-                                      data-toggle="dropdown"
-                                      role="combobox"
-                                      aria-owns="bs-select-2"
-                                      aria-haspopup="listbox"
-                                      aria-expanded="false"
-                                      title="chọn xe"
-                                    >
-                                      <div class="filter-option">
-                                        <div class="filter-option-inner">
-                                          <div class="filter-option-inner-inner car-result">Chọn xe</div>
-                                        </div>
-                                      </div>
-                                    </button>
-                                    <div
-                                      class="dropdown-menu"
-                                      x-placement="bottom-start"
-                                      style="max-height: 182px; overflow: hidden; min-width: 393px; position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 36px, 0px);"
-                                    >
-                                      <div
-                                        class="inner show"
-                                        role="listbox"
-                                        id="bs-select-2"
-                                        tabindex="-1"
-                                        aria-activedescendant="bs-select-2-1"
-                                        style="max-height: 156px; overflow-y: auto;"
-                                      >
-                                        <ul
-                                          class="dropdown-menu inner show"
-                                          role="presentation"
-                                          style="margin-top: 0px; margin-bottom: 0px;"
-                                          id="car-select"
-                                        >
-                                        </ul>
-                                      </div>
-                                    </div>
-                                  </div>
+                                  <select id="car-select"></select>
                                 </div>
                               </div>
                             <div class="form-group row">
-                                <label for="example-search-input" class="col-2 col-form-label">Thể tích</label>
+                                <label for="example-search-input" class="col-2 col-form-label required-input-label">Thể tích</label>
                                 <div class="col-10">
                                     <input class="form-control" type="text" id="example-search-input"
                                         name="volume-input">
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label for="example-email-input" class="col-2 col-form-label">Đơn giá</label>
+                                <label for="example-email-input" class="col-2 col-form-label required-input-label">Đơn giá</label>
                                 <div class="col-10">
                                     <input class="form-control" type="text" id="example-email-input"
                                         name="cost-input">

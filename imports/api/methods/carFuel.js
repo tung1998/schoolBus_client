@@ -18,6 +18,7 @@ if (Meteor.isServer) {
     Meteor.methods({
         'carFuel.getAll': getAllCarFuel,
         'carFuel.getByID': getCarFuelByID,
+        'carFuel.getByPage': getCarFuelByPage,
         'carFuel.create': createCarFuel,
         'carFuel.update': updateCarFuel,
         'carFuel.delete': deleteCarFuel,
@@ -34,6 +35,13 @@ function getAllCarFuel(accessToken = '') {
 
 function getCarFuelByID(data, accessToken = '') {
     let url = `${AUTH_CARFUEL}/${data._id}`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
+}
+
+function getCarFuelByPage(data, accessToken = '') {
+    let url = `${AUTH_CARFUEL}/${data.page}?limit=${data.limit}`
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });
