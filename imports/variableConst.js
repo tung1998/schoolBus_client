@@ -249,6 +249,8 @@ const _SESSION = {
     modules: 'modules',
     mapHeight: 'mapHeight',
     isSuperadmin: 'isSuperadmin',
+    avata: 'avata',
+    name: 'name',
 }
 
 const _TRIP_STUDENT = {
