@@ -14,10 +14,11 @@ const Cookies = require("js-cookie");
 
 
 let accessToken;
-let userID = Session.get(_SESSION.userID);
+let userID;
 
 Template.profile.onCreated(() => {
     accessToken = Cookies.get("accessToken");
+    userID = Cookies.get(_SESSION.userID);
 });
 
 Template.profile.onRendered(() => {
@@ -152,7 +153,9 @@ async function editAvatarProfile() {
         }
         await MeteorCall(_METHODS.user.Update, data, accessToken)
         handleSuccess("Đổi", "ảnh").then(() => {
-            $('#editparentModal').modal("hide")
+            $('#editUploadImageModal').modal("hide")
+            $('.kt-avatar__holder').css("background-image", `url(http://123.24.137.209:3000/images/${data.image}/0)`)
+
           })
           console.log("đã update");
     } catch (error) {
@@ -185,7 +188,6 @@ function initDropzoneProfile() {
             $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
         })
         $('.dropzone-msg-title').html("Đã chọn ảnh, xóa ảnh để chọn ảnh mới")
-        
         myDropzone.disable()
     })
 
