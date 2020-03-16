@@ -18,11 +18,11 @@ if (Meteor.isServer) {
     Meteor.methods({
         'user.getAll': getAllUser,
         'user.getByID': getUserByID,
-        'user.getCurrentInfor': getCurrentUserInfor,
         'user.create': createUser,
         'user.update': updateUser,
         'user.delete': deleteUser,
-        'user.updatePassword': updatePassword
+        'user.updatePassword': updatePassword,
+        'user.getCurrentInfor': getCurrentUserInfor,
     });
 }
 

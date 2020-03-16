@@ -13,7 +13,6 @@ export {
     handleConfirm,
     redirectLogin,
     addRequiredInputLabel,
-    passChangeHandleError,
     getBase64,
     makeID,
     addPaging,
@@ -52,23 +51,6 @@ function handleError(error, title = "Có lỗi xảy ra") {
     });
 }
 
-function passChangeHandleError(error, title = "") {
-    console.log(error);
-    return Swal.fire({
-        toast: true,
-        position: 'top',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        onOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-        },
-        icon: 'error',
-        title,
-        width: '30rem'
-    });
-}
 
 function handleSuccess(type, name = "") {
     let title = type + " " + name + " thành công";

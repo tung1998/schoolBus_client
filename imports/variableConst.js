@@ -195,6 +195,7 @@ const _METHODS = {
         Create: 'token.create',
         Update: 'token.update',
         LoginByUsername: 'token.loginByUsername',
+        GetUserInfo: 'token.getUserInfo',
     },
     trip: {
         GetAll: 'trip.getAll',
@@ -243,6 +244,7 @@ const _SESSION = {
     accessToken: 'accessToken',
     userID: 'userID',
     username: 'username',
+    modules: 'modules',
     mapHeight: 'mapHeight'
 }
 
