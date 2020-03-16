@@ -16,7 +16,7 @@ import {
     _METHODS,
     LIMIT_DOCUMENT_PAGE,
     _SESSION,
-    _URL_images 
+    _URL_images
 } from "../../../../variableConst";
 
 let accessToken;
@@ -30,12 +30,11 @@ Template.administratorManager.onCreated(() => {
 });
 
 Template.administratorManager.onRendered(() => {
-    // MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
-    let result = true
-    Session.set(_SESSION.isSuperadmin, result)
-    if (result)
-        initSchoolSelect2()
-    // }).catch(handleError)
+    MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
+        Session.set(_SESSION.isSuperadmin, result)
+        if (result)
+            initSchoolSelect2()
+    }).catch(handleError)
 
     addPaging()
     addRequiredInputLabel()
@@ -94,9 +93,9 @@ function ClickModifyButton(event) {
     $("#email-input").val(adminData.email);
     $("#admintype-input").val(adminData.adminType);
     $("#editAdministratorModal").modal("show");
-    if(adminData.image){
+    if (adminData.image) {
         imgUrl = `${_URL_images}/${adminData.image}/0`
-        $('#avata').attr('src',imgUrl)
+        $('#avata').attr('src', imgUrl)
         $('.avatabox').removeClass('kt-hidden')
     }
     dropzone.removeAllFiles(true)
@@ -125,7 +124,7 @@ async function SubmitForm(event) {
             password: target.password.value
         };
         if (Session.get(_SESSION.isSuperadmin) && data.adminType == 1) data.schoolID = target.school.value
-        let imagePreview = $('div.dropzone-previews').find('div.dz-image-preview')
+        let imagePreview = $('#kt_dropzone_1').find('div.dz-image-preview')
         if (imagePreview.length) {
             if (imagePreview.hasClass('dz-success')) {
                 let imageId = makeID("user")
