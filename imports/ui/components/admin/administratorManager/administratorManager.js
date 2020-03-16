@@ -244,7 +244,7 @@ function dataRow(data) {
         adminType: data.adminType
     }
     return `
-                <th scope="row">${data.index}</th>
+                <th scope="row">${data.index + 1}</th>
                 <td>${item.name}</td>
                 <td>${item.username}</td>
                 <td>${item.phone}</td>

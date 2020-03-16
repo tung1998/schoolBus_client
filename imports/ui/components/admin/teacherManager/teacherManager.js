@@ -300,7 +300,7 @@ function dataRow(result) {
         schoolName: result.school.name
     };
     return `
-                <td scope="row">${result.index}</td>
+                <td scope="row">${result.index + 1}</td>
                 <td>${data.name}</td>
                 <td>${data.username}</td>
                 <td>${data.phone}</td>

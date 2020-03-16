@@ -1,3 +1,4 @@
+
 import "./studentManager.html";
 
 import QRCode from 'qrcode';
@@ -127,6 +128,7 @@ function ClickModifyButton(e) {
 	$('input[name="email"]').val(studentData.email);
 	$('input[name="phone"]').val(studentData.phone);
 	$('input[name="phone"]').trigger('change');
+	$('#student-school').val(studentData.schoolID).trigger('change')
 	// $('#student-class').val(studentData.classID).trigger('change')
 	$('#student-carStopID').val(studentData.carStopID).trigger('change')
 	$('input[name="status"]').val(studentData.status);
@@ -142,7 +144,7 @@ function ClickAddMoreButton(e) {
     $("#editStudentModal").attr("studentID", "");
     $(".modal-title").html("Thêm Mới");
     $(".confirm-button").html("Thêm");
-    clearForm();
+    // clearForm();
 }
 
 function ClickDeleteButton(event) {
@@ -202,8 +204,9 @@ async function SubmitForm(event) {
                 MeteorCall(_METHODS.student.Create, data, accessToken)
                     .then(result => {
                         handleSuccess("Thêm", "học sinh").then(() => {
-                            $("#editStudentModal").modal("hide");
+                            // $("#editStudentModal").modal("hide");
                             reloadTable(1, getLimitDocPerPage())
+                            clearForm()
                         })
 
                     })
@@ -363,10 +366,10 @@ function dataRow(result) {
         address: result.address,
         phone: result.user.phone,
         email: result.user.email,
-        // schoolID: result.class.school._id,
-        // schoolName: result.class.school.name,
-        // classID: result.class._id,
-        // className: result.class.name,
+        schoolID: result.class.school._id,
+        schoolName: result.class.school.name,
+        classID: result.class._id,
+        className: result.class.name,
         IDStudent: result.IDStudent,
         carStopID: result.carStopID,
         carStop: result.carStop.name,
@@ -374,7 +377,7 @@ function dataRow(result) {
         image: result.imageId
     }
     return `
-			<td>${result.index}</td>
+			<td>${result.index + 1}</td>
             <td>${data.name}</td>
             <td>${data.address}</td>
             <td>${data.phone}</td>
