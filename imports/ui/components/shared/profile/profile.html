@@ -76,13 +76,10 @@
                         <label class="col-xl-3 col-lg-3 col-form-label">Ảnh đại diện</label>
                         <div class="col-lg-9 col-xl-6">
                           <div class="kt-avatar kt-avatar--outline kt-avatar--circle-" id="kt_user_edit_avatar">
-                            <div class="kt-avatar__holder"
-                              style="background-image: url(&quot;http://keenthemes.com/metronic/preview/default/custom/user/assets/media/users/300_20.jpg&quot;);">
+                            <div class="kt-avatar__holder">
                             </div>
-                            <label class="kt-avatar__upload" data-toggle="kt-tooltip" title=""
-                              data-original-title="Change avatar">
+                            <label class="kt-avatar__upload" data-toggle="modal" title=""  data-target="#editUploadImageModal">
                               <i class="fa fa-pen"></i>
-                              <input type="file" name="profile_avatar" accept=".png, .jpg, .jpeg">
                             </label>
                             <span class="kt-avatar__cancel" data-toggle="kt-tooltip" title=""
                               data-original-title="Cancel avatar">
@@ -182,6 +179,56 @@
             </div>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+  {{> editUploadImageModal}}
+</template>
+
+<template name="editUploadImageModal">
+  <div class="modal fade" id="editUploadImageModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title add-more" id="exampleModalLabel">Đổi ảnh đại diện</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          </button>
+        </div>
+        <div class="modal-body">
+          
+            <div class="kt-portlet__body">
+              <div class="form-group row">
+                <label for="example-date-input" class="col-12 col-form-label">Ảnh đại diện</label>
+                <div class="col-12">
+                  <div class="dropzone dropzone-default dropzone-brand" id="profile-dropzone">
+                    <div class="dropzone-msg dz-message needsclick">
+                      <h3 class="dropzone-msg-title">Kéo ảnh hoặc click để chọn ảnh.</h3>
+                      <span class="dropzone-msg-desc"><strong>jpg, jpeg, png ...</strong></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="dropzone dropzone-default">
+                    <div class="dropzone-previews">
+                      <div class="dz-preview dz-file-preview" stu;>
+                        <div class="dz-image"><img data-dz-thumbnail="" alt="" src=""></div>
+                        <div class="dz-details">
+                          <div class="dz-filename"><span data-dz-name></span></div>
+                        </div>
+                        <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+              <button type="submit" class="btn btn-primary" id="image-confirm-button">Xác nhận</button>
+            </div>
+          
+        </div>
       </div>
     </div>
   </div>
