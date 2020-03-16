@@ -172,7 +172,7 @@ function checkInput() {
     if (!name || !phone || !address || !IDNumber || !IDIssueBy || !IDIssueDate || !DLNumber || !DLIssueDate) {
         Swal.fire({
             icon: "error",
-            text: "Làm ơn điền đầy đủ thông tin",
+            text: "Chưa đủ thông tin!",
             timer: 2000
         })
         return false;

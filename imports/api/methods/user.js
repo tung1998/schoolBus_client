@@ -23,6 +23,7 @@ if (Meteor.isServer) {
         'user.delete': deleteUser,
         'user.updatePassword': updatePassword,
         'user.getCurrentInfor': getCurrentUserInfor,
+        'user.isSuperadmin': isSuperadmin,
     });
 }
 
@@ -74,6 +75,14 @@ function deleteUser(data, accessToken = '') {
 function updatePassword(data, accessToken = '') {
     let url = `${AUTH_USER}/password`
     return httpDefault(METHOD.put, url, {
+        body: data,
+        token: accessToken
+    })
+}
+
+function isSuperadmin(data, accessToken = '') {
+    let url = `${AUTH_USER}/isSuperadmin`
+    return httpDefault(METHOD.get, url, {
         body: data,
         token: accessToken
     })

@@ -27,7 +27,6 @@ FlowRouter.triggers.enter([function (context, redirect) {
     else {
         console.log(accessToken)
         MeteorCall(_METHODS.token.GetUserInfo, null, accessToken).then(result => {
-            console.log(result)
             localStorage.setItem(_SESSION.modules, JSON.stringify(result.modules))
             Session.set(_SESSION.userID, result.userID)
             Session.set(_SESSION.username, result.user.username)
@@ -56,7 +55,6 @@ FlowRouter.route('/login', {
         if (accessToken) {
             console.log(accessToken)
             MeteorCall(_METHODS.token.GetUserInfo, null, accessToken).then(result => {
-                console.log(result)
                 localStorage.setItem(_SESSION.modules, JSON.stringify(result.modules))
                 Session.set(_SESSION.userID, result.userID)
                 Session.set(_SESSION.username, result.user.username)
