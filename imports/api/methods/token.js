@@ -13,6 +13,7 @@ import {
 
 const BASE_TOKEN = `${BASE}/Token`
 const AUTH_TOKEN = `${AUTH_PATH}/Token`
+const AUTH_INFO = `${AUTH_PATH}/Info`
 
 if (Meteor.isServer) {
     Meteor.methods({
@@ -22,10 +23,11 @@ if (Meteor.isServer) {
         'token.update': updateToken,
         'token.delete': deleteToken,
         'token.loginByUsername': loginByUsername,
+        'token.getUserInfo': getUserInfo,
     });
 }
 
-function getAllToken(accessToken = '') {
+function getAllToken(data, accessToken = '') {
     let url = `${AUTH_TOKEN}`
     return httpDefault(METHOD.get, url, {
         body: data,
@@ -74,4 +76,11 @@ function loginByUsername(data) {
         content,
         headers
     });
+}
+
+function getUserInfo(data, accessToken = '') {
+    let url = `${AUTH_INFO}`;
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    })
 }

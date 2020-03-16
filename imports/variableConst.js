@@ -2,9 +2,10 @@ export {
     _METHODS,
     _SESSION,
     _TRIP_STUDENT,
-    LIMIT_DOCUMENT_PAGE
+    LIMIT_DOCUMENT_PAGE,
+    _URL_images
 }
-
+const _URL_images = 'http://192.168.100.69:3000/images'
 const _METHODS = {
     student: {
         GetAll: 'student.getAll',
@@ -34,6 +35,7 @@ const _METHODS = {
     carFuel: {
         GetAll: 'carFuel.getAll',
         GetById: 'carFuel.getByID',
+        GetByPage: 'carFuel.getByPage',
         Create: 'carFuel.create',
         Update: 'carFuel.update',
         Delete: 'carFuel.delete',
@@ -194,6 +196,7 @@ const _METHODS = {
         Create: 'token.create',
         Update: 'token.update',
         LoginByUsername: 'token.loginByUsername',
+        GetUserInfo: 'token.getUserInfo',
     },
     trip: {
         GetAll: 'trip.getAll',
@@ -219,7 +222,8 @@ const _METHODS = {
         Update: 'user.update',
         Delete: 'user.delete',
         GetCurrentInfor: 'user.getCurrentInfor',
-        UpdatePassword: 'user.updatePassword'
+        UpdatePassword: 'user.updatePassword',
+        IsSuperadmin: 'user.isSuperadmin'
     },
     sms: {
         GetAll: 'sms.getSMS',
@@ -242,7 +246,9 @@ const _SESSION = {
     accessToken: 'accessToken',
     userID: 'userID',
     username: 'username',
-    mapHeight: 'mapHeight'
+    modules: 'modules',
+    mapHeight: 'mapHeight',
+    isSuperadmin: 'isSuperadmin',
 }
 
 const _TRIP_STUDENT = {

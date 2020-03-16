@@ -13,12 +13,12 @@ export {
     handleConfirm,
     redirectLogin,
     addRequiredInputLabel,
-    passChangeHandleError,
     getBase64,
     makeID,
     addPaging,
-    tablePaging, 
-    initDropzone
+    tablePaging,
+    handlePaging,
+    initDropzone,
 }
 
 function MeteorCall(method = "", data = null, accessToken = "") {
@@ -52,23 +52,6 @@ function handleError(error, title = "Có lỗi xảy ra") {
     });
 }
 
-function passChangeHandleError(error, title = "") {
-    console.log(error);
-    return Swal.fire({
-        toast: true,
-        position: 'top',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        onOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-        },
-        icon: 'error',
-        title,
-        width: '30rem'
-    });
-}
 
 function handleSuccess(type, name = "") {
     let title = type + " " + name + " thành công";
@@ -105,11 +88,11 @@ function showLoading() {
         title: 'Now loading',
         allowEscapeKey: false,
         allowOutsideClick: false,
-        
+
         onBeforeOpen: () => {
-          swal.showLoading();
+            swal.showLoading();
         }
-      })
+    })
 }
 
 
@@ -124,6 +107,7 @@ function redirectLogin() {
 function addRequiredInputLabel() {
     $(".required-input-label").append(`&nbsp;<span style="color: red;">*</span>`)
 }
+
 function getBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -142,7 +126,7 @@ function makeID(text = "", length = 15) {
     return text
 }
 
-function addPaging(tag = '.kt-datatable'){
+function addPaging(tag = '.kt-datatable') {
     $(tag).append(`
         <div class="kt-datatable__pager">
             <ul class="kt-datatable__pager-nav tablePaging">
@@ -206,53 +190,43 @@ function tablePaging(tag = '.tablePaging', count, page = 1, limit = LIMIT_DOCUME
     $(".disabledPaging").attr("disabled", "disabled");
 }
 
-function initDropzone(addButton='', editButton='') {
-    Dropzone.autoDiscover = false;
-    let myDropzone = new Dropzone('#kt_dropzone_1', {
+function handlePaging(table, count, page, limitDocPerPage) {
+    emptyWrapper = $('#empty-data')
+    tablePaging(".tablePaging", count, page, limitDocPerPage)
+    $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
+    if (count === 0) {
+        $('.tablePaging').addClass('d-none');
+        table.parent().addClass('d-none');
+        emptyWrapper.removeClass('d-none');
+    } else if (count > limitDocPerPage) {
+        $('.tablePaging').removeClass('d-none');
+        table.parent().removeClass('d-none');
+        emptyWrapper.addClass('d-none');
+        // update số bản ghi
+    } else {
+        $('.tablePaging').addClass('d-none');
+        table.parent().removeClass('d-none');
+        emptyWrapper.addClass('d-none');
+    }
+}
+
+function initDropzone(dropZoneID) {
+    // Dropzone.autoDiscover = false;
+    let currentFile = null
+    return new Dropzone(dropZoneID, {
         url: "#", // Set the url for your upload script location
         paramName: "file", // The name that will be used to transfer the file
         maxFiles: 1,
         maxFilesize: 5, // MB
-        addRemoveLinks: true,
         acceptedFiles: "image/*",
-        previewsContainer: '.dropzone-previews',
-        previewTemplate: $('.dropzone-previews').html(),
         dictUploadCanceled: "",
-        dictRemoveFile: `<hr/><button type="button" class="btn btn-outline-hover-dark btn-icon btn-circle"><i class="fas fa-trash"></i></button>`,
-    })
-
-    myDropzone.on("complete", function (file) {
-        if (addButton != '') {
-            $(`${addButton}`).on('click', function () {
-                myDropzone.removeFile(file);
-                $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
-            });
-        }
-        $('a.dz-remove').on('click', function(){
-            $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
-        })
-        $('.dropzone-msg-title').html("Đã chọn ảnh, xóa ảnh để chọn ảnh mới")
-        myDropzone.disable()
-
-    })
-
-    myDropzone.on('addedfile', function(file) {
-        if (editButton != '') {
-            $(`${editButton}`).on('click', function () {
-                myDropzone.removeFile(file);
-                $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
+        init: function () {
+            this.on("addedfile", function (file) {
+                if (currentFile) {
+                    this.removeFile(currentFile);
+                }
+                currentFile = file;
             });
         }
     })
-
-    myDropzone.on('uploadprogress', function (file) {
-        $('.dropzone-previews').find('div:eq(0)').hide()
-    })
-
-    myDropzone.on("removedfile", function (file) {
-        myDropzone.enable()
-        $('.dropzone-previews').find('div:eq(0)').show()
-    })
-
-    
 }
