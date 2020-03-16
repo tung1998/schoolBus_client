@@ -94,33 +94,9 @@ Template.carStopList_studentListInfo.events({
     'mousemove .kt-portlet--sortable': function(event) {
         console.log(1)
     },
-    'drag .kt-portlet--sortable': function(event, t) {
-        let targetID = event.target.getAttribute('id'),
-            ID_order = [],
-            modPos;
-        if (event.drag.type === 'dragend') {
-            $('.carStopContainer').children('div').each(function() {
-                if ($(this).attr('id') != undefined) {
-                    if ($(this).attr('id') != targetID) {
-                        ID_order.push($(this).attr('id'));
-                    }
-                } else {
-                    ID_order.push(targetID);
-                    modPos = ID_order.length - 1; //điểm di chuyển
-                }
-            })
-            if (ID_order != stopPointOrder) {
-                console.log(ID_order)
-                stopPointCoors = reArrange(defaultStopPoint, [], ID_order)
-                removeLayerByID(polyID)
-                console.log(stopPointCoors)
-                drawPath(stopPointCoors)
-            } else {
-                console.log(2)
-            }
+    'click .confirmButton': function(event) {},
 
-        }
-    }
+    'drag .kt-portlet--sortable': dragTab
 })
 
 function initClassSelect2() {
@@ -302,3 +278,36 @@ function drawPath(arr){
         addPoly(pol)
     }).catch(handleError);
 }
+
+function dragTab(event) {
+        let targetID = event.target.getAttribute('id'),
+            ID_order = [],
+            modPos;
+        if (event.drag.type === 'dragend') {
+            $('.carStopContainer').children('div').each(function() {
+                if ($(this).attr('id') != undefined) {
+                    if ($(this).attr('id') != targetID) {
+                        ID_order.push($(this).attr('id'));
+                    }
+                } else {
+                    ID_order.push(targetID);
+                    modPos = ID_order.length - 1; //điểm di chuyển
+                }
+            })
+            if (ID_order != stopPointOrder) {
+                console.log(ID_order)
+                stopPointCoors = reArrange(defaultStopPoint, [], ID_order)
+                removeLayerByID(polyID)
+                console.log(stopPointCoors)
+                drawPath(stopPointCoors)
+            } else {
+                console.log(2)
+            }
+        }
+    }
+
+function confirmPath(event) {
+    MeteorCall(_METHODS.studentList.Update)
+}
+//tạo loading modal while drawing path
+//confirm button
