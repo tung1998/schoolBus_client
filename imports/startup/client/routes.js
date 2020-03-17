@@ -26,7 +26,6 @@ FlowRouter.triggers.enter([function (context, redirect) {
     let accessToken = Cookies.get('accessToken');
     if (!accessToken) FlowRouter.go('/login');
     else {
-        console.log(accessToken)
         MeteorCall(_METHODS.token.GetUserInfo, null, accessToken).then(result => {
             Session.set(_SESSION.modules, result.modules)
             Session.set(_SESSION.userID, result.userID)
@@ -56,7 +55,6 @@ FlowRouter.route('/login', {
         let accessToken = Cookies.get('accessToken');
         BlazeLayout.setRoot('body');
         if (accessToken) {
-            console.log(accessToken)
             MeteorCall(_METHODS.token.GetUserInfo, null, accessToken).then(result => {
                 Session.set(_SESSION.modules, result.modules)
                 Session.set(_SESSION.userID, result.userID)
