@@ -120,10 +120,13 @@ async function SubmitForm(event) {
             username: target.username.value,
             phone: target.phoneNumber.value,
             email: target.email.value,
-            adminType: target.adminType.value,
             password: target.password.value
         };
-        if (Session.get(_SESSION.isSuperadmin) && data.adminType == 1) data.schoolID = target.school.value
+
+        if (Session.get(_SESSION.isSuperadmin)) {
+            data.adminType == Number(target.adminType.value)
+            if (data.adminType == 1) data.schoolID = target.school.value
+        }
         let imagePreview = $('#kt_dropzone_1').find('div.dz-image-preview')
         if (imagePreview.length) {
             if (imagePreview.hasClass('dz-success')) {
@@ -177,7 +180,7 @@ function checkInput() {
     let admintype = $("#admintype-input").val();
     let username = $("#username-input").val();
 
-    if (admintype == null || !name || !address || !phone || !username) {
+    if ((Session.get(_SESSION.isSuperadmin) && admintype == null) || !name || !address || !phone || !username) {
         Swal.fire({
             icon: "error",
             text: "Chưa đủ thông tin!",
@@ -218,7 +221,6 @@ function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
 }
 
 function createRow(data, index) {
-    // _id is tripID
     let item = {
         _id: data._id,
         name: data.user.name,
@@ -226,7 +228,8 @@ function createRow(data, index) {
         phone: data.user.phone,
         email: data.user.email,
         adminType: data.adminType,
-        image: data.user.image
+        image: data.user.image,
+        schoolName: data.school ? data.school.name : ''
     }
     return `
         <tr id="${item._id}" class="table-row">
@@ -235,6 +238,7 @@ function createRow(data, index) {
             <td>${item.phone}</td>
             <td>${item.email}</td>
             <td>${item.adminType==0?"Quản trị viên tổng":"Quản trị viên trường"}</td>
+            <td>${item.schoolName}</td>
             <td>
                 <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
                     item
