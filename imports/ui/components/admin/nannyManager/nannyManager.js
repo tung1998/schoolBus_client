@@ -17,7 +17,9 @@ import {
 
 import {
     _METHODS,
-    LIMIT_DOCUMENT_PAGE
+    LIMIT_DOCUMENT_PAGE,
+    _SESSION,
+    _URL_images
 } from "../../../../variableConst";
 
 
@@ -27,17 +29,33 @@ let dropzone;
 
 Template.nannyManager.onCreated(() => {
     accessToken = Cookies.get("accessToken");
+    Session.set(_SESSION.isSuperadmin, true)
+    Session.set('schools', [])
 });
 
 Template.nannyManager.onRendered(() => {
     reloadTable();
-    initDropzone(".add-more", "modify-button")
     addRequiredInputLabel()
     addPaging()
     reloadTable(1);
     dropzone = initDropzone("#kt_dropzone_1")
     this.dropzone = dropzone
+
+    MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
+        Session.set(_SESSION.isSuperadmin, result)
+        if (result)
+            initSchoolSelect2()
+    }).catch(handleError)
 });
+
+Template.editNannyModal.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    },
+    schools() {
+        return Session.get('schools')
+    },
+})
 
 Template.nannyManager.onDestroyed(() => {
     dropzone = null
@@ -93,6 +111,9 @@ function ClickModifyButton(event) {
     $("#identityCardBy-input").val(nannyData.IDIssueBy);
     $("#status-input").val(nannyData.status);
 
+    if (Session.get(_SESSION.isSuperadmin)) {
+        $('#school-input').val(data.schoolID).trigger('change')
+    }
     //remove ảnh cũ
     if (teacherData.image) {
         imgUrl = `${_URL_images}/${teacherData.image}/0`
@@ -131,6 +152,9 @@ async function SubmitForm(event) {
                 IDIssueDate: $("#identityCardDate-input").val(),
                 IDIssueBy: $("#identityCardBy-input").val(),
                 status: $("#status-input").val(),
+            }
+            if (Session.get(_SESSION.isSuperadmin)) {
+                data.schoolID = $('#school-input').val()
             }
             let imagePreview = $('#kt_dropzone_1').find('div.dz-image-preview')
             if (imagePreview.length) {
@@ -193,6 +217,18 @@ function checkInput() {
         })
         return false;
     } else {
+        if (Session.get(_SESSION.isSuperadmin)) {
+            let schoolID = $('#school-input').val()
+            if (!schoolID) {
+                Swal.fire({
+                    icon: "error",
+                    text: "Chưa chọn trường!",
+                    timer: 2000
+                })
+                return false;
+            }
+            
+        }
         return true;
     }
 
@@ -207,6 +243,9 @@ function clearForm() {
     $("#identityCardDate-input").val("");
     $("#identityCardBy-input").val("");
     $("#status-input").val("");
+    if (Session.get(_SESSION.isSuperadmin)) {
+        $('#school-input').val('').trigger('change')
+     }
     dropzone.removeAllFiles(true)
 }
 
@@ -288,6 +327,7 @@ function dataRow(data) {
         email: data.user.email,
         username: data.user.username,
         address: data.address,
+        schoolID: result.schoolID,
         IDNumber: data.IDNumber,
         IDIssueDate: data.IDIssueDate,
         IDIssueBy: data.IDIssueBy,
@@ -295,7 +335,7 @@ function dataRow(data) {
         image: data.image
     }
     return `
-            <th scope="row">${data.index}</th>
+            <th scope="row">${data.index + 1}</th>
             <td>${dt.name}</td>
             <td>${dt.username}</td>
             <td>${dt.phone}</td>
@@ -310,4 +350,14 @@ function dataRow(data) {
                 <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(dt)}\'>Xóa</button>
             </td>
         </tr>`
+}
+
+function initSchoolSelect2() {
+    MeteorCall(_METHODS.school.GetAll, null, accessToken).then(result => {
+        Session.set('schools', result.data)
+        $('#school-input').select2({
+            width: '100%',
+            placeholder: "Chọn trường"
+        })
+    }).catch(handleError)
 }

@@ -20,6 +20,7 @@ import {
 import {
   _METHODS,
   LIMIT_DOCUMENT_PAGE,
+  _SESSION,
   _URL_images,
 } from "../../../../variableConst";
 
@@ -29,22 +30,26 @@ let currentPage = 1;
 let dropzone
 
 Template.teacherManager.onCreated(() => {
-  console.log("created");
   accessToken = Cookies.get("accessToken");
+  Session.set(_SESSION.isSuperadmin, true)
+  Session.set('schools', [])
 });
 
 Template.teacherManager.onRendered(() => {
   addRequiredInputLabel()
-  addPaging(),
-    getLimitDocPerPage()
+  addPaging()
+  getLimitDocPerPage()
   reloadTable(1);
-  renderSchoolName();
-  initSelect2()
   dropzone = initDropzone("#kt_dropzone_1")
   this.dropzone = dropzone
+
+  MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
+    Session.set(_SESSION.isSuperadmin, result)
+    if (result)
+      initSchoolSelect2()
+  }).catch(handleError)
 });
 
-Template.teacherManager.helpers({});
 
 Template.teacherManager.onDestroyed(() => {
   dropzone = null
@@ -67,19 +72,17 @@ Template.teacherManager.events({
   "click .dz-preview": dzPreviewClick,
 });
 
+Template.editTeacherModal.helpers({
+  isSuperadmin() {
+    return Session.get(_SESSION.isSuperadmin)
+  },
+  schools() {
+    return Session.get('schools')
+  },
+});
+
 function dzPreviewClick() {
   dropzone.hiddenFileInput.click()
-}
-
-function renderSchoolName() {
-  MeteorCall(_METHODS.school.GetAll, {}, accessToken)
-    .then(result => {
-      let optionSelects = result.data.map((key) => {
-        return `<option value="${key._id}">${key.name}</option>`;
-      });
-      $("#school-select").append(optionSelects.join(" "));
-    })
-    .catch(handleError);
 }
 
 function ClickAddmoreButton(e) {
@@ -103,7 +106,9 @@ function ClickModifyButton(e) {
   $(' #school-select').val(teacherData.school).trigger('change');
   $(' input[name="class"]').val(teacherData.class);
 
-  $("#school-select").val(teacherData.schoolID).trigger('change')
+  if (Session.get(_SESSION.isSuperadmin)) {
+    $('#school-input').val(teacherData.schoolID).trigger('change')
+  }
   //remove ảnh cũ
   if (teacherData.image) {
     imgUrl = `${_URL_images}/${teacherData.image}/0`
@@ -149,10 +154,12 @@ async function SubmitForm(event) {
           phone: target.phoneNumber.value,
           email: target.email.value,
           password: "12345678",
-          schoolID: $("#school-select").val(),
-          schoolName: $('#select2-school-select-container').attr('title'),
-        };
 
+        };
+        if (Session.get(_SESSION.isSuperadmin)) {
+          data.schoolID = $('#school-input').val()
+          data.schoolName = $('#select2-school-input-container').attr('title')
+        }
         let imagePreview = $('#kt_dropzone_1').find('div.dz-image-preview')
         if (imagePreview.length) {
           if (imagePreview.hasClass('dz-success')) {
@@ -201,7 +208,6 @@ function checkInput() {
   let name = $("input[name='name']").val();
   let phone = $('input[name="phoneNumber"]').val();
   let email = $('input[name="email"]').val();
-  let schoolID = $("#school-select").val();
 
   if (!schoolID || !name || !phone || !email) {
     Swal.fire({
@@ -211,6 +217,18 @@ function checkInput() {
     })
     return false;
   } else {
+    if (Session.get(_SESSION.isSuperadmin)) {
+      let schoolID = $('#school-input').val()
+      if (!schoolID) {
+        Swal.fire({
+          icon: "error",
+          text: "Chưa chọn trường!",
+          timer: 2000
+        })
+        return false;
+      }
+
+    }
     return true;
   }
 
@@ -223,19 +241,12 @@ function clearForm() {
   $(' input[name="email"]').val("");
   $(' input[name="avatar"]').val("");
 
-  $('#school-select').val('').trigger('change')
-
+  if (Session.get(_SESSION.isSuperadmin)) {
+    $('#school-input').val('').trigger('change')
+  }
   // remove ảnh
   dropzone.removeAllFiles(true)
 }
-
-function initSelect2() {
-  $('#school-select').select2({
-    placeholder: "Chọn trường",
-    width: "100%"
-  })
-}
-
 
 function getLimitDocPerPage() {
   return parseInt($("#limit-doc").val());
@@ -332,4 +343,14 @@ function dataRow(result) {
     data
   )}\'>Xóa</button>
                 </td>`;
+}
+
+function initSchoolSelect2() {
+  MeteorCall(_METHODS.school.GetAll, null, accessToken).then(result => {
+    Session.set('schools', result.data)
+    $('#school-input').select2({
+      width: '100%',
+      placeholder: "Chọn trường"
+    })
+  }).catch(handleError)
 }
