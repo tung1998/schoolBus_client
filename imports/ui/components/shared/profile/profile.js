@@ -4,48 +4,47 @@ import {
     handleError,
     handleSuccess,
     makeID,
+    initDropzone
+    
 } from "../../../../functions";
 import {
     _METHODS,
-    _SESSION
+    _SESSION,
+    _URL_images
 } from "../../../../variableConst";
 const Cookies = require("js-cookie");
 
 
 let accessToken;
 let userID;
+let dropzone
 
 Template.profile.onCreated(() => {
     accessToken = Cookies.get("accessToken");
-    userID = Cookies.get(_SESSION.userID);
 });
 
 Template.profile.onRendered(() => {
-    initDropzoneProfile()
+    dropzone = initDropzone("#profile-dropzone")
+    this.dropzone = dropzone
 
 
     MeteorCall(_METHODS.user.GetCurrentInfor, null, accessToken).then(result => {
         Session.set(_SESSION.username, result.username);
         //$(document).ready(() => {
         //type: 0 ADMIN, schoolID = null
-
+        userID = result._id
+        
         if (result.userType == 0) {
             let userData = {
                 name: result.name,
                 phoneNumber: result.phone,
                 email: result.email,
             }
-            if (result.image == null) {
-                userData.image = "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-            } else {
-                userData.image = `http://123.24.137.209:3000/images/${result.image}/0`
-            }
             console.log(userData.image);
             $(".name").val(userData.name);
             $(".school_section").remove();
             $(".phone").val(userData.phoneNumber);
             $(".email").val(userData.email);
-            $('.kt-avatar__holder').css("background-image", `url(${userData.image})`)
         }
         //type: 1 TEACHER
         else if (result.userType == 1) {
@@ -55,19 +54,24 @@ Template.profile.onRendered(() => {
                 phoneNumber: result.phone,
                 email: result.email,
             }
-            if (result.image == null) {
-                userData.image = "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-            } else {
-                userData.image = `http://123.24.137.209:3000/images/${result.image}/0`
-            }
+            
             $(".name").val(userData.name);
             $(".schoolName").val(userData.school);
             $(".phone").val(userData.phoneNumber);
             $(".email").val(userData.email);
-            $('.kt-avatar__holder').css("background-image", `url(${userData.image})`)
         }
-        //})
+        let urlImage = "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+        if (result.image != null) {
+            urlImage = `${_URL_images}/${result.image}/0`
+        }
+        console.log(`maeno-${urlImage}`);
+        $('.kt-avatar__holder').css("background-image", `url(${urlImage})`)
+        
     }).catch(handleError);
+});
+
+Template.profile.onDestroyed(() => {
+    dropzone = null
 });
 
 Template.profile.rendered = () => {
@@ -78,7 +82,15 @@ Template.profile.rendered = () => {
 Template.profile.events({
     'submit form': appendNewPass,
     'click #image-confirm-button': editAvatarProfile,
+    'click .dz-preview': dzPreviewClick,
+    'click .kt-avatar__upload': () => {
+        dropzone.removeAllFiles(true)
+    }
 })
+
+function dzPreviewClick() {
+    dropzone.hiddenFileInput.click()
+}
 
 function checkNewPass(string1, string2) {
     if (string1 == string2) {
@@ -126,7 +138,7 @@ async function editAvatarProfile() {
         }
         console.log(data);
 
-        let imagePreview = $('div.dropzone-previews').find('div.dz-image-preview')
+        let imagePreview = $('#profile-dropzone').find('div.dz-image-preview')
         if (imagePreview.length) {
             if (imagePreview.hasClass('dz-success')) {
                 let imageId = makeID("user")
@@ -149,49 +161,12 @@ async function editAvatarProfile() {
         await MeteorCall(_METHODS.user.Update, data, accessToken)
         handleSuccess("Đổi", "ảnh").then(() => {
             $('#editUploadImageModal').modal("hide")
-            $('.kt-avatar__holder').css("background-image", `url(http://123.24.137.209:3000/images/${data.image}/0)`)
+            $('.kt-avatar__holder').css("background-image", `url(${_URL_images}/${data.image}/0)`)
+            Session.set(_SESSION.avata, `${_URL_images}/${data.image}/0`)
 
         })
         console.log("đã update");
     } catch (error) {
         handleError(error)
     }
-}
-
-function initDropzoneProfile() {
-    Dropzone.autoDiscover = false;
-    let myDropzone = new Dropzone('#profile-dropzone', {
-        url: "#", // Set the url for your upload script location
-        paramName: "file", // The name that will be used to transfer the file
-        maxFiles: 1,
-        maxFilesize: 5, // MB
-        addRemoveLinks: true,
-        acceptedFiles: "image/*",
-        previewsContainer: '.dropzone-previews',
-        previewTemplate: $('.dropzone-previews').html(),
-        dictUploadCanceled: "",
-        dictRemoveFile: `<hr/><button type="button" class="btn btn-outline-hover-dark btn-icon btn-circle"><i class="fas fa-trash"></i></button>`,
-    })
-
-    myDropzone.on('complete', function (file) {
-        $('.kt-avatar__upload').on('click', function () {
-            myDropzone.removeFile(file)
-            $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
-        })
-
-        $('a.dz-remove').on('click', function () {
-            $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
-        })
-        $('.dropzone-msg-title').html("Đã chọn ảnh, xóa ảnh để chọn ảnh mới")
-        myDropzone.disable()
-    })
-
-    myDropzone.on('uploadprogress', function (file) {
-        $('.dropzone-previews').find('div:eq(0)').hide()
-    })
-
-    myDropzone.on("removedfile", function (file) {
-        myDropzone.enable()
-        $('.dropzone-previews').find('div:eq(0)').show()
-    })
 }

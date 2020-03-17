@@ -22,11 +22,13 @@ import {
 
 import {
     _METHODS,
-    LIMIT_DOCUMENT_PAGE
+    LIMIT_DOCUMENT_PAGE,
+    _URL_images
 } from '../../../../variableConst'
 
 let accessToken;
 let currentPage = 1;
+let dropzone
 
 Template.driverManager.onCreated(() => {
     accessToken = Cookies.get('accessToken')
@@ -36,14 +38,20 @@ Template.driverManager.onRendered(() => {
     addPaging();
     reloadTable(1, getLimitDocPerPage())
     addRequiredInputLabel()
-    initDropzone('#add-button', '#edit-button')
+    dropzone = initDropzone("#kt_dropzone_1")
+    this.dropzone = dropzone
 })
+
+Template.driverManager.onDestroyed(() => {
+    dropzone = null
+});
 
 Template.driverManager.events({
     'click #add-button': () => {
         $('.modal-title').html("Thêm lái xe mới");
         $('.modal-footer').find('.btn.btn-primary').html("Thêm mới")
         clearForm()
+        $('.avatabox').addClass('kt-hidden')
     },
     'click #edit-button': clickEditButton,
     'click .submit-button': clickSubmitButton,
@@ -56,8 +64,13 @@ Template.driverManager.events({
     },
     "change #limit-doc": (e) => {
         reloadTable(1, getLimitDocPerPage());
-    }
+    },
+    "click .dz-preview": dzPreviewClick,
 })
+
+function dzPreviewClick() {
+    dropzone.hiddenFileInput.click()
+}
 
 function clickEditButton(event) {
     //fill data
@@ -71,12 +84,17 @@ function clickEditButton(event) {
     $('#driver-IDIssueBy').val(data.IDIssueBy)
     $('#driver-DLNumber').val(data.DLNumber)
     $('#driver-DLIssueDate').val(data.DLIssueDate)
-    $('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', `http://123.24.137.209:3000/images/${data.image}/0`)
-    $('div.dropzone-previews').find('div.dz-image-preview').remove()
-    $('div.dz-preview').show()
-    $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
     $('#driver-id').val(data._id)
-        //edit modal
+
+    if (data.image) {
+        imgUrl = `${_URL_images}/${data.image}/0`
+        $('#avata').attr('src', imgUrl)
+        $('.avatabox').removeClass('kt-hidden')
+    } else {
+        $('.avatabox').addClass('kt-hidden')
+    }
+    dropzone.removeAllFiles(true)
+    //edit modal
     $('.modal-title').html(`Cập nhật thông tin lái xe: ${data.name}`);
     $('.modal-footer').find('.btn.btn-primary').html("Cập nhật")
 
@@ -86,7 +104,7 @@ async function clickSubmitButton() {
     try {
         if (checkInput()) {
             let data = getInputData()
-            let imagePreview = $('div.dropzone-previews').find('div.dz-image-preview')
+            let imagePreview = $('#kt_dropzone_1').find('div.dz-image-preview')
             if (imagePreview.length) {
                 if (imagePreview.hasClass('dz-success')) {
                     let imageId = makeID("user")
@@ -192,8 +210,8 @@ function clearForm(e) {
     $('#driver-DLNumber').val('')
     $('#driver-DLIssueDate').val('')
     $('#driver-id').val('')
-        // remove ảnh
-    $('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', '')
+    // remove ảnh
+    dropzone.removeAllFiles(true)
 }
 
 function getLimitDocPerPage() {
@@ -297,39 +315,3 @@ function dataRow(result) {
                 </td>
             `
 }
-
-// function initDropzone() {
-//     Dropzone.autoDiscover = false;
-//     let myDropzone = new Dropzone('#kt_dropzone_1', {
-//         url: "#", // Set the url for your upload script location
-//         paramName: "file", // The name that will be used to transfer the file
-//         maxFiles: 1,
-//         maxFilesize: 5, // MB
-//         addRemoveLinks: true,
-//         acceptedFiles: "image/*",
-//         previewsContainer: '.dropzone-previews',
-//         previewTemplate: $('.dropzone-previews').html(),
-//         dictUploadCanceled: "",
-//         dictRemoveFile: `<hr/><button type="button" class="btn btn-outline-hover-dark btn-icon btn-circle"><i class="fas fa-trash"></i></button>`,
-//     })
-
-//     myDropzone.on("complete", function (file) {
-//         $('#add-button').on('click', function () {
-//             myDropzone.removeFile(file);
-//         });
-
-//         $('.dropzone-msg-title').html("Đã chọn ảnh, xóa ảnh để chọn ảnh mới")
-
-//         myDropzone.disable()
-
-//     })
-
-//     myDropzone.on('uploadprogress', function (file) {
-//         $('.dropzone-previews').find('div:eq(0)').hide()
-//     })
-
-//     myDropzone.on("removedfile", function (file) {
-//         myDropzone.enable()
-//         $('.dropzone-previews').find('div:eq(0)').show()
-//     })
-// }

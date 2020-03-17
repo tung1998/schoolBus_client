@@ -24,6 +24,9 @@ if (Meteor.isServer) {
         'modules.create': createModule,
         'modules.update': updateModule,
         'modules.delete': deleteModule,
+        'modules.getIcons': function () {
+			return Assets.getText('icon.json')
+		},
     });
 }
 
