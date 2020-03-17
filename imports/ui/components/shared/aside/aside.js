@@ -13,6 +13,7 @@ Template.aside.onRendered(() => {
     this.trackerModules = Tracker.autorun(() => {
         let modules = Session.get(_SESSION.modules)
         renderAside(modules)
+        KTLayout.initAside()
     })
 })
 
@@ -21,7 +22,7 @@ Template.aside.onDestroyed(() => {
 })
 
 function renderAside(data) {
-    $("#kt_aside_menu").children().empty()
+    $("#kt_aside_menu").find('ul.kt-menu__nav').empty()
     if (Array.isArray(data))
         data.forEach(item => {
             if (item.parent) {
@@ -50,7 +51,7 @@ function renderAside(data) {
                 }
 
             } else {
-                $("#kt_aside_menu").children().append(`<li class="kt-menu__item" url="${item.route}" aria-haspopup="true">
+                $("#kt_aside_menu").find('ul.kt-menu__nav').append(`<li class="kt-menu__item" url="${item.route}" aria-haspopup="true">
                                                     <a href="${item.route}" class="kt-menu__link ">
                                                         <i class="kt-menu__link-icon fa ${item.icon}"></i>
                                                         <span class="kt-menu__link-text">${item.name}</span>
