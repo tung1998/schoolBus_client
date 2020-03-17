@@ -23,6 +23,7 @@ import {
 import {
     _METHODS,
     LIMIT_DOCUMENT_PAGE,
+    _SESSION,
     _URL_images
 } from '../../../../variableConst'
 
@@ -32,6 +33,8 @@ let dropzone
 
 Template.driverManager.onCreated(() => {
     accessToken = Cookies.get('accessToken')
+    Session.set(_SESSION.isSuperadmin, true)
+    Session.set('schools', [])
 });
 
 Template.driverManager.onRendered(() => {
@@ -40,6 +43,12 @@ Template.driverManager.onRendered(() => {
     addRequiredInputLabel()
     dropzone = initDropzone("#kt_dropzone_1")
     this.dropzone = dropzone
+
+    MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
+        Session.set(_SESSION.isSuperadmin, result)
+        if (result)
+            initSchoolSelect2()
+    }).catch(handleError)
 })
 
 Template.driverManager.onDestroyed(() => {
@@ -68,6 +77,15 @@ Template.driverManager.events({
     "click .dz-preview": dzPreviewClick,
 })
 
+Template.editDriverModal.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    },
+    schools() {
+        return Session.get('schools')
+    },
+})
+
 function dzPreviewClick() {
     dropzone.hiddenFileInput.click()
 }
@@ -85,6 +103,10 @@ function clickEditButton(event) {
     $('#driver-DLNumber').val(data.DLNumber)
     $('#driver-DLIssueDate').val(data.DLIssueDate)
     $('#driver-id').val(data._id)
+
+    if (Session.get(_SESSION.isSuperadmin)) {
+        $('#school-input').val(data.schoolID).trigger('change')
+    }
 
     if (data.image) {
         imgUrl = `${_URL_images}/${data.image}/0`
@@ -158,7 +180,7 @@ function clickDelButton(event) {
 }
 
 function getInputData() {
-    let input = {
+    let data = {
         username: $('#driver-phone').val(),
         password: '12345678',
         name: $('#driver-name').val(),
@@ -172,10 +194,13 @@ function getInputData() {
         DLIssueDate: $('#driver-DLIssueDate').val(),
         status: 0
     }
-    if ($('#driver-id').val()) {
-        input._id = $('#driver-id').val()
+    if (Session.get(_SESSION.isSuperadmin)) {
+        data.schoolID = $('#school-input').val()
     }
-    return input
+    if ($('#driver-id').val()) {
+        data._id = $('#driver-id').val()
+    }
+    return data
 }
 
 function checkInput() {
@@ -187,7 +212,8 @@ function checkInput() {
     let IDIssueBy = $('#driver-IDIssueBy').val();
     let DLNumber = $('#driver-DLNumber').val();
     let DLIssueDate = $('#driver-DLIssueDate').val();
-    if (!name || !phone || !address || !IDNumber || !IDIssueBy || !IDIssueDate || !DLNumber || !DLIssueDate) {
+    if (!name || !phone || !address ||!IDNumber || !IDIssueBy || !IDIssueDate || !DLNumber || !DLIssueDate) {
+        
         Swal.fire({
             icon: "error",
             text: "Chưa đủ thông tin!",
@@ -195,6 +221,18 @@ function checkInput() {
         })
         return false;
     } else {
+        if (Session.get(_SESSION.isSuperadmin)) {
+            let schoolID = $('#school-input').val()
+            if (!schoolID) {
+                Swal.fire({
+                    icon: "error",
+                    text: "Chưa chọn trường!",
+                    timer: 2000
+                })
+                return false;
+            }
+            
+        }
         return true;
     }
 }
@@ -204,6 +242,11 @@ function clearForm(e) {
     $('#driver-phone').val('')
     $('#driver-email').val('')
     $('#driver-address').val('')
+
+    if (Session.get(_SESSION.isSuperadmin)) {
+       $('#school-input').val('').trigger('change')
+    }
+
     $('#driver-IDNumber').val('')
     $('#driver-IDIssueDate').val('')
     $('#driver-IDIssueBy').val('')
@@ -283,12 +326,15 @@ function createRow(data) {
         `
 }
 
-function dataRow(result) {
+function dataRow(result) 
+{   
+
     let driver = {
         _id: result._id,
         image: result.user.image,
         name: result.user.name,
         username: result.user.username,
+        schoolID: result.schoolID,
         phone: result.user.phone,
         email: result.user.email,
         address: result.address,
@@ -299,7 +345,7 @@ function dataRow(result) {
         DLIssueDate: result.DLIssueDate,
     }
     return `
-                <th scope="row">${result.index}</th>
+                <th scope="row">${result.index + 1}</th>
                 <td>${driver.name}</td>
                 <td>${driver.phone}</td>
                 <td>${driver.email}</td>
@@ -314,4 +360,14 @@ function dataRow(result) {
                     <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(driver)}\'>Xóa</button>
                 </td>
             `
+}
+
+function initSchoolSelect2() {
+    MeteorCall(_METHODS.school.GetAll, null, accessToken).then(result => {
+        Session.set('schools', result.data)
+        $('#school-input').select2({
+            width: '100%',
+            placeholder: "Chọn trường"
+        })
+    }).catch(handleError)
 }

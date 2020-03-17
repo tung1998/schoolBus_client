@@ -119,6 +119,21 @@
                   <input class="form-control" type="text" id="address-input">
                 </div>
               </div>
+
+              {{#if isSuperadmin}}
+              <div class="form-group row">
+                <label for="example-tel-input" class="col-2 col-form-label required-input-label">Chọn trường</label>
+                <div class="col-10">
+                  <select class="form-control" name="school" id="school-input">
+                    <option value=""></option>
+                    {{#each schools}}
+                    <option value="{{_id}}">{{name}}</option>
+                    {{/each}}
+                  </select>
+                </div>
+              </div>
+              {{/if}}
+
               <div class="form-group row">
                 <label for="example-url-input" class="col-2 col-form-label required-input-label">CCCD</label>
                 <div class="col-10">
