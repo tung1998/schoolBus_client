@@ -59,6 +59,7 @@ function initSelect2() {
 
 function initCarSelect2() {
     MeteorCall(_METHODS.car.GetAll, null, accessToken).then(result => {
+      
         if (result.data) {
             let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.numberPlate}</option>`)
             $('#carSelect').html(htmlClassOption.join('')).select2({
@@ -71,6 +72,7 @@ function initCarSelect2() {
 
 function initDriverSelect2() {
     MeteorCall(_METHODS.driver.GetAll, null, accessToken).then(result => {
+        console.log(result);
         if (result.data) {
             let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.user.name}</option>`)
             $('#driverSelect').html(htmlClassOption.join('')).select2({

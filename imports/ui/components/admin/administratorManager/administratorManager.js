@@ -97,6 +97,8 @@ function ClickModifyButton(event) {
         imgUrl = `${_URL_images}/${adminData.image}/0`
         $('#avata').attr('src', imgUrl)
         $('.avatabox').removeClass('kt-hidden')
+    } else {
+        $('.avatabox').addClass('kt-hidden')
     }
     dropzone.removeAllFiles(true)
 }
