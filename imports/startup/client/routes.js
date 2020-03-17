@@ -12,6 +12,7 @@ import {
 
 import {
     _METHODS,
+    _URL_images,
 } from '../../variableConst'
 
 Blaze._allowJavascriptUrls()
@@ -30,6 +31,8 @@ FlowRouter.triggers.enter([function (context, redirect) {
             localStorage.setItem(_SESSION.modules, JSON.stringify(result.modules))
             Session.set(_SESSION.userID, result.userID)
             Session.set(_SESSION.username, result.user.username)
+            Session.set(_SESSION.name, result.user.name)
+            Session.set(_SESSION.avata, `${_URL_images}/${result.user.image}/0`)
         }).catch(e => {
             console.log(e)
             Cookies.remove('accessToken');
@@ -58,6 +61,8 @@ FlowRouter.route('/login', {
                 localStorage.setItem(_SESSION.modules, JSON.stringify(result.modules))
                 Session.set(_SESSION.userID, result.userID)
                 Session.set(_SESSION.username, result.user.username)
+                Session.set(_SESSION.name, result.user.name)
+                Session.set(_SESSION.avata, result.user.image)
                 FlowRouter.go('/profile')
             }).catch(e => {
                 console.log(e)

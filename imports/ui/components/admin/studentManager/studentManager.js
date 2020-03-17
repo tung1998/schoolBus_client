@@ -24,11 +24,13 @@ import {
 
 import {
     _METHODS,
-    LIMIT_DOCUMENT_PAGE
+    LIMIT_DOCUMENT_PAGE,
+    _URL_images
 } from "../../../../variableConst";
 
 let accessToken;
 let currentPage = 1;
+let dropzone
 
 Template.studentManager.onCreated(() => {
     accessToken = Cookies.get("accessToken");
@@ -42,7 +44,12 @@ Template.studentManager.onRendered(() => {
     addPaging();
     getLimitDocPerPage();
     reloadTable();
-    initDropzone('.add-more', '.modify-button')
+    dropzone = initDropzone("#kt_dropzone_1")
+    this.dropzone = dropzone
+});
+
+Template.studentManager.onDestroyed(() => {
+    dropzone = null
 });
 
 Template.studentManager.events({
@@ -60,8 +67,13 @@ Template.studentManager.events({
     },
     "change #limit-doc": (e) => {
         reloadTable(1, getLimitDocPerPage());
-    }
+    },
+    "click .dz-preview": dzPreviewClick,
 });
+
+function dzPreviewClick() {
+    dropzone.hiddenFileInput.click()
+}
 
 function renderSchoolName() {
     MeteorCall(_METHODS.school.GetAll, {}, accessToken)
@@ -131,11 +143,17 @@ function ClickModifyButton(e) {
 	$('#student-school').val(studentData.schoolID).trigger('change')
 	// $('#student-class').val(studentData.classID).trigger('change')
 	$('#student-carStopID').val(studentData.carStopID).trigger('change')
-	$('input[name="status"]').val(studentData.status);
-	$('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', `http://123.24.137.209:3000/images/${studentData.image}/0`)
-    $('div.dropzone-previews').find('div.dz-image-preview').remove()
-    $('div.dz-preview').show()
-    $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
+    $('input[name="status"]').val(studentData.status);
+    
+    if (studentData.image) {
+        imgUrl = `${_URL_images}/${studentData.image}/0`
+        $('#avata').attr('src', imgUrl)
+        $('.avatabox').removeClass('kt-hidden')
+    }
+    else {
+        $('.avatabox').addClass('kt-hidden')
+    }
+    dropzone.removeAllFiles(true)
 
     return false
 }
@@ -144,7 +162,8 @@ function ClickAddMoreButton(e) {
     $("#editStudentModal").attr("studentID", "");
     $(".modal-title").html("Thêm Mới");
     $(".confirm-button").html("Thêm");
-    // clearForm();
+    $('.avatabox').addClass('kt-hidden')
+    clearForm();
 }
 
 function ClickDeleteButton(event) {
@@ -184,7 +203,7 @@ async function SubmitForm(event) {
                 schoolID: $('#student-school').val()
             };
 
-            let imagePreview = $('div.dropzone-previews').find('div.dz-image-preview')
+            let imagePreview = $('#kt_dropzone_1').find('div.dz-image-preview')
             if (imagePreview.length) {
                 if (imagePreview.hasClass('dz-success')) {
                     let imageId = makeID("user")
@@ -265,7 +284,7 @@ function clearForm() {
     $('#student-carStopID').val("").trigger('change')
     $('input[name="status"]').val("");
     // remove ảnh
-    $('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', '')
+    dropzone.removeAllFiles(true)
 }
 
 function initSelect2() {
@@ -374,7 +393,7 @@ function dataRow(result) {
         carStopID: result.carStopID,
         carStop: result.carStop.name,
         status: result.status,
-        image: result.imageId
+        image: result.user.image
     }
     return `
 			<td>${result.index + 1}</td>

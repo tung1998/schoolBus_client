@@ -22,6 +22,8 @@ import {
 
 
 let accessToken;
+let currentPage = 1;
+let dropzone;
 
 Template.nannyManager.onCreated(() => {
     accessToken = Cookies.get("accessToken");
@@ -33,6 +35,12 @@ Template.nannyManager.onRendered(() => {
     addRequiredInputLabel()
     addPaging()
     reloadTable(1);
+    dropzone = initDropzone("#kt_dropzone_1")
+    this.dropzone = dropzone
+});
+
+Template.nannyManager.onDestroyed(() => {
+    dropzone = null
 });
 
 Template.nannyManager.events({
@@ -48,8 +56,14 @@ Template.nannyManager.events({
     },
     "change #limit-doc": (e) => {
         reloadTable(1, getLimitDocPerPage());
-    }
+    },
+    "click .dz-preview": dzPreviewClick,
 });
+
+function dzPreviewClick() {
+    dropzone.hiddenFileInput.click()
+}
+
 
 function ClickAddmoreButton(event) {
     $(".modal-title").html("Thêm mới");
@@ -58,6 +72,7 @@ function ClickAddmoreButton(event) {
     $("#editNannyModal").modal("show");
     $("#editNannyModal").attr("nannyID", "");
     $("#password-input").parent().parent().show();
+    $('.avatabox').addClass('kt-hidden')
     clearForm();
 }
 
@@ -79,10 +94,14 @@ function ClickModifyButton(event) {
     $("#status-input").val(nannyData.status);
 
     //remove ảnh cũ
-    $('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', `http://123.24.137.209:3000/images/${studentData.image}/0`)
-    $('div.dropzone-previews').find('div.dz-image-preview').remove()
-    $('div.dz-preview').show()
-    $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
+    if (teacherData.image) {
+        imgUrl = `${_URL_images}/${teacherData.image}/0`
+        $('#avata').attr('src', imgUrl)
+        $('.avatabox').removeClass('kt-hidden')
+    } else {
+        $('.avatabox').addClass('kt-hidden')
+    }
+    dropzone.removeAllFiles(true)
 }
 
 
@@ -113,7 +132,7 @@ async function SubmitForm(event) {
                 IDIssueBy: $("#identityCardBy-input").val(),
                 status: $("#status-input").val(),
             }
-            let imagePreview = $('div.dropzone-previews').find('div.dz-image-preview')
+            let imagePreview = $('#kt_dropzone_1').find('div.dz-image-preview')
             if (imagePreview.length) {
                 if (imagePreview.hasClass('dz-success')) {
                     let imageId = makeID("user")
@@ -188,7 +207,7 @@ function clearForm() {
     $("#identityCardDate-input").val("");
     $("#identityCardBy-input").val("");
     $("#status-input").val("");
-    $("#image-input").val("");
+    dropzone.removeAllFiles(true)
 }
 
 function getLimitDocPerPage() {
@@ -199,7 +218,10 @@ function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
     let table = $('#table-body');
     let emptyWrapper = $('#empty-data');
     table.html('');
-    MeteorCall(_METHODS.Nanny.GetByPage, { page: page, limit: limitDocPerPage }, accessToken).then(result => {
+    MeteorCall(_METHODS.Nanny.GetByPage, {
+        page: page,
+        limit: limitDocPerPage
+    }, accessToken).then(result => {
         console.log(result)
         tablePaging(".tablePaging", result.count, page, limitDocPerPage)
         $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
@@ -288,19 +310,4 @@ function dataRow(data) {
                 <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(dt)}\'>Xóa</button>
             </td>
         </tr>`
-}
-
-function clearForm() {
-    $("#name-input").val("");
-    $("#phone-input").val("");
-    $("#email-input").val("");
-    $("#address-input").val("");
-    $("#identityCard-input").val("");
-    $("#identityCardDate-input").val("");
-    $("#identityCardBy-input").val("");
-    $("#status-input").val("");
-    $("#image-input").val("");
-
-    // remove ảnh
-    $('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', '')
 }
