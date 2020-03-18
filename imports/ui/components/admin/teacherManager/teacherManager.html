@@ -94,29 +94,34 @@
               <div class="form-group row">
                 <label for="example-text-input" class="col-2 col-form-label required-input-label">Họ tên</label>
                 <div class="col-10">
-                  <input class="form-control" type="text" id="example-text-input" name="name">
+                  <input class="form-control" type="text" id="example-text-input" placeholder="Họ tên">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-url-input" class="col-2 col-form-label required-input-label">Số điện thoại</label>
                 <div class="col-10">
-                  <input class="form-control" type="number" id="example-url-input" name=phoneNumber>
+                  <input class="form-control" type="number" id="example-url-input" placeholder="Số điện thoại">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-tel-input" class="col-2 col-form-label">Email</label>
                 <div class="col-10">
-                  <input class="form-control" type="email" id="example-tel-input" name=email>
+                  <input class="form-control" type="email" id="example-tel-input" placeholder="Email">
                 </div>
               </div>
+              {{#if isSuperadmin}}
               <div class="form-group row">
-                <label class="col-2 col-form-label required-input-label">Trường</label>
+                <label for="example-tel-input" class="col-2 col-form-label required-input-label">Chọn trường</label>
                 <div class="col-10">
-                  <select id="school-select" class="form-control">
+                  <select class="form-control" name="school" id="school-input">
                     <option value=""></option>
+                    {{#each schools}}
+                    <option value="{{_id}}">{{name}}</option>
+                    {{/each}}
                   </select>
                 </div>
               </div>
+              {{/if}}
               <div class="form-group row">
                 <label for="example-date-input" class="col-2 col-form-label">Ảnh đại diện</label>
                 <div class="col-5">
@@ -128,16 +133,8 @@
                   </div>
                 </div>
                 <div class="col-5">
-                  <div class="dropzone dropzone-default">
-                    <div class="dropzone-previews">
-                      <div class="dz-preview dz-file-preview">
-                        <div class="dz-image"><img data-dz-thumbnail="" alt="" src=""></div>
-                        <div class="dz-details">
-                          <div class="dz-filename"><span data-dz-name></span></div>
-                        </div>
-                        <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>
-                      </div>
-                    </div>
+                  <div class="avatabox kt-hidden">
+                    <img src="" alt="avata" id="avata">
                   </div>
                 </div>
               </div>

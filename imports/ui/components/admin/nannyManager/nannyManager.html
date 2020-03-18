@@ -119,6 +119,21 @@
                   <input class="form-control" type="text" id="address-input">
                 </div>
               </div>
+
+              {{#if isSuperadmin}}
+              <div class="form-group row">
+                <label for="example-tel-input" class="col-2 col-form-label required-input-label">Chọn trường</label>
+                <div class="col-10">
+                  <select class="form-control" name="school" id="school-input">
+                    <option value=""></option>
+                    {{#each schools}}
+                    <option value="{{_id}}">{{name}}</option>
+                    {{/each}}
+                  </select>
+                </div>
+              </div>
+              {{/if}}
+
               <div class="form-group row">
                 <label for="example-url-input" class="col-2 col-form-label required-input-label">CCCD</label>
                 <div class="col-10">
@@ -154,16 +169,8 @@
                   </div>
                 </div>
                 <div class="col-5">
-                  <div class="dropzone dropzone-default">
-                    <div class="dropzone-previews">
-                      <div class="dz-preview dz-file-preview">
-                        <div class="dz-image"><img data-dz-thumbnail="" alt="" src=""></div>
-                        <div class="dz-details">
-                          <div class="dz-filename"><span data-dz-name></span></div>
-                        </div>
-                        <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>
-                      </div>
-                    </div>
+                  <div class="avatabox kt-hidden">
+                    <img src="" alt="avata" id="avata">
                   </div>
                 </div>
               </div>

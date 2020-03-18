@@ -22,28 +22,45 @@ import {
 
 import {
     _METHODS,
-    LIMIT_DOCUMENT_PAGE
+    LIMIT_DOCUMENT_PAGE,
+    _SESSION,
+    _URL_images
 } from '../../../../variableConst'
 
 let accessToken;
 let currentPage = 1;
+let dropzone
 
 Template.driverManager.onCreated(() => {
     accessToken = Cookies.get('accessToken')
+    Session.set(_SESSION.isSuperadmin, true)
+    Session.set('schools', [])
 });
 
 Template.driverManager.onRendered(() => {
     addPaging();
     reloadTable(1, getLimitDocPerPage())
     addRequiredInputLabel()
-    initDropzone('#add-button', '#edit-button')
+    dropzone = initDropzone("#kt_dropzone_1")
+    this.dropzone = dropzone
+
+    MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
+        Session.set(_SESSION.isSuperadmin, result)
+        if (result)
+            initSchoolSelect2()
+    }).catch(handleError)
 })
+
+Template.driverManager.onDestroyed(() => {
+    dropzone = null
+});
 
 Template.driverManager.events({
     'click #add-button': () => {
         $('.modal-title').html("Thêm lái xe mới");
         $('.modal-footer').find('.btn.btn-primary').html("Thêm mới")
         clearForm()
+        $('.avatabox').addClass('kt-hidden')
     },
     'click #edit-button': clickEditButton,
     'click .submit-button': clickSubmitButton,
@@ -56,8 +73,22 @@ Template.driverManager.events({
     },
     "change #limit-doc": (e) => {
         reloadTable(1, getLimitDocPerPage());
-    }
+    },
+    "click .dz-preview": dzPreviewClick,
 })
+
+Template.editDriverModal.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    },
+    schools() {
+        return Session.get('schools')
+    },
+})
+
+function dzPreviewClick() {
+    dropzone.hiddenFileInput.click()
+}
 
 function clickEditButton(event) {
     //fill data
@@ -71,12 +102,21 @@ function clickEditButton(event) {
     $('#driver-IDIssueBy').val(data.IDIssueBy)
     $('#driver-DLNumber').val(data.DLNumber)
     $('#driver-DLIssueDate').val(data.DLIssueDate)
-    $('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', `http://123.24.137.209:3000/images/${data.image}/0`)
-    $('div.dropzone-previews').find('div.dz-image-preview').remove()
-    $('div.dz-preview').show()
-    $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
     $('#driver-id').val(data._id)
-        //edit modal
+
+    if (Session.get(_SESSION.isSuperadmin)) {
+        $('#school-input').val(data.schoolID).trigger('change')
+    }
+
+    if (data.image) {
+        imgUrl = `${_URL_images}/${data.image}/0`
+        $('#avata').attr('src', imgUrl)
+        $('.avatabox').removeClass('kt-hidden')
+    } else {
+        $('.avatabox').addClass('kt-hidden')
+    }
+    dropzone.removeAllFiles(true)
+    //edit modal
     $('.modal-title').html(`Cập nhật thông tin lái xe: ${data.name}`);
     $('.modal-footer').find('.btn.btn-primary').html("Cập nhật")
 
@@ -86,7 +126,7 @@ async function clickSubmitButton() {
     try {
         if (checkInput()) {
             let data = getInputData()
-            let imagePreview = $('div.dropzone-previews').find('div.dz-image-preview')
+            let imagePreview = $('#kt_dropzone_1').find('div.dz-image-preview')
             if (imagePreview.length) {
                 if (imagePreview.hasClass('dz-success')) {
                     let imageId = makeID("user")
@@ -140,7 +180,7 @@ function clickDelButton(event) {
 }
 
 function getInputData() {
-    let input = {
+    let data = {
         username: $('#driver-phone').val(),
         password: '12345678',
         name: $('#driver-name').val(),
@@ -154,10 +194,13 @@ function getInputData() {
         DLIssueDate: $('#driver-DLIssueDate').val(),
         status: 0
     }
-    if ($('#driver-id').val()) {
-        input._id = $('#driver-id').val()
+    if (Session.get(_SESSION.isSuperadmin)) {
+        data.schoolID = $('#school-input').val()
     }
-    return input
+    if ($('#driver-id').val()) {
+        data._id = $('#driver-id').val()
+    }
+    return data
 }
 
 function checkInput() {
@@ -169,7 +212,8 @@ function checkInput() {
     let IDIssueBy = $('#driver-IDIssueBy').val();
     let DLNumber = $('#driver-DLNumber').val();
     let DLIssueDate = $('#driver-DLIssueDate').val();
-    if (!name || !phone || !address || !IDNumber || !IDIssueBy || !IDIssueDate || !DLNumber || !DLIssueDate) {
+    if (!name || !phone || !address ||!IDNumber || !IDIssueBy || !IDIssueDate || !DLNumber || !DLIssueDate) {
+        
         Swal.fire({
             icon: "error",
             text: "Chưa đủ thông tin!",
@@ -177,6 +221,18 @@ function checkInput() {
         })
         return false;
     } else {
+        if (Session.get(_SESSION.isSuperadmin)) {
+            let schoolID = $('#school-input').val()
+            if (!schoolID) {
+                Swal.fire({
+                    icon: "error",
+                    text: "Chưa chọn trường!",
+                    timer: 2000
+                })
+                return false;
+            }
+            
+        }
         return true;
     }
 }
@@ -186,14 +242,19 @@ function clearForm(e) {
     $('#driver-phone').val('')
     $('#driver-email').val('')
     $('#driver-address').val('')
+
+    if (Session.get(_SESSION.isSuperadmin)) {
+       $('#school-input').val('').trigger('change')
+    }
+
     $('#driver-IDNumber').val('')
     $('#driver-IDIssueDate').val('')
     $('#driver-IDIssueBy').val('')
     $('#driver-DLNumber').val('')
     $('#driver-DLIssueDate').val('')
     $('#driver-id').val('')
-        // remove ảnh
-    $('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', '')
+    // remove ảnh
+    dropzone.removeAllFiles(true)
 }
 
 function getLimitDocPerPage() {
@@ -265,12 +326,15 @@ function createRow(data) {
         `
 }
 
-function dataRow(result) {
+function dataRow(result) 
+{   
+
     let driver = {
         _id: result._id,
         image: result.user.image,
         name: result.user.name,
         username: result.user.username,
+        schoolID: result.schoolID,
         phone: result.user.phone,
         email: result.user.email,
         address: result.address,
@@ -282,7 +346,7 @@ function dataRow(result) {
     }
     console.log(driver._id)
     return `
-                <th scope="row">${result.index}</th>
+                <th scope="row">${result.index + 1}</th>
                 <td>${driver.name}</td>
                 <td>${driver.phone}</td>
                 <td>${driver.email}</td>
@@ -299,38 +363,12 @@ function dataRow(result) {
             `
 }
 
-// function initDropzone() {
-//     Dropzone.autoDiscover = false;
-//     let myDropzone = new Dropzone('#kt_dropzone_1', {
-//         url: "#", // Set the url for your upload script location
-//         paramName: "file", // The name that will be used to transfer the file
-//         maxFiles: 1,
-//         maxFilesize: 5, // MB
-//         addRemoveLinks: true,
-//         acceptedFiles: "image/*",
-//         previewsContainer: '.dropzone-previews',
-//         previewTemplate: $('.dropzone-previews').html(),
-//         dictUploadCanceled: "",
-//         dictRemoveFile: `<hr/><button type="button" class="btn btn-outline-hover-dark btn-icon btn-circle"><i class="fas fa-trash"></i></button>`,
-//     })
-
-//     myDropzone.on("complete", function (file) {
-//         $('#add-button').on('click', function () {
-//             myDropzone.removeFile(file);
-//         });
-
-//         $('.dropzone-msg-title').html("Đã chọn ảnh, xóa ảnh để chọn ảnh mới")
-
-//         myDropzone.disable()
-
-//     })
-
-//     myDropzone.on('uploadprogress', function (file) {
-//         $('.dropzone-previews').find('div:eq(0)').hide()
-//     })
-
-//     myDropzone.on("removedfile", function (file) {
-//         myDropzone.enable()
-//         $('.dropzone-previews').find('div:eq(0)').show()
-//     })
-// }
+function initSchoolSelect2() {
+    MeteorCall(_METHODS.school.GetAll, null, accessToken).then(result => {
+        Session.set('schools', result.data)
+        $('#school-input').select2({
+            width: '100%',
+            placeholder: "Chọn trường"
+        })
+    }).catch(handleError)
+}

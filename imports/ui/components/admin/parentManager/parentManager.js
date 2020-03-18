@@ -22,11 +22,13 @@ import {
 
 import {
   _METHODS,
-  LIMIT_DOCUMENT_PAGE
+  LIMIT_DOCUMENT_PAGE,
+  _URL_images,
 } from '../../../../variableConst'
 
 let accessToken;
 let currentPage = 1
+let dropzone
 
 Template.parentManager.onCreated(() => {
   accessToken = Cookies.get('accessToken')
@@ -36,16 +38,22 @@ Template.parentManager.onRendered(() => {
   addPaging()
   reloadTable(1, getLimitDocPerPage())
   addRequiredInputLabel()
-  initDropzone('#add-button', '#edit-button')
   renderSchoolSelect()
   initSelect2()
+  dropzone = initDropzone("#kt_dropzone_1")
+  this.dropzone = dropzone
 })
+
+Template.parentManager.onDestroyed(() => {
+  dropzone = null
+});
 
 Template.parentManager.events({
   'click #add-button': () => {
     $('.modal-title').html("Thêm phụ huynh mới");
     $('.modal-footer').find('.btn.btn-primary').html("Thêm mới")
     $('#student-info').html('')
+    $('.avatabox').addClass('kt-hidden')
     clearForm()
   },
   'click #edit-button': clickEditButton,
@@ -64,9 +72,13 @@ Template.parentManager.events({
   "change #class-select": renderStudentSelect,
   "click #edit-student": (e) => {
     $('.kt-portlet__body:eq(2)').show()
-  }
+  },
+  "click .dz-preview": dzPreviewClick,
 })
 
+function dzPreviewClick() {
+  dropzone.hiddenFileInput.click()
+}
 
 function renderSchoolSelect() {
   MeteorCall(_METHODS.school.GetAll, {}, accessToken)
@@ -136,7 +148,7 @@ function clearForm() {
   $('#student-select').val("").trigger('change')
 
   // remove ảnh
-  $('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', '')
+  dropzone.removeAllFiles(true)
 }
 
 function checkForm() {
@@ -174,11 +186,15 @@ function clickEditButton(event) {
   $('#parent-email').val(data.email)
   $('#parent-address').val(data.address)
 
-  //ảnh
-  $('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', `http://123.24.137.209:3000/images/${data.image}/0`)
-  $('div.dropzone-previews').find('div.dz-image-preview').remove()
-  $('div.dz-preview').show()
-  $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
+  //remove ảnh cũ
+  if (teacherData.image) {
+    imgUrl = `${_URL_images}/${teacherData.image}/0`
+    $('#avata').attr('src', imgUrl)
+    $('.avatabox').removeClass('kt-hidden')
+  } else {
+    $('.avatabox').addClass('kt-hidden')
+  }
+  dropzone.removeAllFiles(true)
 
   //edit modal
   $('.modal-title').html(`Cập nhật thông tin phụ huynh: ${data.name}`);
@@ -196,7 +212,7 @@ async function clickSubmitButton(event) {
   try {
     if (checkForm()) {
       let data = getInputData()
-      let imagePreview = $('div.dropzone-previews').find('div.dz-image-preview')
+      let imagePreview = $('#kt_dropzone_1').find('div.dz-image-preview')
       if (imagePreview.length) {
         if (imagePreview.hasClass('dz-success')) {
           let imageId = makeID("user")
@@ -235,17 +251,17 @@ async function clickSubmitButton(event) {
 function clickDelButton(event) {
   handleConfirm().then(result => {
     if (result.value) {
-        let data = $(event.currentTarget).data("json");
-        MeteorCall(_METHODS.Parent.Delete, data, accessToken).then(result => {
-            Swal.fire({
-                icon: "success",
-                text: "Đã xóa thành công",
-                timer: 3000
-            })
-            reloadTable(currentPage, getLimitDocPerPage())
-        }).catch(handleError)
+      let data = $(event.currentTarget).data("json");
+      MeteorCall(_METHODS.Parent.Delete, data, accessToken).then(result => {
+        Swal.fire({
+          icon: "success",
+          text: "Đã xóa thành công",
+          timer: 3000
+        })
+        reloadTable(currentPage, getLimitDocPerPage())
+      }).catch(handleError)
     }
-})
+  })
 }
 
 function initSelect2() {
@@ -282,36 +298,36 @@ function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
   let emptyWrapper = $('#empty-data');
   table.html('');
   MeteorCall(_METHODS.Parent.GetByPage, {
-      page: page,
-      limit: limitDocPerPage
+    page: page,
+    limit: limitDocPerPage
   }, accessToken).then(result => {
     console.log(result);
-      tablePaging(".tablePaging", result.count, page, limitDocPerPage)
-      $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
-      if (result.count === 0) {
-          $('.tablePaging').addClass('d-none');
-          table.parent().addClass('d-none');
-          emptyWrapper.removeClass('d-none');
-      } else if (result.count > limitDocPerPage) {
-          $('.tablePaging').removeClass('d-none');
-          table.parent().removeClass('d-none');
-          emptyWrapper.addClass('d-none');
-          // update số bản ghi
-      } else {
-          $('.tablePaging').addClass('d-none');
-          table.parent().removeClass('d-none');
-          emptyWrapper.addClass('d-none');
-      }
-      createTable(table, result, limitDocPerPage)
+    tablePaging(".tablePaging", result.count, page, limitDocPerPage)
+    $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
+    if (result.count === 0) {
+      $('.tablePaging').addClass('d-none');
+      table.parent().addClass('d-none');
+      emptyWrapper.removeClass('d-none');
+    } else if (result.count > limitDocPerPage) {
+      $('.tablePaging').removeClass('d-none');
+      table.parent().removeClass('d-none');
+      emptyWrapper.addClass('d-none');
+      // update số bản ghi
+    } else {
+      $('.tablePaging').addClass('d-none');
+      table.parent().removeClass('d-none');
+      emptyWrapper.addClass('d-none');
+    }
+    createTable(table, result, limitDocPerPage)
   })
 
 }
 
 function createTable(table, result, limitDocPerPage) {
   result.data.forEach((key, index) => {
-      key.index = index + (result.page - 1) * limitDocPerPage;
-      const row = createRow(key);
-      table.append(row);
+    key.index = index + (result.page - 1) * limitDocPerPage;
+    const row = createRow(key);
+    table.append(row);
   });
 }
 
@@ -327,17 +343,17 @@ function createRow(data) {
 
 function dataRow(result) {
   let parent = {
-      _id: result._id,
-      image: result.user.image,
-      name: result.user.name,
-      username: result.user.username,
-      phone: result.user.phone,
-      email: result.user.email,
-      address: result.student.address,
-      studentID: result.studentID,
-      studentName: result.student.user.name,
-      className: result.student.class.name,
-      schoolName: result.student.class.school.name,
+    _id: result._id,
+    image: result.user.image,
+    name: result.user.name,
+    username: result.user.username,
+    phone: result.user.phone,
+    email: result.user.email,
+    address: result.student.address,
+    studentID: result.studentID,
+    studentName: result.student.user.name,
+    className: result.student.class.name,
+    schoolName: result.student.class.school.name,
   }
   return `
               <th scope="row"></th>

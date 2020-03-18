@@ -28,7 +28,7 @@ Template.moduleManager.onRendered(() => {
     Session.setDefault('module-parent-route', [])
     // Session.setDefault('module-route', [])
 
-    MeteorCall(_METHODS.modules.GetIcons, null, accessToken).then(result => {
+    MeteorCall(_METHODS.modules.GetIcons, {}, accessToken).then(result => {
         Session.set('icons', result);
     });
 

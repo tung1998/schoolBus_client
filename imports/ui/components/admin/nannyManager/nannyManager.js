@@ -17,22 +17,48 @@ import {
 
 import {
     _METHODS,
-    LIMIT_DOCUMENT_PAGE
+    LIMIT_DOCUMENT_PAGE,
+    _SESSION,
+    _URL_images
 } from "../../../../variableConst";
 
 
 let accessToken;
+let currentPage = 1;
+let dropzone;
 
 Template.nannyManager.onCreated(() => {
     accessToken = Cookies.get("accessToken");
+    Session.set(_SESSION.isSuperadmin, true)
+    Session.set('schools', [])
 });
 
 Template.nannyManager.onRendered(() => {
     reloadTable();
-    initDropzone(".add-more", "modify-button")
     addRequiredInputLabel()
     addPaging()
     reloadTable(1);
+    dropzone = initDropzone("#kt_dropzone_1")
+    this.dropzone = dropzone
+
+    MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
+        Session.set(_SESSION.isSuperadmin, result)
+        if (result)
+            initSchoolSelect2()
+    }).catch(handleError)
+});
+
+Template.editNannyModal.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    },
+    schools() {
+        return Session.get('schools')
+    },
+})
+
+Template.nannyManager.onDestroyed(() => {
+    dropzone = null
 });
 
 Template.nannyManager.events({
@@ -48,8 +74,14 @@ Template.nannyManager.events({
     },
     "change #limit-doc": (e) => {
         reloadTable(1, getLimitDocPerPage());
-    }
+    },
+    "click .dz-preview": dzPreviewClick,
 });
+
+function dzPreviewClick() {
+    dropzone.hiddenFileInput.click()
+}
+
 
 function ClickAddmoreButton(event) {
     $(".modal-title").html("Thêm mới");
@@ -58,6 +90,7 @@ function ClickAddmoreButton(event) {
     $("#editNannyModal").modal("show");
     $("#editNannyModal").attr("nannyID", "");
     $("#password-input").parent().parent().show();
+    $('.avatabox').addClass('kt-hidden')
     clearForm();
 }
 
@@ -78,11 +111,18 @@ function ClickModifyButton(event) {
     $("#identityCardBy-input").val(nannyData.IDIssueBy);
     $("#status-input").val(nannyData.status);
 
+    if (Session.get(_SESSION.isSuperadmin)) {
+        $('#school-input').val(data.schoolID).trigger('change')
+    }
     //remove ảnh cũ
-    $('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', `http://123.24.137.209:3000/images/${studentData.image}/0`)
-    $('div.dropzone-previews').find('div.dz-image-preview').remove()
-    $('div.dz-preview').show()
-    $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
+    if (teacherData.image) {
+        imgUrl = `${_URL_images}/${teacherData.image}/0`
+        $('#avata').attr('src', imgUrl)
+        $('.avatabox').removeClass('kt-hidden')
+    } else {
+        $('.avatabox').addClass('kt-hidden')
+    }
+    dropzone.removeAllFiles(true)
 }
 
 
@@ -113,7 +153,10 @@ async function SubmitForm(event) {
                 IDIssueBy: $("#identityCardBy-input").val(),
                 status: $("#status-input").val(),
             }
-            let imagePreview = $('div.dropzone-previews').find('div.dz-image-preview')
+            if (Session.get(_SESSION.isSuperadmin)) {
+                data.schoolID = $('#school-input').val()
+            }
+            let imagePreview = $('#kt_dropzone_1').find('div.dz-image-preview')
             if (imagePreview.length) {
                 if (imagePreview.hasClass('dz-success')) {
                     let imageId = makeID("user")
@@ -174,6 +217,18 @@ function checkInput() {
         })
         return false;
     } else {
+        if (Session.get(_SESSION.isSuperadmin)) {
+            let schoolID = $('#school-input').val()
+            if (!schoolID) {
+                Swal.fire({
+                    icon: "error",
+                    text: "Chưa chọn trường!",
+                    timer: 2000
+                })
+                return false;
+            }
+            
+        }
         return true;
     }
 
@@ -188,7 +243,10 @@ function clearForm() {
     $("#identityCardDate-input").val("");
     $("#identityCardBy-input").val("");
     $("#status-input").val("");
-    $("#image-input").val("");
+    if (Session.get(_SESSION.isSuperadmin)) {
+        $('#school-input').val('').trigger('change')
+     }
+    dropzone.removeAllFiles(true)
 }
 
 function getLimitDocPerPage() {
@@ -199,7 +257,10 @@ function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
     let table = $('#table-body');
     let emptyWrapper = $('#empty-data');
     table.html('');
-    MeteorCall(_METHODS.Nanny.GetByPage, { page: page, limit: limitDocPerPage }, accessToken).then(result => {
+    MeteorCall(_METHODS.Nanny.GetByPage, {
+        page: page,
+        limit: limitDocPerPage
+    }, accessToken).then(result => {
         console.log(result)
         tablePaging(".tablePaging", result.count, page, limitDocPerPage)
         $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
@@ -266,6 +327,7 @@ function dataRow(data) {
         email: data.user.email,
         username: data.user.username,
         address: data.address,
+        schoolID: result.schoolID,
         IDNumber: data.IDNumber,
         IDIssueDate: data.IDIssueDate,
         IDIssueBy: data.IDIssueBy,
@@ -273,7 +335,7 @@ function dataRow(data) {
         image: data.image
     }
     return `
-            <th scope="row">${data.index}</th>
+            <th scope="row">${data.index + 1}</th>
             <td>${dt.name}</td>
             <td>${dt.username}</td>
             <td>${dt.phone}</td>
@@ -290,17 +352,12 @@ function dataRow(data) {
         </tr>`
 }
 
-function clearForm() {
-    $("#name-input").val("");
-    $("#phone-input").val("");
-    $("#email-input").val("");
-    $("#address-input").val("");
-    $("#identityCard-input").val("");
-    $("#identityCardDate-input").val("");
-    $("#identityCardBy-input").val("");
-    $("#status-input").val("");
-    $("#image-input").val("");
-
-    // remove ảnh
-    $('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', '')
+function initSchoolSelect2() {
+    MeteorCall(_METHODS.school.GetAll, null, accessToken).then(result => {
+        Session.set('schools', result.data)
+        $('#school-input').select2({
+            width: '100%',
+            placeholder: "Chọn trường"
+        })
+    }).catch(handleError)
 }
