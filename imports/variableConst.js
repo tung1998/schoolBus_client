@@ -251,6 +251,7 @@ const _SESSION = {
     isSuperadmin: 'isSuperadmin',
     avata: 'avata',
     name: 'name',
+    isLoading: 'isLoading',
 }
 
 const _TRIP_STUDENT = {

@@ -10,6 +10,7 @@ import {
     handlePaging,
     initDropzone,
     makeID,
+    handleSuccess,
 } from "../../../../functions";
 
 import {
@@ -151,12 +152,14 @@ async function SubmitForm(event) {
                 .then(result => {
                     $("#editAdministratorModal").modal("hide");
                     reloadTable(1, getLimitDocPerPage())
+                    handleSuccess("Đã thêm")
                 }).catch(handleError);
-        } else {
-            data._id = modify;
-            MeteorCall(_METHODS.admin.Update, data, accessToken)
+            } else {
+                data._id = modify;
+                MeteorCall(_METHODS.admin.Update, data, accessToken)
                 .then(result => {
                     $("#editAdministratorModal").modal("hide");
+                    handleSuccess("Đã sửa!")
                     reloadTable(currentPage, getLimitDocPerPage())
                 })
                 .catch(handleError);
@@ -169,6 +172,7 @@ function ClickDeleteButton(event) {
     let data = $(event.currentTarget).data("json");
     MeteorCall(_METHODS.admin.Delete, data, accessToken)
         .then(result => {
+            handleSuccess('Đã xóa!')
             reloadTable(currentPage, getLimitDocPerPage())
         })
         .catch(handleError);
@@ -176,13 +180,13 @@ function ClickDeleteButton(event) {
 
 function checkInput() {
     let name = $("#name-input").val();
-    let address = $("#address-input").val();
+    // let address = $("#address-input").val();
     let phone = $("#phonenumber-input").val();
     // let email = $("#email-input").val("");
     let admintype = $("#admintype-input").val();
     let username = $("#username-input").val();
 
-    if ((Session.get(_SESSION.isSuperadmin) && admintype == null) || !name || !address || !phone || !username) {
+    if ((Session.get(_SESSION.isSuperadmin) && admintype == null) || !name || !phone || !username) {
         Swal.fire({
             icon: "error",
             text: "Chưa đủ thông tin!",
@@ -218,6 +222,7 @@ function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
         handlePaging(table, result.count, page, limitDocPerPage)
         let htmlRow = result.data.map(createRow);
         table.html(htmlRow.join(''));
+
     })
 
 }

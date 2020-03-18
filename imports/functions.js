@@ -22,9 +22,11 @@ export {
 }
 
 function MeteorCall(method = "", data = null, accessToken = "") {
+    Session.set('isLoading', true)
     return new Promise((resolve, reject) => {
         console.log(method)
         Meteor.call(method, data, accessToken, (err, result) => {
+            Session.set('isLoading', false)
             if (result && result.error) reject(result)
             else if (err) reject(err);
             else resolve(result);
@@ -53,8 +55,7 @@ function handleError(error, title = "Có lỗi xảy ra") {
 }
 
 
-function handleSuccess(type, name = "") {
-    let title = type + " " + name + " thành công";
+function handleSuccess(title = "Thành công") {
     return Swal.fire({
         toast: true,
         position: 'top',
