@@ -8,6 +8,7 @@ import '../../ui/pages/login/login.js';
 import '../../ui/pages/not-found/not-found.js';
 // shared component template
 import '../../ui/components/shared/profile/profile.js'
+import '../../ui/components/shared/panel/panel.js'
 // admin template
 import '../../ui/components/admin/sample/sample.js'
 import '../../ui/components/admin/studentManager/studentManager.js'

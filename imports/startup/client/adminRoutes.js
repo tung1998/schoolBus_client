@@ -45,6 +45,7 @@ FlowRouter.route('/administratorManager', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'administratorManager',
+            panel: 'panel'
         });
     },
 });
