@@ -287,11 +287,11 @@ const _TRIP = {
         },
         finish: {
             text: "Đã kết thúc",
-            number: 3
+            number: 2
         },
         accident: {
             text: "Gặp sự cố",
-            number: 4
+            number: 3
         }
     }
 }

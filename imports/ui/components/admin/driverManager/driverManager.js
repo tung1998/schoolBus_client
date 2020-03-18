@@ -344,6 +344,7 @@ function dataRow(result)
         DLNumber: result.DLNumber,
         DLIssueDate: result.DLIssueDate,
     }
+    console.log(driver._id)
     return `
                 <th scope="row">${result.index + 1}</th>
                 <td>${driver.name}</td>

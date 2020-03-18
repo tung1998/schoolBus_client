@@ -1,25 +1,45 @@
 <template name="upCommingTripInfo">
-    <div style="z-index: 1000; margin: 5px;">
+    <div style="z-index: 1; margin: 5px;" class="buttonHeader">
         <div class="fa-pull-right">
+            <button type="button" class="btn btn-success" id="startTripButton">
+                Bắt đầu chuyến đi
+            </button>
             <button type="button" class="btn btn-success" id="studentListShowButton">
                 Xem Danh sách học sinh
             </button>
         </div>
     </div>
     <div id="map"></div>
+    <div style="z-index: 1; position: fixed; bottom: 0%; width: 100%;" class="buttonBottom">
+        <div style="text-align: center;">
+            <button type="button" class="btn btn-danger" id="endTripButton" style="width: 100%;">
+                Kết thúc chuyến đi
+            </button>
+        </div>
+    </div>
     <div class="student-info">
         {{> displayStudentInfoInUpCommingTrip}}
     </div>
     <div class="student-list">
         {{> displayStudentListInUpCommingTrip}}
     </div>
+    {{> troubleReport}}
 </template>
 
 <template name="displayStudentInfoInUpCommingTrip">
-    <div id="displayStudentInfoInUpCommingTrip">
-        
-    </div>
+    <div class="kt-portlet">
+        <div class="kt-portlet__head">
+            <div class="kt-portlet__head-label">
+                <h3 class="kt-portlet__head-title">
+                    Danh Sách Học Sinh Theo Điểm Dừng 
+                </h3>
+            </div>
+        </div>
+        <div id="displayStudentInfoInUpCommingTrip">
 
+        </div>
+    </div>
+    
 </template>
 
 <template name="displayStudentListInUpCommingTrip">
@@ -41,30 +61,12 @@
                         <thead class="thead-inverse">
                             <tr>
                                 <th>#</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Username</th>
+                                <th>Tên</th>
+                                <th>Số Điện Thoại</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <th scope="row">1</th>
-                                <td>Jhon</td>
-                                <td>Stone</td>
-                                <td>@jhon</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">2</th>
-                                <td>Lisa</td>
-                                <td>Nilson</td>
-                                <td>@lisa</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">3</th>
-                                <td>Larry</td>
-                                <td>the Bird</td>
-                                <td>@twitter</td>
-                            </tr>
+                        <tbody id="table-body">
+                            
                         </tbody>
                     </table>
                 </div>
@@ -73,3 +75,42 @@
         </div>
     </div>
 </template>
+
+<template name="troubleReport">
+    <div class="modal fade" id="troubleReport" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+      style="display: none;" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" style="margin-top: 20%;">
+          <div class="modal-header">
+            <h5 class="modal-title">Báo cáo sự cố</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            </button>
+          </div>
+          <div class="modal-body">
+            <form class="kt-form kt-form--label-right">
+              <div class="kt-portlet__body">
+                <div class="form-group row noteRow">
+                    <label class="col-form-label col-lg-3 col-sm-12 required-input-label">Báo cáo sự cố</label>
+                    <div class="col-lg-4 col-md-9 col-sm-12">
+                      <textarea
+                        placeholder="nhập lý do"
+                        id="note"
+                        name="markdown"
+                        class="form-control md-input"
+                        data-provide="markdown"
+                        rows="10"
+                        style="resize: none;"
+                      ></textarea>
+                    </div>
+                  </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel-button">Hủy</button>
+                <button type="submit" class="btn btn-primary" id="confirm-trouble-report-button">Xác nhận</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>

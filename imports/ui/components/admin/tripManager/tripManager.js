@@ -47,7 +47,7 @@ function ClickModifyButton(event) {
     $("#routeSelect").val(data.route._id);
 
     $('#editTripManagerModal').modal('show')
-    // console.log($("#routeSelect").val())
+        // console.log($("#routeSelect").val())
     $('#editTripManagerModal').attr("modify", data._id)
 }
 
@@ -80,7 +80,7 @@ function SubmitForm(event) {
 
 }
 
-function ClickUpdateTimeButton(){
+function ClickUpdateTimeButton() {
     reloadTable();
 }
 
@@ -101,18 +101,19 @@ function getDayFilter() {
 function reloadTable() {
     let data = getDayFilter();
     MeteorCall(_METHODS.trip.GetByTime, data, accessToken).then(result => {
-         console.log(result);
-        if(result!=[]) {
+        console.log(result);
+        if (result != []) {
             let html = result.map(htmlRow);
             $(".trip_list").html(html.join(" "));
         } else {
             $(".trip_list").html("<span>Không có dữ liệu</span>");
         }
-        
+
     }).catch(handleError)
 }
 
 function htmlRow(data) {
+    console.log(data)
     return `<div class="kt-widget kt-widget--user-profile-3" style="background: bisque;
             border-radius: 20px !important;
             padding: 11px; margin-bottom: 10px;">
@@ -127,12 +128,12 @@ function htmlRow(data) {
                     <div class="kt-widget__content">
                         <div class="kt-widget__head">
                             <a href="#" class="kt-widget__username">
-                                Tài xế: ${data.route.driver.user.name}
+                                Tài xế: ${data.driver.user.name}
                                 <i class="flaticon2-correct"></i>
                             </a>
 
                             <div class="kt-widget__action">
-                                <span class="btn btn-label-brand btn-sm btn-bold btn-upper">Biển số: ${data.route.car.numberPlate}</span>
+                                <span class="btn btn-label-brand btn-sm btn-bold btn-upper">Biển số: ${data.car.numberPlate}</span>
                                 <span class="btn btn-label-brand btn-sm btn-bold btn-upper">ĐANG THỰC HIỆN</span>
                             </div>
                         </div>
@@ -141,7 +142,7 @@ function htmlRow(data) {
                             <div class="row">
                                 <i class="flaticon2-map"></i>&nbsp;
                                 <label for="route-name" class="form-control-label">Cung đường:</label>&nbsp;
-                                <a href="#" id="route-name">${data.route.name}</a>
+                                <a href="#" id="route-name">${data.name}</a>
                             </div>
                             <div class="row">
                                 <i class="flaticon2-calendar-1"></i>&nbsp;
@@ -152,7 +153,7 @@ function htmlRow(data) {
                                 <div class="col-12" style="padding-left: 0px;">
                                     <i class="flaticon2-phone"></i>&nbsp;
                                     <label for="phonenumber" class="form-control-label">Liên hệ:</label>&nbsp;
-                                    <a href="#" id="phonenumber">${data.route.driver.user.phone}</a>
+                                    <a href="#" id="phonenumber">${data.driver.user.phone}</a>
                                     <div class="fa-pull-right">
                                         <button type="button" class="btn btn-danger btn-sm modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
                                         <span></span>
@@ -166,4 +167,3 @@ function htmlRow(data) {
                 </div>
             </div>`
 }
-
