@@ -172,7 +172,7 @@ function checkInput() {
     if (!name || !phone || !address || !IDNumber || !IDIssueBy || !IDIssueDate || !DLNumber || !DLIssueDate) {
         Swal.fire({
             icon: "error",
-            text: "Làm ơn điền đầy đủ thông tin",
+            text: "Chưa đủ thông tin!",
             timer: 2000
         })
         return false;
@@ -280,6 +280,7 @@ function dataRow(result) {
         DLNumber: result.DLNumber,
         DLIssueDate: result.DLIssueDate,
     }
+    console.log(driver._id)
     return `
                 <th scope="row">${result.index}</th>
                 <td>${driver.name}</td>

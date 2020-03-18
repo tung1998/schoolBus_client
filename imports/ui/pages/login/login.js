@@ -11,10 +11,6 @@ import {
     _SESSION
 } from '../../../variableConst';
 
-Template.login.onRendered(function() {
-    console.log('test')
-});
-
 Template.login.events({
     'click #kt_login_signin_submit': loginButtonClick
 });
@@ -25,9 +21,8 @@ function loginButtonClick() {
         password: $('#password').val()
     }
     MeteorCall(_METHODS.token.LoginByUsername, data, null).then(result => {
+        console.log(result)
         Cookies.set("accessToken", result.access_token)
-        Session.set(_SESSION.userID, result.userID)
-        Session.set(_SESSION.username, data.username)
         FlowRouter.go('/profile')
     }).catch(handleError)
 }

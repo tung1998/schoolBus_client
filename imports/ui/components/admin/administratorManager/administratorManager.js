@@ -7,31 +7,51 @@ import {
     addRequiredInputLabel,
     handleError,
     addPaging,
-    tablePaging,
+    handlePaging,
+    initDropzone,
+    makeID,
 } from "../../../../functions";
 
 import {
     _METHODS,
-    LIMIT_DOCUMENT_PAGE
+    LIMIT_DOCUMENT_PAGE,
+    _SESSION,
+    _URL_images
 } from "../../../../variableConst";
 
 let accessToken;
 let currentPage = 1;
+let dropzone
 
 Template.administratorManager.onCreated(() => {
     accessToken = Cookies.get("accessToken");
+    Session.set(_SESSION.isSuperadmin, true)
+    Session.set('schools', [])
 });
 
 Template.administratorManager.onRendered(() => {
+    MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
+        Session.set(_SESSION.isSuperadmin, result)
+        if (result)
+            initSchoolSelect2()
+    }).catch(handleError)
+
     addPaging()
     addRequiredInputLabel()
     reloadTable(1);
+    dropzone = initDropzone("#kt_dropzone_1")
+    this.dropzone = dropzone
+});
+
+Template.administratorManager.onDestroyed(() => {
+    dropzone = null
 });
 
 Template.administratorManager.events({
     "submit form": SubmitForm,
+    "click .dz-preview": dzPreviewClick,
     "click .modify-button": ClickModifyButton,
-    "click .add-more": ClickAddmoreButton,
+    "click .add-button": ClickAddmoreButton,
     "click .delete-button": ClickDeleteButton,
     "click .kt-datatable__pager-link": (e) => {
         reloadTable(parseInt($(e.currentTarget).data('page')), getLimitDocPerPage());
@@ -41,8 +61,22 @@ Template.administratorManager.events({
     },
     "change #limit-doc": (e) => {
         reloadTable(1, getLimitDocPerPage());
-    }
+    },
+    "change #admintype-input": adminTypeChange
 });
+
+Template.editAdministratorModal.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    },
+    schools() {
+        return Session.get('schools')
+    },
+});
+
+function dzPreviewClick() {
+    dropzone.hiddenFileInput.click()
+}
 
 function ClickModifyButton(event) {
     let adminData = $(event.currentTarget).data("json");
@@ -59,6 +93,12 @@ function ClickModifyButton(event) {
     $("#email-input").val(adminData.email);
     $("#admintype-input").val(adminData.adminType);
     $("#editAdministratorModal").modal("show");
+    if (adminData.image) {
+        imgUrl = `${_URL_images}/${adminData.image}/0`
+        $('#avata').attr('src', imgUrl)
+        $('.avatabox').removeClass('kt-hidden')
+    }
+    dropzone.removeAllFiles(true)
 }
 
 function ClickAddmoreButton(event) {
@@ -68,31 +108,42 @@ function ClickAddmoreButton(event) {
     $(".confirm-button").html("Thêm");
     $("#editAdministratorModal").modal("show");
     clearForm();
+    $('.avatabox').addClass('kt-hidden')
 }
 
-function SubmitForm(event) {
+async function SubmitForm(event) {
     event.preventDefault();
     const target = event.target;
     if (checkInput()) {
         let data = {
             name: target.name.value,
             username: target.username.value,
-            // dob: target.dob.value,
-            // address: target.address.value,
             phone: target.phoneNumber.value,
             email: target.email.value,
             adminType: target.adminType.value,
             password: target.password.value
-                //avatar: target.adminType
         };
+        if (Session.get(_SESSION.isSuperadmin) && data.adminType == 1) data.schoolID = target.school.value
+        let imagePreview = $('#kt_dropzone_1').find('div.dz-image-preview')
+        if (imagePreview.length) {
+            if (imagePreview.hasClass('dz-success')) {
+                let imageId = makeID("user")
+                let BASE64 = imagePreview.find('div.dz-image').find('img').attr('src')
+                let importImage = await MeteorCall(_METHODS.image.Import, {
+                    imageId,
+                    BASE64: [BASE64]
+                }, accessToken)
+                if (importImage.error)
+                    handleError(result, "Không tải được ảnh lên server!")
+                else data.image = imageId
+            }
+        }
+
         let modify = $("#editAdministratorModal").attr("adminID");
         // console.log(modify);
-        console.log(data)
         if (modify == "") {
             MeteorCall(_METHODS.admin.Create, data, accessToken)
                 .then(result => {
-                    console.log(result);
-                    // renderTableRow();
                     $("#editAdministratorModal").modal("hide");
                     reloadTable(1, getLimitDocPerPage())
                 }).catch(handleError);
@@ -100,8 +151,6 @@ function SubmitForm(event) {
             data._id = modify;
             MeteorCall(_METHODS.admin.Update, data, accessToken)
                 .then(result => {
-                    console.log(result);
-                    // renderTableRow();
                     $("#editAdministratorModal").modal("hide");
                     reloadTable(currentPage, getLimitDocPerPage())
                 })
@@ -115,8 +164,6 @@ function ClickDeleteButton(event) {
     let data = $(event.currentTarget).data("json");
     MeteorCall(_METHODS.admin.Delete, data, accessToken)
         .then(result => {
-            // console.log(result);
-            // renderTableRow();
             reloadTable(currentPage, getLimitDocPerPage())
         })
         .catch(handleError);
@@ -130,10 +177,10 @@ function checkInput() {
     let admintype = $("#admintype-input").val();
     let username = $("#username-input").val();
 
-    if (!admintype || !name || !address || !phone || !username) {
+    if (admintype == null || !name || !address || !phone || !username) {
         Swal.fire({
             icon: "error",
-            text: "Làm ơn điền đầy đủ thông tin",
+            text: "Chưa đủ thông tin!",
             timer: 3000
         })
         return false;
@@ -150,6 +197,7 @@ function clearForm() {
     $("#email-input").val("");
     $("#admintype-input").val("");
     $("#username-input").val("");
+    dropzone.removeAllFiles(true)
 }
 
 function getLimitDocPerPage() {
@@ -158,89 +206,58 @@ function getLimitDocPerPage() {
 
 function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
     let table = $('#table-body');
-    let emptyWrapper = $('#empty-data');
-    table.html('');
-    MeteorCall(_METHODS.admin.GetByPage, { page: page, limit: limitDocPerPage }, accessToken).then(result => {
-        console.log(result)
-        tablePaging(".tablePaging", result.count, page, limitDocPerPage)
-        $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
-        if (result.count === 0) {
-            $('.tablePaging').addClass('d-none');
-            table.parent().addClass('d-none');
-            emptyWrapper.removeClass('d-none');
-        } else if (result.count > limitDocPerPage) {
-            $('.tablePaging').removeClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
-            // update số bản ghi
-        } else {
-            $('.tablePaging').addClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
-        }
-        createTable(table, result, limitDocPerPage)
+    MeteorCall(_METHODS.admin.GetByPage, {
+        page: page,
+        limit: limitDocPerPage
+    }, accessToken).then(result => {
+        handlePaging(table, result.count, page, limitDocPerPage)
+        let htmlRow = result.data.map(createRow);
+        table.html(htmlRow.join(''));
     })
 
 }
 
-function renderTable(data, page = 1) {
-    let table = $('#table-body');
-    let emptyWrapper = $('#empty-data');
-    table.html('');
-    tablePaging('.tablePaging', data.count, page);
-    if (carStops.count === 0) {
-        $('.tablePaging').addClass('d-none');
-        table.parent().addClass('d-none');
-        emptyWrapper.removeClass('d-none');
-    } else {
-        $('.tablePaging').addClass('d-none');
-        table.parent().removeClass('d-none');
-        emptyWrapper.addClass('d-none');
-    }
-
-    createTable(table, data);
-}
-
-function createTable(table, result, limitDocPerPage) {
-    result.data.forEach((key, index) => {
-        key.index = index + (result.page - 1) * limitDocPerPage;
-        const row = createRow(key);
-        table.append(row);
-    });
-}
-
-function createRow(data) {
-    const data_row = dataRow(data);
+function createRow(data, index) {
     // _id is tripID
-    return `
-        <tr id="${data._id}" class="table-row">
-          ${data_row}
-        </tr>
-        `
-}
-
-function dataRow(data) {
     let item = {
         _id: data._id,
         name: data.user.name,
         username: data.user.username,
         phone: data.user.phone,
         email: data.user.email,
-        adminType: data.adminType
+        adminType: data.adminType,
+        image: data.user.image
     }
     return `
-                <th scope="row">${data.index}</th>
-                <td>${item.name}</td>
-                <td>${item.username}</td>
-                <td>${item.phone}</td>
-                <td>${item.email}</td>
-                <td>${item.adminType}</td>
-                <td>
-                    <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
-                        item
-                    )}\'>Sửa</button>
-                    <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(
-                        item
-                    )}\'>Xóa</button>
-                </td>`;
+        <tr id="${item._id}" class="table-row">
+            <td>${item.name}</td>
+            <td>${item.username}</td>
+            <td>${item.phone}</td>
+            <td>${item.email}</td>
+            <td>${item.adminType==0?"Quản trị viên tổng":"Quản trị viên trường"}</td>
+            <td>
+                <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
+                    item
+                )}\'>Sửa</button>
+                <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(
+                    item
+                )}\'>Xóa</button>
+            </td>
+        </tr>
+        `
+}
+
+function initSchoolSelect2() {
+    MeteorCall(_METHODS.school.GetAll, null, accessToken).then(result => {
+        Session.set('schools', result.data)
+        $('#school-input').select2({
+            width: '100%'
+        })
+    }).catch(handleError)
+}
+
+function adminTypeChange(e) {
+    let value = e.currentTarget.value
+    if (value == 0) $('#school-input').parent().parent().addClass('kt-hidden')
+    else $('#school-input').parent().parent().removeClass('kt-hidden')
 }

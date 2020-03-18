@@ -1,55 +1,55 @@
 <template name="administratorManager">
-    <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-      <!-- begin:: Subheader -->
-      <div class="kt-subheader   kt-grid__item" id="kt_subheader">
-        <div class="kt-container  kt-container--fluid ">
-          <div class="kt-subheader__main">
-            <h3 class="kt-subheader__title">
-  
-              Quản trị viên </h3>
-  
-            <span class="kt-subheader__separator kt-hidden"></span>
-            <div class="kt-subheader__breadcrumbs">
-              <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
-              <span class="kt-subheader__breadcrumbs-separator"></span>
-              <a href="" class="kt-subheader__breadcrumbs-link">
-                SchoolBus </a>
-              <span class="kt-subheader__breadcrumbs-separator"></span>
-              <a href="" class="kt-subheader__breadcrumbs-link">
-                Quản trị viên</a>
-            </div>
+  <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+    <!-- begin:: Subheader -->
+    <div class="kt-subheader   kt-grid__item" id="kt_subheader">
+      <div class="kt-container  kt-container--fluid ">
+        <div class="kt-subheader__main">
+          <h3 class="kt-subheader__title">
+
+            Quản trị viên </h3>
+
+          <span class="kt-subheader__separator kt-hidden"></span>
+          <div class="kt-subheader__breadcrumbs">
+            <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
+            <span class="kt-subheader__breadcrumbs-separator"></span>
+            <a href="" class="kt-subheader__breadcrumbs-link">
+              SchoolBus </a>
+            <span class="kt-subheader__breadcrumbs-separator"></span>
+            <a href="" class="kt-subheader__breadcrumbs-link">
+              Quản trị viên</a>
           </div>
         </div>
       </div>
-      <!-- end:: Subheader -->
-  
-      <!-- begin:: Content -->
-      <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-        <div class="row">
-          <div class="col">
-  
-            <div class="kt-portlet">
-              <div class="kt-portlet__head">
-                <div class="kt-portlet__head-label">
-                  <h3 class="kt-portlet__head-title">
-                    Danh sách quản trị viên
-                  </h3>
-                </div>
+    </div>
+    <!-- end:: Subheader -->
+
+    <!-- begin:: Content -->
+    <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+      <div class="row">
+        <div class="col">
+
+          <div class="kt-portlet">
+            <div class="kt-portlet__head">
+              <div class="kt-portlet__head-label">
+                <h3 class="kt-portlet__head-title">
+                  Danh sách quản trị viên
+                </h3>
               </div>
-  
-              <div class="kt-portlet__body">
-                <!--begin::Section-->
-                <div class="kt-section">
-                  <div class="kt-section__content">
-                    <button type="button" class="btn btn-outline-brand mb-4 add-more" data-toggle="modal" data-target="#editStudentModal">Thêm mới</button>
-					<div class="kt-datatable kt-datatable--default kt-datatable--brand">
-						<p id="empty-data" class="text-muted font-14 d-none">
-						  Không có dữ liệu
-						</p>
-					<table class="table table-bordered table-hover">
+            </div>
+
+            <div class="kt-portlet__body">
+              <!--begin::Section-->
+              <div class="kt-section">
+                <div class="kt-section__content">
+                  <button type="button" class="btn btn-outline-brand mb-4 add-button" data-toggle="modal"
+                    data-target="#editStudentModal">Thêm mới</button>
+                  <div class="kt-datatable kt-datatable--default kt-datatable--brand">
+                    <p id="empty-data" class="text-muted font-14 d-none">
+                      Không có dữ liệu
+                    </p>
+                    <table class="table table-bordered table-hover">
                       <thead class="thead-light">
                         <tr>
-                          <th>#</th>
                           <th>Họ tên</th>
                           <th>Tên đăng nhập</th>
                           <th>Số điện thoại</th>
@@ -59,26 +59,26 @@
                         </tr>
                       </thead>
                       <tbody id="table-body">
-                        
+
                       </tbody>
-					</table>
-					</div>
+                    </table>
                   </div>
                 </div>
-                <!--end::Section-->
               </div>
+              <!--end::Section-->
             </div>
           </div>
         </div>
       </div>
-      <!-- end:: Content -->
     </div>
-    {{> editAdministratorModal}}
-  </template>
+    <!-- end:: Content -->
+  </div>
+  {{> editAdministratorModal}}
+</template>
 
 
 <template name="editAdministratorModal">
-    <div class="modal fade" id="editAdministratorModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  <div class="modal fade" id="editAdministratorModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
@@ -91,56 +91,82 @@
           <form class="kt-form kt-form--label-right">
             <div class="kt-portlet__body">
               <div class="form-group row">
-                <label for="example-text-input" class="col-2 col-form-label required-input-label">Họ tên</label>
-                <div class="col-10">
+                <label for="example-text-input" class="col-3 col-form-label required-input-label">Họ tên</label>
+                <div class="col-8">
                   <input class="form-control" type="text" name="name" id="name-input">
                 </div>
               </div>
               <div class="form-group row">
-                <label for="example-search-input" class="col-2 col-form-label required-input-label">Tên Đăng nhập</label>
-                <div class="col-10">
+                <label for="example-search-input" class="col-3 col-form-label required-input-label">Tên Đăng
+                  nhập</label>
+                <div class="col-8">
                   <input class="form-control" type="text" name="username" id="username-input">
                 </div>
               </div>
               <div class="form-group row">
-                <label for="example-email-input" class="col-2 col-form-label required-input-label">Mật khẩu</label>
-                <div class="col-10">
+                <label for="example-email-input" class="col-3 col-form-label required-input-label">Mật khẩu</label>
+                <div class="col-8">
                   <input class="form-control" type="password" name="password" id="address-input">
                 </div>
               </div>
               <div class="form-group row">
-                <label for="example-url-input" class="col-2 col-form-label required-input-label">Số điện thoại</label>
-                <div class="col-10">
-                  <input class="form-control" type="text" value="https://getbootstrap.com" name="phoneNumber" id="phonenumber-input">
+                <label for="example-url-input" class="col-3 col-form-label required-input-label">Số điện thoại</label>
+                <div class="col-8">
+                  <input class="form-control" type="text" name="phoneNumber" id="phonenumber-input">
                 </div>
               </div>
               <div class="form-group row">
-                <label for="example-tel-input" class="col-2 col-form-label">Email</label>
-                <div class="col-10">
-                  <input class="form-control" type="text" value="1-(555)-555-5555" name="email" id="email-input">
+                <label for="example-tel-input" class="col-3 col-form-label">Email</label>
+                <div class="col-8">
+                  <input class="form-control" type="text" name="email" id="email-input">
                 </div>
               </div>
+              {{#if isSuperadmin}}
               <div class="form-group row">
-                <label for="example-tel-input" class="col-2 col-form-label required-input-label">Loại admin</label>
-                <div class="col-10">
-                  <input class="form-control" type="text" value="1-(555)-555-5555" name="adminType" id="admintype-input">
+                <label for="example-tel-input" class="col-3 col-form-label required-input-label">Loại admin</label>
+                <div class="col-8">
+                  <select class="form-control" name="adminType" id="admintype-input">
+                    <option value="0">Quản trị viên tổng</option>
+                    <option value="1">Quản trị viên trường</option>
+                  </select>
                 </div>
               </div>
-              <!-- <div class="form-group row">
-                <label for="example-date-input" class="col-2 col-form-label">Ảnh đại diện</label>
-                <div class="col-10">
-                  <input class="form-control" type="text" value="2011-08-19" name="avatar" id="avatar-input">
+              <div class="form-group row kt-hidden">
+                <label for="example-tel-input" class="col-3 col-form-label required-input-label">Chọn trường</label>
+                <div class="col-8">
+                  <select class="form-control" name="school" id="school-input">
+                    {{#each schools}}
+                    <option value="{{_id}}">{{name}}</option>
+                    {{/each}}
+                  </select>
                 </div>
-              </div> -->
+              </div>
+              {{/if}}
+              <div class="form-group row">
+                <label for="example-date-input" class="col-3 col-form-label">Ảnh đại diện</label>
+                <div class="col-4">
+                  <div class="dropzone dropzone-default dropzone-brand" id="kt_dropzone_1">
+                    <div class="dropzone-msg dz-message needsclick">
+                      <h3 class="dropzone-msg-title">Kéo ảnh hoặc click để chọn ảnh.</h3>
+                      <span class="dropzone-msg-desc"><strong>jpg, jpeg, png ...</strong></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="avatabox kt-hidden">
+                    <img src="" alt="avata" id="avata">
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary cancel-button" data-dismiss="modal">Hủy</button>
-              <button type="submit" class="btn btn-primary confirm-button" >Xác nhận</button>
+              <button type="submit" class="btn btn-primary confirm-button">Xác nhận</button>
             </div>
           </form>
         </div>
-        
+
       </div>
     </div>
   </div>
-  </template>
+</template>

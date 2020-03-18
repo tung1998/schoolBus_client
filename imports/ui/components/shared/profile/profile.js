@@ -2,7 +2,6 @@ import './profile.html';
 import {
     MeteorCall,
     handleError,
-    passChangeHandleError,
     handleSuccess,
     makeID,
 } from "../../../../functions";
@@ -14,19 +13,18 @@ const Cookies = require("js-cookie");
 
 
 let accessToken;
-let userID = Session.get(_SESSION.userID);
+let userID;
 
 Template.profile.onCreated(() => {
     accessToken = Cookies.get("accessToken");
+    userID = Cookies.get(_SESSION.userID);
 });
 
 Template.profile.onRendered(() => {
     initDropzoneProfile()
 
 
-    MeteorCall(_METHODS.user.GetCurrentInfor, {
-        userID: userID
-    }, accessToken).then(result => {
+    MeteorCall(_METHODS.user.GetCurrentInfor, null, accessToken).then(result => {
         Session.set(_SESSION.username, result.username);
         //$(document).ready(() => {
         //type: 0 ADMIN, schoolID = null
@@ -39,8 +37,7 @@ Template.profile.onRendered(() => {
             }
             if (result.image == null) {
                 userData.image = "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-            }
-            else {
+            } else {
                 userData.image = `http://123.24.137.209:3000/images/${result.image}/0`
             }
             console.log(userData.image);
@@ -60,8 +57,7 @@ Template.profile.onRendered(() => {
             }
             if (result.image == null) {
                 userData.image = "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-            }
-            else {
+            } else {
                 userData.image = `http://123.24.137.209:3000/images/${result.image}/0`
             }
             $(".name").val(userData.name);
@@ -78,6 +74,7 @@ Template.profile.rendered = () => {
     console.log($(".kt-portlet__body").height())
     Session.set(_SESSION.mapHeight, $(".kt-portlet__body").height());
 }
+
 Template.profile.events({
     'submit form': appendNewPass,
     'click #image-confirm-button': editAvatarProfile,
@@ -101,7 +98,7 @@ function appendNewPass(event) {
     console.log(data.username)
     MeteorCall(_METHODS.token.LoginByUsername, data, null).then(result => {
         if (checkNewPass(oldPass, newPass)) {
-            passChangeHandleError(null, "Mật khẩu cũ và mới không được giống nhau!")
+            handleError(null, "Mật khẩu cũ và mới không được giống nhau!")
         } else {
             if (checkNewPass(newPass, confirmation)) {
                 MeteorCall(_METHODS.user.UpdatePassword, {
@@ -115,7 +112,7 @@ function appendNewPass(event) {
                     })
                     .catch(handleError);
             } else {
-                passChangeHandleError(null, "Xác nhận mật khẩu sai!")
+                handleError(null, "Xác nhận mật khẩu sai!")
             }
         }
     }).catch(handleError)
@@ -135,26 +132,27 @@ async function editAvatarProfile() {
                 let imageId = makeID("user")
                 let BASE64 = imagePreview.find('div.dz-image').find('img').attr('src')
                 let importImage = await MeteorCall(_METHODS.image.Import, {
-                  imageId,
-                  BASE64: [BASE64]
+                    imageId,
+                    BASE64: [BASE64]
                 }, accessToken)
                 if (importImage.error)
-                  handleError(result, "Không tải được ảnh lên server!")
+                    handleError(result, "Không tải được ảnh lên server!")
                 else data.image = imageId
-              }
-        }
-        else {
+            }
+        } else {
             Swal.fire({
                 icon: "error",
                 text: "Bạn chưa chọn ảnh!",
                 timer: 3000
-              })
+            })
         }
         await MeteorCall(_METHODS.user.Update, data, accessToken)
         handleSuccess("Đổi", "ảnh").then(() => {
-            $('#editparentModal').modal("hide")
-          })
-          console.log("đã update");
+            $('#editUploadImageModal').modal("hide")
+            $('.kt-avatar__holder').css("background-image", `url(http://123.24.137.209:3000/images/${data.image}/0)`)
+
+        })
+        console.log("đã update");
     } catch (error) {
         handleError(error)
     }
@@ -175,17 +173,16 @@ function initDropzoneProfile() {
         dictRemoveFile: `<hr/><button type="button" class="btn btn-outline-hover-dark btn-icon btn-circle"><i class="fas fa-trash"></i></button>`,
     })
 
-    myDropzone.on('complete', function(file) {
-        $('.kt-avatar__upload').on('click', function() {
+    myDropzone.on('complete', function (file) {
+        $('.kt-avatar__upload').on('click', function () {
             myDropzone.removeFile(file)
             $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
         })
 
-        $('a.dz-remove').on('click', function(){
+        $('a.dz-remove').on('click', function () {
             $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
         })
         $('.dropzone-msg-title').html("Đã chọn ảnh, xóa ảnh để chọn ảnh mới")
-        
         myDropzone.disable()
     })
 

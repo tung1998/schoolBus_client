@@ -156,7 +156,7 @@ function checkForm() {
   if (check == false) {
     Swal.fire({
       icon: "error",
-      text: "Làm ơn điền đầy đủ thông tin",
+      text: "Chưa đủ thông tin!",
       timer: 3000
     })
     return false

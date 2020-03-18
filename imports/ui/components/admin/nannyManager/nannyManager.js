@@ -169,7 +169,7 @@ function checkInput() {
     if (!identityCard || !name || !address || !phone || !identityCardDate || !identityCardBy || !status) {
         Swal.fire({
             icon: "error",
-            text: "Làm ơn điền đầy đủ thông tin",
+            text: "Chưa đủ thông tin!",
             timer: 3000
         })
         return false;
