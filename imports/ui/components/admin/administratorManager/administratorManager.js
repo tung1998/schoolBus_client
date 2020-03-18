@@ -100,6 +100,12 @@ function ClickModifyButton(event) {
     } else {
         $('.avatabox').addClass('kt-hidden')
     }
+
+    if (adminData.adminType == 0) $('#school-input').parent().parent().addClass('kt-hidden')
+    else {
+        $('#school-input').val(adminData.schoolID).trigger('change')
+        $('#school-input').parent().parent().removeClass('kt-hidden')
+    }
     dropzone.removeAllFiles(true)
 }
 
@@ -179,7 +185,7 @@ function checkInput() {
     let admintype = $("#admintype-input").val();
     let username = $("#username-input").val();
 
-    if (admintype == null || !name || !address || !phone || !username) {
+    if (admintype == null || !name || !phone || !username) {
         Swal.fire({
             icon: "error",
             text: "Chưa đủ thông tin!",
@@ -221,6 +227,7 @@ function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
 
 function createRow(data, index) {
     // _id is tripID
+    console.log(data);
     let item = {
         _id: data._id,
         name: data.user.name,
@@ -230,6 +237,13 @@ function createRow(data, index) {
         adminType: data.adminType,
         image: data.user.image
     }
+    if (data.schoolID != null) {
+        item.schoolID = data.schoolID
+        item.schoolName = data.school.name
+    }
+    else {
+        item.schoolName = ''
+    }
     return `
         <tr id="${item._id}" class="table-row">
             <td>${item.name}</td>
@@ -237,6 +251,7 @@ function createRow(data, index) {
             <td>${item.phone}</td>
             <td>${item.email}</td>
             <td>${item.adminType==0?"Quản trị viên tổng":"Quản trị viên trường"}</td>
+            <td>${item.schoolName}</td>
             <td>
                 <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
                     item

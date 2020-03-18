@@ -70,7 +70,7 @@ Template.editClassModal.helpers({
 });
 
 
-function renderTeacherName() {
+function renderTeacherName(teacherID = '') {
   let _id = $('#school-input').val()
   MeteorCall(_METHODS.teacher.GetBySchoolID, {
       _id
@@ -84,6 +84,9 @@ function renderTeacherName() {
         placeholder: "Chọn giáo viên",
         width: "100%"
       })
+      if (teacherID != '') {
+        $("#teacher-select").val(teacherID).trigger('change')
+      }
     })
     .catch(handleError)
 
@@ -104,9 +107,16 @@ function ClickModifyButton(event) {
   $(".confirm-button").html("Sửa");
 
   $("input[name='className']").val(classData.name);
-  $("teacher-select").val(classData.teacherID).trigger('change')
+
   if (Session.get(_SESSION.isSuperadmin)) {
-    $('#school-input').val(teacherData.schoolID).trigger('change')
+    $('#school-input').val(classData.schoolID).select2({
+      width: "100%"
+    })
+    renderTeacherName(classData.teacherID)
+
+
+  } else {
+    $("#teacher-select").val(classData.teacherID).trigger('change')
   }
   $("#editClassModal").modal("show");
 }
@@ -123,7 +133,7 @@ function SubmitForm(event) {
     };
     if (Session.get(_SESSION.isSuperadmin)) {
       data.schoolID = $('#school-input').val()
-      data.schoolName = $('#select2-school-select-container').attr('title')
+      data.schoolName = $('#select2-school-input-container').attr('title')
     }
     let modify = $("#editClassModal").attr("classID");
     if (modify == "") {

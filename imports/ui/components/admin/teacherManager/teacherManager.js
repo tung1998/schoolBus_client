@@ -209,7 +209,7 @@ function checkInput() {
   let phone = $('input[name="phoneNumber"]').val();
   let email = $('input[name="email"]').val();
 
-  if (!schoolID || !name || !phone || !email) {
+  if (!name || !phone || !email) {
     Swal.fire({
       icon: "error",
       text: "Chưa đủ thông tin!",

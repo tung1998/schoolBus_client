@@ -5,14 +5,17 @@ const Cookies = require("js-cookie");
 import {
     MeteorCall,
     handleError,
+    handleSuccess,
+    handleConfirm,
     addRequiredInputLabel,
     addPaging,
-    tablePaging
+    tablePaging,
 } from "../../../../functions";
 
 import {
     _METHODS,
-    LIMIT_DOCUMENT_PAGE
+    LIMIT_DOCUMENT_PAGE,
+    _SESSION
 } from "../../../../variableConst";
 
 let accessToken;
@@ -20,12 +23,20 @@ let currentPage = 1;
 
 Template.carModelManager.onCreated(() => {
     accessToken = Cookies.get("accessToken");
+    Session.set(_SESSION.isSuperadmin, true)
+    Session.set('schools', [])
 });
 
 Template.carModelManager.onRendered(() => {
     addRequiredInputLabel()
     addPaging()
     reloadTable(1);
+
+    MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
+        Session.set(_SESSION.isSuperadmin, result)
+        if (result)
+            initSchoolSelect2()
+    }).catch(handleError)
 })
 
 Template.carModelManager.events({
@@ -42,6 +53,15 @@ Template.carModelManager.events({
     "change #limit-doc": (e) => {
         reloadTable(1, getLimitDocPerPage());
     }
+});
+
+Template.editCarModelModal.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    },
+    schools() {
+        return Session.get('schools')
+    },
 });
 
 function ClickAddmoreButton(event) {
@@ -68,17 +88,30 @@ function ClickModifyButton(event) {
     $('input[name="capacity-input"]').val(carData.fuelCapacity);
     $('input[name="maintenance-input"]').val(carData.maintenanceDay);
     $('input[name="km-input"]').val(carData.maintenanceDistance);
-
+    if (Session.get(_SESSION.isSuperadmin)) {
+        $('#school-input').val(carData.schoolID).trigger('change')
+    }
 }
 
 function ClickDeleteButton(event) {
-    let data = $(event.currentTarget).data("json");
-    console.log(data._id)
-    MeteorCall(_METHODS.carModel.Delete, data, accessToken)
-        .then(result => {
-            reloadTable(currentPage, getLimitDocPerPage())
-        })
-        .catch(handleError);
+    handleConfirm().then(result => {
+        console.log(result);
+        if (result.value) {
+            let data = $(event.currentTarget).data("json");
+            MeteorCall(_METHODS.carModel.Delete, data, accessToken)
+                .then(result => {
+                    console.log(result);
+                    Swal.fire({
+                        icon: "success",
+                        text: "Đã xóa thành công",
+                        timer: 3000
+                    })
+                    reloadTable(currentPage, getLimitDocPerPage())
+                }).catch(handleError)
+        } else {
+
+        }
+    })
 }
 
 function SubmitForm(event) {
@@ -93,23 +126,29 @@ function SubmitForm(event) {
             maintenanceDay: $('input[name="maintenance-input"]').val(),
             maintenanceDistance: $('input[name="km-input"]').val()
         }
+        if (Session.get(_SESSION.isSuperadmin)) {
+            data.schoolID = $('#school-input').val()
+        }
 
         let modify = $("#editCarModelModal").attr("carID");
         console.log(data)
         if (modify == "") {
             MeteorCall(_METHODS.carModel.Create, data, accessToken)
                 .then(result => {
-                    console.log(result);
-                    $("#editCarModelModal").modal("hide");
-                    reloadTable(1, getLimitDocPerPage())
+                    handleSuccess("Thêm", "loại xe").then(() => {
+                        $("#editCarModelModal").modal("hide");
+                        reloadTable(1, getLimitDocPerPage())
+                    })
                 }).catch(handleError);
         } else {
             data._id = modify;
             MeteorCall(_METHODS.carModel.Update, data, accessToken)
                 .then(result => {
                     console.log(result);
-                    $("#editCarModelModal").modal("hide");
-                    reloadTable(currentPage, getLimitDocPerPage())
+                    handleSuccess("Cập nhật", "loại xe").then(() => {
+                        $("#editStudentModal").modal("hide");
+                        reloadTable(currentPage, getLimitDocPerPage())
+                    })
                 })
                 .catch(handleError);
         }
@@ -125,6 +164,10 @@ function clearForm() {
     $('input[name="capacity-input"]').val("");
     $('input[name="maintenance-input"]').val("");
     $('input[name="km-input"]').val("");
+
+    if (Session.get(_SESSION.isSuperadmin)) {
+        $('#school-input').val('').trigger('change')
+    }
 }
 
 function checkInput() {
@@ -144,6 +187,18 @@ function checkInput() {
         })
         return false;
     } else {
+        if (Session.get(_SESSION.isSuperadmin)) {
+            let schoolID = $('#school-input').val()
+            if (!schoolID) {
+                Swal.fire({
+                    icon: "error",
+                    text: "Chưa chọn trường!",
+                    timer: 2000
+                })
+                return false;
+            }
+
+        }
         return true;
     }
 
@@ -157,7 +212,10 @@ function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
     let table = $('#table-body');
     let emptyWrapper = $('#empty-data');
     table.html('');
-    MeteorCall(_METHODS.carModel.GetByPage, { page: page, limit: limitDocPerPage }, accessToken).then(result => {
+    MeteorCall(_METHODS.carModel.GetByPage, {
+        page: page,
+        limit: limitDocPerPage
+    }, accessToken).then(result => {
         console.log(result)
         tablePaging(".tablePaging", result.count, page, limitDocPerPage)
         $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
@@ -231,4 +289,14 @@ function dataRow(result) {
         <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(result)}\'>Xóa</button>
         </td>
     `;
+}
+
+function initSchoolSelect2() {
+    MeteorCall(_METHODS.school.GetAll, null, accessToken).then(result => {
+        Session.set('schools', result.data)
+        $('#school-input').select2({
+            width: '100%',
+            placeholder: "Chọn trường"
+        })
+    }).catch(handleError)
 }
