@@ -19,7 +19,8 @@ import {
     tablePaging,
     getBase64,
     makeID,
-    initDropzone
+    initDropzone,
+    handlePaging
 } from "../../../../functions";
 
 import {
@@ -41,8 +42,7 @@ Template.studentManager.onRendered(() => {
     renderCarStopID();
     initSelect2()
     addRequiredInputLabel();
-    addPaging();
-    getLimitDocPerPage();
+    addPaging($('#studentTable'));
     reloadTable();
     dropzone = initDropzone("#kt_dropzone_1")
     this.dropzone = dropzone
@@ -317,68 +317,22 @@ function getLimitDocPerPage() {
 
 function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
     let table = $('#table-body');
-    let emptyWrapper = $('#empty-data');
-    table.html('');
     MeteorCall(_METHODS.student.GetByPage, { page: page, limit: limitDocPerPage }, accessToken).then(result => {
-        console.log(result)
-        tablePaging(".tablePaging", result.count, page, limitDocPerPage)
-        $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
-        if (result.count === 0) {
-            $('.tablePaging').addClass('d-none');
-            table.parent().addClass('d-none');
-            emptyWrapper.removeClass('d-none');
-        } else if (result.count > limitDocPerPage) {
-            $('.tablePaging').removeClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
-            // update số bản ghi
-        } else {
-            $('.tablePaging').addClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
-        }
+        handlePaging(table, result.count, page, limitDocPerPage)
         createTable(table, result, limitDocPerPage)
     })
 
 }
 
-function renderTable(data, page = 1) {
-    let table = $('#table-body');
-    let emptyWrapper = $('#empty-data');
-    table.html('');
-    tablePaging('.tablePaging', data.count, page);
-    if (carStops.count === 0) {
-        $('.tablePaging').addClass('d-none');
-        table.parent().addClass('d-none');
-        emptyWrapper.removeClass('d-none');
-    } else {
-        $('.tablePaging').addClass('d-none');
-        table.parent().removeClass('d-none');
-        emptyWrapper.addClass('d-none');
-    }
-
-    createTable(table, data);
-}
-
 function createTable(table, result, limitDocPerPage) {
-    result.data.forEach((key, index) => {
+    let htmlRow = result.data.map((key, index) => {
         key.index = index + (result.page - 1) * limitDocPerPage;
-        const row = createRow(key);
-        table.append(row);
+        return createRow(key);
     });
+    table.html(htmlRow.join(''))
 }
 
-function createRow(data) {
-    const data_row = dataRow(data);
-    // _id is tripID
-    return `
-        <tr id="${data._id}" class="table-row">
-          ${data_row}
-        </tr>
-        `
-}
-
-function dataRow(result) {
+function createRow(result) {
     let data = {
         _id: result._id,
         name: result.user.name,
@@ -395,8 +349,10 @@ function dataRow(result) {
         status: result.status,
         image: result.user.image
     }
+    // _id is tripID
     return `
-			<td>${result.index + 1}</td>
+        <tr id="${data._id}" class="table-row">
+            <td>${result.index + 1}</td>
             <td>${data.name}</td>
             <td>${data.address}</td>
             <td>${data.phone}</td>
@@ -406,12 +362,9 @@ function dataRow(result) {
             <td>${data.IDStudent}</td>
             <td>${data.carStop}</td>
             <td>
-            <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
-		data
-	)}\'>Sửa</button>
-            <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(
-		data
-	)}\'>Xóa</button>
+            <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
+            <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
             </td>
-    `;
+        </tr>
+        `
 }

@@ -37,11 +37,10 @@ Template.administratorManager.onRendered(() => {
             initSchoolSelect2()
     }).catch(handleError)
 
-    addPaging()
+    addPaging($('#administratorTable'))
     addRequiredInputLabel()
     reloadTable(1);
     dropzone = initDropzone("#kt_dropzone_1")
-    this.dropzone = dropzone
 });
 
 Template.administratorManager.onDestroyed(() => {
@@ -220,38 +219,44 @@ function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
         limit: limitDocPerPage
     }, accessToken).then(result => {
         handlePaging(table, result.count, page, limitDocPerPage)
-        let htmlRow = result.data.map(createRow);
-        table.html(htmlRow.join(''));
-
+        createTable(table, result, limitDocPerPage)
     })
-
 }
 
-function createRow(data, index) {
-    let item = {
-        _id: data._id,
-        name: data.user.name,
-        username: data.user.username,
-        phone: data.user.phone,
-        email: data.user.email,
-        adminType: data.adminType,
-        image: data.user.image,
-        schoolName: data.school ? data.school.name : ''
+function createTable(table, result, limitDocPerPage) {
+    let htmlRow = result.data.map((key, index) => {
+        key.index = index + (result.page - 1) * limitDocPerPage;
+        return createRow(key);
+    });
+    table.html(htmlRow.join(''))
+}
+
+function createRow(result, index) {
+    let data = {
+        _id: result._id,
+        name: result.user.name,
+        username: result.user.username,
+        phone: result.user.phone,
+        email: result.user.email,
+        adminType: result.adminType,
+        image: result.user.image,
+        schoolName: result.school ? result.school.name : ''
     }
     return `
-        <tr id="${item._id}" class="table-row">
-            <td>${item.name}</td>
-            <td>${item.username}</td>
-            <td>${item.phone}</td>
-            <td>${item.email}</td>
-            <td>${item.adminType==0?"Quản trị viên tổng":"Quản trị viên trường"}</td>
-            <td>${item.schoolName}</td>
+        <tr id="${data._id}" class="table-row">
+            <td>${result.index + 1}</td>
+            <td>${data.name}</td>
+            <td>${data.username}</td>
+            <td>${data.phone}</td>
+            <td>${data.email}</td>
+            <td>${data.adminType==0?"Quản trị viên tổng":"Quản trị viên trường"}</td>
+            <td>${data.schoolName}</td>
             <td>
                 <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
-                    item
+                    data
                 )}\'>Sửa</button>
                 <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(
-                    item
+                    data
                 )}\'>Xóa</button>
             </td>
         </tr>

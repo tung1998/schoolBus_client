@@ -127,28 +127,36 @@ function makeID(text = "", length = 15) {
     return text
 }
 
-function addPaging(tag = '.kt-datatable') {
-    $(tag).append(`
+function addPaging(table) {
+    table.after(`
         <div class="kt-datatable__pager">
-            <ul class="kt-datatable__pager-nav tablePaging">
-
+            <div></div>
+            <ul class="kt-datatable__pager-nav tablePaging pull-right">
             </ul>
-            <div class="kt-datatable__pager-info">
+        </div>
+    `)
+    table.before(`
+        <div class="kt-datatable__pager">
+            <div class="kt-datatable__pager-info paging-detail">
+                <div class="kt-datatable__pager-detail">Hiển thị 
                 <select id="limit-doc" data-width="60px" data-selected="10" tabindex="-98">
                     <option value="10">10</option>
                     <option value="20">20</option>
                     <option value="30">30</option>
                     <option value="50">50</option>
                     <option value="100">100</option>
-                </select>
-                <span class="kt-datatable__pager-detail" id="paging-detail">Hiển thị 10 bản ghi</span>
+                </select> bản ghi</div>
+            </div>
+            <div class="entries pull-right">
+                <p id="info-record" class="text-muted font-14 pull-right">
+                    <code id="document-page">0</code>/<code id="count">0</code> bản ghi
+                </p>
             </div>
         </div>
     `)
-    console.log("paging added")
 }
 
-function tablePaging(tag = '.tablePaging', count, page = 1, limit = LIMIT_DOCUMENT_PAGE) {
+function tablePaging(tablePagingEl, count, page = 1, limit = LIMIT_DOCUMENT_PAGE) {
     let totalPage = Math.ceil(count / limit);
     let start = page == 1 ? 'kt-datatable__pager-link--disabled disabledPaging' : ''
     let previous = page == 1 ? 'kt-datatable__pager-link--disabled disabledPaging' : ''
@@ -187,27 +195,36 @@ function tablePaging(tag = '.tablePaging', count, page = 1, limit = LIMIT_DOCUME
         </a>
     </li>
     `
-    $(tag).html(html);
-    $(".disabledPaging").attr("disabled", "disabled");
+    tablePagingEl.html(html);
+    $(".disabledPaging").prop("disabled", true);
 }
 
 function handlePaging(table, count, page, limitDocPerPage) {
-    emptyWrapper = $('#empty-data')
-    tablePaging(".tablePaging", count, page, limitDocPerPage)
-    $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
+    let emptyWrapper = $('#empty-data')
+    let documentPage = $("#document-page")
+    let tablePagingEl = $(".tablePaging")
+    let paggingDetail = $(".kt-datatable__pager-detail")
+    let countEl = $("#count")
+    countEl.html(count)
+
+    tablePagingEl.addClass('d-none');
+    paggingDetail.addClass('d-none');
+    table.parent().addClass('d-none');
+    emptyWrapper.addClass('d-none');
+
     if (count === 0) {
-        $('.tablePaging').addClass('d-none');
-        table.parent().addClass('d-none');
         emptyWrapper.removeClass('d-none');
     } else if (count > limitDocPerPage) {
-        $('.tablePaging').removeClass('d-none');
+        let startDocIndex = (page-1) * limitDocPerPage + 1
+        let endDocIndex = page * limitDocPerPage 
+        paggingDetail.removeClass('d-none');
+        tablePaging(tablePagingEl, count, page, limitDocPerPage)
+        tablePagingEl.removeClass('d-none');
         table.parent().removeClass('d-none');
-        emptyWrapper.addClass('d-none');
-        // update số bản ghi
+        documentPage.html(`${startDocIndex}-${endDocIndex<count?endDocIndex:count}`)
     } else {
-        $('.tablePaging').addClass('d-none');
+        documentPage.html(`1-${count}`)
         table.parent().removeClass('d-none');
-        emptyWrapper.addClass('d-none');
     }
 }
 
