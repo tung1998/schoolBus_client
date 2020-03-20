@@ -248,13 +248,7 @@ function createRow(result, index) {
         image: result.user.image,
         schoolName: result.school ? result.school.name : ''
     }
-    if (data.schoolID != null) {
-        item.schoolID = data.schoolID
-        item.schoolName = data.school.name
-    }
-    else {
-        item.schoolName = ''
-    }
+   
     return `
         <tr id="${data._id}" class="table-row">
             <td>${result.index + 1}</td>

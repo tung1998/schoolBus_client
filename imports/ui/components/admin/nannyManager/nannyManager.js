@@ -9,10 +9,9 @@ import {
     handleConfirm,
     addRequiredInputLabel,
     addPaging,
-    tablePaging,
-    getBase64,
     makeID,
-    initDropzone
+    initDropzone,
+    handlePaging
 } from "../../../../functions";
 
 import {
@@ -36,8 +35,8 @@ Template.nannyManager.onCreated(() => {
 Template.nannyManager.onRendered(() => {
     reloadTable();
     addRequiredInputLabel()
-    addPaging()
-    reloadTable(1);
+    addPaging($('#nannyTable'))
+    reloadTable();
     dropzone = initDropzone("#kt_dropzone_1")
     this.dropzone = dropzone
 
@@ -255,101 +254,57 @@ function getLimitDocPerPage() {
 
 function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
     let table = $('#table-body');
-    let emptyWrapper = $('#empty-data');
-    table.html('');
     MeteorCall(_METHODS.Nanny.GetByPage, {
         page: page,
         limit: limitDocPerPage
     }, accessToken).then(result => {
-        console.log(result)
-        tablePaging(".tablePaging", result.count, page, limitDocPerPage)
-        $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
-        if (result.count === 0) {
-            $('.tablePaging').addClass('d-none');
-            table.parent().addClass('d-none');
-            emptyWrapper.removeClass('d-none');
-        } else if (result.count > limitDocPerPage) {
-            $('.tablePaging').removeClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
-            // update số bản ghi
-        } else {
-            $('.tablePaging').addClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
-        }
+        handlePaging(table, result.count, page, limitDocPerPage)
         createTable(table, result, limitDocPerPage)
     })
 
 }
 
-function renderTable(data, page = 1) {
-    let table = $('#table-body');
-    let emptyWrapper = $('#empty-data');
-    table.html('');
-    tablePaging('.tablePaging', data.count, page);
-    if (carStops.count === 0) {
-        $('.tablePaging').addClass('d-none');
-        table.parent().addClass('d-none');
-        emptyWrapper.removeClass('d-none');
-    } else {
-        $('.tablePaging').addClass('d-none');
-        table.parent().removeClass('d-none');
-        emptyWrapper.addClass('d-none');
-    }
-
-    createTable(table, data);
-}
-
 function createTable(table, result, limitDocPerPage) {
-    result.data.forEach((key, index) => {
+    let htmlRow = result.data.map((key, index) => {
         key.index = index + (result.page - 1) * limitDocPerPage;
-        const row = createRow(key);
-        table.append(row);
+        return createRow(key)
     });
+    table.html(htmlRow.join(''))
 }
 
-function createRow(data) {
-    const data_row = dataRow(data);
-    // _id is tripID
+function createRow(result) {
+    let data = {
+        _id: result._id,
+        name: result.user.name,
+        phone: result.user.phone,
+        email: result.user.email,
+        username: result.user.username,
+        address: result.address,
+        schoolID: result.schoolID,
+        IDNumber: result.IDNumber,
+        IDIssueDate: result.IDIssueDate,
+        IDIssueBy: result.IDIssueBy,
+        status: result.status,
+        image: result.image
+    }
     return `
         <tr id="${data._id}" class="table-row">
-          ${data_row}
+            <th scope="row">${result.index + 1}</th>
+            <td>${data.name}</td>
+            <td>${data.username}</td>
+            <td>${data.phone}</td>
+            <td>${data.email}</td>
+            <td>${data.address}</td>
+            <td>${data.IDNumber}</td>
+            <td>${data.IDIssueDate}</td>
+            <td>${data.IDIssueBy}</td>
+            <td>${data.status}</td>
+            <td>
+                <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
+                <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
+            </td>
         </tr>
         `
-}
-
-function dataRow(data) {
-    let dt = {
-        _id: data._id,
-        name: data.user.name,
-        phone: data.user.phone,
-        email: data.user.email,
-        username: data.user.username,
-        address: data.address,
-        schoolID: result.schoolID,
-        IDNumber: data.IDNumber,
-        IDIssueDate: data.IDIssueDate,
-        IDIssueBy: data.IDIssueBy,
-        status: data.status,
-        image: data.image
-    }
-    return `
-            <th scope="row">${data.index + 1}</th>
-            <td>${dt.name}</td>
-            <td>${dt.username}</td>
-            <td>${dt.phone}</td>
-            <td>${dt.email}</td>
-            <td>${dt.address}</td>
-            <td>${dt.IDNumber}</td>
-            <td>${dt.IDIssueDate}</td>
-            <td>${dt.IDIssueBy}</td>
-            <td>${dt.status}</td>
-            <td>
-                <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(dt)}\'>Sửa</button>
-                <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(dt)}\'>Xóa</button>
-            </td>
-        </tr>`
 }
 
 function initSchoolSelect2() {
