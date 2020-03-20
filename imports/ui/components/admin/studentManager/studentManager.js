@@ -82,21 +82,24 @@ function dzPreviewClick() {
 }
 
 function renderClassName(classID = '') {
-    MeteorCall(_METHODS.class.GetAll, {}, accessToken)
-        .then(result => {
-            let optionSelects = result.data.map((key) => {
-                if (key.schoolID === $('#school-input').val()) {
-                    return `<option value="${key._id}">${key.name}</option>`;
+    let schoolID = $('#school-input').val()
+    if (schoolID != '') {
+        MeteorCall(_METHODS.class.GetAll, {}, accessToken)
+            .then(result => {
+                let optionSelects = result.data.map((key) => {
+                    if (key.schoolID === schoolID) {
+                        return `<option value="${key._id}">${key.name}</option>`;
+                    }
+                });
+
+                $("#student-select").html('<option></option>').append(optionSelects.join(" "));
+
+                if (classID != '') {
+                    $("#student-select").val(classID).trigger('change')
                 }
-            });
-
-            $("#student-select").html('<option></option>').append(optionSelects.join(" "));
-
-            if (classID != '') {
-                $("#student-select").val(classID).trigger('change')
-            }
-        })
-        .catch(handleError);
+            })
+            .catch(handleError);
+    }
 }
 
 function renderCarStopID() {
@@ -402,7 +405,8 @@ function initSchoolSelect2() {
     MeteorCall(_METHODS.school.GetAll, null, accessToken).then(result => {
         Session.set('schools', result.data)
         $('#school-input').select2({
-            width: '100%'
+            width: '100%',
+            placeholder: 'Chọn trường'
         })
     }).catch(handleError)
 }

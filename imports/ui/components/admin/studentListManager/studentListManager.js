@@ -13,12 +13,13 @@ import {
     handleSuccess,
     addRequiredInputLabel,
     addPaging,
-    tablePaging,
+    handlePaging
 } from '../../../../functions';
 
 import {
     _METHODS,
-    LIMIT_DOCUMENT_PAGE
+    LIMIT_DOCUMENT_PAGE,
+    _SESSION
 } from '../../../../variableConst';
 
 let accessToken;
@@ -30,8 +31,8 @@ Template.studentListManager.onCreated(() => {
 
 Template.studentListManager.onRendered(() => {
     addRequiredInputLabel();
-    addPaging();
-    reloadTable(1);
+    addPaging($('studentListTable'));
+    reloadTable();
 });
 
 Template.studentListManager.events({
@@ -122,79 +123,36 @@ function getLimitDocPerPage() {
 }
 
 function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
-    let table = $('#studentListData');
-    let emptyWrapper = $('#empty-data');
-    table.html('');
+    let table = $('#table-body');
     MeteorCall(_METHODS.studentList.GetByPage, { page: page, limit: limitDocPerPage }, accessToken).then(result => {
-        console.log(result)
-        tablePaging(".tablePaging", result.count, page, limitDocPerPage)
-        $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
-        if (result.count === 0) {
-            $('.tablePaging').addClass('d-none');
-            table.parent().addClass('d-none');
-            emptyWrapper.removeClass('d-none');
-        } else if (result.count > limitDocPerPage) {
-            $('.tablePaging').removeClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
-            // update số bản ghi
-        } else {
-            $('.tablePaging').addClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
-        }
+        handlePaging(table, result.count, page, limitDocPerPage)
         createTable(table, result, limitDocPerPage)
     })
 
 }
 
-function renderTable(data, page = 1) {
-    let table = $('#studentListData');
-    let emptyWrapper = $('#empty-data');
-    table.html('');
-    tablePaging('.tablePaging', data.count, page);
-    if (carStops.count === 0) {
-        $('.tablePaging').addClass('d-none');
-        table.parent().addClass('d-none');
-        emptyWrapper.removeClass('d-none');
-    } else {
-        $('.tablePaging').addClass('d-none');
-        table.parent().removeClass('d-none');
-        emptyWrapper.addClass('d-none');
-    }
-
-    createTable(table, data);
-}
-
 function createTable(table, result, limitDocPerPage) {
-    result.data.forEach((key, index) => {
+    let htmlRow = result.data.map((key, index) => {
         key.index = index + (result.page - 1) * limitDocPerPage;
-        const row = createRow(key);
-        table.append(row);
+        return createRow(key);
     });
+    table.html(htmlRow.join(''));
 }
 
-function createRow(data) {
-    const data_row = dataRow(data);
-    // _id is tripID
+function createRow(result) {
+    let data = {
+        _id: result._id,
+        name: result.name,
+    }
     return `
         <tr id="${data._id}" class="table-row">
-          ${data_row}
+            <td>${result.index + 1}</td>
+            <td>${data.name}</td>
+            <td>${moment(data.createdTime).format('l')}</td>
+            <td>
+            <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
+            <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
+            </td>
         </tr>
         `
-}
-
-function dataRow(data) {
-    let item = {
-        _id: data._id,
-        name: data.name,
-    }
-    return `
-                <td>${data.index}</td>
-                <td>${item.name}</td>
-                <td>${moment(item.createdTime).format('l')}</td>
-                <td>
-                <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(item)}\'>Sửa</button>
-                <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(item)}\'>Xóa</button>
-                </td>`
 }

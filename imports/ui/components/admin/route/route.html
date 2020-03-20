@@ -44,7 +44,7 @@
                                         <p id="empty-data" class="text-muted font-14 d-none">
                                             Không có dữ liệu
                                         </p>
-                                        <table class="table table-bordered table-hover">
+                                        <table class="table table-bordered table-hover" id="routeTable">
                                             <thead class="thead-light">
                                                 <tr>
                                                     <th>#</th>
@@ -55,7 +55,7 @@
                                                     <th>Nhóm học sinh</th>
                                                 </tr>
                                             </thead>
-                                            <tbody id="routeData">
+                                            <tbody id="table-body">
                                             </tbody>
                                         </table>
                                     </div>
@@ -85,7 +85,8 @@
                 <div class="modal-body">
                     <form>
                         <div class="form-group">
-                            <label for="route-name" class="form-control-label required-input-label">Tên cung đường:</label>
+                            <label for="route-name" class="form-control-label required-input-label">Tên cung
+                                đường:</label>
                             <input type="text" class="form-control" id="route-name">
                         </div>
                         <div class="form-group">
