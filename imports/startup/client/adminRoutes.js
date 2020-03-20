@@ -282,6 +282,7 @@ FlowRouter.route('/moduleManager', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'moduleManager',
+            panel: 'panel'
         })
     }
 });
