@@ -21,8 +21,9 @@ function loginButtonClick() {
         password: $('#password').val()
     }
     MeteorCall(_METHODS.token.LoginByUsername, data, null).then(result => {
-        console.log(result)
         Cookies.set("accessToken", result.access_token)
         FlowRouter.go('/profile')
-    }).catch(handleError)
+    }).catch(error=>{
+        handleError(error, "Sai tài khoản hoặc mật khẩu!")
+    })
 }

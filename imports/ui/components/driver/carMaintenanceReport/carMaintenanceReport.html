@@ -28,36 +28,30 @@
             </h3>
           </div>
         </div>
-        <form
-          class="kt-form kt-form--label-right carMaintenanceReport-form"
-          id="kt_form_1"
-          novalidate="novalidate"
-        >
+        
           <div class="kt-portlet__body">
-            <div class="form-group row">
-              <label class="col-lg-3 col-form-label">Tên Lái xe</label>
+            <form>
+              <!-- <div class="form-group row">
+              <label class="col-lg-3 col-form-label required-input-label">Tên Lái xe</label>
               <div class="col-lg-6">
-                <input
-                  required
-                  type="email"
+                <input 
+                  type="text"
+                  id="name"
                   class="form-control"
                   placeholder="Nhập tên đầy đủ"
                 />
               </div>
-            </div>
+            </div> -->
             <div class="form-group row">
-              <label class="col-lg-3 col-form-label">Biển số</label>
+              <label class="col-lg-3 col-form-label required-input-label">Biển số xe</label>
               <div class="col-lg-6">
-                <input
-                  required
-                  type="email"
-                  class="form-control"
-                  placeholder="Nhập biển số"
-                />
+                <select id="carSelect" class="form-control">
+
+                </select>
               </div>
             </div>
-            <div class="form-group row">
-              <label class="col-form-label col-lg-3 col-sm-12">Ngày</label>
+            <!-- <div class="form-group row">
+              <label class="col-form-label col-lg-3 col-sm-12 required-input-label">Ngày</label>
               <div class="col-lg-4 col-md-9 col-sm-12">
                 <div class="input-group">
                   <input
@@ -74,33 +68,39 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div> -->
             <div class="form-group row">
-              <label class="col-form-label col-lg-3 col-sm-12">Giờ</label>
-              <div class="col-lg-4 col-md-9 col-sm-12">
-                <div class="input-group date">
-                  <input
-                    class="form-control"
-                    id="kt_timepicker"
-                    placeholder="Select time"
-                    name="time"
-                    type="text"
-                    aria-describedby="kt_timepicker-error"
-                    aria-invalid="false"
-                  />
-                  <div class="input-group-append">
-                    <span class="input-group-text"
-                      ><i class="la la-clock-o"></i
-                    ></span>
-                  </div>
-                </div>
+              <label class="col-lg-3 col-form-label required-input-label">Giá thành</label>
+              <div class="col-lg-6">
+                <input
+                  type="text"
+                  id="cost"
+                  class="form-control"
+                  placeholder="Nhập chi phí"
+                />
               </div>
             </div>
             <div class="form-group row">
-              <label class="col-form-label col-lg-3 col-sm-12">Ghi chú</label>
+              <label class="col-lg-3 col-form-label required-input-label">Chọn loại chi phí</label>
+              <div class="col-lg-6">
+                <select id="selectType">
+                  <option value="0">Đổ xăng</option>
+                  <option value="1">Bảo dưỡng</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group row volumeRow">
+              <label class="col-lg-3 col-form-label required-input-label">Thể tích</label>
+              <div class="col-lg-6">
+                <input type="text" id="volume">
+              </div>
+            </div>
+            <div class="form-group row noteRow">
+              <label class="col-form-label col-lg-3 col-sm-12 required-input-label">Ghi chú</label>
               <div class="col-lg-4 col-md-9 col-sm-12">
                 <textarea
                   placeholder="nhập lý do"
+                  id="note"
                   name="markdown"
                   class="form-control md-input"
                   data-provide="markdown"
@@ -109,22 +109,13 @@
                 ></textarea>
               </div>
             </div>
-            <div class="kt-portlet__foot">
-              <div class=" ">
-                <div class="row">
-                  <div class="col-lg-9 ml-lg-auto">
-                    <button type="submit" class="btn btn-success">
-                      Xác Nhận
-                    </button>
-                    <button type="reset" class="btn btn-secondary">
-                      Hủy Bỏ
-                    </button>
-                  </div>
-                </div>
-              </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel-button">Hủy</button>
+              <button type="submit" class="btn btn-primary" id="confirm-button">Xác nhận</button>
             </div>
+          </form>
           </div>
-        </form>
+        
       </div>
     </div>
   </div>
@@ -154,9 +145,9 @@
               <thead class="thead-inverse">
                 <tr>
                     <th>#</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Username</th>
+                    <th>Thời gian</th>
+                    <th>Giá thành</th>
+                    <th>Nội dung</th>
                 </tr>
               </thead>
               <tbody>

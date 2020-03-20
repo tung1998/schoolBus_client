@@ -10,6 +10,7 @@ import {
     handlePaging,
     initDropzone,
     makeID,
+    handleSuccess,
 } from "../../../../functions";
 
 import {
@@ -36,11 +37,10 @@ Template.administratorManager.onRendered(() => {
             initSchoolSelect2()
     }).catch(handleError)
 
-    addPaging()
+    addPaging($('#administratorTable'))
     addRequiredInputLabel()
     reloadTable(1);
     dropzone = initDropzone("#kt_dropzone_1")
-    this.dropzone = dropzone
 });
 
 Template.administratorManager.onDestroyed(() => {
@@ -128,10 +128,13 @@ async function SubmitForm(event) {
             username: target.username.value,
             phone: target.phoneNumber.value,
             email: target.email.value,
-            adminType: target.adminType.value,
             password: target.password.value
         };
-        if (Session.get(_SESSION.isSuperadmin) && data.adminType == 1) data.schoolID = target.school.value
+
+        if (Session.get(_SESSION.isSuperadmin)) {
+            data.adminType == Number(target.adminType.value)
+            if (data.adminType == 1) data.schoolID = target.school.value
+        }
         let imagePreview = $('#kt_dropzone_1').find('div.dz-image-preview')
         if (imagePreview.length) {
             if (imagePreview.hasClass('dz-success')) {
@@ -154,12 +157,14 @@ async function SubmitForm(event) {
                 .then(result => {
                     $("#editAdministratorModal").modal("hide");
                     reloadTable(1, getLimitDocPerPage())
+                    handleSuccess("Đã thêm")
                 }).catch(handleError);
-        } else {
-            data._id = modify;
-            MeteorCall(_METHODS.admin.Update, data, accessToken)
+            } else {
+                data._id = modify;
+                MeteorCall(_METHODS.admin.Update, data, accessToken)
                 .then(result => {
                     $("#editAdministratorModal").modal("hide");
+                    handleSuccess("Đã sửa!")
                     reloadTable(currentPage, getLimitDocPerPage())
                 })
                 .catch(handleError);
@@ -172,6 +177,7 @@ function ClickDeleteButton(event) {
     let data = $(event.currentTarget).data("json");
     MeteorCall(_METHODS.admin.Delete, data, accessToken)
         .then(result => {
+            handleSuccess('Đã xóa!')
             reloadTable(currentPage, getLimitDocPerPage())
         })
         .catch(handleError);
@@ -179,13 +185,13 @@ function ClickDeleteButton(event) {
 
 function checkInput() {
     let name = $("#name-input").val();
-    let address = $("#address-input").val();
+    // let address = $("#address-input").val();
     let phone = $("#phonenumber-input").val();
     // let email = $("#email-input").val("");
     let admintype = $("#admintype-input").val();
     let username = $("#username-input").val();
 
-    if (admintype == null || !name || !phone || !username) {
+    if ((Session.get(_SESSION.isSuperadmin) && admintype == null) || !name || !phone || !username) {
         Swal.fire({
             icon: "error",
             text: "Chưa đủ thông tin!",
@@ -219,23 +225,28 @@ function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
         limit: limitDocPerPage
     }, accessToken).then(result => {
         handlePaging(table, result.count, page, limitDocPerPage)
-        let htmlRow = result.data.map(createRow);
-        table.html(htmlRow.join(''));
+        createTable(table, result, limitDocPerPage)
     })
-
 }
 
-function createRow(data, index) {
-    // _id is tripID
-    console.log(data);
-    let item = {
-        _id: data._id,
-        name: data.user.name,
-        username: data.user.username,
-        phone: data.user.phone,
-        email: data.user.email,
-        adminType: data.adminType,
-        image: data.user.image
+function createTable(table, result, limitDocPerPage) {
+    let htmlRow = result.data.map((key, index) => {
+        key.index = index + (result.page - 1) * limitDocPerPage;
+        return createRow(key);
+    });
+    table.html(htmlRow.join(''))
+}
+
+function createRow(result, index) {
+    let data = {
+        _id: result._id,
+        name: result.user.name,
+        username: result.user.username,
+        phone: result.user.phone,
+        email: result.user.email,
+        adminType: result.adminType,
+        image: result.user.image,
+        schoolName: result.school ? result.school.name : ''
     }
     if (data.schoolID != null) {
         item.schoolID = data.schoolID
@@ -245,19 +256,20 @@ function createRow(data, index) {
         item.schoolName = ''
     }
     return `
-        <tr id="${item._id}" class="table-row">
-            <td>${item.name}</td>
-            <td>${item.username}</td>
-            <td>${item.phone}</td>
-            <td>${item.email}</td>
-            <td>${item.adminType==0?"Quản trị viên tổng":"Quản trị viên trường"}</td>
-            <td>${item.schoolName}</td>
+        <tr id="${data._id}" class="table-row">
+            <td>${result.index + 1}</td>
+            <td>${data.name}</td>
+            <td>${data.username}</td>
+            <td>${data.phone}</td>
+            <td>${data.email}</td>
+            <td>${data.adminType==0?"Quản trị viên tổng":"Quản trị viên trường"}</td>
+            <td>${data.schoolName}</td>
             <td>
                 <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
-                    item
+                    data
                 )}\'>Sửa</button>
                 <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(
-                    item
+                    data
                 )}\'>Xóa</button>
             </td>
         </tr>

@@ -9,7 +9,7 @@ import {
     handleConfirm,
     addRequiredInputLabel,
     addPaging,
-    tablePaging,
+    handlePaging
 } from "../../../../functions";
 
 import {
@@ -29,8 +29,8 @@ Template.carModelManager.onCreated(() => {
 
 Template.carModelManager.onRendered(() => {
     addRequiredInputLabel()
-    addPaging()
-    reloadTable(1);
+    addPaging($('#carModelTable'))
+    reloadTable();
 
     MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
         Session.set(_SESSION.isSuperadmin, result)
@@ -210,85 +210,51 @@ function getLimitDocPerPage() {
 
 function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
     let table = $('#table-body');
-    let emptyWrapper = $('#empty-data');
-    table.html('');
     MeteorCall(_METHODS.carModel.GetByPage, {
         page: page,
         limit: limitDocPerPage
     }, accessToken).then(result => {
-        console.log(result)
-        tablePaging(".tablePaging", result.count, page, limitDocPerPage)
-        $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
-        if (result.count === 0) {
-            $('.tablePaging').addClass('d-none');
-            table.parent().addClass('d-none');
-            emptyWrapper.removeClass('d-none');
-        } else if (result.count > limitDocPerPage) {
-            $('.tablePaging').removeClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
-            // update số bản ghi
-        } else {
-            $('.tablePaging').addClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
-        }
+        handlePaging(table, result.count, page, limitDocPerPage)
         createTable(table, result, limitDocPerPage)
     })
 
 }
 
-function renderTable(data, page = 1) {
-    let table = $('#table-body');
-    let emptyWrapper = $('#empty-data');
-    table.html('');
-    tablePaging('.tablePaging', data.count, page);
-    if (carStops.count === 0) {
-        $('.tablePaging').addClass('d-none');
-        table.parent().addClass('d-none');
-        emptyWrapper.removeClass('d-none');
-    } else {
-        $('.tablePaging').addClass('d-none');
-        table.parent().removeClass('d-none');
-        emptyWrapper.addClass('d-none');
-    }
-
-    createTable(table, data);
-}
-
 function createTable(table, result, limitDocPerPage) {
-    result.data.forEach((key, index) => {
+    let htmlRow = result.data.map((key, index) => {
         key.index = index + (result.page - 1) * limitDocPerPage;
-        const row = createRow(key);
-        table.append(row);
+        return createRow(key)
     });
+    table.html(htmlRow.join(''))
 }
 
-function createRow(data) {
-    const data_row = dataRow(data);
-    // _id is tripID
+function createRow(result) {
+    let data = {
+        _id: result._id,
+        brand: result.brand,
+        model: result.model,
+        seatNumber: result.seatNumber,
+        fuelType: result.fuelType,
+        fuelCapacity: result.fuelCapacity,
+        maintenanceDay: result.maintenanceDay,
+        maintenanceDistance: result.maintenanceDistance
+    }
     return `
         <tr id="${data._id}">
-          ${data_row}
+            <th scope="row">${result.index + 1}</th>
+            <td>${data.brand}</td>
+            <td>${data.model}</td>
+            <td>${data.seatNumber}</td>
+            <td>${data.fuelType}</td>
+            <td>${data.fuelCapacity}</td>
+            <td>${data.maintenanceDay}</td>
+            <td>${data.maintenanceDistance}</td>
+            <td>
+            <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
+            <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
+            </td>
         </tr>
         `
-}
-
-function dataRow(result) {
-    return `
-        <th scope="row">${result.index}</th>
-        <td>${result.brand}</td>
-        <td>${result.model}</td>
-        <td>${result.seatNumber}</td>
-        <td>${result.fuelType}</td>
-        <td>${result.fuelCapacity}</td>
-        <td>${result.maintenanceDay}</td>
-        <td>${result.maintenanceDistance}</td>
-        <td>
-        <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(result)}\'>Sửa</button>
-        <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(result)}\'>Xóa</button>
-        </td>
-    `;
 }
 
 function initSchoolSelect2() {

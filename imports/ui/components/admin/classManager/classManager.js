@@ -9,7 +9,7 @@ import {
   handleConfirm,
   addRequiredInputLabel,
   addPaging,
-  tablePaging
+  handlePaging
 } from "../../../../functions";
 
 import {
@@ -29,7 +29,7 @@ Template.classManager.onCreated(() => {
 });
 
 Template.classManager.onRendered(() => {
-  addPaging();
+  addPaging($('#classTable'));
   reloadTable();
   addRequiredInputLabel();
   MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
@@ -222,71 +222,25 @@ function getLimitDocPerPage() {
 
 function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
   let table = $('#table-body');
-  let emptyWrapper = $('#empty-data');
-  table.html('');
   MeteorCall(_METHODS.class.GetByPage, {
     page: page,
     limit: limitDocPerPage
   }, accessToken).then(result => {
-    console.log(result)
-    tablePaging(".tablePaging", result.count, page, limitDocPerPage)
-    $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
-    if (result.count === 0) {
-      $('.tablePaging').addClass('d-none');
-      table.parent().addClass('d-none');
-      emptyWrapper.removeClass('d-none');
-    } else if (result.count > limitDocPerPage) {
-      $('.tablePaging').removeClass('d-none');
-      table.parent().removeClass('d-none');
-      emptyWrapper.addClass('d-none');
-      // update số bản ghi
-    } else {
-      $('.tablePaging').addClass('d-none');
-      table.parent().removeClass('d-none');
-      emptyWrapper.addClass('d-none');
-    }
+    handlePaging(table, result.count, page, limitDocPerPage)
     createTable(table, result, limitDocPerPage)
   })
 
 }
 
-function renderTable(data, page = 1) {
-  let table = $('#table-body');
-  let emptyWrapper = $('#empty-data');
-  table.html('');
-  tablePaging('.tablePaging', data.count, page);
-  if (carStops.count === 0) {
-    $('.tablePaging').addClass('d-none');
-    table.parent().addClass('d-none');
-    emptyWrapper.removeClass('d-none');
-  } else {
-    $('.tablePaging').addClass('d-none');
-    table.parent().removeClass('d-none');
-    emptyWrapper.addClass('d-none');
-  }
-
-  createTable(table, data);
-}
-
 function createTable(table, result, limitDocPerPage) {
-  result.data.forEach((key, index) => {
+  let htmlRow = result.data.map((key, index) => {
     key.index = index + (result.page - 1) * limitDocPerPage;
-    const row = createRow(key);
-    table.append(row);
+    return createRow(key);
   });
+  table.html('').append(htmlRow.join(' '))
 }
 
-function createRow(data) {
-  const data_row = dataRow(data);
-  // _id is tripID
-  return `
-        <tr id="${data._id}">
-          ${data_row}
-        </tr>
-        `
-}
-
-function dataRow(result) {
+function createRow(result) {
   let data = {
     _id: result._id,
     schoolName: result.school.name,
@@ -296,19 +250,17 @@ function dataRow(result) {
     teacherName: result.teacher.user.name
   }
   return `
-                <th scope="row">${result.index}</th>
-                <td>${data.schoolName}</td>
-                <td>${data.name}</td>
-                <td>${data.teacherName}</td>
-                <td>
-                    <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
-        data
-    )}\'>Sửa</button>
-                    <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(
-        data
-    )}\'>Xóa</button>
-                </td>
-    `;
+        <tr id="${data._id}">
+          <th scope="row">${result.index}</th>
+          <td>${data.schoolName}</td>
+          <td>${data.name}</td>
+          <td>${data.teacherName}</td>
+          <td>
+              <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
+              <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
+          </td>
+        </tr>
+        `
 }
 
 function initSchoolSelect2() {

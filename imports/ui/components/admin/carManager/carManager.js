@@ -5,9 +5,12 @@ const Cookies = require("js-cookie");
 import {
     MeteorCall,
     handleError,
+    handleSuccess,
+    handleConfirm,
     addRequiredInputLabel,
     addPaging,
-    tablePaging
+    tablePaging,
+    handlePaging
 } from "../../../../functions";
 
 import {
@@ -27,8 +30,8 @@ Template.carManager.onCreated(() => {
 
 Template.carManager.onRendered(() => {
     addRequiredInputLabel();
-    addPaging();
-    reloadTable(1);
+    addPaging($('#carTable'));
+    reloadTable();
     renderModelOption();
 
     MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
@@ -210,87 +213,44 @@ function getLimitDocPerPage() {
 
 function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
     let table = $('#table-body');
-    let emptyWrapper = $('#empty-data');
-    table.html('');
     MeteorCall(_METHODS.car.GetByPage, {
         page: page,
         limit: limitDocPerPage
     }, accessToken).then(result => {
-        console.log(result)
-        tablePaging(".tablePaging", result.count, page, limitDocPerPage)
-        $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
-        if (result.count === 0) {
-            $('.tablePaging').addClass('d-none');
-            table.parent().addClass('d-none');
-            emptyWrapper.removeClass('d-none');
-        } else if (result.count > limitDocPerPage) {
-            $('.tablePaging').removeClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
-            // update số bản ghi
-        } else {
-            $('.tablePaging').addClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
-        }
+        handlePaging(table, result.count, page, limitDocPerPage)
         createTable(table, result, limitDocPerPage)
     })
 
 }
 
-function renderTable(data, page = 1) {
-    let table = $('#table-body');
-    let emptyWrapper = $('#empty-data');
-    table.html('');
-    tablePaging('.tablePaging', data.count, page);
-    if (carStops.count === 0) {
-        $('.tablePaging').addClass('d-none');
-        table.parent().addClass('d-none');
-        emptyWrapper.removeClass('d-none');
-    } else {
-        $('.tablePaging').addClass('d-none');
-        table.parent().removeClass('d-none');
-        emptyWrapper.addClass('d-none');
-    }
-
-    createTable(table, data);
-}
-
 function createTable(table, result, limitDocPerPage) {
-    result.data.forEach((key, index) => {
+    let htmlRow = result.data.map((key, index) => {
         key.index = index + (result.page - 1) * limitDocPerPage;
-        const row = createRow(key);
-        table.append(row);
+        return createRow(key);
     });
+    table.html(htmlRow.join(''))
 }
 
-function createRow(data) {
-    const data_row = dataRow(data);
-    // _id is tripID
-    return `
-        <tr id="${data._id}">
-          ${data_row}
-        </tr>
-        `
-}
-
-function dataRow(result) {
+function createRow(result) {
     let data = {
         modelName: result.carModel.model,
         numberPlate: result.numberPlate,
         status: result.status
     }
     return `
-        <th scope="row">${result.index}</th>
-        <td>${data.modelName}</td>
-        <td>${data.numberPlate}</td>
-        <td>${data.status}</td>
-        <td>
-        <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(result)}\'>Sửa</button>
-        <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(result)}\'>Xóa</button>
-        </td>
-    `;
+        <tr id="${data._id}">
+            <th scope="row">${result.index + 1}</th>
+            <td>${data.modelName}</td>
+            <td>${data.numberPlate}</td>
+            <td>${data.status}</td>
+            <td>
+            <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(result)}\'>Sửa</button>
+            <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(result)}\'>Xóa</button>
+            </td>
+        </tr>
+        `
 }
+
 
 function initSchoolSelect2() {
     MeteorCall(_METHODS.school.GetAll, null, accessToken).then(result => {
