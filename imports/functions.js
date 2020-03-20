@@ -139,7 +139,7 @@ function addPaging(table) {
         <div class="kt-datatable__pager">
             <div class="kt-datatable__pager-info paging-detail">
                 <div class="kt-datatable__pager-detail">Hiển thị 
-                <select id="limit-doc" data-width="60px" data-selected="10" tabindex="-98">
+                <select id="limit-doc" data-width="70px" data-selected="10" tabindex="-98">
                     <option value="10">10</option>
                     <option value="20">20</option>
                     <option value="30">30</option>
@@ -154,6 +154,10 @@ function addPaging(table) {
             </div>
         </div>
     `)
+    $('#limit-doc').select2({
+        width: "100%",
+        minimumResultsForSearch: Infinity,
+    })
 }
 
 function tablePaging(tablePagingEl, count, page = 1, limit = LIMIT_DOCUMENT_PAGE) {

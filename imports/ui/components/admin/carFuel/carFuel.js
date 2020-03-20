@@ -5,14 +5,20 @@ const Cookies = require("js-cookie");
 import {
     MeteorCall,
     handleError,
+    handleSuccess,
+    handleConfirm,
     addRequiredInputLabel,
     addPaging,
     tablePaging,
+    initDropzone,
+    handlePaging
 } from "../../../../functions";
 
 import {
     _METHODS,
-    LIMIT_DOCUMENT_PAGE
+    LIMIT_DOCUMENT_PAGE,
+    _SESSION,
+
 } from "../../../../variableConst";
 
 let accessToken;
@@ -23,10 +29,14 @@ Template.carFuel.onCreated(() => {
 });
 
 Template.carFuel.onRendered(() => {
-    reloadTable(1);
+    reloadTable();
     addRequiredInputLabel()
-    addPaging()
-    $("#car-select").select2()
+    addPaging($('#carFuelTable'))
+    $("#car-select").select2({
+        placeholder: "Chọn Xe",
+        width: "100%",
+        minimumResultsForSearch: Infinity,
+    })
     renderCarOption();
 });
 
@@ -35,6 +45,15 @@ Template.carFuel.events({
     "click .modify-button": ClickModifyButton,
     "click .add-more": ClickAddmoreButton,
     "click .delete-button": ClickDeleteButton,
+    "click .kt-datatable__pager-link": (e) => {
+        reloadTable(parseInt($(e.currentTarget).data('page')), getLimitDocPerPage());
+        $(".kt-datatable__pager-link").removeClass("kt-datatable__pager-link--active");
+        $(e.currentTarget).addClass("kt-datatable__pager-link--active")
+        currentPage = parseInt($(e.currentTarget).data('page'));
+    },
+    "change #limit-doc": (e) => {
+        reloadTable(1, getLimitDocPerPage());
+    },
 });
 
 function renderCarOption() {
@@ -43,7 +62,7 @@ function renderCarOption() {
             let optionSelects = result.data.map(res => {
                 return `<option value=${res._id}>Biển số:&nbsp;${res.numberPlate}&nbsp&nbsp${res.carModel.brand}-${res.carModel.model}</option>`;
             });
-            $("#car-select").html(optionSelects.join(" "));
+            $("#car-select").html('<option></option>').append(optionSelects.join(" "));
         })
         .catch(handleError);
 }
@@ -139,71 +158,37 @@ function getLimitDocPerPage() {
 
 function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
     let table = $('#table-body');
-    let emptyWrapper = $('#empty-data');
-    table.html('');
-    MeteorCall(_METHODS.carFuel.GetByPage, { page: page, limit: limitDocPerPage }, accessToken).then(result => {
-        console.log(result)
-        tablePaging(".tablePaging", result.count, page, limitDocPerPage)
-        $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
-        if (result.count === 0) {
-            $('.tablePaging').addClass('d-none');
-            table.parent().addClass('d-none');
-            emptyWrapper.removeClass('d-none');
-        } else if (result.count > limitDocPerPage) {
-            $('.tablePaging').removeClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
-            // update số bản ghi
-        } else {
-            $('.tablePaging').addClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
-        }
+    MeteorCall(_METHODS.carFuel.GetByPage, {
+        page: page,
+        limit: limitDocPerPage
+    }, accessToken).then(result => {
+        handlePaging(table, result.count, page, limitDocPerPage)
         createTable(table, result, limitDocPerPage)
     })
 
 }
 
-function renderTable(data, page = 1) {
-    let table = $('#table-body');
-    let emptyWrapper = $('#empty-data');
-    table.html('');
-    tablePaging('.tablePaging', data.count, page);
-    if (carStops.count === 0) {
-        $('.tablePaging').addClass('d-none');
-        table.parent().addClass('d-none');
-        emptyWrapper.removeClass('d-none');
-    } else {
-        $('.tablePaging').addClass('d-none');
-        table.parent().removeClass('d-none');
-        emptyWrapper.addClass('d-none');
-    }
-
-    createTable(table, data);
-}
-
 function createTable(table, result, limitDocPerPage) {
-    result.data.forEach((key, index) => {
+    let htmlRow = result.data.map((key, index) => {
         key.index = index + (result.page - 1) * limitDocPerPage;
-        const row = createRow(key);
-        table.append(row);
+        return createRow(key);
     });
+    table.html(htmlRow.join(''))
 }
 
-function createRow(data) {
-    const data_row = dataRow(data);
-    // _id is tripID
+function createRow(result) {
+    let data = {
+        _id: result._id,
+        numberPlate: result.car.numberPlate,
+        volume: result.volume,
+        price: result.price,
+        createdTime: result.createdTime,
+        updatedTime: result.updatedTime
+    }
     return `
         <tr id="${data._id}" class="table-row">
-          ${data_row}
-        </tr>
-        `
-}
-
-function dataRow(data) {
-    return `
-            <th scope="row">${data.index}</th>
-            <td>${data.car.numberPlate}</td>
+            <th scope="row">${result.index + 1}</th>
+            <td>${data.numberPlate}</td>
             <td>${data.volume}</td>
             <td>${data.price}</td>
             <td>${moment(data.createdTime).format('L')}</td>
@@ -212,5 +197,6 @@ function dataRow(data) {
             <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
             <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
             </td>
-            `
+        </tr>
+        `
 }

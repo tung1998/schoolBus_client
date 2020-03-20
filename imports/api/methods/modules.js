@@ -21,6 +21,8 @@ const AUTH_MODULE = `${AUTH_PATH}/Module`
 if (Meteor.isServer) {
     Meteor.methods({
         'modules.get': getModules,
+        'modules.getByID': getModulesByID,
+        'modules.getByPage': getModulesByPage,
         'modules.create': createModule,
         'modules.update': updateModule,
         'modules.delete': deleteModule,
@@ -35,6 +37,20 @@ function getModules(data, accessToken = '') {
     return httpDefault(METHOD.get, url, {
         token: accessToken
     })
+}
+
+function getModulesByID(data, accessToken = '') {
+    let url = `${AUTH_MODULE}/${data._id}`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    })
+}
+
+function getModulesByPage(data, accessToken = '') {
+    let url = `${AUTH_MODULE}/${data.page}?limit=${data.limit}`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
 }
 
 function createModule(data, accessToken = '') {

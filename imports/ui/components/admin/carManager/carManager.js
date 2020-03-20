@@ -5,14 +5,18 @@ const Cookies = require("js-cookie");
 import {
     MeteorCall,
     handleError,
+    handleSuccess,
+    handleConfirm,
     addRequiredInputLabel,
     addPaging,
-    tablePaging
+    tablePaging,
+    handlePaging
 } from "../../../../functions";
 
 import {
     _METHODS,
-    LIMIT_DOCUMENT_PAGE
+    LIMIT_DOCUMENT_PAGE,
+    _SESSION
 } from "../../../../variableConst";
 
 let accessToken;
@@ -20,13 +24,21 @@ let currentPage = 1;
 
 Template.carManager.onCreated(() => {
     accessToken = Cookies.get("accessToken");
+    Session.set(_SESSION.isSuperadmin, true)
+    Session.set('schools', [])
 });
 
 Template.carManager.onRendered(() => {
     addRequiredInputLabel();
-    addPaging();
-    reloadTable(1);
+    addPaging($('#carTable'));
+    reloadTable();
     renderModelOption();
+
+    MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
+        Session.set(_SESSION.isSuperadmin, result)
+        if (result)
+            initSchoolSelect2()
+    }).catch(handleError)
 });
 
 Template.carManager.events({
@@ -45,13 +57,27 @@ Template.carManager.events({
     }
 });
 
+Template.editCarManagerModal.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    },
+    schools() {
+        return Session.get('schools')
+    },
+});
+
+
 function renderModelOption() {
     MeteorCall(_METHODS.carModel.GetAll, null, accessToken)
         .then(result => {
             let optionSelects = result.data.map(res => {
                 return `<option value="${res._id}">${res.brand}-${res.model}</option>`;
             });
-            $("#model-select").html(optionSelects.join(" "));
+            $("#model-select").html('<option></option>').append(optionSelects.join(" "));
+            $("#model-select").select2({
+                placeholder: "Chọn model",
+                width: "100%"
+            })
         })
         .catch(handleError);
 }
@@ -73,22 +99,31 @@ function ClickModifyButton(event) {
     $("#editCarManagerModal").attr("carID", carData._id);
     $("#editCarManagerModal").modal("show");
 
-    $(".button-model-selected").attr("title", carData.modelName);
-    $(".model-result").attr("carModelID", carData.carModelID);
-    $(".model-result").html(carData.modelName);
+    $("#model-select").val(carData.carModelID).trigger('change')
     $('input[name="licensePlate-input"]').val(carData.numberPlate);
     $('input[name="status-input"]').val(carData.status);
 
 }
 
 function ClickDeleteButton(event) {
-    let data = $(event.currentTarget).data("json");
-    console.log(data._id)
-    MeteorCall(_METHODS.car.Delete, data, accessToken)
-        .then(result => {
-            reloadTable(currentPage, getLimitDocPerPage())
-        })
-        .catch(handleError);
+    handleConfirm().then(result => {
+        console.log(result);
+        if (result.value) {
+            let data = $(event.currentTarget).data("json");
+            MMeteorCall(_METHODS.car.Delete, data, accessToken)
+                .then(result => {
+                    console.log(result);
+                    Swal.fire({
+                        icon: "success",
+                        text: "Đã xóa thành công",
+                        timer: 3000
+                    })
+                    reloadTable(currentPage, getLimitDocPerPage())
+                }).catch(handleError)
+        } else {
+
+        }
+    })
 }
 
 function SubmitForm(event) {
@@ -101,20 +136,30 @@ function SubmitForm(event) {
             numberPlate: $('input[name="licensePlate-input"]').val()
         };
 
+        if (Session.get(_SESSION.isSuperadmin)) {
+            data.schoolID = $('#school-input').val()
+        }
+
         let modify = $("#editCarManagerModal").attr("carID");
         if (modify == "") {
             MeteorCall(_METHODS.car.Create, data, accessToken)
                 .then(result => {
-                    $("#editCarManagerModal").modal("hide");
-                    reloadTable(1, getLimitDocPerPage());
+                   handleSuccess("Thêm").then(() => {
+                            $("#editStudentModal").modal("hide");
+                            reloadTable(1, getLimitDocPerPage())
+                            clearForm()
+                        })
                 })
                 .catch(handleError);
         } else {
             data._id = modify;
             MeteorCall(_METHODS.car.Update, data, accessToken)
                 .then(result => {
-                    $("#editCarManagerModal").modal("hide");
-                    reloadTable(currentPage, getLimitDocPerPage());
+                    handleSuccess("Cập nhật").then(() => {
+                        $("#editStudentModal").modal("hide");
+                        reloadTable(1, getLimitDocPerPage())
+                        clearForm()
+                    })
                 })
                 .catch(handleError);
         }
@@ -135,6 +180,18 @@ function checkInput() {
         })
         return false;
     } else {
+        if (Session.get(_SESSION.isSuperadmin)) {
+            let schoolID = $('#school-input').val()
+            if (!schoolID) {
+                Swal.fire({
+                    icon: "error",
+                    text: "Chưa chọn trường!",
+                    timer: 2000
+                })
+                return false;
+            }
+
+        }
         return true;
     }
 }
@@ -144,6 +201,10 @@ function clearForm() {
     $(".model-result").html("Chọn Model");
     $('input[name="licensePlate-input"]').val();
     $('input[name="status-input"]').val();
+    
+    if (Session.get(_SESSION.isSuperadmin)) {
+        $('#school-input').val('').trigger('change')
+    }
 }
 
 function getLimitDocPerPage() {
@@ -152,81 +213,51 @@ function getLimitDocPerPage() {
 
 function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
     let table = $('#table-body');
-    let emptyWrapper = $('#empty-data');
-    table.html('');
-    MeteorCall(_METHODS.car.GetByPage, { page: page, limit: limitDocPerPage }, accessToken).then(result => {
-        console.log(result)
-        tablePaging(".tablePaging", result.count, page, limitDocPerPage)
-        $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
-        if (result.count === 0) {
-            $('.tablePaging').addClass('d-none');
-            table.parent().addClass('d-none');
-            emptyWrapper.removeClass('d-none');
-        } else if (result.count > limitDocPerPage) {
-            $('.tablePaging').removeClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
-            // update số bản ghi
-        } else {
-            $('.tablePaging').addClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
-        }
+    MeteorCall(_METHODS.car.GetByPage, {
+        page: page,
+        limit: limitDocPerPage
+    }, accessToken).then(result => {
+        handlePaging(table, result.count, page, limitDocPerPage)
         createTable(table, result, limitDocPerPage)
     })
 
 }
 
-function renderTable(data, page = 1) {
-    let table = $('#table-body');
-    let emptyWrapper = $('#empty-data');
-    table.html('');
-    tablePaging('.tablePaging', data.count, page);
-    if (carStops.count === 0) {
-        $('.tablePaging').addClass('d-none');
-        table.parent().addClass('d-none');
-        emptyWrapper.removeClass('d-none');
-    } else {
-        $('.tablePaging').addClass('d-none');
-        table.parent().removeClass('d-none');
-        emptyWrapper.addClass('d-none');
-    }
-
-    createTable(table, data);
-}
-
 function createTable(table, result, limitDocPerPage) {
-    result.data.forEach((key, index) => {
+    let htmlRow = result.data.map((key, index) => {
         key.index = index + (result.page - 1) * limitDocPerPage;
-        const row = createRow(key);
-        table.append(row);
+        return createRow(key);
     });
+    table.html(htmlRow.join(''))
 }
 
-function createRow(data) {
-    const data_row = dataRow(data);
-    // _id is tripID
-    return `
-        <tr id="${data._id}">
-          ${data_row}
-        </tr>
-        `
-}
-
-function dataRow(result) {
+function createRow(result) {
     let data = {
         modelName: result.carModel.model,
         numberPlate: result.numberPlate,
         status: result.status
     }
     return `
-        <th scope="row">${result.index}</th>
-        <td>${data.modelName}</td>
-        <td>${data.numberPlate}</td>
-        <td>${data.status}</td>
-        <td>
-        <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(result)}\'>Sửa</button>
-        <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(result)}\'>Xóa</button>
-        </td>
-    `;
+        <tr id="${data._id}">
+            <th scope="row">${result.index + 1}</th>
+            <td>${data.modelName}</td>
+            <td>${data.numberPlate}</td>
+            <td>${data.status}</td>
+            <td>
+            <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(result)}\'>Sửa</button>
+            <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(result)}\'>Xóa</button>
+            </td>
+        </tr>
+        `
+}
+
+
+function initSchoolSelect2() {
+    MeteorCall(_METHODS.school.GetAll, null, accessToken).then(result => {
+        Session.set('schools', result.data)
+        $('#school-input').select2({
+            width: '100%',
+            placeholder: "Chọn trường"
+        })
+    }).catch(handleError)
 }

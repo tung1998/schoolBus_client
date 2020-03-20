@@ -100,6 +100,12 @@ function ClickModifyButton(event) {
     } else {
         $('.avatabox').addClass('kt-hidden')
     }
+
+    if (adminData.adminType == 0) $('#school-input').parent().parent().addClass('kt-hidden')
+    else {
+        $('#school-input').val(adminData.schoolID).trigger('change')
+        $('#school-input').parent().parent().removeClass('kt-hidden')
+    }
     dropzone.removeAllFiles(true)
 }
 
@@ -241,6 +247,13 @@ function createRow(result, index) {
         adminType: result.adminType,
         image: result.user.image,
         schoolName: result.school ? result.school.name : ''
+    }
+    if (data.schoolID != null) {
+        item.schoolID = data.schoolID
+        item.schoolName = data.school.name
+    }
+    else {
+        item.schoolName = ''
     }
     return `
         <tr id="${data._id}" class="table-row">

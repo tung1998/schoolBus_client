@@ -10,15 +10,20 @@ import {
     handleError,
     handleSuccess,
     handleConfirm,
-    addRequiredInputLabel
+    addRequiredInputLabel,
+    addPaging,
+    handlePaging
 
 } from '../../../../functions'
 
 import {
-    _METHODS
+    _METHODS,
+    LIMIT_DOCUMENT_PAGE,
+    _SESSION,
 } from '../../../../variableConst'
 
 let accessToken;
+let currentPage = 1
 
 Template.moduleManager.onCreated(() => {
     accessToken = Cookies.get('accessToken')
@@ -27,20 +32,19 @@ Template.moduleManager.onCreated(() => {
 Template.moduleManager.onRendered(() => {
     Session.setDefault('module-parent-route', [])
     // Session.setDefault('module-route', [])
-
     MeteorCall(_METHODS.modules.GetIcons, {}, accessToken).then(result => {
         Session.set('icons', result);
     });
 
-    reloadTable()
-    addRequiredInputLabel()
+    addRequiredInputLabel();
+    addPaging($('#moduleTable'));
+    reloadTable();
 });
 
 
 Template.editModuleModal.onRendered(() => {
     editTitleForm()
     initSelect2()
-    console.log(Session.get('module-parent-route'));
 })
 
 
@@ -60,6 +64,15 @@ Template.moduleManager.events({
     'click .submit-button': submitButton,
     'click #edit-module': clickEditButton,
     'click .delete-button': submitDelButton,
+    "click .kt-datatable__pager-link": (e) => {
+        reloadTable(parseInt($(e.currentTarget).data('page')), getLimitDocPerPage());
+        $(".kt-datatable__pager-link").removeClass("kt-datatable__pager-link--active");
+        $(e.currentTarget).addClass("kt-datatable__pager-link--active")
+        currentPage = parseInt($(e.currentTarget).data('page'));
+    },
+    "change #limit-doc": (e) => {
+        reloadTable(1, getLimitDocPerPage());
+    },
 })
 
 function submitButton(e) {
@@ -67,19 +80,19 @@ function submitButton(e) {
     if (checkInput()) {
         if (!data._id) {
             MeteorCall(_METHODS.modules.Create, data, accessToken).then(result => {
-                console.log(result);
-                reloadTable()
-                clearForm()
-                console.log("đã thêm mới");
-                handleSuccess("Thêm", "module")
+                handleSuccess("Thêm").then(() => {
+                    $("#editModuleModal").modal("hide");
+                    reloadTable(1, getLimitDocPerPage())
+                    clearForm()
+                })
             }).catch(handleError)
-        }
-        else {
+        } else {
             MeteorCall(_METHODS.modules.Update, data, accessToken).then(result => {
-                reloadTable()
-                clearForm()
-                handleSuccess("Cập nhật", "module")
-                console.log("đã update");
+                handleSuccess("Cập nhât ").then(() => {
+                    $("#editModuleModal").modal("hide");
+                    reloadTable(1, getLimitDocPerPage())
+                    clearForm()
+                })
             }).catch(handleError)
         }
     }
@@ -114,8 +127,7 @@ function submitDelButton(event) {
                 })
                 reloadTable()
             }).catch(handleError)
-        }
-        else {
+        } else {
 
         }
     })
@@ -179,45 +191,64 @@ function clearForm() {
     $('#module-permission').val('').trigger('change')
 }
 
-function insertRow(data, result) {
-    data._id = result._id;
+function getLimitDocPerPage() {
+    return parseInt($("#limit-doc").val());
+}
 
+function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
+    let table = $('#table-body');
+    MeteorCall(_METHODS.modules.GetByPage, {
+        page: page,
+        limit: limitDocPerPage
+    }, accessToken).then(result => {
+        handlePaging(table, result.count, page, limitDocPerPage)
+        createTable(table, result, limitDocPerPage)
+    })
 
 }
 
-function reloadTable() {
-    MeteorCall(_METHODS.modules.GetAll, null, accessToken).then(result => {
-        let routes = []
-        let parentRoutes = []
-        let table = $('#table-module')
-        dataModule = result.data;
-        let row = dataModule.map((key, index) => {
-            routes.push(key.route)
-            if (key.level === 0) {
-                parentRoutes.push(key.route)
-            }
-
-            return `<tr id="${key._id}">
-                        <th scope="row">${index + 1}</th>
-                        <td>${key.name}</td>
-                        <td>${key.description}</td>
-                        <td>${key.route}</td>
-                        <td>${key.permission}</td>
-                        <td>${key.createdTime}</td>
-                        <td>
-                            <button type="button" class="btn btn-outline-brand"
-                                data-toggle="modal" id="edit-module" data-target="#editModuleModal" data-json=\'${JSON.stringify(key)}\'>Sửa</button>
-                            <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(key)}\'>Xóa</button>
-                        </td>
-                    </tr>`
-        })
-        table.find("tbody").html(row.join(""))
-
-        // Session.set('module-route', routes)
-        Session.set('module-parent-route', parentRoutes)
-    }).catch(handleError)
+function createTable(table, result, limitDocPerPage) {
+    let routes = []
+    let parentRoutes = []
+    let htmlRow = result.data.map((key, index) => {
+        routes.push(key.route)
+        if (key.level === 0) {
+            parentRoutes.push(key.route)
+        }
+        key.index = index + (result.page - 1) * limitDocPerPage;
+        return createRow(key);
+    });
+    table.html(htmlRow.join(''))
+    // Session.set('module-route', routes)
+    Session.set('module-parent-route', parentRoutes)
 }
 
+
+function createRow(result) {
+    let data = {
+        _id: result._id,
+        name: result.name,
+        description: result.description,
+        route: result.route,
+        permission: result.permission,
+        createdTime: result.createdTime
+    }
+    return `<tr id="${data._id}">
+        <th scope="row">${result.index + 1}</th>
+        <td>${data.name}</td>
+        <td>${data.description}</td>
+        <td>${data.route}</td>
+        <td>${data.permission}</td>
+        <td>${moment(data.createdTime).format('L')}</td>
+        <td>
+            <button type="button" class="btn btn-outline-brand"
+                data-toggle="modal" id="edit-module" data-target="#editModuleModal" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
+            <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
+        </td>
+    </tr>`
+
+    
+}
 
 function editTitleForm() {
     let ktContent = $('.kt-section').find('.kt-section__content');
