@@ -423,3 +423,13 @@ FlowRouter.route('/routeManager', {
         });
     },
 });
+
+FlowRouter.route('/userManager', {
+    name: 'user',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'userManager',
+        });
+    },
+});

@@ -11,7 +11,6 @@ import {
   handleConfirm,
   addRequiredInputLabel,
   addPaging,
-  tablePaging,
   getBase64,
   makeID,
   initDropzone,
