@@ -401,7 +401,6 @@ function createRow(result) {
         `
 }
 
-
 function initSchoolSelect2() {
     MeteorCall(_METHODS.school.GetAll, null, accessToken).then(result => {
         Session.set('schools', result.data)

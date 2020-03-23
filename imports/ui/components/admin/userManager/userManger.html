@@ -1,0 +1,154 @@
+<template name="userManager">
+  <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+    <!-- begin:: Subheader -->
+    <div class="kt-subheader   kt-grid__item" id="kt_subheader">
+      <div class="kt-container  kt-container--fluid ">
+        <div class="kt-subheader__main">
+          <h3 class="kt-subheader__title">
+
+            Quản lý user</h3>
+
+          <span class="kt-subheader__separator kt-hidden"></span>
+          <div class="kt-subheader__breadcrumbs">
+            <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
+            <span class="kt-subheader__breadcrumbs-separator"></span>
+            <a href="" class="kt-subheader__breadcrumbs-link">
+              SchoolBus </a>
+            <span class="kt-subheader__breadcrumbs-separator"></span>
+            <a href="" class="kt-subheader__breadcrumbs-link">
+              Quản lý user</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end:: Subheader -->
+
+    <!-- begin:: Content -->
+    <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+      <div class="row">
+        <div class="col">
+
+          <div class="kt-portlet">
+            <div class="kt-portlet__head">
+              <div class="kt-portlet__head-label">
+                <h3 class="kt-portlet__head-title">
+                  Danh sách user
+                </h3>
+              </div>
+            </div>
+
+            <div class="kt-portlet__body">
+              <!--begin::Section-->
+              <div class="kt-section">
+                <div class="kt-section__content">
+                  <div class="kt-datatable kt-datatable--default kt-datatable--brand">
+                    <p id="empty-data" class="text-muted font-14 d-none">
+                      Không có dữ liệu
+                    </p>
+                    <table class="table table-bordered table-hover" id="userTable">
+                      <thead class="thead-light">
+                        <tr>
+                          <th>#</th>
+                          <th>Ảnh</th>
+                          <th>Họ tên</th>
+                          <th>Username</th>
+                          <th>Số điện thoại</th>
+                          <th>Email</th>
+                          <th>Khóa/Bị khóa</th>
+                          <th>Người Khóa</th>
+                          <th>Lý do</th>
+                          <th>Loại tài khoản</th>
+                          <th>Chọn</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody id="table-body">
+                        <tr>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td>
+                            <div class="from-group">
+                              <label class="kt-checkbox kt-checkbox--brand">
+                              <input type="checkbox" class="student-checkbox">
+                              <span></span>
+                              </label>
+                          </div>
+                          </td>
+                          <td>
+                            <div class="dropdown dropdown-inline">
+                              <button type="button"
+                                class="btn btn-hover-danger btn-elevate-hover btn-icon btn-sm btn-icon-md"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="flaticon-more-1"></i>
+                              </button>
+                              <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#editUserModal"><i class="la la-key"></i> Đổi mật khẩu</a>
+                                <a class="dropdown-item" href="#"><i class="la la-lock"></i> Khóa/Mở Khóa</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#"><i class="la la-trash"></i> Xóa</a>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                </div>
+              </div>
+              <!--end::Section-->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end:: Content -->
+  </div>
+  {{> editUserModal}}
+</template>
+
+
+<template name="editUserModal">
+  <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-center" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Đổi mật khẩu</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          </button>
+        </div>
+        <div class="modal-body">
+          <form class="kt-form kt-form--label-right">
+            <div class="kt-portlet__body">
+              <div class="form-group row">
+                <label for="example-text-input" class="col-3 col-form-label required-input-label">Mật khẩu mới</label>
+                <div class="col-8">
+                  <input class="form-control" type="text" id="password" placeholder="Mật khẩu mới">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="example-email-input" class="col-3 col-form-label required-input-label">Nhập lại mật khẩu</label>
+                <div class="col-8">
+                  <input class="form-control" type="text" id="confirm-password" placeholder="Nhập lại mật khẩu">
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel-button">Hủy</button>
+              <button type="submit" class="btn btn-primary" id="confirm-button">Xác nhận</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

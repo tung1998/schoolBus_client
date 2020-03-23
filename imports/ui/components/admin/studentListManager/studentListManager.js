@@ -27,12 +27,20 @@ let currentPage = 1;
 
 Template.studentListManager.onCreated(() => {
     accessToken = Cookies.get('accessToken');
+    Session.set(_SESSION.isSuperadmin, true)
+    Session.set('schools', [])
 });
 
 Template.studentListManager.onRendered(() => {
     addRequiredInputLabel();
     addPaging($('studentListTable'));
     reloadTable();
+
+    MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
+        Session.set(_SESSION.isSuperadmin, result)
+        if (result)
+            initSchoolSelect2()
+    }).catch(handleError)
 });
 
 Template.studentListManager.events({
@@ -65,6 +73,11 @@ function clickEditListModalSubmit() {
         handleError(null, 'Vui lòng điền đầy đủ thông tin')
         return
     }
+
+    if (Session.get(_SESSION.isSuperadmin)) {
+        data.schoolID = $('#school-input').val()
+    }
+
     let studentListID = $('#studentListModal').attr('studentListID')
     if (studentListID) {
         handleConfirm('Bạn muốn sửa danh sách?').then(result => {
@@ -72,7 +85,7 @@ function clickEditListModalSubmit() {
             data._id = studentListID
             MeteorCall(_METHODS.studentList.Update, data, accessToken).then(result => {
                 reloadTable(currentPage, getLimitDocPerPage())
-                handleSuccess('Cập nhật', "Danh sách")
+                handleSuccess('Cập nhật')
                 $('#studentListModal').modal('hide')
             }).catch(handleError)
         })
@@ -82,7 +95,7 @@ function clickEditListModalSubmit() {
             MeteorCall(_METHODS.studentList.Create, data, accessToken).then(result => {
                 reloadTable(1, getLimitDocPerPage())
                 $('#studentListModal').modal('hide')
-                handleSuccess('Thêm mới', "Danh sách")
+                handleSuccess('Thêm mới')
             }).catch(handleError)
         })
     }
@@ -92,6 +105,12 @@ function clickEditStudentListButton(e) {
     e.preventDefault();
     let data = $(e.currentTarget).data('json')
     $('#studentList-name').val(data.name)
+
+    if (Session.get(_SESSION.isSuperadmin)) {
+       $('#school-input').val(data.schoolID).trigger('change')
+    }
+
+
     $('#studentListModalSubmit').html('Cập nhật')
     $('#studentListModal').attr('studentListID', data._id).modal('show')
     return false
@@ -118,6 +137,15 @@ function clickStudentListRow(e) {
     FlowRouter.go(`/studentlistManager/${studentListID}`)
 }
 
+Template.studentListModal.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    },
+    schools() {
+        return Session.get('schools')
+    },
+});
+
 function getLimitDocPerPage() {
     return parseInt($("#limit-doc").val());
 }
@@ -143,11 +171,13 @@ function createRow(result) {
     let data = {
         _id: result._id,
         name: result.name,
+        schoolName: result.school.name
     }
     return `
         <tr id="${data._id}" class="table-row">
             <td>${result.index + 1}</td>
             <td>${data.name}</td>
+            <td>${data.schoolName}</td>
             <td>${moment(data.createdTime).format('l')}</td>
             <td>
             <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
@@ -155,4 +185,15 @@ function createRow(result) {
             </td>
         </tr>
         `
+}
+
+
+function initSchoolSelect2() {
+    MeteorCall(_METHODS.school.GetAll, null, accessToken).then(result => {
+        Session.set('schools', result.data)
+        $('#school-input').select2({
+            width: '100%',
+            placeholder: 'Chọn trường'
+        })
+    }).catch(handleError)
 }
