@@ -46,9 +46,9 @@ Template.studentListManager.onRendered(() => {
 Template.studentListManager.events({
     'click #addStudentListButton': clickAddStudentListButton,
     'click #studentListModalSubmit': clickEditListModalSubmit,
-    'click #studentListData .modify-button': clickEditStudentListButton,
-    'click #studentListData .delete-button': clickDeleteStudentListButton,
-    'click #studentListData tr': clickStudentListRow,
+    'click #table-body .modify-button': clickEditStudentListButton,
+    'click #table-body .delete-button': clickDeleteStudentListButton,
+    'click #table-body tr': clickStudentListRow,
     "click .kt-datatable__pager-link": (e) => {
         reloadTable(parseInt($(e.currentTarget).data('page')), getLimitDocPerPage());
         $(".kt-datatable__pager-link").removeClass("kt-datatable__pager-link--active");
@@ -107,7 +107,7 @@ function clickEditStudentListButton(e) {
     $('#studentList-name').val(data.name)
 
     if (Session.get(_SESSION.isSuperadmin)) {
-       $('#school-input').val(data.schoolID).trigger('change')
+        $('#school-input').val(data.schoolID).trigger('change')
     }
 
 
@@ -152,7 +152,10 @@ function getLimitDocPerPage() {
 
 function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
     let table = $('#table-body');
-    MeteorCall(_METHODS.studentList.GetByPage, { page: page, limit: limitDocPerPage }, accessToken).then(result => {
+    MeteorCall(_METHODS.studentList.GetByPage, {
+        page: page,
+        limit: limitDocPerPage
+    }, accessToken).then(result => {
         handlePaging(table, result.count, page, limitDocPerPage)
         createTable(table, result, limitDocPerPage)
     })
@@ -168,10 +171,11 @@ function createTable(table, result, limitDocPerPage) {
 }
 
 function createRow(result) {
+    console.log(result)
     let data = {
         _id: result._id,
         name: result.name,
-        schoolName: result.school.name
+        schoolName: result.school?result.school.name:''
     }
     return `
         <tr id="${data._id}" class="table-row">

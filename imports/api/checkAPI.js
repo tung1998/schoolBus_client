@@ -63,7 +63,7 @@ function httpDefault(method, url, { body, token, content, headers}) {
     return new Promise((resolve, reject) => {
         // console.log(url, options);
         HTTP.call(method, url, options, (error, result) => {
-            console.log(error, result)
+            // console.log(error, result)
             if(!result && error){
                 resolve({error : true, message: 'Lỗi mạng', message_en: error.errno});
             }else if(isStatusCodeError(result)) {
