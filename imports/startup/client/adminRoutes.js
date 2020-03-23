@@ -5,6 +5,7 @@ FlowRouter.route('/studentManager', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'studentManager',
+            panel: 'panel'
         });
     },
 });
@@ -305,6 +306,7 @@ FlowRouter.route('/carMaintenanceReport', {
             BlazeLayout.render('App_body', {
                 main: 'App_home',
                 content: 'carMaintenanceReport',
+            panel: 'panel'
             });
     },
 });
