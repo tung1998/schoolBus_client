@@ -39,19 +39,19 @@ Template.studentManager.onCreated(() => {
 });
 
 Template.studentManager.onRendered(() => {
+    initFilter()
     renderCarStopID();
     initSelect2()
     addRequiredInputLabel();
-    addPaging($('#studentTable'));
-    reloadTable();
-    dropzone = initDropzone("#kt_dropzone_1")
-    this.dropzone = dropzone
-
     MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
         Session.set(_SESSION.isSuperadmin, result)
         if (result)
             initSchoolSelect2()
     }).catch(handleError)
+    dropzone = initDropzone("#kt_dropzone_1")
+    this.dropzone = dropzone
+    addPaging($('#studentTable'));
+    reloadTable(1, getLimitDocPerPage())
 });
 
 Template.studentManager.onDestroyed(() => {
@@ -343,11 +343,12 @@ function getLimitDocPerPage() {
     return parseInt($("#limit-doc").val());
 }
 
-function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
+function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options = null) {
     let table = $('#table-body');
     MeteorCall(_METHODS.student.GetByPage, {
         page: page,
-        limit: limitDocPerPage
+        limit: limitDocPerPage,
+        options
     }, accessToken).then(result => {
         handlePaging(table, result.count, page, limitDocPerPage)
         createTable(table, result, limitDocPerPage)
@@ -385,12 +386,12 @@ function createRow(result) {
         <tr id="${data._id}" class="table-row">
             <td>${result.index + 1}</td>
             <td>${data.name}</td>
+            <td>${data.IDStudent}</td>
             <td>${data.address}</td>
             <td>${data.phone}</td>
             <td>${data.email}</td>
             <td>${data.schoolName}</td>
             <td>${data.className}</td>
-            <td>${data.IDStudent}</td>
             <td>${data.carStop}</td>
             <td>
             <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
@@ -409,4 +410,76 @@ function initSchoolSelect2() {
             placeholder: 'Chọn trường'
         })
     }).catch(handleError)
+}
+
+function initFilter() {
+    let filterHtml = `
+    <div class="form-group row">
+        <label for="student-name" class="col-3 col-form-label">Họ tên</label>
+        <div class="col-9">
+            <input class="form-control filter-input" type="text" value="" id="student-name-filter" 
+                name="student-name">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="student-route" class="col-3 col-form-label">Địa chỉ</label>
+        <div class="col-9">
+            <input class="form-control filter-input" type="text" value="" id="student-address-filter"
+                name="student-address">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="student-parent-route" class="col-3 col-form-label">Số điện thoại</label>
+        <div class="col-9">
+        <input class="form-control filter-input" type="text" value="" id="student-phone-filter"
+        name="student-phone">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="student-parent-route" class="col-3 col-form-label">Email</label>
+        <div class="col-9">
+        <input class="form-control filter-input" type="text" value="" id="student-email-filter"
+        name="student-email">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="student-parent-route" class="col-3 col-form-label">Trường</label>
+        <div class="col-9">
+        <input class="form-control filter-input" type="text" value="" id="student-school-filter"
+        name="student-email">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="student-parent-route" class="col-3 col-form-label">Lớp</label>
+        <div class="col-9">
+        <input class="form-control filter-input" type="text" value="" id="student-class-filter"
+        name="student-class">
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary" id="filter-button">Tìm kiếm</button>`
+    $('.kt-demo-panel__body').html(filterHtml)
+
+    $('#filter-button').on('click', e => {
+        let option = [{
+            text: "user/name",
+            value: $('#student-name-filter').val()
+        },{
+            text: "address",
+            value: $('#student-address-filter').val()
+        },{
+            text: "user/phone",
+            value: $('#student-phone-filter').val()
+        },{
+            text: "user/email",
+            value: $('#student-email-filter').val()
+        },{
+            text: "class/school/name",
+            value: $('#student-school-filter').val()
+        },{
+            text: "class/name",
+            value: $('#student-class-filter').val()
+        }]
+        
+        reloadTable(1, getLimitDocPerPage(), option)
+    })
 }
