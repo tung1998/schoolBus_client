@@ -175,7 +175,9 @@ function createRow(result) {
     let data = {
         _id: result._id,
         name: result.name,
-        schoolName: result.school?result.school.name:''
+        schoolName: result.school ? result.school.name: '',
+        createTime: result.createdTime
+
     }
     return `
         <tr id="${data._id}" class="table-row">
