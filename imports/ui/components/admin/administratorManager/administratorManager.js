@@ -10,6 +10,7 @@ import {
     handlePaging,
     initDropzone,
     makeID,
+    handleSuccess,
 } from "../../../../functions";
 
 import {
@@ -36,11 +37,17 @@ Template.administratorManager.onRendered(() => {
             initSchoolSelect2()
     }).catch(handleError)
 
-    addPaging()
+    $('#admintype-input').select2({
+        width: "100%",
+        placeholder: "Loại admin",
+        minimumResultsForSearch: Infinity
+
+    })
+
+    addPaging($('#administratorTable'))
     addRequiredInputLabel()
     reloadTable(1);
     dropzone = initDropzone("#kt_dropzone_1")
-    this.dropzone = dropzone
 });
 
 Template.administratorManager.onDestroyed(() => {
@@ -91,12 +98,20 @@ function ClickModifyButton(event) {
     $("#address-input").val(adminData.address);
     $("#phonenumber-input").val(adminData.phone);
     $("#email-input").val(adminData.email);
-    $("#admintype-input").val(adminData.adminType);
+    $("#admintype-input").val(adminData.adminType).trigger('change');
     $("#editAdministratorModal").modal("show");
     if (adminData.image) {
         imgUrl = `${_URL_images}/${adminData.image}/0`
         $('#avata').attr('src', imgUrl)
         $('.avatabox').removeClass('kt-hidden')
+    } else {
+        $('.avatabox').addClass('kt-hidden')
+    }
+
+    if (adminData.adminType == 0) $('#school-input').parent().parent().addClass('kt-hidden')
+    else {
+        $('#school-input').val(adminData.schoolID).trigger('change')
+        $('#school-input').parent().parent().removeClass('kt-hidden')
     }
     dropzone.removeAllFiles(true)
 }
@@ -120,10 +135,14 @@ async function SubmitForm(event) {
             username: target.username.value,
             phone: target.phoneNumber.value,
             email: target.email.value,
-            adminType: target.adminType.value,
-            password: target.password.value
+            password: "12345678"
         };
-        if (Session.get(_SESSION.isSuperadmin) && data.adminType == 1) data.schoolID = target.school.value
+
+        if (Session.get(_SESSION.isSuperadmin)) {
+            data.adminType = Number($('#admintype-input').val())
+            if (data.adminType == 1) data.schoolID = $('#school-input').val()
+            console.log(data);
+        }
         let imagePreview = $('#kt_dropzone_1').find('div.dz-image-preview')
         if (imagePreview.length) {
             if (imagePreview.hasClass('dz-success')) {
@@ -146,12 +165,15 @@ async function SubmitForm(event) {
                 .then(result => {
                     $("#editAdministratorModal").modal("hide");
                     reloadTable(1, getLimitDocPerPage())
+                    handleSuccess("Đã thêm")
                 }).catch(handleError);
-        } else {
-            data._id = modify;
-            MeteorCall(_METHODS.admin.Update, data, accessToken)
+            } else {
+                data._id = modify;
+                console.log(data);
+                MeteorCall(_METHODS.admin.Update, data, accessToken)
                 .then(result => {
                     $("#editAdministratorModal").modal("hide");
+                    handleSuccess("Đã sửa!")
                     reloadTable(currentPage, getLimitDocPerPage())
                 })
                 .catch(handleError);
@@ -164,6 +186,7 @@ function ClickDeleteButton(event) {
     let data = $(event.currentTarget).data("json");
     MeteorCall(_METHODS.admin.Delete, data, accessToken)
         .then(result => {
+            handleSuccess('Đã xóa!')
             reloadTable(currentPage, getLimitDocPerPage())
         })
         .catch(handleError);
@@ -171,13 +194,13 @@ function ClickDeleteButton(event) {
 
 function checkInput() {
     let name = $("#name-input").val();
-    let address = $("#address-input").val();
+    // let address = $("#address-input").val();
     let phone = $("#phonenumber-input").val();
     // let email = $("#email-input").val("");
     let admintype = $("#admintype-input").val();
     let username = $("#username-input").val();
 
-    if (admintype == null || !name || !address || !phone || !username) {
+    if ((Session.get(_SESSION.isSuperadmin) && admintype == null) || !name || !phone || !username) {
         Swal.fire({
             icon: "error",
             text: "Chưa đủ thông tin!",
@@ -211,36 +234,46 @@ function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
         limit: limitDocPerPage
     }, accessToken).then(result => {
         handlePaging(table, result.count, page, limitDocPerPage)
-        let htmlRow = result.data.map(createRow);
-        table.html(htmlRow.join(''));
+        createTable(table, result, limitDocPerPage)
     })
-
 }
 
-function createRow(data, index) {
-    // _id is tripID
-    let item = {
-        _id: data._id,
-        name: data.user.name,
-        username: data.user.username,
-        phone: data.user.phone,
-        email: data.user.email,
-        adminType: data.adminType,
-        image: data.user.image
+function createTable(table, result, limitDocPerPage) {
+    let htmlRow = result.data.map((key, index) => {
+        key.index = index + (result.page - 1) * limitDocPerPage;
+        return createRow(key);
+    });
+    table.html(htmlRow.join(''))
+}
+
+function createRow(result, index) {
+    let data = {
+        _id: result._id,
+        name: result.user.name,
+        username: result.user.username,
+        phone: result.user.phone,
+        email: result.user.email,
+        adminType: result.adminType,
+        image: result.user.image,
+        schoolName: result.school ? result.school.name : '',
+        schoolID: result.schoolID ? result.schoolID : ''
     }
+   
     return `
-        <tr id="${item._id}" class="table-row">
-            <td>${item.name}</td>
-            <td>${item.username}</td>
-            <td>${item.phone}</td>
-            <td>${item.email}</td>
-            <td>${item.adminType==0?"Quản trị viên tổng":"Quản trị viên trường"}</td>
+        <tr id="${data._id}" class="table-row">
+            <td>${result.index + 1}</td>
+            <td>${data.name}</td>
+            <td>${data.username}</td>
+            <td>${data.phone}</td>
+            <td>${data.email}</td>
+            <td>${data.adminType==0?"Quản trị viên tổng":"Quản trị viên trường"}</td>
+            <td>${data.schoolName}</td>
             <td>
                 <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
-                    item
+                    data
                 )}\'>Sửa</button>
                 <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(
-                    item
+                    data
                 )}\'>Xóa</button>
             </td>
         </tr>
@@ -251,7 +284,8 @@ function initSchoolSelect2() {
     MeteorCall(_METHODS.school.GetAll, null, accessToken).then(result => {
         Session.set('schools', result.data)
         $('#school-input').select2({
-            width: '100%'
+            width: '100%',
+            placeholder: "Chọn trường"
         })
     }).catch(handleError)
 }

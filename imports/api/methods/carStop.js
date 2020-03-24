@@ -18,6 +18,7 @@ if (Meteor.isServer) {
     Meteor.methods({
         'carStop.getAll': getAllCarStop,
         'carStop.getByID': getCarStopByID,
+        'carStop.getByPage': getCarStopByPage,
         'carStop.create': createCarStop,
         'carStop.update': updateCarStop,
         'carStop.delete': deleteCarStop,
@@ -33,6 +34,13 @@ function getAllCarStop(data, accessToken = '') {
 
 function getCarStopByID(data, accessToken = '') {
     let url = `${AUTH_CARSTOP}/${data._id}`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
+}
+
+function getCarStopByPage(data, accessToken = '') {
+    let url = `${AUTH_CARSTOP}/${data.page}?limit=${data.limit}`
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });

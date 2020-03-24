@@ -1,31 +1,42 @@
 <template name="App_home">
-  <div>
-    {{> mobileHeader}}
-    <div class="kt-grid kt-grid--hor kt-grid--root">
-      <div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--ver kt-page">
-        <!-- begin:: Aside -->
-        <button class="kt-aside-close " id="kt_aside_close_btn"><i class="la la-close"></i></button>
-        {{> aside}}
-        <!-- end:: Aside -->
-        <div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor kt-wrapper" id="kt_wrapper">
-          <!-- begin:: Header -->
-          {{> header}}
-          <!-- end:: Header -->
-          <!-- begin:: Content -->
-          <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-            {{> Template.dynamic template=content}}
-          </div>
-          <!-- end:: Content -->
-          <!-- begin:: Footer -->
-          {{> footer}}
-          <!-- end:: Footer -->
-          <!-- begin::Scrolltop -->
-          <div id="kt_scrolltop" class="kt-scrolltop">
-            <i class="fa fa-arrow-up"></i>
-          </div>
-          <!-- end::Scrolltop -->
+  {{> mobileHeader}}
+  <div class="kt-grid kt-grid--hor kt-grid--root">
+    <div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--ver kt-page">
+      <!-- begin:: Aside -->
+      <button class="kt-aside-close " id="kt_aside_close_btn"><i class="la la-close"></i></button>
+      {{> aside}}
+      <!-- end:: Aside -->
+      <div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor kt-wrapper" id="kt_wrapper">
+        <!-- begin:: Header -->
+        {{> header}}
+        <!-- end:: Header -->
+        <!-- begin:: Content -->
+        <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+          {{> Template.dynamic template=content}}
         </div>
+        <!-- end:: Content -->
+        <!-- begin:: Footer -->
+        {{> footer}}
+
+        {{> Template.dynamic template=panel}}
+        <!-- end:: Footer -->
+        <!-- begin::Scrolltop -->
+        <div id="kt_scrolltop" class="kt-scrolltop">
+          <i class="fa fa-arrow-up"></i>
+        </div>
+        <!-- end::Scrolltop -->
       </div>
     </div>
   </div>
+  {{#if isLoading}}
+  <div id="loader" class="pageload-overlay pageload-loading">
+    <div class="spinner" >
+      <div class="rect1" ></div >
+      <div class="rect2" ></div >
+     <div class="rect3" ></div >
+      <div class="rect4" ></div >
+     <div class="rect5" ></div >
+    </div >
+  </div>
+  {{/if}}
 </template>

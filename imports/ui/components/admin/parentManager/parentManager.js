@@ -13,39 +13,48 @@ import {
   handleConfirm,
   addRequiredInputLabel,
   addPaging,
-  tablePaging,
   getBase64,
   makeID,
-  initDropzone
+  initDropzone,
+  handlePaging
 
 } from '../../../../functions'
 
 import {
   _METHODS,
-  LIMIT_DOCUMENT_PAGE
+  _SESSION,
+  LIMIT_DOCUMENT_PAGE,
+  _URL_images,
 } from '../../../../variableConst'
 
 let accessToken;
 let currentPage = 1
+let dropzone
 
 Template.parentManager.onCreated(() => {
   accessToken = Cookies.get('accessToken')
 });
 
 Template.parentManager.onRendered(() => {
-  addPaging()
-  reloadTable(1, getLimitDocPerPage())
+  addPaging($('#parentTable'))
+  reloadTable()
   addRequiredInputLabel()
-  initDropzone('#add-button', '#edit-button')
   renderSchoolSelect()
   initSelect2()
+  dropzone = initDropzone("#kt_dropzone_1")
+  this.dropzone = dropzone
 })
+
+Template.parentManager.onDestroyed(() => {
+  dropzone = null
+});
 
 Template.parentManager.events({
   'click #add-button': () => {
     $('.modal-title').html("Thêm phụ huynh mới");
     $('.modal-footer').find('.btn.btn-primary').html("Thêm mới")
     $('#student-info').html('')
+    $('.avatabox').addClass('kt-hidden')
     clearForm()
   },
   'click #edit-button': clickEditButton,
@@ -64,9 +73,13 @@ Template.parentManager.events({
   "change #class-select": renderStudentSelect,
   "click #edit-student": (e) => {
     $('.kt-portlet__body:eq(2)').show()
-  }
+  },
+  "click .dz-preview": dzPreviewClick,
 })
 
+function dzPreviewClick() {
+  dropzone.hiddenFileInput.click()
+}
 
 function renderSchoolSelect() {
   MeteorCall(_METHODS.school.GetAll, {}, accessToken)
@@ -136,7 +149,7 @@ function clearForm() {
   $('#student-select').val("").trigger('change')
 
   // remove ảnh
-  $('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', '')
+  dropzone.removeAllFiles(true)
 }
 
 function checkForm() {
@@ -174,11 +187,15 @@ function clickEditButton(event) {
   $('#parent-email').val(data.email)
   $('#parent-address').val(data.address)
 
-  //ảnh
-  $('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', `http://123.24.137.209:3000/images/${data.image}/0`)
-  $('div.dropzone-previews').find('div.dz-image-preview').remove()
-  $('div.dz-preview').show()
-  $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
+  //remove ảnh cũ
+  if (data.image) {
+    imgUrl = `${_URL_images}/${data.image}/0`
+    $('#avata').attr('src', imgUrl)
+    $('.avatabox').removeClass('kt-hidden')
+  } else {
+    $('.avatabox').addClass('kt-hidden')
+  }
+  dropzone.removeAllFiles(true)
 
   //edit modal
   $('.modal-title').html(`Cập nhật thông tin phụ huynh: ${data.name}`);
@@ -196,7 +213,7 @@ async function clickSubmitButton(event) {
   try {
     if (checkForm()) {
       let data = getInputData()
-      let imagePreview = $('div.dropzone-previews').find('div.dz-image-preview')
+      let imagePreview = $('#kt_dropzone_1').find('div.dz-image-preview')
       if (imagePreview.length) {
         if (imagePreview.hasClass('dz-success')) {
           let imageId = makeID("user")
@@ -235,17 +252,17 @@ async function clickSubmitButton(event) {
 function clickDelButton(event) {
   handleConfirm().then(result => {
     if (result.value) {
-        let data = $(event.currentTarget).data("json");
-        MeteorCall(_METHODS.Parent.Delete, data, accessToken).then(result => {
-            Swal.fire({
-                icon: "success",
-                text: "Đã xóa thành công",
-                timer: 3000
-            })
-            reloadTable(currentPage, getLimitDocPerPage())
-        }).catch(handleError)
+      let data = $(event.currentTarget).data("json");
+      MeteorCall(_METHODS.Parent.Delete, data, accessToken).then(result => {
+        Swal.fire({
+          icon: "success",
+          text: "Đã xóa thành công",
+          timer: 3000
+        })
+        reloadTable(currentPage, getLimitDocPerPage())
+      }).catch(handleError)
     }
-})
+  })
 }
 
 function initSelect2() {
@@ -279,77 +296,50 @@ function getLimitDocPerPage() {
 
 function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
   let table = $('#table-body');
-  let emptyWrapper = $('#empty-data');
-  table.html('');
   MeteorCall(_METHODS.Parent.GetByPage, {
-      page: page,
-      limit: limitDocPerPage
+    page: page,
+    limit: limitDocPerPage
   }, accessToken).then(result => {
-    console.log(result);
-      tablePaging(".tablePaging", result.count, page, limitDocPerPage)
-      $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
-      if (result.count === 0) {
-          $('.tablePaging').addClass('d-none');
-          table.parent().addClass('d-none');
-          emptyWrapper.removeClass('d-none');
-      } else if (result.count > limitDocPerPage) {
-          $('.tablePaging').removeClass('d-none');
-          table.parent().removeClass('d-none');
-          emptyWrapper.addClass('d-none');
-          // update số bản ghi
-      } else {
-          $('.tablePaging').addClass('d-none');
-          table.parent().removeClass('d-none');
-          emptyWrapper.addClass('d-none');
-      }
-      createTable(table, result, limitDocPerPage)
+    handlePaging(table, result.count, page, limitDocPerPage)
+    createTable(table, result, limitDocPerPage)
   })
 
 }
 
 function createTable(table, result, limitDocPerPage) {
-  result.data.forEach((key, index) => {
-      key.index = index + (result.page - 1) * limitDocPerPage;
-      const row = createRow(key);
-      table.append(row);
-  });
+  let htmlRow = result.data.map((key, index) => {
+    key.index = index + (result.page - 1) * limitDocPerPage;
+    return createRow(key);
+  })
+  table.html(htmlRow.join(''))
 }
 
-function createRow(data) {
-  const data_row = dataRow(data);
-  // _id is tripID
-  return `
-      <tr id="${data._id}">
-        ${data_row}
-      </tr>
-      `
-}
-
-function dataRow(result) {
-  let parent = {
-      _id: result._id,
-      image: result.user.image,
-      name: result.user.name,
-      username: result.user.username,
-      phone: result.user.phone,
-      email: result.user.email,
-      address: result.student.address,
-      studentID: result.studentID,
-      studentName: result.student.user.name,
-      className: result.student.class.name,
-      schoolName: result.student.class.school.name,
+function createRow(result) {
+  let data = {
+    _id: result._id,
+    image: result.user.image,
+    name: result.user.name,
+    username: result.user.username,
+    phone: result.user.phone,
+    email: result.user.email,
+    address: result.student.address,
+    studentID: result.studentID,
+    studentName: result.student.user.name,
+    className: result.student.class.name,
+    schoolName: result.student.class.school.name,
   }
-  return `
-              <th scope="row"></th>
-              <td>${parent.name}</td>
-              <td>${parent.username}</td>
-              <td>${parent.phone}</td>
-              <td>${parent.email}</td>
-              <td>${parent.address}</td>
-              <td>${parent.studentName}</td>
+  return ` <tr id="${data._id}">
+              <th scope="row">${result.index + 1}</th>
+              <td>${data.name}</td>
+              <td>${data.username}</td>
+              <td>${data.phone}</td>
+              <td>${data.email}</td>
+              <td>${data.address}</td>
+              <td>${data.studentName}</td>
               <td>
-                  <button type="button" class="btn btn-outline-brand dz-remove" data-toggle="modal" id="edit-button" data-target="#editParentModal" data-json=\'${JSON.stringify(parent)}\'>Sửa</button>
-                  <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(parent)}\'>Xóa</button>
+                  <button type="button" class="btn btn-outline-brand dz-remove" data-toggle="modal" id="edit-button" data-target="#editParentModal" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
+                  <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
               </td>
+            </tr>
           `
 }

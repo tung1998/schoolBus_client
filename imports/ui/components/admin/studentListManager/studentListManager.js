@@ -13,12 +13,13 @@ import {
     handleSuccess,
     addRequiredInputLabel,
     addPaging,
-    tablePaging,
+    handlePaging
 } from '../../../../functions';
 
 import {
     _METHODS,
-    LIMIT_DOCUMENT_PAGE
+    LIMIT_DOCUMENT_PAGE,
+    _SESSION
 } from '../../../../variableConst';
 
 let accessToken;
@@ -26,20 +27,28 @@ let currentPage = 1;
 
 Template.studentListManager.onCreated(() => {
     accessToken = Cookies.get('accessToken');
+    Session.set(_SESSION.isSuperadmin, true)
+    Session.set('schools', [])
 });
 
 Template.studentListManager.onRendered(() => {
     addRequiredInputLabel();
-    addPaging();
-    reloadTable(1);
+    addPaging($('studentListTable'));
+    reloadTable();
+
+    MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
+        Session.set(_SESSION.isSuperadmin, result)
+        if (result)
+            initSchoolSelect2()
+    }).catch(handleError)
 });
 
 Template.studentListManager.events({
     'click #addStudentListButton': clickAddStudentListButton,
     'click #studentListModalSubmit': clickEditListModalSubmit,
-    'click #studentListData .modify-button': clickEditStudentListButton,
-    'click #studentListData .delete-button': clickDeleteStudentListButton,
-    'click #studentListData tr': clickStudentListRow,
+    'click #table-body .modify-button': clickEditStudentListButton,
+    'click #table-body .delete-button': clickDeleteStudentListButton,
+    'click #table-body tr': clickStudentListRow,
     "click .kt-datatable__pager-link": (e) => {
         reloadTable(parseInt($(e.currentTarget).data('page')), getLimitDocPerPage());
         $(".kt-datatable__pager-link").removeClass("kt-datatable__pager-link--active");
@@ -64,6 +73,11 @@ function clickEditListModalSubmit() {
         handleError(null, 'Vui lòng điền đầy đủ thông tin')
         return
     }
+
+    if (Session.get(_SESSION.isSuperadmin)) {
+        data.schoolID = $('#school-input').val()
+    }
+
     let studentListID = $('#studentListModal').attr('studentListID')
     if (studentListID) {
         handleConfirm('Bạn muốn sửa danh sách?').then(result => {
@@ -71,7 +85,7 @@ function clickEditListModalSubmit() {
             data._id = studentListID
             MeteorCall(_METHODS.studentList.Update, data, accessToken).then(result => {
                 reloadTable(currentPage, getLimitDocPerPage())
-                handleSuccess('Cập nhật', "Danh sách")
+                handleSuccess('Cập nhật')
                 $('#studentListModal').modal('hide')
             }).catch(handleError)
         })
@@ -81,7 +95,7 @@ function clickEditListModalSubmit() {
             MeteorCall(_METHODS.studentList.Create, data, accessToken).then(result => {
                 reloadTable(1, getLimitDocPerPage())
                 $('#studentListModal').modal('hide')
-                handleSuccess('Thêm mới', "Danh sách")
+                handleSuccess('Thêm mới')
             }).catch(handleError)
         })
     }
@@ -91,6 +105,12 @@ function clickEditStudentListButton(e) {
     e.preventDefault();
     let data = $(e.currentTarget).data('json')
     $('#studentList-name').val(data.name)
+
+    if (Session.get(_SESSION.isSuperadmin)) {
+        $('#school-input').val(data.schoolID).trigger('change')
+    }
+
+
     $('#studentListModalSubmit').html('Cập nhật')
     $('#studentListModal').attr('studentListID', data._id).modal('show')
     return false
@@ -117,84 +137,67 @@ function clickStudentListRow(e) {
     FlowRouter.go(`/studentlistManager/${studentListID}`)
 }
 
+Template.studentListModal.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    },
+    schools() {
+        return Session.get('schools')
+    },
+});
+
 function getLimitDocPerPage() {
     return parseInt($("#limit-doc").val());
 }
 
 function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
-    let table = $('#studentListData');
-    let emptyWrapper = $('#empty-data');
-    table.html('');
-    MeteorCall(_METHODS.studentList.GetByPage, { page: page, limit: limitDocPerPage }, accessToken).then(result => {
-        console.log(result)
-        tablePaging(".tablePaging", result.count, page, limitDocPerPage)
-        $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
-        if (result.count === 0) {
-            $('.tablePaging').addClass('d-none');
-            table.parent().addClass('d-none');
-            emptyWrapper.removeClass('d-none');
-        } else if (result.count > limitDocPerPage) {
-            $('.tablePaging').removeClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
-            // update số bản ghi
-        } else {
-            $('.tablePaging').addClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
-        }
+    let table = $('#table-body');
+    MeteorCall(_METHODS.studentList.GetByPage, {
+        page: page,
+        limit: limitDocPerPage
+    }, accessToken).then(result => {
+        handlePaging(table, result.count, page, limitDocPerPage)
         createTable(table, result, limitDocPerPage)
     })
 
 }
 
-function renderTable(data, page = 1) {
-    let table = $('#studentListData');
-    let emptyWrapper = $('#empty-data');
-    table.html('');
-    tablePaging('.tablePaging', data.count, page);
-    if (carStops.count === 0) {
-        $('.tablePaging').addClass('d-none');
-        table.parent().addClass('d-none');
-        emptyWrapper.removeClass('d-none');
-    } else {
-        $('.tablePaging').addClass('d-none');
-        table.parent().removeClass('d-none');
-        emptyWrapper.addClass('d-none');
-    }
-
-    createTable(table, data);
-}
-
 function createTable(table, result, limitDocPerPage) {
-    result.data.forEach((key, index) => {
+    let htmlRow = result.data.map((key, index) => {
         key.index = index + (result.page - 1) * limitDocPerPage;
-        const row = createRow(key);
-        table.append(row);
+        return createRow(key);
     });
+    table.html(htmlRow.join(''));
 }
 
-function createRow(data) {
-    const data_row = dataRow(data);
-    // _id is tripID
+function createRow(result) {
+    console.log(result)
+    let data = {
+        _id: result._id,
+        name: result.name,
+        schoolName: result.school?result.school.name:''
+    }
     return `
         <tr id="${data._id}" class="table-row">
-          ${data_row}
+            <td>${result.index}</td>
+            <td>${data.name}</td>
+            <td>${data.schoolName}</td>
+            <td>${moment(data.createdTime).format('l')}</td>
+            <td>
+            <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
+            <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
+            </td>
         </tr>
         `
 }
 
-function dataRow(data) {
-    let item = {
-        _id: data._id,
-        name: data.name,
-    }
-    return `
-                <td>${data.index}</td>
-                <td>${item.name}</td>
-                <td>${moment(item.createdTime).format('l')}</td>
-                <td>
-                <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(item)}\'>Sửa</button>
-                <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(item)}\'>Xóa</button>
-                </td>`
+
+function initSchoolSelect2() {
+    MeteorCall(_METHODS.school.GetAll, null, accessToken).then(result => {
+        Session.set('schools', result.data)
+        $('#school-input').select2({
+            width: '100%',
+            placeholder: 'Chọn trường'
+        })
+    }).catch(handleError)
 }

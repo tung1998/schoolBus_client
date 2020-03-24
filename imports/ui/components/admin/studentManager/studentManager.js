@@ -15,33 +15,47 @@ import {
     handleConfirm,
     addRequiredInputLabel,
     addPaging,
-    tablePaging,
     getBase64,
     makeID,
-    initDropzone
+    initDropzone,
+    handlePaging
 } from "../../../../functions";
 
 import {
     _METHODS,
-    LIMIT_DOCUMENT_PAGE
+    LIMIT_DOCUMENT_PAGE,
+    _SESSION,
+    _URL_images
 } from "../../../../variableConst";
 
 let accessToken;
 let currentPage = 1;
+let dropzone
 
 Template.studentManager.onCreated(() => {
     accessToken = Cookies.get("accessToken");
+    Session.set(_SESSION.isSuperadmin, true)
+    Session.set('schools', [])
 });
 
 Template.studentManager.onRendered(() => {
-    renderSchoolName();
+    initFilter()
     renderCarStopID();
     initSelect2()
     addRequiredInputLabel();
-    addPaging();
-    getLimitDocPerPage();
-    reloadTable();
-    initDropzone('.add-more', '.modify-button')
+    MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
+        Session.set(_SESSION.isSuperadmin, result)
+        if (result)
+            initSchoolSelect2()
+    }).catch(handleError)
+    dropzone = initDropzone("#kt_dropzone_1")
+    this.dropzone = dropzone
+    addPaging($('#studentTable'));
+    reloadTable(1, getLimitDocPerPage())
+});
+
+Template.studentManager.onDestroyed(() => {
+    dropzone = null
 });
 
 Template.studentManager.events({
@@ -50,7 +64,7 @@ Template.studentManager.events({
     "click .delete-button": ClickDeleteButton,
     "click .add-more": ClickAddMoreButton,
     "submit form": SubmitForm,
-    "change #student-school": renderClassName,
+    "change #school-input": renderClassName,
     "click .kt-datatable__pager-link": (e) => {
         reloadTable(parseInt($(e.currentTarget).data('page')), getLimitDocPerPage());
         $(".kt-datatable__pager-link").removeClass("kt-datatable__pager-link--active");
@@ -59,32 +73,33 @@ Template.studentManager.events({
     },
     "change #limit-doc": (e) => {
         reloadTable(1, getLimitDocPerPage());
-    }
+    },
+    "click .dz-preview": dzPreviewClick,
 });
 
-function renderSchoolName() {
-    MeteorCall(_METHODS.school.GetAll, {}, accessToken)
-        .then(result => {
-            let optionSelects = result.data.map((key) => {
-                return `<option value="${key._id}">${key.name}</option>`;
-            });
-            $("#student-school").append(optionSelects.join(""));
-        })
-        .catch(handleError);
+function dzPreviewClick() {
+    dropzone.hiddenFileInput.click()
 }
 
-function renderClassName() {
-    MeteorCall(_METHODS.class.GetAll, {}, accessToken)
-        .then(result => {
-            let optionSelects = result.data.map((key) => {
-                if (key.schoolID === $('#student-school').val()) {
-                    return `<option value="${key._id}">${key.name}</option>`;
-                }
-            });
+function renderClassName(classID = '') {
+    let schoolID = $('#school-input').val()
+    if (schoolID != '') {
+        MeteorCall(_METHODS.class.GetAll, {}, accessToken)
+            .then(result => {
+                let optionSelects = result.data.map((key) => {
+                    if (key.schoolID === schoolID) {
+                        return `<option value="${key._id}">${key.name}</option>`;
+                    }
+                });
 
-            $("#student-class").html('<option></option>').append(optionSelects.join(" "));
-        })
-        .catch(handleError);
+                $("#student-select").html('<option></option>').append(optionSelects.join(" "));
+
+                if (classID != '') {
+                    $("#student-select").val(classID).trigger('change')
+                }
+            })
+            .catch(handleError);
+    }
 }
 
 function renderCarStopID() {
@@ -113,35 +128,56 @@ function ClickTableRow(event) {
 }
 
 function ClickModifyButton(e) {
-	let studentData = $(e.currentTarget).data("json");
+    let studentData = $(e.currentTarget).data("json");
 
-	 console.log("click button")
-	$("#editStudentModal").modal("show");
-	$("#editStudentModal").attr("studentID", studentData._id);
-	$(".modal-title").html("Chỉnh Sửa");
-	$(".confirm-button").html("Sửa");
+    console.log("click button")
+    $("#editStudentModal").modal("show");
+    $("#editStudentModal").attr("studentID", studentData._id);
+    $(".modal-title").html("Chỉnh Sửa");
+    $(".confirm-button").html("Sửa");
 
-	$('input[name="IDstudent"]').val(studentData.IDStudent);
-	$('input[name="address"]').val(studentData.address);
-	$('input[name="name"]').val(studentData.name);
-	$('input[name="email"]').val(studentData.email);
-	$('input[name="phone"]').val(studentData.phone);
-	$('input[name="phone"]').trigger('change');
-	// $('#student-class').val(studentData.classID).trigger('change')
-	$('#student-carStopID').val(studentData.carStopID).trigger('change')
-	$('input[name="status"]').val(studentData.status);
-	$('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', `http://123.24.137.209:3000/images/${studentData.image}/0`)
-    $('div.dropzone-previews').find('div.dz-image-preview').remove()
-    $('div.dz-preview').show()
-    $('.dropzone-msg-title').html("Kéo ảnh hoặc click để chọn ảnh.")
+    $('input[name="IDstudent"]').val(studentData.IDStudent);
+    $('input[name="address"]').val(studentData.address);
+    $('input[name="name"]').val(studentData.name);
+    $('input[name="email"]').val(studentData.email);
+    $('input[name="phone"]').val(studentData.phone);
+    $('input[name="phone"]').trigger('change');
+
+    if (Session.get(_SESSION.isSuperadmin)) {
+        $('#school-input').val(studentData.schoolID).trigger('change')
+        renderClassName(studentData.classID)
+    } else {
+        $('#student-select').val(studentData.classID).trigger('change')
+    }
+    $('#student-carStopID').val(studentData.carStopID).trigger('change')
+    $('input[name="status"]').val(studentData.status);
+
+    if (studentData.image) {
+        imgUrl = `${_URL_images}/${studentData.image}/0`
+        $('#avata').attr('src', imgUrl)
+        $('.avatabox').removeClass('kt-hidden')
+    } else {
+        $('.avatabox').addClass('kt-hidden')
+    }
+    dropzone.removeAllFiles(true)
 
     return false
 }
+
+Template.editStudentModal.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    },
+    schools() {
+        return Session.get('schools')
+    },
+});
 
 function ClickAddMoreButton(e) {
     $("#editStudentModal").attr("studentID", "");
     $(".modal-title").html("Thêm Mới");
     $(".confirm-button").html("Thêm");
+    $('.avatabox').addClass('kt-hidden')
     clearForm();
 }
 
@@ -178,11 +214,13 @@ async function SubmitForm(event) {
                 phone: $('input[name="phone"]').val(),
                 status: $('input[name="status"]').val(),
                 carStopID: $('#student-carStopID').val(),
-                classID: $('#student-class').val(),
-                schoolID: $('#student-school').val()
+                classID: $('#student-select').val(),
             };
+            if (Session.get(_SESSION.isSuperadmin)) {
+                data.schoolID = $('#school-input').val()
+            }
 
-            let imagePreview = $('div.dropzone-previews').find('div.dz-image-preview')
+            let imagePreview = $('#kt_dropzone_1').find('div.dz-image-preview')
             if (imagePreview.length) {
                 if (imagePreview.hasClass('dz-success')) {
                     let imageId = makeID("user")
@@ -201,9 +239,10 @@ async function SubmitForm(event) {
             if (modify == "") {
                 MeteorCall(_METHODS.student.Create, data, accessToken)
                     .then(result => {
-                        handleSuccess("Thêm", "học sinh").then(() => {
-                            $("#editStudentModal").modal("hide");
+                        handleSuccess("Thêm").then(() => {
+                            // $("#editStudentModal").modal("hide");
                             reloadTable(1, getLimitDocPerPage())
+                            clearForm()
                         })
 
                     })
@@ -212,7 +251,7 @@ async function SubmitForm(event) {
                 data._id = modify;
                 MeteorCall(_METHODS.student.Update, data, accessToken)
                     .then(result => {
-                        handleSuccess("Cập nhật", "học sinh").then(() => {
+                        handleSuccess("Cập nhật").then(() => {
                             $("#editStudentModal").modal("hide");
                             reloadTable(currentPage, getLimitDocPerPage())
                         })
@@ -234,7 +273,7 @@ function checkInput() {
     // let email = $('input[name="email"]').val();
     let phone = $('input[name="phone"]').val();
     let school = $('#student-school').val();
-    let className = $('#student-class').val();
+    let className = $('#student-select').val();
     let carStopID = $('#student-carStopID').val();
     let status = $('input[name="status"]').val();
 
@@ -246,6 +285,18 @@ function checkInput() {
         })
         return false;
     } else {
+        if (Session.get(_SESSION.isSuperadmin)) {
+            let schoolID = $('#school-input').val()
+            if (!schoolID) {
+                Swal.fire({
+                    icon: "error",
+                    text: "Chưa chọn trường!",
+                    timer: 2000
+                })
+                return false;
+            }
+
+        }
         return true;
     }
 
@@ -257,21 +308,20 @@ function clearForm() {
     $('input[name="address"]').val("");
     $('input[name="email"]').val("");
     $('input[name="phone"]').val("");
-    $('#student-school').val("").trigger('change')
-    $('#student-class').val("").trigger('change')
+    $('#student-select').val("").trigger('change')
     $('#student-carStopID').val("").trigger('change')
     $('input[name="status"]').val("");
+
+    if (Session.get(_SESSION.isSuperadmin)) {
+        $('#school-input').val('').trigger('change')
+    }
     // remove ảnh
-    $('div.dropzone-previews').find('div.dz-preview').find('div.dz-image').find('img').attr('src', '')
+    dropzone.removeAllFiles(true)
 }
 
 function initSelect2() {
     let initSelect2 = [{
-            id: 'student-school',
-            name: 'Chọn trường'
-        },
-        {
-            id: 'student-class',
+            id: 'student-select',
             name: 'Chọn lớp'
         },
         {
@@ -293,103 +343,142 @@ function getLimitDocPerPage() {
     return parseInt($("#limit-doc").val());
 }
 
-function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
+function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options = null) {
     let table = $('#table-body');
-    let emptyWrapper = $('#empty-data');
-    table.html('');
-    MeteorCall(_METHODS.student.GetByPage, { page: page, limit: limitDocPerPage }, accessToken).then(result => {
-        console.log(result)
-        tablePaging(".tablePaging", result.count, page, limitDocPerPage)
-        $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
-        if (result.count === 0) {
-            $('.tablePaging').addClass('d-none');
-            table.parent().addClass('d-none');
-            emptyWrapper.removeClass('d-none');
-        } else if (result.count > limitDocPerPage) {
-            $('.tablePaging').removeClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
-            // update số bản ghi
-        } else {
-            $('.tablePaging').addClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
-        }
+    MeteorCall(_METHODS.student.GetByPage, {
+        page: page,
+        limit: limitDocPerPage,
+        options
+    }, accessToken).then(result => {
+        handlePaging(table, result.count, page, limitDocPerPage)
         createTable(table, result, limitDocPerPage)
     })
 
 }
 
-function renderTable(data, page = 1) {
-    let table = $('#table-body');
-    let emptyWrapper = $('#empty-data');
-    table.html('');
-    tablePaging('.tablePaging', data.count, page);
-    if (carStops.count === 0) {
-        $('.tablePaging').addClass('d-none');
-        table.parent().addClass('d-none');
-        emptyWrapper.removeClass('d-none');
-    } else {
-        $('.tablePaging').addClass('d-none');
-        table.parent().removeClass('d-none');
-        emptyWrapper.addClass('d-none');
-    }
-
-    createTable(table, data);
-}
-
 function createTable(table, result, limitDocPerPage) {
-    result.data.forEach((key, index) => {
+    let htmlRow = result.data.map((key, index) => {
         key.index = index + (result.page - 1) * limitDocPerPage;
-        const row = createRow(key);
-        table.append(row);
+        return createRow(key);
     });
+    table.html(htmlRow.join(''))
 }
 
-function createRow(data) {
-    const data_row = dataRow(data);
-    // _id is tripID
-    return `
-        <tr id="${data._id}" class="table-row">
-          ${data_row}
-        </tr>
-        `
-}
-
-function dataRow(result) {
+function createRow(result) {
     let data = {
         _id: result._id,
         name: result.user.name,
         address: result.address,
         phone: result.user.phone,
         email: result.user.email,
-        // schoolID: result.class.school._id,
-        // schoolName: result.class.school.name,
-        // classID: result.class._id,
-        // className: result.class.name,
+        schoolID: result.class.school._id,
+        schoolName: result.class.school.name,
+        classID: result.class._id,
+        className: result.class.name,
         IDStudent: result.IDStudent,
         carStopID: result.carStopID,
         carStop: result.carStop.name,
         status: result.status,
-        image: result.imageId
+        image: result.user.image
     }
+    // _id is tripID
     return `
-			<td>${result.index}</td>
+        <tr id="${data._id}" class="table-row">
+            <td>${result.index + 1}</td>
             <td>${data.name}</td>
+            <td>${data.IDStudent}</td>
             <td>${data.address}</td>
             <td>${data.phone}</td>
             <td>${data.email}</td>
             <td>${data.schoolName}</td>
             <td>${data.className}</td>
-            <td>${data.IDStudent}</td>
             <td>${data.carStop}</td>
             <td>
-            <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
-		data
-	)}\'>Sửa</button>
-            <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(
-		data
-	)}\'>Xóa</button>
+            <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
+            <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
             </td>
-    `;
+        </tr>
+        `
+}
+
+function initSchoolSelect2() {
+    MeteorCall(_METHODS.school.GetAll, null, accessToken).then(result => {
+        Session.set('schools', result.data)
+        $('#school-input').select2({
+            width: '100%',
+            placeholder: 'Chọn trường'
+        })
+    }).catch(handleError)
+}
+
+function initFilter() {
+    let filterHtml = `
+    <div class="form-group row">
+        <label for="student-name" class="col-3 col-form-label">Họ tên</label>
+        <div class="col-9">
+            <input class="form-control filter-input" type="text" value="" id="student-name-filter" 
+                name="student-name">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="student-route" class="col-3 col-form-label">Địa chỉ</label>
+        <div class="col-9">
+            <input class="form-control filter-input" type="text" value="" id="student-address-filter"
+                name="student-address">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="student-parent-route" class="col-3 col-form-label">Số điện thoại</label>
+        <div class="col-9">
+        <input class="form-control filter-input" type="text" value="" id="student-phone-filter"
+        name="student-phone">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="student-parent-route" class="col-3 col-form-label">Email</label>
+        <div class="col-9">
+        <input class="form-control filter-input" type="text" value="" id="student-email-filter"
+        name="student-email">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="student-parent-route" class="col-3 col-form-label">Trường</label>
+        <div class="col-9">
+        <input class="form-control filter-input" type="text" value="" id="student-school-filter"
+        name="student-email">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="student-parent-route" class="col-3 col-form-label">Lớp</label>
+        <div class="col-9">
+        <input class="form-control filter-input" type="text" value="" id="student-class-filter"
+        name="student-class">
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary" id="filter-button">Tìm kiếm</button>`
+    $('.kt-demo-panel__body').html(filterHtml)
+
+    $('#filter-button').on('click', e => {
+        let option = [{
+            text: "user/name",
+            value: $('#student-name-filter').val()
+        },{
+            text: "address",
+            value: $('#student-address-filter').val()
+        },{
+            text: "user/phone",
+            value: $('#student-phone-filter').val()
+        },{
+            text: "user/email",
+            value: $('#student-email-filter').val()
+        },{
+            text: "class/school/name",
+            value: $('#student-school-filter').val()
+        },{
+            text: "class/name",
+            value: $('#student-class-filter').val()
+        }]
+        
+        reloadTable(1, getLimitDocPerPage(), option)
+    })
 }

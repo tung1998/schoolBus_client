@@ -46,8 +46,8 @@
 										</button>
 										<p id="empty-data" class="text-muted font-14 d-none">
 											Không có dữ liệu
-										  </p>
-										<table class="table table-bordered table-hover">
+										</p>
+										<table class="table table-bordered table-hover" id="classTable">
 											<thead class="thead-light">
 												<tr>
 													<th>#</th>
@@ -87,25 +87,32 @@
 					<form class="kt-form kt-form--label-right">
 						<div class="kt-portlet__body">
 							<div class="form-group row">
-								<label class="col-2 col-form-label required-input-label" >Trường</label>
+								<label for="example-date-input"
+									class="col-2 col-form-label required-input-label">Lớp</label>
 								<div class="col-10">
-									<select id="school-select" class="form-control">
+									<input class="form-control" type="text" id="class-name" name="className">
+								</div>
+							</div>
+							{{#if isSuperadmin}}
+							<div class="form-group row">
+								<label for="example-tel-input" class="col-2 col-form-label required-input-label">Chọn
+									trường</label>
+								<div class="col-10">
+									<select class="form-control" name="school" id="school-input">
 										<option value=""></option>
+										{{#each schools}}
+										<option value="{{_id}}">{{name}}</option>
+										{{/each}}
 									</select>
 								</div>
 							</div>
+							{{/if}}
 							<div class="form-group row">
 								<label class="col-2 col-form-label required-input-label">Giáo Viên</label>
 								<div class="col-10">
 									<select id="teacher-select" class="form-control">
 										<option value=""></option>
 									</select>
-								</div>
-							</div>
-							<div class="form-group row">
-								<label for="example-date-input" class="col-2 col-form-label required-input-label">Lớp</label>
-								<div class="col-10">
-									<input class="form-control" type="text" id="class-name" name="className">
 								</div>
 							</div>
 						</div>

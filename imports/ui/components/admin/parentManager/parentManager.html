@@ -42,7 +42,7 @@
                 <div class="kt-section">
                   <div class="kt-section__content">
                     <button type="button" id="add-button" class="btn btn-outline-brand mb-4" data-toggle="modal" data-target="#editParentModal">Thêm mới</button>
-                    <table class="table table-bordered table-hover">
+                    <table class="table table-bordered table-hover" id="parentTable">
                       <thead class="thead-light">
                         <tr>
                           <th>#</th>
@@ -160,16 +160,8 @@
                   </div>
                 </div>
                 <div class="col-5">
-                  <div class="dropzone dropzone-default">
-                    <div class="dropzone-previews">
-                      <div class="dz-preview dz-file-preview">
-                        <div class="dz-image"><img data-dz-thumbnail="" alt="" src=""></div>
-                        <div class="dz-details">
-                          <div class="dz-filename"><span data-dz-name></span></div>
-                        </div>
-                        <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>
-                      </div>
-                    </div>
+                  <div class="avatabox kt-hidden">
+                    <img src="" alt="avata" id="avata">
                   </div>
                 </div>
               </div>

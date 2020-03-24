@@ -64,6 +64,7 @@ function createTrip(data, accessToken = '') {
 function updateTrip(data, accessToken = '') {
     let url = `${AUTH_TRIP}/${data._id}`
     return httpDefault(METHOD.put, url, {
+        body: data,
         token: accessToken
     });
 }

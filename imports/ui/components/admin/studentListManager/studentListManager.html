@@ -1,76 +1,77 @@
 <template name="studentListManager">
-    <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-      <!-- begin:: Subheader -->
-      <div class="kt-subheader   kt-grid__item" id="kt_subheader">
-        <div class="kt-container  kt-container--fluid ">
-          <div class="kt-subheader__main">
-            <h3 class="kt-subheader__title">
-  
-              Quản lý học </h3>
-  
-            <span class="kt-subheader__separator kt-hidden"></span>
-            <div class="kt-subheader__breadcrumbs">
-              <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
-              <span class="kt-subheader__breadcrumbs-separator"></span>
-              <a href="" class="kt-subheader__breadcrumbs-link">
-                SchoolBus </a>
-              <span class="kt-subheader__breadcrumbs-separator"></span>
-              <a href="" class="kt-subheader__breadcrumbs-link">
-                Quản lý danh sách học sinh</a>
-            </div>
+  <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+    <!-- begin:: Subheader -->
+    <div class="kt-subheader   kt-grid__item" id="kt_subheader">
+      <div class="kt-container  kt-container--fluid ">
+        <div class="kt-subheader__main">
+          <h3 class="kt-subheader__title">
+
+            Quản lý học </h3>
+
+          <span class="kt-subheader__separator kt-hidden"></span>
+          <div class="kt-subheader__breadcrumbs">
+            <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
+            <span class="kt-subheader__breadcrumbs-separator"></span>
+            <a href="" class="kt-subheader__breadcrumbs-link">
+              SchoolBus </a>
+            <span class="kt-subheader__breadcrumbs-separator"></span>
+            <a href="" class="kt-subheader__breadcrumbs-link">
+              Quản lý danh sách học sinh</a>
           </div>
         </div>
       </div>
-      <!-- end:: Subheader -->
-  
-      <!-- begin:: Content -->
-      <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-        <div class="row">
-          <div class="col">
-  
-            <div class="kt-portlet">
-              <div class="kt-portlet__head">
-                <div class="kt-portlet__head-label">
-                  <h3 class="kt-portlet__head-title">
-                    Tên danh sách
-                  </h3>
-                </div>
+    </div>
+    <!-- end:: Subheader -->
+
+    <!-- begin:: Content -->
+    <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+      <div class="row">
+        <div class="col">
+
+          <div class="kt-portlet">
+            <div class="kt-portlet__head">
+              <div class="kt-portlet__head-label">
+                <h3 class="kt-portlet__head-title">
+                  Tên danh sách
+                </h3>
               </div>
-              <div class="kt-portlet__body">
-                <!--begin::Section-->
-                <div class="kt-section">
-                  <div class="kt-section__content">
-                    <button type="button" class="btn btn-outline-brand mb-4" id="addStudentListButton">Thêm mới</button>
-                    <div class="kt-datatable kt-datatable--default kt-datatable--brand">
-                      <p id="empty-data" class="text-muted font-14 d-none">
-                        Không có dữ liệu
-                      </p>
-                    <table class="table table-bordered table-hover">
+            </div>
+            <div class="kt-portlet__body">
+              <!--begin::Section-->
+              <div class="kt-section">
+                <div class="kt-section__content">
+                  <button type="button" class="btn btn-outline-brand mb-4" id="addStudentListButton">Thêm mới</button>
+                  <div class="kt-datatable kt-datatable--default kt-datatable--brand">
+                    <p id="empty-data" class="text-muted font-14 d-none">
+                      Không có dữ liệu
+                    </p>
+                    <table class="table table-bordered table-hover" id="studentListTable">
                       <thead class="thead-light">
                         <tr>
                           <th>#</th>
                           <th>Tên</th>
-                          <th>DS</th>
+                          <th>Trường</th>
+                          <th>Thời gian tạo</th>
                           <th></th>
                         </tr>
                       </thead>
-                      <tbody id="studentListData">
+                      <tbody id="table-body">
 
                       </tbody>
                     </table>
-                    </div>
                   </div>
                 </div>
-                <!--end::Section-->
               </div>
+              <!--end::Section-->
             </div>
           </div>
         </div>
       </div>
-      <!-- end:: Content -->
     </div>
-    {{> studentListModal}}
-  </template>
+    <!-- end:: Content -->
+  </div>
+  {{> studentListModal}}
+</template>
 
 <template name="studentListModal">
   <div class="modal fade" id="studentListModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -84,9 +85,24 @@
         </div>
         <div class="modal-body">
           <form>
-            <div class="form-group">
-              <label for="studentList-name" class="form-control-label required-input-label">Tên</label>
-              <input type="text" class="form-control" id="studentList-name">
+            {{#if isSuperadmin}}
+            <div class="form-group row">
+              <label for="example-tel-input" class="col-2 col-form-label required-input-label">Chọn trường</label>
+              <div class="col-10">
+                <select class="form-control" name="school" id="school-input">
+                  <option value=""></option>
+                  {{#each schools}}
+                  <option value="{{_id}}">{{name}}</option>
+                  {{/each}}
+                </select>
+              </div>
+            </div>
+            {{/if}}
+            <div class="form-group row">
+              <label for="studentList-name" class="col-2 col-form-label required-input-label">Tên</label>
+              <div class="col-10">
+                <input type="text" class="form-control" id="studentList-name">
+              </div>
             </div>
           </form>
         </div>
@@ -97,4 +113,4 @@
       </div>
     </div>
   </div>
-  </template>
+</template>

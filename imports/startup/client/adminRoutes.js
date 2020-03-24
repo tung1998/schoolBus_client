@@ -5,6 +5,7 @@ FlowRouter.route('/studentManager', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'studentManager',
+            panel: 'panel'
         });
     },
 });
@@ -45,6 +46,7 @@ FlowRouter.route('/administratorManager', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'administratorManager',
+            panel: 'panel'
         });
     },
 });
@@ -281,6 +283,7 @@ FlowRouter.route('/moduleManager', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'moduleManager',
+            panel: 'panel'
         })
     }
 });
@@ -303,6 +306,7 @@ FlowRouter.route('/carMaintenanceReport', {
             BlazeLayout.render('App_body', {
                 main: 'App_home',
                 content: 'carMaintenanceReport',
+            panel: 'panel'
             });
     },
 });
@@ -418,6 +422,16 @@ FlowRouter.route('/routeManager', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'route',
+        });
+    },
+});
+
+FlowRouter.route('/userManager', {
+    name: 'user',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'userManager',
         });
     },
 });

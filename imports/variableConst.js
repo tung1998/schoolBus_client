@@ -5,7 +5,7 @@ export {
     LIMIT_DOCUMENT_PAGE,
     _URL_images
 }
-const _URL_images = 'http://192.168.100.69:3000/images'
+const _URL_images = 'http://123.24.137.209:3000/images'
 const _METHODS = {
     student: {
         GetAll: 'student.getAll',
@@ -43,6 +43,7 @@ const _METHODS = {
     carMaintenance: {
         GetAll: 'carMaintenance.getAll',
         GetById: 'carMaintenance.getByID',
+        GetByPage: 'carMaintenance.getByPage',
         Create: 'carMaintenance.create',
         Update: 'carMaintenance.update',
         Delete: 'carMaintenance.delete',
@@ -58,6 +59,7 @@ const _METHODS = {
     carStop: {
         GetAll: 'carStop.getAll',
         GetById: 'carStop.getByID',
+        GetByPage: 'carStop.getByPage',
         Create: 'carStop.create',
         Update: 'carStop.update',
         Delete: 'carStop.delete',
@@ -110,6 +112,8 @@ const _METHODS = {
     },
     modules: {
         GetAll: 'modules.get',
+        GetById: 'modules.getByID',
+        GetByPage: 'modules.getByPage',
         Create: 'modules.create',
         Update: 'modules.update',
         Delete: 'modules.delete',
@@ -228,7 +232,7 @@ const _METHODS = {
     sms: {
         GetAll: 'sms.getSMS',
         GetById: 'sms.getSMSByID',
-        GetBYPage: 'getSMSByPage',
+        GetByPage: 'getSMSByPage',
         Create: 'sms.createSMS',
         Update: 'sms.updateSMS',
         Delete: 'sms.deleteSMS',
@@ -251,6 +255,7 @@ const _SESSION = {
     isSuperadmin: 'isSuperadmin',
     avata: 'avata',
     name: 'name',
+    isLoading: 'isLoading',
 }
 
 const _TRIP_STUDENT = {
@@ -286,11 +291,11 @@ const _TRIP = {
         },
         finish: {
             text: "Đã kết thúc",
-            number: 3
+            number: 2
         },
         accident: {
             text: "Gặp sự cố",
-            number: 4
+            number: 3
         }
     }
 }
