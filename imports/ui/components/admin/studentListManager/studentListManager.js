@@ -179,7 +179,7 @@ function createRow(result) {
     }
     return `
         <tr id="${data._id}" class="table-row">
-            <td>${result.index + 1}</td>
+            <td>${result.index}</td>
             <td>${data.name}</td>
             <td>${data.schoolName}</td>
             <td>${moment(data.createdTime).format('l')}</td>
