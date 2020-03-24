@@ -16,7 +16,9 @@ const AUTH_PATH = 'http://linh.247car.vn'
 // const BASE = 'http://192.168.100.69:2999';
 
 
-// const AUTH_PATH = 'http://localhost:3000';
+// const AUTH_PATH = 'http://localhost:3999';
+
+// const AUTH_PATH = 'http://linh.247car.vn';
 
 // console.log(BASE);
 // mail hainv@fimo

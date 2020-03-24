@@ -187,7 +187,7 @@ function getLimitDocPerPage() {
 }
 
 function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
-    let table = $('#routeData');
+    let table = $('#table-body');
     MeteorCall(_METHODS.route.GetByPage, {
         page: page,
         limit: limitDocPerPage
