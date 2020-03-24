@@ -18,6 +18,7 @@ if (Meteor.isServer) {
     Meteor.methods({
         'carMaintenance.getAll': getAllCarMaintenance,
         'carMaintenance.getByID': getCarMaintenanceByID,
+        'carMaintenance.getByPage': getCarMaintenanceByPage,
         'carMaintenance.create': createCarMaintenance,
         'carMaintenance.update': updateCarMaintenance,
         'carMaintenance.delete': deleteCarMaintenance,
@@ -34,6 +35,13 @@ function getAllCarMaintenance(accessToken = '') {
 
 function getCarMaintenanceByID(data, accessToken = '') {
     let url = `${AUTH_CARMAINTENANCE}/${data._id}`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
+}
+
+function getCarMaintenanceByPage(data, accessToken = '') {
+    let url = `${AUTH_CARMAINTENANCE}/${data.page}?limit=${data.limit}`
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });

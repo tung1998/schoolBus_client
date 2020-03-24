@@ -42,6 +42,7 @@ import '../../ui/components/admin/userManager/userManager.js';
 // driver template
 import '../../ui/components/driver/upCommingTripInfo/upCommingTripInfo.js';
 import '../../ui/components/driver/carMaintenanceReport/carMaintenanceReport.js';
+import '../../ui/components/driver/carMaintenanceReport/carMaintenanceReportHistory.js';
 import '../../ui/components/driver/tripHistoryDriver/tripHistoryDriver.js';
 // parent template
 import '../../ui/components/parent/childrenInfo/childrenInfo.js';
