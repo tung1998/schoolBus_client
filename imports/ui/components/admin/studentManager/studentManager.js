@@ -39,7 +39,6 @@ Template.studentManager.onCreated(() => {
 });
 
 Template.studentManager.onRendered(() => {
-    initFilter()
     renderCarStopID();
     initSelect2()
     addRequiredInputLabel();
@@ -75,6 +74,10 @@ Template.studentManager.events({
         reloadTable(1, getLimitDocPerPage());
     },
     "click .dz-preview": dzPreviewClick,
+});
+
+Template.studentFilter.events({
+    "click #filter-button": fillterBtnClick,
 });
 
 function dzPreviewClick() {
@@ -411,74 +414,26 @@ function initSchoolSelect2() {
     }).catch(handleError)
 }
 
-function initFilter() {
-    let filterHtml = `
-    <div class="form-group row">
-        <label for="student-name" class="col-3 col-form-label">Họ tên</label>
-        <div class="col-9">
-            <input class="form-control filter-input" type="text" value="" id="student-name-filter" 
-                name="student-name">
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="student-route" class="col-3 col-form-label">Địa chỉ</label>
-        <div class="col-9">
-            <input class="form-control filter-input" type="text" value="" id="student-address-filter"
-                name="student-address">
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="student-parent-route" class="col-3 col-form-label">Số điện thoại</label>
-        <div class="col-9">
-        <input class="form-control filter-input" type="text" value="" id="student-phone-filter"
-        name="student-phone">
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="student-parent-route" class="col-3 col-form-label">Email</label>
-        <div class="col-9">
-        <input class="form-control filter-input" type="text" value="" id="student-email-filter"
-        name="student-email">
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="student-parent-route" class="col-3 col-form-label">Trường</label>
-        <div class="col-9">
-        <input class="form-control filter-input" type="text" value="" id="student-school-filter"
-        name="student-email">
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="student-parent-route" class="col-3 col-form-label">Lớp</label>
-        <div class="col-9">
-        <input class="form-control filter-input" type="text" value="" id="student-class-filter"
-        name="student-class">
-        </div>
-    </div>
-    <button type="submit" class="btn btn-primary" id="filter-button">Tìm kiếm</button>`
-    $('.kt-demo-panel__body').html(filterHtml)
-
-    $('#filter-button').on('click', e => {
-        let option = [{
-            text: "user/name",
-            value: $('#student-name-filter').val()
-        },{
-            text: "address",
-            value: $('#student-address-filter').val()
-        },{
-            text: "user/phone",
-            value: $('#student-phone-filter').val()
-        },{
-            text: "user/email",
-            value: $('#student-email-filter').val()
-        },{
-            text: "class/school/name",
-            value: $('#student-school-filter').val()
-        },{
-            text: "class/name",
-            value: $('#student-class-filter').val()
-        }]
-        
-        reloadTable(1, getLimitDocPerPage(), option)
-    })
+function fillterBtnClick(e){
+    let option = [{
+        text: "user/name",
+        value: $('#student-name-filter').val()
+    },{
+        text: "address",
+        value: $('#student-address-filter').val()
+    },{
+        text: "user/phone",
+        value: $('#student-phone-filter').val()
+    },{
+        text: "user/email",
+        value: $('#student-email-filter').val()
+    },{
+        text: "class/school/name",
+        value: $('#student-school-filter').val()
+    },{
+        text: "class/name",
+        value: $('#student-class-filter').val()
+    }]
+    
+    reloadTable(1, getLimitDocPerPage(), option)
 }
