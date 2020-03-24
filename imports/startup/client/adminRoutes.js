@@ -16,6 +16,7 @@ FlowRouter.route('/teacherManager', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'teacherManager',
+            panel: 'panel'
         });
     },
 });
@@ -26,6 +27,7 @@ FlowRouter.route('/schoolManager', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'schoolManager',
+            panel: 'panel'
         });
     },
 });
@@ -36,6 +38,7 @@ FlowRouter.route('/classManager', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'classManager',
+            panel: 'panel'
         });
     },
 });
@@ -57,6 +60,7 @@ FlowRouter.route('/driverManager', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'driverManager',
+            panel: 'panel'
         });
     },
 });
@@ -67,6 +71,7 @@ FlowRouter.route('/parentManager', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'parentManager',
+            panel: 'panel'
         });
     },
 });
@@ -77,6 +82,7 @@ FlowRouter.route('/carStopList', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'carStopList',
+            panel: 'panel'
         });
     },
 });
@@ -97,6 +103,7 @@ FlowRouter.route('/nannyManager', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'nannyManager',
+            panel: 'panel'
         });
     },
 });
@@ -107,6 +114,7 @@ FlowRouter.route('/carModelManager', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'carModelManager',
+            panel: 'panel'
         });
     },
 });
@@ -117,6 +125,7 @@ FlowRouter.route('/studentListManager', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'studentListManager',
+            panel: 'panel'
         });
     },
 });
@@ -140,6 +149,7 @@ FlowRouter.route('/routeManager', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'route',
+            panel: 'panel'
         });
     },
 
@@ -191,6 +201,7 @@ FlowRouter.route('/carFuel', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'carFuel',
+            panel: 'panel'
         });
     },
 });
@@ -221,6 +232,7 @@ FlowRouter.route('/carMaintenance', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'carMaintenance',
+            panel: 'panel'
         });
     },
 });
@@ -251,6 +263,7 @@ FlowRouter.route('/carStop', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'carStop',
+            panel: 'panel'
         });
     },
 });
@@ -317,6 +330,7 @@ FlowRouter.route('/carManager', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'carManager',
+            panel: 'panel'
         });
     },
 });
@@ -422,6 +436,7 @@ FlowRouter.route('/routeManager', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'route',
+            panel: 'panel'
         });
     },
 });
@@ -432,6 +447,7 @@ FlowRouter.route('/userManager', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'userManager',
+            panel: 'panel'
         });
     },
 });

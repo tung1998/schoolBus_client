@@ -43,8 +43,12 @@ function getAllAdmin(data, accessToken = '') {
 
 function getAdminByPage(data, accessToken = '') {
     let url = `${AUTH_ADMIN}/${data.page}?limit=${data.limit}`;
-    return httpDefault(METHOD.get, url, {
-        token: accessToken
+    if (data.options && data.options.length)
+        data.options.forEach(item => {
+            if (item.value) url += `&${encodeURIComponent(item.text)}=${encodeURIComponent(item.value)}`
+        })
+        return httpDefault(METHOD.get, url, {
+            token: accessToken
     })
 }
 
