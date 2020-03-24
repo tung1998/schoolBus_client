@@ -13,6 +13,14 @@
       </div>
     </div>
   </div>
+  <div class="select_history_type">
+    <button type="button" class="btn btn-success history_type" id="fuel_history">
+      Xem lịch sử đổ xăng
+    </button>
+    <button type="button" class="btn btn-success history_type" id="maintenance_history">
+      Xem lịch sử bảo trì
+    </button>
+  </div>
   <div
     class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor carMaintenanceReport"
     id="kt_content"
@@ -130,7 +138,7 @@
   <div class="kt-portlet">
     <div class="kt-portlet__head">
       <div class="kt-portlet__head-label">
-        <h3 class="kt-portlet__head-title">
+        <h3 class="kt-portlet__head-title carMaintenanceReportHistory_title">
           Lịch sử
         </h3>
       </div>
@@ -147,28 +155,10 @@
                     <th>#</th>
                     <th>Thời gian</th>
                     <th>Giá thành</th>
-                    <th>Nội dung</th>
+                    <th id="description">Nội dung</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>Jhon</td>
-                    <td>Stone</td>
-                    <td>@jhon</td>
-                </tr>
-                <tr>
-                    <th scope="row">2</th>
-                    <td>Lisa</td>
-                    <td>Nilson</td>
-                    <td>@lisa</td>
-                </tr>
-                <tr>
-                    <th scope="row">3</th>
-                    <td>Larry</td>
-                    <td>the Bird</td>
-                    <td>@twitter</td>
-                </tr>
+              <tbody id="table-body">
               </tbody>
           </table>
         </div>

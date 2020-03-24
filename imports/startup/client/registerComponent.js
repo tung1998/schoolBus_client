@@ -40,6 +40,7 @@ import '../../ui/components/admin/monitoring/monitoring.js';
 // driver template
 import '../../ui/components/driver/upCommingTripInfo/upCommingTripInfo.js';
 import '../../ui/components/driver/carMaintenanceReport/carMaintenanceReport.js';
+import '../../ui/components/driver/carMaintenanceReport/carMaintenanceReportHistory.js';
 import '../../ui/components/driver/tripHistoryDriver/tripHistoryDriver.js';
 // parent template
 import '../../ui/components/parent/tripTracking/tripTracking.js';
