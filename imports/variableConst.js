@@ -59,6 +59,7 @@ const _METHODS = {
     carStop: {
         GetAll: 'carStop.getAll',
         GetById: 'carStop.getByID',
+        GetByPage: 'carStop.getByPage',
         Create: 'carStop.create',
         Update: 'carStop.update',
         Delete: 'carStop.delete',
@@ -111,6 +112,8 @@ const _METHODS = {
     },
     modules: {
         GetAll: 'modules.get',
+        GetById: 'modules.getByID',
+        GetByPage: 'modules.getByPage',
         Create: 'modules.create',
         Update: 'modules.update',
         Delete: 'modules.delete',
@@ -229,7 +232,7 @@ const _METHODS = {
     sms: {
         GetAll: 'sms.getSMS',
         GetById: 'sms.getSMSByID',
-        GetBYPage: 'getSMSByPage',
+        GetByPage: 'getSMSByPage',
         Create: 'sms.createSMS',
         Update: 'sms.updateSMS',
         Delete: 'sms.deleteSMS',

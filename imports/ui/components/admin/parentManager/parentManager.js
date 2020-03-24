@@ -13,15 +13,16 @@ import {
   handleConfirm,
   addRequiredInputLabel,
   addPaging,
-  tablePaging,
   getBase64,
   makeID,
-  initDropzone
+  initDropzone,
+  handlePaging
 
 } from '../../../../functions'
 
 import {
   _METHODS,
+  _SESSION,
   LIMIT_DOCUMENT_PAGE,
   _URL_images,
 } from '../../../../variableConst'
@@ -35,8 +36,8 @@ Template.parentManager.onCreated(() => {
 });
 
 Template.parentManager.onRendered(() => {
-  addPaging()
-  reloadTable(1, getLimitDocPerPage())
+  addPaging($('#parentTable'))
+  reloadTable()
   addRequiredInputLabel()
   renderSchoolSelect()
   initSelect2()
@@ -187,8 +188,8 @@ function clickEditButton(event) {
   $('#parent-address').val(data.address)
 
   //remove ảnh cũ
-  if (teacherData.image) {
-    imgUrl = `${_URL_images}/${teacherData.image}/0`
+  if (data.image) {
+    imgUrl = `${_URL_images}/${data.image}/0`
     $('#avata').attr('src', imgUrl)
     $('.avatabox').removeClass('kt-hidden')
   } else {
@@ -295,54 +296,26 @@ function getLimitDocPerPage() {
 
 function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
   let table = $('#table-body');
-  let emptyWrapper = $('#empty-data');
-  table.html('');
   MeteorCall(_METHODS.Parent.GetByPage, {
     page: page,
     limit: limitDocPerPage
   }, accessToken).then(result => {
-    console.log(result);
-    tablePaging(".tablePaging", result.count, page, limitDocPerPage)
-    $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
-    if (result.count === 0) {
-      $('.tablePaging').addClass('d-none');
-      table.parent().addClass('d-none');
-      emptyWrapper.removeClass('d-none');
-    } else if (result.count > limitDocPerPage) {
-      $('.tablePaging').removeClass('d-none');
-      table.parent().removeClass('d-none');
-      emptyWrapper.addClass('d-none');
-      // update số bản ghi
-    } else {
-      $('.tablePaging').addClass('d-none');
-      table.parent().removeClass('d-none');
-      emptyWrapper.addClass('d-none');
-    }
+    handlePaging(table, result.count, page, limitDocPerPage)
     createTable(table, result, limitDocPerPage)
   })
 
 }
 
 function createTable(table, result, limitDocPerPage) {
-  result.data.forEach((key, index) => {
+  let htmlRow = result.data.map((key, index) => {
     key.index = index + (result.page - 1) * limitDocPerPage;
-    const row = createRow(key);
-    table.append(row);
-  });
+    return createRow(key);
+  })
+  table.html(htmlRow.join(''))
 }
 
-function createRow(data) {
-  const data_row = dataRow(data);
-  // _id is tripID
-  return `
-      <tr id="${data._id}">
-        ${data_row}
-      </tr>
-      `
-}
-
-function dataRow(result) {
-  let parent = {
+function createRow(result) {
+  let data = {
     _id: result._id,
     image: result.user.image,
     name: result.user.name,
@@ -355,17 +328,18 @@ function dataRow(result) {
     className: result.student.class.name,
     schoolName: result.student.class.school.name,
   }
-  return `
-              <th scope="row"></th>
-              <td>${parent.name}</td>
-              <td>${parent.username}</td>
-              <td>${parent.phone}</td>
-              <td>${parent.email}</td>
-              <td>${parent.address}</td>
-              <td>${parent.studentName}</td>
+  return ` <tr id="${data._id}">
+              <th scope="row">${result.index + 1}</th>
+              <td>${data.name}</td>
+              <td>${data.username}</td>
+              <td>${data.phone}</td>
+              <td>${data.email}</td>
+              <td>${data.address}</td>
+              <td>${data.studentName}</td>
               <td>
-                  <button type="button" class="btn btn-outline-brand dz-remove" data-toggle="modal" id="edit-button" data-target="#editParentModal" data-json=\'${JSON.stringify(parent)}\'>Sửa</button>
-                  <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(parent)}\'>Xóa</button>
+                  <button type="button" class="btn btn-outline-brand dz-remove" data-toggle="modal" id="edit-button" data-target="#editParentModal" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
+                  <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
               </td>
+            </tr>
           `
 }

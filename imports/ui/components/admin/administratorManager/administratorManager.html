@@ -47,9 +47,10 @@
                     <p id="empty-data" class="text-muted font-14 d-none">
                       Không có dữ liệu
                     </p>
-                    <table class="table table-bordered table-hover">
+                    <table id="administratorTable" class="table table-bordered table-hover">
                       <thead class="thead-light">
                         <tr>
+                          <th>#</th>
                           <th>Họ tên</th>
                           <th>Tên đăng nhập</th>
                           <th>Số điện thoại</th>
@@ -136,6 +137,7 @@
                 <label for="example-tel-input" class="col-3 col-form-label required-input-label">Chọn trường</label>
                 <div class="col-8">
                   <select class="form-control" name="school" id="school-input">
+                    <option value=""></option>
                     {{#each schools}}
                     <option value="{{_id}}">{{name}}</option>
                     {{/each}}

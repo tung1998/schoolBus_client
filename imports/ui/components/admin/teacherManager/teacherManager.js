@@ -11,10 +11,10 @@ import {
   handleConfirm,
   addRequiredInputLabel,
   addPaging,
-  tablePaging,
   getBase64,
   makeID,
-  initDropzone
+  initDropzone,
+  handlePaging
 } from "../../../../functions";
 
 import {
@@ -37,9 +37,9 @@ Template.teacherManager.onCreated(() => {
 
 Template.teacherManager.onRendered(() => {
   addRequiredInputLabel()
-  addPaging()
-  getLimitDocPerPage()
-  reloadTable(1);
+  addPaging($("#teacherTable"))
+  reloadTable();
+
   dropzone = initDropzone("#kt_dropzone_1")
   this.dropzone = dropzone
 
@@ -209,7 +209,7 @@ function checkInput() {
   let phone = $('input[name="phoneNumber"]').val();
   let email = $('input[name="email"]').val();
 
-  if (!schoolID || !name || !phone || !email) {
+  if (!name || !phone || !email) {
     Swal.fire({
       icon: "error",
       text: "Chưa đủ thông tin!",
@@ -254,71 +254,25 @@ function getLimitDocPerPage() {
 
 function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
   let table = $('#table-body');
-  let emptyWrapper = $('#empty-data');
-  table.html('');
   MeteorCall(_METHODS.teacher.GetByPage, {
     page: page,
     limit: limitDocPerPage
   }, accessToken).then(result => {
-    console.log(result)
-    tablePaging(".tablePaging", result.count, page, limitDocPerPage)
-    $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
-    if (result.count === 0) {
-      $('.tablePaging').addClass('d-none');
-      table.parent().addClass('d-none');
-      emptyWrapper.removeClass('d-none');
-    } else if (result.count > limitDocPerPage) {
-      $('.tablePaging').removeClass('d-none');
-      table.parent().removeClass('d-none');
-      emptyWrapper.addClass('d-none');
-      // update số bản ghi
-    } else {
-      $('.tablePaging').addClass('d-none');
-      table.parent().removeClass('d-none');
-      emptyWrapper.addClass('d-none');
-    }
+    handlePaging(table, result.count, page, limitDocPerPage)
     createTable(table, result, limitDocPerPage)
   })
 
 }
 
-function renderTable(data, page = 1) {
-  let table = $('#table-body');
-  let emptyWrapper = $('#empty-data');
-  table.html('');
-  tablePaging('.tablePaging', data.count, page);
-  if (carStops.count === 0) {
-    $('.tablePaging').addClass('d-none');
-    table.parent().addClass('d-none');
-    emptyWrapper.removeClass('d-none');
-  } else {
-    $('.tablePaging').addClass('d-none');
-    table.parent().removeClass('d-none');
-    emptyWrapper.addClass('d-none');
-  }
-
-  createTable(table, data);
-}
-
 function createTable(table, result, limitDocPerPage) {
-  result.data.forEach((key, index) => {
-    key.index = index + (result.page - 1) * limitDocPerPage;
-    const row = createRow(key);
-    table.append(row);
+  let htmlRow = result.data.map((key, index) => {
+      key.index = index + (result.page - 1) * limitDocPerPage;
+      return createRow(key);
   });
+  table.html(htmlRow.join(''))
 }
 
-function createRow(data) {
-  const data_row = dataRow(data);
-  // _id is tripID
-  return `
-        <tr id="${data._id}">
-          ${data_row}
-        </tr>
-        `
-}
-
-function dataRow(result) {
+function createRow(result) {
   let data = {
     _id: result._id,
     name: result.user.name,
@@ -326,9 +280,10 @@ function dataRow(result) {
     phone: result.user.phone,
     email: result.user.email,
     schoolID: result.schoolID,
-    schoolName: result.school.name
+    schoolName: result.school.name,
+    image: result.user.image
   };
-  return `
+  return `<tr id="${data._id}" class="table-row">
                 <td scope="row">${result.index + 1}</td>
                 <td>${data.name}</td>
                 <td>${data.username}</td>
@@ -342,7 +297,9 @@ function dataRow(result) {
                 <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(
     data
   )}\'>Xóa</button>
-                </td>`;
+  </td>
+  </tr>`;
+
 }
 
 function initSchoolSelect2() {

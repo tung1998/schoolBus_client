@@ -47,17 +47,17 @@
                     <p id="empty-data" class="text-muted font-14 d-none">
                       Không có dữ liệu
                     </p>
-                    <table class="table table-bordered table-hover">
+                    <table class="table table-bordered table-hover" id="studentTable">
                       <thead class="thead-light">
                         <tr>
-							<th>#</th>
+							            <th>#</th>
                           <th>Họ tên</th>
+                          <th>Mã học sinh</th>
                           <th>Địa chỉ</th>
                           <th>Số điện thoại</th>
                           <th>Email</th>
                           <th>Trường</th>
                           <th>Lớp</th>
-                          <th>Mã học sinh</th>
                           <th>Điểm đón, trả</th>
                           <th></th>
                         </tr>
@@ -99,40 +99,44 @@
               <div class="form-group row">
                 <label for="example-text-input" class="col-2 col-form-label required-input-label">Họ tên</label>
                 <div class="col-10">
-                  <input class="form-control" type="text" id="name-input" name="name">
+                  <input class="form-control" type="text" id="name-input" name="name" placeholder="Họ tên">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-email-input" class="col-2 col-form-label required-input-label">Địa chỉ</label>
                 <div class="col-10">
-                  <input class="form-control" type="text" id="address-input" name="address">
+                  <input class="form-control" type="text" id="address-input" name="address" placeholder="Địa chỉ">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-url-input" class="col-2 col-form-label required-input-label">Số điện thoại</label>
                 <div class="col-10">
-                  <input class="form-control" type="tel" id="phonenumber-input" name="phone">
+                  <input class="form-control" type="tel" id="phonenumber-input" name="phone" placeholder="Số điện thoại">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-tel-input" class="col-2 col-form-label">Email</label>
                 <div class="col-10">
-                  <input class="form-control" type="email" id="email-input" name="email">
+                  <input class="form-control" type="email" id="email-input" name="email" placeholder="Email">
                 </div>
               </div>
+              {{#if isSuperadmin}}
               <div class="form-group row">
-                <label class="col-2 col-form-label required-input-label">Trường</label>
+                <label for="example-tel-input" class="col-2 col-form-label required-input-label">Chọn trường</label>
                 <div class="col-10">
-                  <select id="student-school" class="form-control">
-                    <option></option>
+                  <select class="form-control" name="school" id="school-input">
+                    <option value=""></option>
+                    {{#each schools}}
+                    <option value="{{_id}}">{{name}}</option>
+                    {{/each}}
                   </select>
-
                 </div>
               </div>
+              {{/if}}
               <div class="form-group row">
                 <label class="col-2 col-form-label required-input-label">Lớp</label>
                 <div class="col-10">
-                  <select id="student-class" class="form-control">
+                  <select id="student-select" class="form-control">
                   </select>
                 </div>
               </div>
@@ -140,7 +144,7 @@
                 <label for="example-datetime-local-input" class="col-2 col-form-label required-input-label">Mã học
                   sinh</label>
                 <div class="col-10">
-                  <input class="form-control" type="number" name="IDstudent" id="student-id-input">
+                  <input class="form-control" type="number" name="IDstudent" placeholder="Mã học sinh" id="student-id-input">
                 </div>
               </div>
               <div class="form-group row">
@@ -157,7 +161,7 @@
                 <label for="example-datetime-local-input" class="col-2 col-form-label required-input-label">Trạng
                   thái</label>
                 <div class="col-10">
-                  <input class="form-control" type="number" name="status">
+                  <input class="form-control" type="number" value="0" name="status">
                 </div>
               </div>
               <div class="form-group row">

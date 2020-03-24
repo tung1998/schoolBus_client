@@ -8,6 +8,7 @@ import '../../ui/pages/login/login.js';
 import '../../ui/pages/not-found/not-found.js';
 // shared component template
 import '../../ui/components/shared/profile/profile.js'
+import '../../ui/components/shared/panel/panel.js'
 // admin template
 import '../../ui/components/admin/sample/sample.js'
 import '../../ui/components/admin/studentManager/studentManager.js'
@@ -35,6 +36,7 @@ import '../../ui/components/admin/carStopList/carStopList.js';
 import '../../ui/components/admin/tripManager/tripManager.js';
 import '../../ui/components/admin/tripManager/tripInfo/tripInfo';
 import '../../ui/components/admin/monitoring/monitoring.js';
+import '../../ui/components/admin/userManager/userManager.js';
 
 // import '../../ui/components/admin/admin/admin.js';
 // driver template
@@ -43,6 +45,7 @@ import '../../ui/components/driver/carMaintenanceReport/carMaintenanceReport.js'
 import '../../ui/components/driver/carMaintenanceReport/carMaintenanceReportHistory.js';
 import '../../ui/components/driver/tripHistoryDriver/tripHistoryDriver.js';
 // parent template
+import '../../ui/components/parent/childrenInfo/childrenInfo.js';
 import '../../ui/components/parent/tripTracking/tripTracking.js';
 import '../../ui/components/parent/sendFeedback/parentFeedback.js';
 import '../../ui/components/parent/parrentRequest/parrentRequest.js';

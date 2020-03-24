@@ -2,17 +2,39 @@ import "./feedback.html";
 
 const Cookies = require("js-cookie");
 
-import { MeteorCall, handleError } from "../../../../functions";
+import {
+    MeteorCall,
+    handleError,
+    handleSuccess,
+    handleConfirm,
+    addRequiredInputLabel,
+    addPaging,
+    getBase64,
+    makeID,
+    initDropzone,
+    handlePaging
+} from "../../../../functions";
 
-import { _METHODS } from "../../../../variableConst";
+import {
+    _METHODS,
+    LIMIT_DOCUMENT_PAGE,
+    _SESSION,
+    _URL_images
+} from "../../../../variableConst";
 
 let accessToken;
+let currentPage = 1;
 
 Template.feedback.onCreated(() => {
     accessToken = Cookies.get("accessToken");
+    Session.set(_SESSION.isSuperadmin, true)
+    Session.set('schools', [])
 });
 
 Template.feedback.onRendered(() => {
+    initSelect2()
+    addRequiredInputLabel();
+    addPaging($('#feedbackTable'));
     reloadTable();
 });
 
@@ -59,7 +81,7 @@ function SubmitForm(event) {
         email: target.email.value,
         adminType: target.adminType.value,
         password: target.password.value
-            //avatar: target.adminType
+        //avatar: target.adminType
     };
     let modify = $("#editAdministratorModal").attr("adminID");
     // console.log(modify);
@@ -138,7 +160,9 @@ function deleteRow(data) {
 }
 
 function reloadTable() {
-    MeteorCall(_METHODS.feedback.GetAll, { extra: "responseUser" }, accessToken)
+    MeteorCall(_METHODS.feedback.GetAll, {
+            extra: "responseUser"
+        }, accessToken)
         .then(result => {
             console.log(result)
             let htmlTable = result.data.map(htmlRow);

@@ -25,41 +25,35 @@ Template.moduleManager.onCreated(() => {
 });
 
 Template.moduleManager.onRendered(() => {
-    Session.setDefault('module-parent-route', [])
-    // Session.setDefault('module-route', [])
-
     MeteorCall(_METHODS.modules.GetIcons, {}, accessToken).then(result => {
         Session.set('icons', result);
     });
-
-    reloadTable()
     addRequiredInputLabel()
+    initSelect2()
+    initFilter()
+    reloadData()
 });
 
-
-Template.editModuleModal.onRendered(() => {
-    editTitleForm()
-    initSelect2()
-    console.log(Session.get('module-parent-route'));
-})
-
-
+Template.moduleManager.onDestroyed(() => {
+    $('.filter-input').unbind('change')
+});
 
 Template.editModuleModal.helpers({
     icons: function () {
         return Session.get('icons') ? JSON.parse(Session.get('icons')) : [];
     },
 
-    parentRoutes: function () {
-        return Session.get('module-parent-route')
+    modulesData: function () {
+        return Session.get('modulesData')
     }
 
 });
 
 Template.moduleManager.events({
     'click .submit-button': submitButton,
+    'click #add-module': clickAddModule,
     'click #edit-module': clickEditButton,
-    'click .delete-button': submitDelButton,
+    'click .delete-button': clickDelButton,
 })
 
 function submitButton(e) {
@@ -67,28 +61,29 @@ function submitButton(e) {
     if (checkInput()) {
         if (!data._id) {
             MeteorCall(_METHODS.modules.Create, data, accessToken).then(result => {
-                console.log(result);
-                reloadTable()
+                reloadData()
                 clearForm()
-                console.log("đã thêm mới");
                 handleSuccess("Thêm", "module")
             }).catch(handleError)
-        }
-        else {
+        } else {
             MeteorCall(_METHODS.modules.Update, data, accessToken).then(result => {
-                reloadTable()
+                reloadData()
                 clearForm()
                 handleSuccess("Cập nhật", "module")
-                console.log("đã update");
             }).catch(handleError)
         }
     }
+}
 
+function clickAddModule() {
+    $('.modal-header').find('.modal-title').html("Thêm Module mới");
+    $('.modal-footer').find('.btn.btn-primary').html("Thêm mới");
+    clearForm()
 }
 
 function clickEditButton(event) {
     let data = $(event.currentTarget).data("json");
-    $('.modal-header').find('.modal-title').html('Sửa Module ' + `${data.name}`);
+    $('.modal-header').find('.modal-title').html('Sửa Module');
     $('.modal-footer').find('.btn.btn-primary').html("Sửa");
     //gán data
     $('#module-id').val(data._id)
@@ -100,26 +95,18 @@ function clickEditButton(event) {
     $('#module-permission').val(data.permission).trigger('change')
 }
 
-function submitDelButton(event) {
+function clickDelButton(event) {
     handleConfirm().then(result => {
         console.log(result);
         if (result.value) {
             let data = $(event.currentTarget).data("json");
             MeteorCall(_METHODS.modules.Delete, data, accessToken).then(result => {
                 console.log(result);
-                Swal.fire({
-                    icon: "success",
-                    text: "Đã xóa thành công",
-                    timer: 3000
-                })
-                reloadTable()
+                handleSuccess('Đã xóa')
+                reloadData()
             }).catch(handleError)
-        }
-        else {
-
-        }
+        } else {}
     })
-
 }
 
 
@@ -179,54 +166,42 @@ function clearForm() {
     $('#module-permission').val('').trigger('change')
 }
 
-function insertRow(data, result) {
-    data._id = result._id;
-
-
+function htmlRow(key, index) {
+    return `<tr id="${key._id}">
+                <th scope="row">${index + 1}</th>
+                <td>${key.name}</td>
+                <td>${key.description}</td>
+                <td>${key.route}</td>
+                <td>${key.permission}</td>
+                <td>${key.createdTime}</td>
+                <td>
+                    <button type="button" class="btn btn-outline-brand"
+                        data-toggle="modal" id="edit-module" data-target="#editModuleModal" data-json=\'${JSON.stringify(key)}\'>Sửa</button>
+                    <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(key)}\'>Xóa</button>
+                </td>
+            </tr>`
 }
 
 function reloadTable() {
-    MeteorCall(_METHODS.modules.GetAll, null, accessToken).then(result => {
-        let routes = []
-        let parentRoutes = []
-        let table = $('#table-module')
-        dataModule = result.data;
-        let row = dataModule.map((key, index) => {
-            routes.push(key.route)
-            if (key.level === 0) {
-                parentRoutes.push(key.route)
-            }
+    let modulesData = Session.get('modulesData')
+    let moduleNameFilter = $('#module-name-filter').val()
+    let moduleRouteFilter = $('#module-route-filter').val()
+    let moduleParentRouteFilter = $('#module-parentRoute-filter').val()
+    let modulePermissionFilter = $('#module-permission-filter').val()
+    if (moduleNameFilter) modulesData = modulesData.filter(item => item.name.match(new RegExp(`${moduleNameFilter}`, 'i')))
+    if (moduleRouteFilter) modulesData = modulesData.filter(item => item.route.match(new RegExp(`${moduleRouteFilter}`, 'i')))
+    if (moduleParentRouteFilter) modulesData = modulesData.filter(item => item.parentRoute.match(new RegExp(`${moduleParentRouteFilter}`, 'i')))
+    if (modulePermissionFilter != 'all') modulesData = modulesData.filter(item => item.permission == modulePermissionFilter)
+    let htmlTable = modulesData.map(htmlRow)
 
-            return `<tr id="${key._id}">
-                        <th scope="row">${index + 1}</th>
-                        <td>${key.name}</td>
-                        <td>${key.description}</td>
-                        <td>${key.route}</td>
-                        <td>${key.permission}</td>
-                        <td>${key.createdTime}</td>
-                        <td>
-                            <button type="button" class="btn btn-outline-brand"
-                                data-toggle="modal" id="edit-module" data-target="#editModuleModal" data-json=\'${JSON.stringify(key)}\'>Sửa</button>
-                            <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(key)}\'>Xóa</button>
-                        </td>
-                    </tr>`
-        })
-        table.find("tbody").html(row.join(""))
-
-        // Session.set('module-route', routes)
-        Session.set('module-parent-route', parentRoutes)
-    }).catch(handleError)
+    $("#table-body").html(htmlTable.join(""))
 }
 
-
-function editTitleForm() {
-    let ktContent = $('.kt-section').find('.kt-section__content');
-    ktContent.find('#add-module').click(() => {
-        $('.modal-header').find('.modal-title').html("Thêm Module mới");
-        $('.modal-footer').find('.btn.btn-primary').html("Thêm mới");
-        clearForm()
-    });
-
+function reloadData() {
+    MeteorCall(_METHODS.modules.GetAll, null, accessToken).then(result => {
+        Session.set('modulesData', result.data)
+        reloadTable()
+    }).catch(handleError)
 }
 
 function initSelect2() {
@@ -251,3 +226,44 @@ function initSelect2() {
 function formatText(icon) {
     return $('<span><i class="' + $(icon.element).data('icon') + '"></i> ' + icon.text + '</span>');
 };
+
+function initFilter() {
+    let filterHtml = `
+    <div class="form-group row">
+        <label for="module-name" class="col-3 col-form-label">Tên Module</label>
+        <div class="col-9">
+            <input class="form-control filter-input" type="text" value="" id="module-name-filter" name="module-name"
+                placeholder="Tên Module">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="module-route" class="col-3 col-form-label">Đường dẫn</label>
+        <div class="col-9">
+            <input class="form-control filter-input" type="text" value="" id="module-route-filter"
+                name="module-route" placeholder="Đường dẫn">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="module-parent-route" class="col-3 col-form-label">Đường dẫn cha</label>
+        <div class="col-9">
+        <input class="form-control filter-input" type="text" value="" id="module-parentRoute-filter"
+        name="module-description" placeholder="Mô Tả">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="module-permission" class="col-3 col-form-label">Chọn quyền</label>
+        <div class="col-9">
+            <select id="module-permission-filter" class="form-control filter-input">
+                <option value="all" selected>Tất cả</option>
+                <option value="admin">Quản trị viên</option>
+                <option value="driver">Lái xe</option>
+                <option value="parent">Phụ huynh</option>
+                <option value="teacher">Giáo viên</option>
+            </select>
+        </div>
+    </div>`
+    $('.kt-demo-panel__body').html(filterHtml)
+    $('.filter-input').on('change', e => {
+        reloadTable()
+    })
+}

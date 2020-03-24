@@ -47,7 +47,7 @@
                     <p id="empty-data" class="text-muted font-14 d-none">
                       Không có dữ liệu
                     </p>
-                    <table class="table table-bordered table-hover">
+                    <table class="table table-bordered table-hover" id="teacherTable">
                       <thead class="thead-light">
                         <tr>
                           <th>#</th>
@@ -94,19 +94,19 @@
               <div class="form-group row">
                 <label for="example-text-input" class="col-2 col-form-label required-input-label">Họ tên</label>
                 <div class="col-10">
-                  <input class="form-control" type="text" id="example-text-input" placeholder="Họ tên">
+                  <input class="form-control" type="text" id="example-text-input" name="name" placeholder="Họ tên">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-url-input" class="col-2 col-form-label required-input-label">Số điện thoại</label>
                 <div class="col-10">
-                  <input class="form-control" type="number" id="example-url-input" placeholder="Số điện thoại">
+                  <input class="form-control" type="number" id="example-url-input" name="phoneNumber" placeholder="Số điện thoại">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-tel-input" class="col-2 col-form-label">Email</label>
                 <div class="col-10">
-                  <input class="form-control" type="email" id="example-tel-input" placeholder="Email">
+                  <input class="form-control" type="email"  name="email" id="example-tel-input" placeholder="Email">
                 </div>
               </div>
               {{#if isSuperadmin}}
