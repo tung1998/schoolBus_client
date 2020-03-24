@@ -49,55 +49,27 @@
                       <thead class="thead-light">
                         <tr>
                           <th>#</th>
-                          <th>Ảnh</th>
                           <th>Họ tên</th>
                           <th>Username</th>
                           <th>Số điện thoại</th>
                           <th>Email</th>
                           <th>Khóa/Bị khóa</th>
-                          <th>Người Khóa</th>
+                          <!-- <th>Người Khóa</th> -->
                           <th>Lý do</th>
                           <th>Loại tài khoản</th>
-                          <th>Chọn</th>
+                          <th>
+                            <div class="from-group">
+                              <label class="kt-checkbox kt-checkbox--brand">
+                              <input type="checkbox" id="user-checkbox-all">
+                              <span></span>
+                              </label>
+                          </div>
+                          </th>
                           <th></th>
                         </tr>
                       </thead>
                       <tbody id="table-body">
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td>
-                            <div class="from-group">
-                              <label class="kt-checkbox kt-checkbox--brand">
-                              <input type="checkbox" class="student-checkbox">
-                              <span></span>
-                              </label>
-                          </div>
-                          </td>
-                          <td>
-                            <div class="dropdown dropdown-inline">
-                              <button type="button"
-                                class="btn btn-hover-danger btn-elevate-hover btn-icon btn-sm btn-icon-md"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="flaticon-more-1"></i>
-                              </button>
-                              <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#editUserModal"><i class="la la-key"></i> Đổi mật khẩu</a>
-                                <a class="dropdown-item" href="#"><i class="la la-lock"></i> Khóa/Mở Khóa</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#"><i class="la la-trash"></i> Xóa</a>
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
+
                       </tbody>
                     </table>
                   </div>
@@ -112,12 +84,15 @@
     </div>
     <!-- end:: Content -->
   </div>
+  <input type="hidden" id="user-id">
+  {{> editPasswordModal}}
   {{> editUserModal}}
+  {{> blockUserModal}}
 </template>
 
 
-<template name="editUserModal">
-  <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<template name="editPasswordModal">
+  <div class="modal fade" id="editPasswordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-center" role="document">
       <div class="modal-content">
@@ -129,6 +104,7 @@
         <div class="modal-body">
           <form class="kt-form kt-form--label-right">
             <div class="kt-portlet__body">
+              
               <div class="form-group row">
                 <label for="example-text-input" class="col-3 col-form-label required-input-label">Mật khẩu mới</label>
                 <div class="col-8">
@@ -136,15 +112,106 @@
                 </div>
               </div>
               <div class="form-group row">
-                <label for="example-email-input" class="col-3 col-form-label required-input-label">Nhập lại mật khẩu</label>
+                <label for="example-email-input" class="col-3 col-form-label required-input-label">Nhập lại mật
+                  khẩu</label>
                 <div class="col-8">
                   <input class="form-control" type="text" id="confirm-password" placeholder="Nhập lại mật khẩu">
                 </div>
               </div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel-button">Hủy</button>
-              <button type="submit" class="btn btn-primary" id="confirm-button">Xác nhận</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+              <button type="submit" class="btn btn-primary" id="password-confirm-button">Xác nhận</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="editUserModal">
+  <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-center" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Sửa thông tin</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          </button>
+        </div>
+        <div class="modal-body">
+          <form class="kt-form kt-form--label-right">
+            <div class="kt-portlet__body">
+              <div class="form-group row">
+                <label for="example-email-input" class="col-3 col-form-label required-input-label">Họ tên</label>
+                <div class="col-8">
+                  <input class="form-control" type="text" id="name" placeholder="Họ tên">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="example-email-input" class="col-3 col-form-label required-input-label">Số điện thoại</label>
+                <div class="col-8">
+                  <input class="form-control" type="text" id="phone" placeholder="Số điện thoại">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="example-email-input" class="col-3 col-form-label required-input-label">Email</label>
+                <div class="col-8">
+                  <input class="form-control" type="text" id="email" placeholder="Email">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="example-date-input" class="col-3 col-form-label">Ảnh đại diện</label>
+                <div class="col-4">
+                  <div class="dropzone dropzone-default dropzone-brand" id="user-dropzone">
+                    <div class="dropzone-msg dz-message needsclick">
+                      <h3 class="dropzone-msg-title">Kéo ảnh hoặc click để chọn ảnh.</h3>
+                      <span class="dropzone-msg-desc"><strong>jpg, jpeg, png ...</strong></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="avatabox kt-hidden">
+                    <img src="" alt="avata" id="avata">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+              <button type="submit" class="btn btn-primary" id="user-confirm-button">Xác nhận</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="blockUserModal">
+  <div class="modal fade" id="blockUserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-center" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Khóa người dùng</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          </button>
+        </div>
+        <div class="modal-body">
+          <form class="kt-form kt-form--label-right">
+            <div class="kt-portlet__body">
+              <div class="form-group">
+                <label for="example-email-input" class="col-form-label required-input-label">Lý do</label>
+
+                <textarea class="form-control" id="reason-block" rows="3"></textarea>
+
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+              <button type="button" class="btn btn-warning" id="block-confirm-button">Khóa</button>
             </div>
           </form>
         </div>

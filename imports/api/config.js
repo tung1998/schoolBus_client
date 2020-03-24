@@ -7,11 +7,7 @@ export {
 // const BASE = 'http://123.24.137.209:2999'
 // const AUTH_PATH = 'http://123.24.137.209:3000'
 
-<<<<<<< HEAD
 const BASE = 'http://192.168.100.69:3000'
-=======
-// const BASE = 'http://192.168.100.69:3000'
->>>>>>> 037c51e2a8eea2f2954ff6621cec37b64799f419
 const AUTH_PATH = 'http://192.168.100.69:2999'
 
 

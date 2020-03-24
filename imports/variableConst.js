@@ -221,12 +221,15 @@ const _METHODS = {
     user: {
         GetAll: 'user.getAll',
         GetById: 'user.getByID',
+        GetByPage: 'user.getByPage',
         Create: 'user.create',
         Update: 'user.update',
         Delete: 'user.delete',
         GetCurrentInfor: 'user.getCurrentInfor',
         UpdatePassword: 'user.updatePassword',
-        IsSuperadmin: 'user.isSuperadmin'
+        IsSuperadmin: 'user.isSuperadmin',
+        BlockUser: 'user.blockUser',
+        UnblockUser: 'user.unblockUser' 
     },
     sms: {
         GetAll: 'sms.getSMS',

@@ -187,7 +187,7 @@ function getLimitDocPerPage() {
 }
 
 function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
-    let table = $('#routeData');
+    let table = $('#table-body');
     MeteorCall(_METHODS.route.GetByPage, {
         page: page,
         limit: limitDocPerPage
@@ -216,6 +216,7 @@ function createRow(result) {
         carName: result.car.numberPlate,
         driverName: result.driver.user.name,
         nannyName: result.nanny.user.name,
+        studentList: result.studentList.name
     }
     return ` <tr id="${data._id}">
                 <td>${result.index + 1}</td>
@@ -223,6 +224,7 @@ function createRow(result) {
                 <td>${data.carName}</td>
                 <td>${data.driverName}</td>
                 <td>${data.nannyName}</td>
+                <td>${data.studentList}</td>
                 <td>
                 <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
                 <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>

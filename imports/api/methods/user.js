@@ -18,12 +18,15 @@ if (Meteor.isServer) {
     Meteor.methods({
         'user.getAll': getAllUser,
         'user.getByID': getUserByID,
+        'user.getByPage': getUserByPage,
         'user.create': createUser,
         'user.update': updateUser,
         'user.delete': deleteUser,
         'user.updatePassword': updatePassword,
         'user.getCurrentInfor': getCurrentUserInfor,
         'user.isSuperadmin': isSuperadmin,
+        'user.blockUser': blockUser,
+        'user.unblockUser': unblockUser
     });
 }
 
@@ -37,6 +40,13 @@ function getAllUser(accessToken = '') {
 
 function getUserByID(data, accessToken = '') {
     let url = `${AUTH_USER}/${data._id}`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
+}
+
+function getUserByPage(data, accessToken = '') {
+    let url = `${AUTH_USER}/${data.page}?limit=${data.limit}`
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });
@@ -84,6 +94,21 @@ function isSuperadmin(data, accessToken = '') {
     let url = `${AUTH_USER}/isSuperadmin`
     return httpDefault(METHOD.get, url, {
         body: data,
+        token: accessToken
+    })
+}
+
+function blockUser(data, accessToken = '') {
+    let url = `${AUTH_USER}/${data._id}/block`
+    return httpDefault(METHOD.put, url, {
+        body: data,
+        token: accessToken
+    })
+}
+
+function unblockUser(data, accessToken = '') {
+    let url = `${AUTH_USER}/${data._id}/unblock`
+    return httpDefault(METHOD.put, url, {
         token: accessToken
     })
 }

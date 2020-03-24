@@ -151,7 +151,7 @@ function getLimitDocPerPage() {
 }
 
 function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
-    let table = $('#table-body');
+    let table = $('#studentListData');
     MeteorCall(_METHODS.studentList.GetByPage, { page: page, limit: limitDocPerPage }, accessToken).then(result => {
         handlePaging(table, result.count, page, limitDocPerPage)
         createTable(table, result, limitDocPerPage)
@@ -171,7 +171,8 @@ function createRow(result) {
     let data = {
         _id: result._id,
         name: result.name,
-        schoolName: result.school.name
+        schoolName: result.school ? result.school.name: '',
+        createTime: result.createdTime
     }
     return `
         <tr id="${data._id}" class="table-row">
