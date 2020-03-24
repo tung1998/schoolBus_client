@@ -6,7 +6,7 @@
         <div class="kt-subheader__main">
           <h3 class="kt-subheader__title">
 
-           Giáo viên</h3>
+            Giáo viên</h3>
 
           <span class="kt-subheader__separator kt-hidden"></span>
           <div class="kt-subheader__breadcrumbs">
@@ -26,34 +26,56 @@
     <!-- begin:: Content -->
     <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
       <div class="row">
-        {{#each ClassItems}}
-          {{> classItem}}
+        {{#each classesInfo}}
+        {{> classItem}}
         {{/each}}
-        {{> classItem}}
-        {{> classItem}}
-        {{> classItem}}
-        {{> classItem}}
       </div>
     </div>
   </div>
 </template>
 
 <template name="classItem">
-  <div class="col-md-4">
-    <div class="kt-portlet kt-callout">
-      <div class="kt-portlet__body">
-        <div class="kt-callout__body">
-          <div class="kt-callout__content">
-            <h3 class="kt-callout__title">Lớp 1A1</h3>
-            <p class="kt-callout__desc">
-              33 học sinh
-            </p>
-          </div>
-          <div class="kt-callout__action">
-            <a href="#" class="btn btn-custom btn-bold btn-upper btn-font-sm  btn-primary">chi tiết</a>
+  <div class="kt-portlet kt-portlet--height-fluid">
+    <div class="kt-portlet__head kt-portlet__head--noborder"></div>
+    <div class="kt-portlet__body">
+      <!--begin::Widget -->
+      <div class="kt-widget kt-widget--user-profile-2">
+        <div class="kt-widget__head">
+          <div class="kt-widget__info">
+            <a href="#" class="kt-widget__username">
+              ${childrenInfo.user?childrenInfo.user.name||'':''}
+            </a>
+            <span class="kt-widget__desc">
+              ${childrenInfo.class?childrenInfo.class.name||'':''}
+            </span>
           </div>
         </div>
+        <div class="kt-widget__body">
+          <div class="kt-widget__section">
+            ${childrenInfo.class&&childrenInfo.class.school?childrenInfo.class.school.name||'':''}
+          </div>
+
+          <div class="kt-widget__item">
+            <div class="kt-widget__contact">
+              <span class="kt-widget__label">Email:</span>
+              <a href="#" class="kt-widget__data">${childrenInfo.user?childrenInfo.user.email||'':''}</a>
+            </div>
+            <div class="kt-widget__contact">
+              <span class="kt-widget__label">Số điện thoại:</span>
+              <a href="#" class="kt-widget__data">${childrenInfo.user?childrenInfo.user.phone||'':''}</a>
+            </div>
+            <div class="kt-widget__contact">
+              <span class="kt-widget__label">Điểm đón:</span>
+              <span class="kt-widget__data">${childrenInfo.carStop?childrenInfo.carStop.name||'':''}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="kt-widget__footer">
+          <button type="button" class="btn btn-label-warning btn-lg btn-upper">Thông tin chi tiết</button>
+        </div>
       </div>
+      <!--end::Widget -->
     </div>
   </div>
 </template>

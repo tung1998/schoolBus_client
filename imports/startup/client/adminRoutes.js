@@ -5,7 +5,8 @@ FlowRouter.route('/studentManager', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'studentManager',
-            panel: 'panel'
+            panel: 'panel',
+            panelData: 'studentFilter',
         });
     },
 });
