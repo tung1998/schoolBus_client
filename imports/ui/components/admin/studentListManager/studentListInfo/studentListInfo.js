@@ -28,28 +28,29 @@ let defaultStopPoint;
 let polyID;
 //array that contains ID of polyline-layers in markerGroup
 let polyCoor = [];
-let carStopIDs;
+let defaultCarStop = [];
+let carStopIDs = [];
 Template.studentListInfo.onCreated(() => {
     accessToken = Cookies.get('accessToken');
 });
 
 Template.studentListInfo.onRendered(() => {
     reloadTable().then(result => {
+        
         initClassSelect2()
         $(".anchorHeight").css({
-                "max-height": 400
+                "height": 400
             }) //set fixxed height of sortable tabs
             //sort stopPointsCoor by distance to anchor point
         defaultStopPoint = stopPointCoors;
-        stopPointCoors = DistanceAutoCal([21.040276, 105.782988], stopPointCoors);
-        drawPath(stopPointCoors)
-        console.log(stopPointCoors)
+        drawPath(defaultStopPoint)
+        
         
 
 
         //}
         //append HTML sortable tabs to tab-pane
-        for (let i = stopPointOrder.length - 1; i >= 0; i--) {
+        for (let i = 0; i <= stopPointOrder.length - 1; i++) {
             htmlSortable +=
                 `<div class="kt-portlet kt-portlet--mobile kt-portlet--sortable" id="${stopPointOrder[i]}">
                     <div class="kt-portlet__head ui-sortable-handle">
@@ -96,13 +97,38 @@ Template.carStopList_studentListInfo.events({
     /*'mousemove .kt-portlet--sortable': function(event) {
         console.log(1)
     },*/
-    //'click .confirmButton': confirmPath,
-
+    'click .confirmButton': confirmPath,
+    'click .autoDirect': function(event) {
+        
+        removeLayerByID(polyID)
+        stopPointCoors = DistanceAutoCal([21.040276, 105.782988], stopPointCoors);
+        carStopIDs = reArrange(carStopIDs, [], stopPointOrder);
+        console.log(carStopIDs)
+        drawPath(stopPointCoors)
+        htmlSortable = ''
+        for (let i = 0; i <=stopPointOrder.length - 1; i++) {
+            
+            htmlSortable +=
+                `<div class="kt-portlet kt-portlet--mobile kt-portlet--sortable" id="${stopPointOrder[i]}">
+                    <div class="kt-portlet__head ui-sortable-handle">
+                        <div class="kt-portlet__head-label">
+                            <h3 class="kt-portlet__head-title title="${studentStopPoint[stopPointOrder[i]].address}">
+                                ${studentStopPoint[stopPointOrder[i]].name}        
+                            </h3>
+                        </div>
+                    </div>
+                    
+                </div>`
+                //<div class="kt-portlet__body">${studentStopPoint[stopPointOrder[i]].address}</div>
+        }
+        setSortableData(htmlSortable)
+    },
     'drag .kt-portlet--sortable': dragTab
 })
 
 function initClassSelect2() {
     MeteorCall(_METHODS.class.GetAll, null, accessToken).then(result => {
+        console.log(result)
         if (result.data) {
             let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.name}</option>`)
             $('#classSelect').html(htmlClassOption.join('')).select2({
@@ -132,10 +158,11 @@ function reloadTable() {
     return MeteorCall(_METHODS.studentList.GetById, {
         _id: studentListID
     }, accessToken).then(result => {
-        console.log(result);
+        console.log(result)
         studentIDs = result.studentIDs;
         studentStopPoint = result.carStops;
-        carStopIDs = studentStopPoint._id;
+        carStopIDs = result.carStopIDs;
+        defaultCarStop = result.carStopIDs;
         studentStopPoint.map((data, index) => {
             stopPointOrder.push(index);
             setMarker(data.location, data.name)
@@ -194,12 +221,13 @@ function setMarker(arr, des) {
 }
 
 function setSortableData(str) {
+    document.getElementById("kt_sortable_portlets").innerHTML = " ";
     document.getElementById("kt_sortable_portlets").innerHTML += str;
 }
 
 function addPoly(arr) {
     let poly = L.polyline(arr, { color: 'blue', weight: 4, opacity: 0.5, smoothFactor: 1 }).addTo(markerGroup);
-    console.log(markerGroup)
+   
     polyID = markerGroup.getLayerId(poly)
 }
 
@@ -298,10 +326,12 @@ function dragTab(event) {
                 }
             })
             if (ID_order != stopPointOrder) {
-                console.log(ID_order)
+               console.log(ID_order)
                 stopPointCoors = reArrange(defaultStopPoint, [], ID_order)
+                carStopIDs = reArrange(defaultCarStop, [], ID_order)
                 removeLayerByID(polyID)
                 console.log(stopPointCoors)
+                console.log(carStopIDs)
                 drawPath(stopPointCoors)
             } else {
                 console.log(2)

@@ -27,6 +27,7 @@ let currentPage = 1;
 
 Template.studentListManager.onCreated(() => {
     accessToken = Cookies.get('accessToken');
+    console.log(accessToken)
     Session.set(_SESSION.isSuperadmin, true)
     Session.set('schools', [])
 });
