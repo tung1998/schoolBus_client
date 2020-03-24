@@ -28,6 +28,7 @@ let defaultStopPoint;
 let polyID;
 //array that contains ID of polyline-layers in markerGroup
 let polyCoor = [];
+let carStopIDs;
 Template.studentListInfo.onCreated(() => {
     accessToken = Cookies.get('accessToken');
 });
@@ -43,6 +44,7 @@ Template.studentListInfo.onRendered(() => {
         stopPointCoors = DistanceAutoCal([21.040276, 105.782988], stopPointCoors);
         drawPath(stopPointCoors)
         console.log(stopPointCoors)
+        
 
 
         //}
@@ -91,10 +93,10 @@ Template.carStopList_studentListInfo.onRendered(() => {
 })
 
 Template.carStopList_studentListInfo.events({
-    'mousemove .kt-portlet--sortable': function(event) {
+    /*'mousemove .kt-portlet--sortable': function(event) {
         console.log(1)
-    },
-    'click .confirmButton': function(event) {},
+    },*/
+    //'click .confirmButton': confirmPath,
 
     'drag .kt-portlet--sortable': dragTab
 })
@@ -130,9 +132,10 @@ function reloadTable() {
     return MeteorCall(_METHODS.studentList.GetById, {
         _id: studentListID
     }, accessToken).then(result => {
-        //console.log(result);
+        console.log(result);
         studentIDs = result.studentIDs;
         studentStopPoint = result.carStops;
+        carStopIDs = studentStopPoint._id;
         studentStopPoint.map((data, index) => {
             stopPointOrder.push(index);
             setMarker(data.location, data.name)
@@ -307,7 +310,10 @@ function dragTab(event) {
     }
 
 function confirmPath(event) {
-    MeteorCall(_METHODS.studentList.Update)
+    let studentListID = FlowRouter.getParam("id")
+    MeteorCall(_METHODS.studentList.Update, { _id: studentListID, carStopIDs: carStopIDs }, accessToken).then(result=>{
+        console.log(result)
+    }) 
 }
 //tạo loading modal while drawing path
 //confirm button
