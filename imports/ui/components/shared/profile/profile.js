@@ -5,7 +5,7 @@ import {
     handleSuccess,
     makeID,
     initDropzone
-    
+
 } from "../../../../functions";
 import {
     _METHODS,
@@ -33,40 +33,25 @@ Template.profile.onRendered(() => {
         //$(document).ready(() => {
         //type: 0 ADMIN, schoolID = null
         userID = result._id
-        
-        if (result.userType == 0) {
-            let userData = {
-                name: result.name,
-                phoneNumber: result.phone,
-                email: result.email,
-            }
-            console.log(userData.image);
-            $(".name").val(userData.name);
-            $(".school_section").remove();
-            $(".phone").val(userData.phoneNumber);
-            $(".email").val(userData.email);
+
+        let userData = {
+            name: result.name,
+            phoneNumber: result.phone,
+            email: result.email,
         }
-        //type: 1 TEACHER
-        else if (result.userType == 1) {
-            let userData = {
-                name: result.name,
-                school: result.schoolID,
-                phoneNumber: result.phone,
-                email: result.email,
-            }
-            
-            $(".name").val(userData.name);
-            $(".schoolName").val(userData.school);
-            $(".phone").val(userData.phoneNumber);
-            $(".email").val(userData.email);
-        }
+        console.log(userData.image);
+        $(".name").val(userData.name);
+        $(".school_section").remove();
+        $(".phone").val(userData.phoneNumber);
+        $(".email").val(userData.email);
+
         let urlImage = "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
         if (result.image != null) {
             urlImage = `${_URL_images}/${result.image}/0`
         }
         console.log(`maeno-${urlImage}`);
         $('.kt-avatar__holder').css("background-image", `url(${urlImage})`)
-        
+
     }).catch(handleError);
 });
 

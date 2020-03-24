@@ -363,3 +363,4 @@ function clearForm() {
     // remove ảnh
     dropzone.removeAllFiles(true)
 }
+

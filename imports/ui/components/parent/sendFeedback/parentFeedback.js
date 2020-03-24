@@ -1,5 +1,3 @@
-import { Meteor } from 'meteor/meteor';
-import { Tracker } from 'meteor/tracker'
 import './parentFeedback.html';
 const Cookies = require('js-cookie');
 import {
@@ -17,82 +15,18 @@ Template.parentFeedback.onCreated(() => {
 })
 
 Template.parentFeedback.rendered = () => {
-    setFormHeight()
 }
 
 Template.parentFeedback.events({
-    'submit form': (event) => {
-        event.preventDefault();
-        $(document).ready(() => {
-            let countCheck = 0,
-                reportType;
-            for (let i = 1; i <= 4; i++) {
-                if (document.getElementById(`feedback${i}`).checked) {
-                    reportType = i;
-                    countCheck++;
-                }
-                if (countCheck > 1) {
-                    alert("Chỉ được chọn một mục! Vui lòng thử lại.")
-                    break;
-                }
-            }
-            if (countCheck == 1) {
-                let feedback = {
-                    userID: '5e536e400a36ed5f0c2a5ba0',
-                    type: reportType,
-                    feedback: document.getElementById("content").value,
-                    status: 0,
-                    //responseBy: '2141235425124314',
-                    //responseTime: ' ',
-                    //response: ' ',
-                    //createdTime: Date.now(),
-                    //updatedTime: Date.now(),
-                    isDeleted: 0,
-                }
-                MeteorCall(_METHODS.feedback.Create, feedback, accessToken).then(result => {
-                    console.log(result)
-                }).catch(handleError)
-            } else {
-                alert("Xin hãy chọn mục.")
-            }
-
-        })
-
-    }
+    'click #sendFeedback': sendFeedbackClick
 })
 
-function setFormHeight() {
-    let windowHeight = $(window).height();
-    let formHeight = $("#parentFeedback").height();
-    let footerHeight = $("#kt_footer").height();
-    let topBarHeight = $("#kt_header").height();
 
-    if ($(window).width() < 1024) {
-        topBarHeight = $("#kt_header_mobile").height();
-        $("#parentFeedback").css({
-            "height": windowHeight - topBarHeight - 2 * footerHeight + 17
-        })
-        $('#kt_content').css({
-            "padding-top": 0,
-            "padding-bottom": 0
-        })
-    } else {
-        $("#parentFeedback").css({
-            "height": windowHeight - topBarHeight - 2 * footerHeight - 17
-        })
-        $("#kt-portlet__body").css({
-                "height": windowHeight - topBarHeight - 2 * footerHeight - 17
-            })
-            //$("#kt_wrapper").css({
-            //  "padding-top": 60
-            //})
-        $('#kt_content').css({
-            "padding-top": 0,
-            "padding-bottom": 0
-        })
+function sendFeedbackClick(e) {
+    let data = {
+        title: $('#title').val(),
+        type: parseInt($("input[name='feedbackType']:checked").val()),
+        content: $('#content').val(),
     }
-    console.log(windowHeight)
-    console.log(formHeight)
-    console.log(footerHeight)
-    console.log(topBarHeight)
+    console.log(data)
 }

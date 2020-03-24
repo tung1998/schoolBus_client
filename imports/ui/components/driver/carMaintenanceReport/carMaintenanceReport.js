@@ -26,6 +26,7 @@ Template.carMaintenanceReport.onRendered(() => {
         $(".kt-footer").hide();
         $(".historyTable").hide();
     })
+    $(".select_history_type").hide();
     $('.noteRow').hide();
     addRequiredInputLabel();
     initSelect2();
@@ -61,11 +62,13 @@ function initSelect2() {
 
 function carMaintenanceReportHistoryClick() {
     if ($(".historyTable").is(":hidden")) {
+        $(".select_history_type").show();
         $(".historyTable").show();
         $(".carMaintenanceReport").hide();
         $("#carMaintenanceReportHistory").html("Khai báo bảo trì, đổ xăng");
     } else {
         $(".historyTable").hide();
+        $(".select_history_type").hide();
         $(".carMaintenanceReport").show();
         $("#carMaintenanceReportHistory").html("Xem lịch sử đổ xăng, bảo trì");
     }
@@ -76,7 +79,7 @@ function submitForm(e) {
 
     if (checkInput()) {
         // let name = $('#name').val();
-        let carID = $('#numberPlate').val();
+        let carID = $('#carSelect').val();
         // let date = $('#kt_datepicker').val();
         let cost = $('#cost').val();
         let type = $('#selectType').val();
@@ -137,9 +140,7 @@ function checkInput() {
 }
 
 function clearForm() {
-    $('#carSelect').val("");
     $('#cost').val("");
-    $('#selectType').val("");
     $('#note').val("");
     $("#volume").val("");
 }

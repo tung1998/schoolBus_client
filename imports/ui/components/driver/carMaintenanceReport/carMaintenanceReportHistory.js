@@ -16,23 +16,34 @@ import {
 
 let accessToken;
 let currentPage = 1;
+let historyType;
 
 Template.carMaintenanceReportHistory.onCreated(() => {
 
 })
 
 Template.carMaintenanceReportHistory.onRendered(() => {
-    $(document).ready(() => {
-        $(".kt-footer").hide();
-        $(".historyTable").hide();
-    })
     addPaging()
     tablePaging()
+    $(".history_type").click()
 })
 
-Template.carMaintenanceReportHistory.events({
-    
+Template.carMaintenanceReport.events({
+    'click .history_type': ClickHistoryType,
 })
+
+function ClickHistoryType(e) {
+    e.preventDefault();
+    let target = $(e.currentTarget);
+    let target_id = target.attr("id");
+    console.log(target_id);
+    if (target_id == "fuel_history") {
+        historyType = "fuel";
+    } else {
+        historyType = "maintenance";
+    }
+    reloadTable(1, getLimitDocPerPage())
+}
 
 function getLimitDocPerPage() {
     return 15;
@@ -42,7 +53,19 @@ function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
     let table = $('#table-body');
     let emptyWrapper = $('#empty-data');
     table.html('');
-    MeteorCall(_METHODS.driver.GetByPage, {
+
+    let method;
+    if (historyType == "maintenance") {
+        $(".carMaintenanceReportHistory_title").html("Lịch sử bảo dưỡng")
+        $("#description").html("Nội dung")
+        method = _METHODS.carMaintenance.GetByPage;
+    } else if (historyType == "fuel") {
+        $(".carMaintenanceReportHistory_title").html("Lịch sử đổ xăng")
+        $("#description").html("Thể tích")
+        method = _METHODS.carFuel.GetByPage;
+    }
+
+    MeteorCall(method, {
         page: page,
         limit: limitDocPerPage
     }, accessToken).then(result => {
@@ -86,6 +109,7 @@ function renderTable(data, page = 1) {
 }
 
 function createTable(table, result, limitDocPerPage) {
+    console.log(result)
     result.data.forEach((key, index) => {
         key.index = index + (result.page - 1) * limitDocPerPage;
         const row = createRow(key);
@@ -104,34 +128,20 @@ function createRow(data) {
 }
 
 function dataRow(result) {
-    let driver = {
-        _id: result._id,
-        image: result.user.image,
-        name: result.user.name,
-        username: result.user.username,
-        phone: result.user.phone,
-        email: result.user.email,
-        address: result.address,
-        IDNumber: result.IDNumber,
-        IDIssueDate: result.IDIssueDate,
-        IDIssueBy: result.IDIssueBy,
-        DLNumber: result.DLNumber,
-        DLIssueDate: result.DLIssueDate,
+    if (historyType == "maintenance") {
+        return `
+                        <th scope="row">${result.index}</th>
+                        <td>${moment(result.createdTime).format('L')}</td>
+                        <td>${result.price}</td>
+                        <td>${result.description}</td>
+                    `
+    } else if (historyType == "fuel") {
+        return `
+                        <th scope="row">${result.index}</th>
+                        <td>${moment(result.createdTime).format('L')}</td>
+                        <td>${result.price}</td>
+                        <td>${result.volume}</td>
+                    `
     }
-    return `
-                <th scope="row">${result.index}</th>
-                <td>${driver.name}</td>
-                <td>${driver.phone}</td>
-                <td>${driver.email}</td>
-                <td>${driver.address}</td>
-                <td>${driver.IDNumber}</td>
-                <td>${driver.IDIssueDate}</td>
-                <td>${driver.DLNumber}</td>
-                <td>${driver.DLIssueDate}</td>
-                <td>
-                    <button type="button" class="btn btn-outline-brand dz-remove" data-dz-remove
-                        data-toggle="modal" id="edit-button" data-target="#editDriverModal" data-json=\'${JSON.stringify(driver)}\'>Sửa</button>
-                    <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(driver)}\'>Xóa</button>
-                </td>
-            `
+
 }
