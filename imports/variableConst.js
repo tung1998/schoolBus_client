@@ -5,7 +5,7 @@ export {
     LIMIT_DOCUMENT_PAGE,
     _URL_images
 }
-const _URL_images = 'http://123.24.137.209:3000/images'
+const _URL_images = 'http://14.231.130.100:3000/images'
 const _METHODS = {
     student: {
         GetAll: 'student.getAll',
@@ -256,6 +256,9 @@ const _SESSION = {
     avata: 'avata',
     name: 'name',
     isLoading: 'isLoading',
+
+    //chat
+    roomID: 'roomID',
 }
 
 const _TRIP_STUDENT = {
