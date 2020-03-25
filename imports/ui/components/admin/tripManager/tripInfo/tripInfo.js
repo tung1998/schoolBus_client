@@ -78,7 +78,16 @@ Template.tripDetail.events({
         let lngval = tarMark._latlng.lng;
         tarMark.openPopup();
         window.tripMap.setView([latval, lngval], 25);
-    }   
+    },
+    'mousemove .addressTab': (event)=>{
+        event.preventDefault();
+        let indx = parseInt($(event.currentTarget).attr("id"));
+        let tarMark = routeMiniMap._layers[markers_id[indx]];
+        let latval = tarMark._latlng.lat;
+        let lngval = tarMark._latlng.lng;
+        tarMark.openPopup();
+        window.routeMiniMap.setView([latval, lngval], 14);
+    }
 })
 
 Template.tripDetail.onDestroyed(() => {
