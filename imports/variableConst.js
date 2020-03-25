@@ -5,11 +5,7 @@ export {
     LIMIT_DOCUMENT_PAGE,
     _URL_images
 }
-<<<<<<< HEAD
-const _URL_images = 'http://14.231.130.100:3000/images'
-=======
 const _URL_images = 'http://192.168.100.69:3000/images'
->>>>>>> 7784a4695b153803625df37d68590da749ec90ac
 const _METHODS = {
     student: {
         GetAll: 'student.getAll',
