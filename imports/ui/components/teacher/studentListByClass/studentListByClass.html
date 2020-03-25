@@ -22,8 +22,8 @@
       </div>
     </div>
     <!-- end:: Subheader -->
-  
-      <!-- begin:: Content -->
+
+    <!-- begin:: Content -->
     <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
       <div class="row">
         <div class="col">
@@ -32,7 +32,7 @@
             <div class="kt-portlet__head">
               <div class="kt-portlet__head-label">
                 <h3 class="kt-portlet__head-title">
-                  Danh sách học sinh
+                  Danh sách học sinh lớp {{classData.name}}
                 </h3>
               </div>
             </div>
@@ -40,39 +40,20 @@
             <div class="kt-portlet__body">
               <!--begin::Section-->
               <div class="kt-section">
-                <div class="kt-section__info">
-                  <h5>Giáo viên: Nguyễn Văn A</h5>
-                  <h6>Lớp: 1A1</h6>
-                </div>
                 <div class="kt-section__content">
                   <table class="table table-bordered table-hover">
                     <thead class="thead-light">
                       <tr>
                         <th>STT</th>
-                        <th></th>
                         <th>Mã học sinh</th>
                         <th>Họ tên</th>
-                        <th>Ngày sinh</th>
-                        <th>Địa chỉ</th>
-                        <th>Số điện thoại</th>
-                        <th>Email</th>
-                        <th>Trường</th>
-                        <th>Lớp</th>
+                        <th></th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>1</td>
-                        <td><img src="/assets/media/users/100_3.jpg" alt="image"></td>
-                        <td>Larry</td>
-                        <td>Larry</td>
-                        <td>Larry</td>
-                        <td>Larry</td>
-                        <td>Larry</td>
-                        <td>the Bird</td>
-                        <td>@twitter</td>
-                        <td>@twitter</td>
-                      </tr>
+                      {{#each studentList}}
+                      {{> studentRow}}
+                      {{/each}}
                     </tbody>
                   </table>
                 </div>
@@ -86,3 +67,13 @@
   </div>
 </template>
 
+<template name="studentRow">
+  <tr studentID="{{_id}}">
+    <td>{{index}}</td>
+    <td>{{IDStudent}}</td>
+    <td>{{user.name}}</td>
+    <td>
+      <button type="button" studentID="{{_id}}" class="btn btn-outline-brand info-button">Chi tiết</button>
+    </td>
+  </tr>
+</template>

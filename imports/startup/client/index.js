@@ -4,3 +4,4 @@ import './routes.js';
 import './adminRoutes'
 import './parentRoutes'
 import './teacherRoutes'
+import './driverRoutes'
