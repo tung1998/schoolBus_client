@@ -35,47 +35,29 @@
 </template>
 
 <template name="classItem">
-  <div class="kt-portlet kt-portlet--height-fluid">
-    <div class="kt-portlet__head kt-portlet__head--noborder"></div>
-    <div class="kt-portlet__body">
-      <!--begin::Widget -->
-      <div class="kt-widget kt-widget--user-profile-2">
-        <div class="kt-widget__head">
-          <div class="kt-widget__info">
-            <a href="#" class="kt-widget__username">
-              ${childrenInfo.user?childrenInfo.user.name||'':''}
-            </a>
-            <span class="kt-widget__desc">
-              ${childrenInfo.class?childrenInfo.class.name||'':''}
-            </span>
-          </div>
-        </div>
-        <div class="kt-widget__body">
-          <div class="kt-widget__section">
-            ${childrenInfo.class&&childrenInfo.class.school?childrenInfo.class.school.name||'':''}
-          </div>
-
-          <div class="kt-widget__item">
-            <div class="kt-widget__contact">
-              <span class="kt-widget__label">Email:</span>
-              <a href="#" class="kt-widget__data">${childrenInfo.user?childrenInfo.user.email||'':''}</a>
-            </div>
-            <div class="kt-widget__contact">
-              <span class="kt-widget__label">Số điện thoại:</span>
-              <a href="#" class="kt-widget__data">${childrenInfo.user?childrenInfo.user.phone||'':''}</a>
-            </div>
-            <div class="kt-widget__contact">
-              <span class="kt-widget__label">Điểm đón:</span>
-              <span class="kt-widget__data">${childrenInfo.carStop?childrenInfo.carStop.name||'':''}</span>
+  <div class="col-md-6">
+    <div class="kt-portlet kt-portlet--height-fluid">
+      <div class="kt-portlet__head kt-portlet__head--noborder"></div>
+      <div class="kt-portlet__body">
+        <!--begin::Widget -->
+        <div class="kt-widget kt-widget--user-profile-2">
+          <div class="kt-widget__head">
+            <div class="kt-widget__info">
+              <a href="#" class="kt-widget__username">
+                {{name}}
+              </a>
+              <span class="kt-widget__desc">
+                {{school.name}}
+              </span>
             </div>
           </div>
+          <div class="kt-widget__footer">
+            <a href="/teacher/class/{{_id}}" class="btn btn-label-warning btn-lg btn-upper">danh sách học sinh</a>
+          </div>
         </div>
-
-        <div class="kt-widget__footer">
-          <button type="button" class="btn btn-label-warning btn-lg btn-upper">Thông tin chi tiết</button>
-        </div>
+        <!--end::Widget -->
       </div>
-      <!--end::Widget -->
     </div>
   </div>
+  
 </template>
