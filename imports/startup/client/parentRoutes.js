@@ -24,3 +24,14 @@ parentRoutes.route('/feedback', {
         });
     },
 });
+
+parentRoutes.route('/request', {
+    name: 'car.manager',
+    action() {
+        BlazeLayout.setRoot('body');
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'parentRequest',
+        });
+    },
+});

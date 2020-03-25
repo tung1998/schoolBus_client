@@ -5,7 +5,11 @@ export {
     LIMIT_DOCUMENT_PAGE,
     _URL_images
 }
+<<<<<<< HEAD
 const _URL_images = 'http://14.231.130.100:3000/images'
+=======
+const _URL_images = 'http://192.168.100.69:3000/images'
+>>>>>>> 7784a4695b153803625df37d68590da749ec90ac
 const _METHODS = {
     student: {
         GetAll: 'student.getAll',
@@ -222,12 +226,15 @@ const _METHODS = {
     user: {
         GetAll: 'user.getAll',
         GetById: 'user.getByID',
+        GetByPage: 'user.getByPage',
         Create: 'user.create',
         Update: 'user.update',
         Delete: 'user.delete',
         GetCurrentInfor: 'user.getCurrentInfor',
         UpdatePassword: 'user.updatePassword',
-        IsSuperadmin: 'user.isSuperadmin'
+        IsSuperadmin: 'user.isSuperadmin',
+        BlockUser: 'user.blockUser',
+        UnblockUser: 'user.unblockUser' 
     },
     sms: {
         GetAll: 'sms.getSMS',
