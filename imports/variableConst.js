@@ -5,7 +5,7 @@ export {
     LIMIT_DOCUMENT_PAGE,
     _URL_images
 }
-const _URL_images = 'http://123.24.137.209:3000/images'
+const _URL_images = 'http://192.168.100.69:3000/images'
 const _METHODS = {
     student: {
         GetAll: 'student.getAll',
