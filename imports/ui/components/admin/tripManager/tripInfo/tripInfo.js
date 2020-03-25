@@ -4,6 +4,12 @@ import {
     FlowRouter
 } from 'meteor/kadira:flow-router';
 
+import {
+    drawPath,
+    addPoly,
+    swapPcs
+} from '../../studentListManager/studentListInfo/studentListInfo.js'
+
 const Cookies = require('js-cookie');
 import {
     MeteorCall,
@@ -28,26 +34,58 @@ export {
 let accessToken
 let tripID
 let studentList = []
-
+let carStopList = []
+let stopCoor = []
+let markers_id = []
+let htmlStopPane = ''
 Template.tripDetail.onCreated(() => {
     accessToken = Cookies.get('accessToken')
     tripID = FlowRouter.getParam('tripID')
+    
 })
 
 Template.tripDetail.onRendered(() => {
-    reloadData()
+    reloadData();
+    $(".anchorHeight").css({
+        "height": 400
+    })
+    L.Icon.Default.imagePath = '/packages/bevanhunt_leaflet/images/';
+    window.tripMap = L.map('tripMap', {
+        drawControl: true,
+        zoomControl: false
+    }).setView([21.0388, 105.7886], 14);
+    L.tileLayer('https://apis.wemap.asia/raster-tiles/styles/osm-bright/{z}/{x}/{y}@2x.png?key=vpstPRxkBBTLaZkOaCfAHlqXtCR', {
+        maxZoom: 18,
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+            '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+            'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        id: 'mapbox.streets'
+    }).addTo(tripMap);
+    setInterval(() => { tripMap.invalidateSize(); }, 0) //invalidate Size of map
+    window.markerGroup = L.layerGroup().addTo(tripMap); //create markerGroup
 })
+
 
 Template.tripDetail.events({
     'click .status-btn': clickStatusButton,
     'click #openScannerModal': clickOpenScannerModal,
-    'click .studentRow': clickStudentRow
+    'click .studentRow': clickStudentRow,
+    'click .addressTab': (event)=>{
+        event.preventDefault();
+        let indx = parseInt($(event.currentTarget).attr("id"));
+        let tarMark = tripMap._layers[markers_id[indx]];
+        let latval = tarMark._latlng.lat;
+        let lngval = tarMark._latlng.lng;
+        tarMark.openPopup();
+        window.tripMap.setView([latval, lngval], 25);
+    }   
 })
 
 Template.tripDetail.onDestroyed(() => {
     studentList = null
     tripID = null
 })
+
 
 function clickStudentRow(e){
     renderStudentInfoModal($(e.currentTarget).attr("id"))
@@ -100,7 +138,39 @@ function reloadData() {
             carNunberPlate: result.route.car.numberPlate,
             startTime: result.startTime,
         }
-
+        carStopList = result.route.studentList.carStops;
+        carStopList.map((data, index)=>{
+            stopCoor.push(data.location);
+            let mark = L.marker(data.location).bindTooltip(data.name, { permanent: false }).addTo(tripMap);
+            markers_id.push(markerGroup.getLayerId(mark))
+            let popup = `
+                <div class="font-14">
+                    <dl class="row mr-0 mb-0">
+                        <dt class="col-sm-3">Tên điểm dừng: </dt>
+                        <dt class="col-sm-9">${data.name}</dt>
+                        <dt class="col-sm-3">Địa chỉ: </dt>
+                        <dt class="col-sm-9">${data.address}</dt>
+                    </dl>
+                </div>
+            `
+            mark.bindPopup(popup, {
+                minWidth: 301
+            });
+                htmlStopPane += 
+                `<div class="kt-portlet kt-portlet--mobile addressTab" id="${index}">
+                    <div class="kt-portlet__head">
+                        <div class="kt-portlet__head-label">
+                            <h3 class="kt-portlet__head-title title="${data.name}">
+                                ${data.name}        
+                            </h3>
+                        </div>
+                    </div>
+                    
+                </div>`
+        })
+        drawPath(stopCoor)
+        document.getElementById("carStopContainer").innerHTML += htmlStopPane;
+        
         $('#driver-name').html(dataTrip.driverName)
         $('.phone:eq(0)').html(`Số điện thoại: ${dataTrip.driverPhone}`)
         $('#nanny-name').html(dataTrip.nannyName)

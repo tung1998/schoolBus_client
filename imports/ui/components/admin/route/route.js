@@ -204,7 +204,7 @@ function createTable(table, result, limitDocPerPage) {
         key.index = index + (result.page - 1) * limitDocPerPage;
         return createRow(key);
     });
-    table.html(htmlRow.join(''))
+    //document.getElementById("routeData").innerHTML(htmlRow.join(''))
 }
 
 
@@ -213,10 +213,10 @@ function createRow(result) {
     let data = {
         _id: result._id,
         name: result.name,
-        carName: result.car?result.car.numberPlate:'',
-        driverName: result.driver?result.driver.user.name:'',
-        nannyName: result.nanny?result.nanny.user.name:'',
-        studentList: result.studentList?result.studentList.name||'':'',
+        carName: result.car.numberPlate,
+        driverName: result.driver.user.name,
+        nannyName: result.nanny.user.name,
+        studentList: result.studentList.name,
     }
     return ` <tr id="${data._id}">
                 <td>${result.index}</td>
@@ -232,3 +232,7 @@ function createRow(result) {
             </tr>
             `
 }
+
+function getDriver(){}
+function getNanny(){}
+function getCar(){}

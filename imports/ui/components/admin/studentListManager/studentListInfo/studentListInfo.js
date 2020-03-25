@@ -44,10 +44,6 @@ Template.studentListInfo.onRendered(() => {
             //sort stopPointsCoor by distance to anchor point
         defaultStopPoint = stopPointCoors;
         drawPath(defaultStopPoint)
-        
-        
-
-
         //}
         //append HTML sortable tabs to tab-pane
         for (let i = 0; i <= stopPointOrder.length - 1; i++) {
@@ -347,3 +343,8 @@ function confirmPath(event) {
 }
 //tạo loading modal while drawing path
 //confirm button
+export {
+    drawPath,
+    addPoly,
+    swapPcs
+}

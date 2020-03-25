@@ -40,6 +40,11 @@
                                     <i class="fa fa-user"></i> Danh sách học sinh
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#routeMap" role="tab">
+                                    <i class="fa fa-user"></i> Cung đường
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -131,6 +136,28 @@
                             </div>
                             <!--end::Section-->
                         </div>
+                        <div class="tab-pane" id="routeMap" role="tabpanel">
+                            <!--begin::Section-->
+                            <div class="kt-section">
+                                <div class="kt-section__content">
+                                  <div class="row">
+                                    <div class="col-4 anchorHeight" style="overflow: auto;">
+                                      <div class="carStopContainer" id="carStopContainer">
+                                        
+                                      </div>
+                                    </div>
+                                    
+                                    <div class="col-8">
+                                      <!--<button data-toggle="collapse" data-target=".collapse" class="floatingContent confirmButton btn btn-primary btn-sm"><i
+                                        class="fas fa-check" style="right: 20px !important"></i>Xác nhận lộ trình
+                                      </button>-->
+                                        {{>tripMap}}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            <!--end::Section-->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -190,4 +217,8 @@
             </div>
         </div>
     </div>
+</template>
+
+<template name="tripMap">
+    <div id="tripMap" style="padding: 0px; z-index: 0; height: 450px !important;"></div>
 </template>
