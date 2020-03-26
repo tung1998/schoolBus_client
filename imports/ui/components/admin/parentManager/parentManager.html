@@ -1,80 +1,80 @@
 <template name="parentManager">
-    <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-      <!-- begin:: Subheader -->
-      <div class="kt-subheader   kt-grid__item" id="kt_subheader">
-        <div class="kt-container  kt-container--fluid ">
-          <div class="kt-subheader__main">
-            <h3 class="kt-subheader__title">
-  
-              Quản lý phụ huynh </h3>
-  
-            <span class="kt-subheader__separator kt-hidden"></span>
-            <div class="kt-subheader__breadcrumbs">
-              <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
-              <span class="kt-subheader__breadcrumbs-separator"></span>
-              <a href="" class="kt-subheader__breadcrumbs-link">
-                SchoolBus </a>
-              <span class="kt-subheader__breadcrumbs-separator"></span>
-              <a href="" class="kt-subheader__breadcrumbs-link">
-                Quản lý phụ huynh</a>
-            </div>
+  <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+    <!-- begin:: Subheader -->
+    <div class="kt-subheader   kt-grid__item" id="kt_subheader">
+      <div class="kt-container  kt-container--fluid ">
+        <div class="kt-subheader__main">
+          <h3 class="kt-subheader__title">
+
+            Quản lý phụ huynh </h3>
+
+          <span class="kt-subheader__separator kt-hidden"></span>
+          <div class="kt-subheader__breadcrumbs">
+            <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
+            <span class="kt-subheader__breadcrumbs-separator"></span>
+            <a href="" class="kt-subheader__breadcrumbs-link">
+              SchoolBus </a>
+            <span class="kt-subheader__breadcrumbs-separator"></span>
+            <a href="" class="kt-subheader__breadcrumbs-link">
+              Quản lý phụ huynh</a>
           </div>
         </div>
       </div>
-      <!-- end:: Subheader -->
-  
-      <!-- begin:: Content -->
-      <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-        <div class="row">
-          <div class="col">
-  
-            <div class="kt-portlet">
-              <div class="kt-portlet__head">
-                <div class="kt-portlet__head-label">
-                  <h3 class="kt-portlet__head-title">
-                    Danh sách phụ huynh
-                  </h3>
-                </div>
-              </div>
-  
-              <div class="kt-portlet__body">
-                <!--begin::Section-->
-                <div class="kt-section">
-                  <div class="kt-section__content">
-                    <button type="button" id="add-button" class="btn btn-outline-brand mb-4" data-toggle="modal" data-target="#editParentModal">Thêm mới</button>
-                    <table class="table table-bordered table-hover" id="parentTable">
-                      <thead class="thead-light">
-                        <tr>
-                          <th>#</th>
-                          <th>Họ tên</th>
-                          <th>Tên đăng nhập</th>
-                          <th>Số điện thoại</th>
-                          <th>Email</th>
-                          <th>Địa chỉ</th>
-                          <th>Phụ huynh của</th>
-                          <th></th>
-                        </tr>
-                      </thead>
-                      <tbody  id="table-body">
-                      
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-                <!--end::Section-->
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- end:: Content -->
     </div>
-    {{> editParentModal}}
-  </template>
-  
-  
-  <template name="editParentModal">
-    <div class="modal fade" id="editParentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    <!-- end:: Subheader -->
+
+    <!-- begin:: Content -->
+    <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+      <div class="row">
+        <div class="col">
+
+          <div class="kt-portlet">
+            <div class="kt-portlet__head">
+              <div class="kt-portlet__head-label">
+                <h3 class="kt-portlet__head-title">
+                  Danh sách phụ huynh
+                </h3>
+              </div>
+            </div>
+
+            <div class="kt-portlet__body">
+              <!--begin::Section-->
+              <div class="kt-section">
+                <div class="kt-section__content">
+                  <button type="button" id="add-button" class="btn btn-outline-brand mb-4" data-toggle="modal"
+                    data-target="#editParentModal">Thêm mới</button>
+                  <table class="table table-bordered table-hover" id="parentTable">
+                    <thead class="thead-light">
+                      <tr>
+                        <th>#</th>
+                        <th>Họ tên</th>
+                        <th>Số điện thoại</th>
+                        <th>Email</th>
+                        <th>Địa chỉ</th>
+                        <th>Phụ huynh của</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody id="table-body">
+
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <!--end::Section-->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end:: Content -->
+  </div>
+  {{> editParentModal}}
+</template>
+
+
+<template name="editParentModal">
+  <div class="modal fade" id="editParentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
@@ -115,39 +115,53 @@
             </div>
             <div class="kt-separator kt-separator--border-dashed kt-separator--space-lg"></div>
             <div class="kt-section">
-              <h6 id="parent-student">Phụ huynh học sinh: <span></span></h6>
-              <div class="kt-section__content" id="student-info">
+              <h6 id="parent-student">Phụ huynh học sinh:
+              </h6>
 
-              </div>
-             </div>
+            </div>
             <div class="kt-portlet__body">
+              {{#if isSuperadmin}}
               <div class="form-group row">
                 <label for="example-tel-input" class="col-2 col-form-label">Trường: </label>
                 <div class="col-10">
                   <select id="school-select" class="form-control">
-										<option value=""></option>
-									</select>
+                    <option value=""></option>
+                    {{#each schools}}
+                    <option value="{{_id}}">{{name}}</option>
+                    {{/each}}
+                  </select>
                 </div>
               </div>
+              {{/if}}
               <div class="form-group row">
                 <label for="example-tel-input" class="col-2 col-form-label">Lớp: </label>
                 <div class="col-10">
                   <select id="class-select" class="form-control">
-										<option value=""></option>
-									</select>
+                    <option value=""></option>
+                    {{#each class}}
+                    <option value="{{_id}}">{{name}}</option>
+                    {{/each}}
+                  </select>
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-tel-input" class="col-2 col-form-label">Học sinh: </label>
                 <div class="col-10">
                   <select id="student-select" class="form-control">
-										<option value=""></option>
-									</select>
+                    {{#each students}}
+                    <option value="{{_id}}">{{user.name}}</option>
+                    {{/each}}
+                  </select>
                 </div>
               </div>
             </div>
+            <button type="button" class="btn btn-primary cancel-button" id="addStudent">Thêm học sinh</button>
+            <div class="kt-section__content">
+              <ul id="student-info">
+
+              </ul>
+            </div>
             <div class="kt-separator kt-separator--border-dashed kt-separator--space-lg"></div>
-            
             <div class="kt-portlet__body">
               <div class="form-group row">
                 <label for="example-date-input" class="col-2 col-form-label">Ảnh đại diện</label>
@@ -175,4 +189,4 @@
       </div>
     </div>
   </div>
-  </template>
+</template>

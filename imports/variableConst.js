@@ -253,6 +253,8 @@ const _SESSION = {
     accessToken: 'accessToken',
     userID: 'userID',
     username: 'username',
+    userType: 'userType',
+    schoolID: 'schoolID',
     modules: 'modules',
     mapHeight: 'mapHeight',
     isSuperadmin: 'isSuperadmin',

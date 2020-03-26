@@ -28,10 +28,14 @@ FlowRouter.triggers.enter([function(context, redirect) {
     else {
         MeteorCall(_METHODS.token.GetUserInfo, null, accessToken).then(result => {
             Session.set(_SESSION.modules, result.modules)
-            Session.set(_SESSION.userID, result.userID)
-            Session.set(_SESSION.username, result.user.username)
-            Session.set(_SESSION.name, result.user.name)
-            Session.set(_SESSION.avata, `${_URL_images}/${result.user.image}/0`)
+                Session.set(_SESSION.userID, result.userID)
+                Session.set(_SESSION.username, result.user.username)
+                Session.set(_SESSION.userType, result.user.userType)
+                if(result.user.userType==0)
+                    Session.set(_SESSION.isSuperadmin, result.adminType==0)
+                Session.set(_SESSION.name, result.user.name)
+                Session.set(_SESSION.avata, `${_URL_images}/${result.user.image}/0`)
+                Session.set(_SESSION.schoolID, result.schoolID)
         }).catch(e => {
             console.log(e)
             Cookies.remove('accessToken');
@@ -59,8 +63,12 @@ FlowRouter.route('/login', {
                 Session.set(_SESSION.modules, result.modules)
                 Session.set(_SESSION.userID, result.userID)
                 Session.set(_SESSION.username, result.user.username)
+                Session.set(_SESSION.userType, result.user.userType)
+                if(result.user.userType==0)
+                    Session.set(_SESSION.isSuperadmin, result.adminType==0)
                 Session.set(_SESSION.name, result.user.name)
-                Session.set(_SESSION.avata, result.user.image)
+                Session.set(_SESSION.avata, `${_URL_images}/${result.user.image}/0`)
+                Session.set(_SESSION.schoolID, result.schoolID)
                 FlowRouter.go('/profile')
             }).catch(e => {
                 console.log(e)
