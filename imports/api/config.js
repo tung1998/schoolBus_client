@@ -7,8 +7,8 @@ export {
 // const AUTH_PATH = 'http://123.24.137.209:3000'
 
 const BASE = 'http://192.168.100.69:3000'
-    //const AUTH_PATH = 'http://192.168.100.69:2999'
-const AUTH_PATH = 'http://14.231.130.100:2999'
+    const AUTH_PATH = 'http://192.168.100.69:2999'
+// const AUTH_PATH = 'http://14.231.130.100:2999'
 
 
 // const AUTH_PATH = 'http://192.168.100.69:3000';
