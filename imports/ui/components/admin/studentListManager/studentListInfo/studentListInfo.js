@@ -28,26 +28,26 @@ let defaultStopPoint;
 let polyID;
 //array that contains ID of polyline-layers in markerGroup
 let polyCoor = [];
+let defaultCarStop = [];
+let carStopIDs = [];
+let markers_id = [];
 Template.studentListInfo.onCreated(() => {
     accessToken = Cookies.get('accessToken');
 });
 
 Template.studentListInfo.onRendered(() => {
     reloadTable().then(result => {
+        
         initClassSelect2()
         $(".anchorHeight").css({
-                "max-height": 400
+                "height": 400
             }) //set fixxed height of sortable tabs
             //sort stopPointsCoor by distance to anchor point
         defaultStopPoint = stopPointCoors;
-        stopPointCoors = DistanceAutoCal([21.040276, 105.782988], stopPointCoors);
-        drawPath(stopPointCoors)
-        console.log(stopPointCoors)
-
-
+        drawPath(defaultStopPoint)
         //}
         //append HTML sortable tabs to tab-pane
-        for (let i = stopPointOrder.length - 1; i >= 0; i--) {
+        for (let i = 0; i <= stopPointOrder.length - 1; i++) {
             htmlSortable +=
                 `<div class="kt-portlet kt-portlet--mobile kt-portlet--sortable" id="${stopPointOrder[i]}">
                     <div class="kt-portlet__head ui-sortable-handle">
@@ -91,40 +91,47 @@ Template.carStopList_studentListInfo.onRendered(() => {
 })
 
 Template.carStopList_studentListInfo.events({
-    'mousemove .kt-portlet--sortable': function(event) {
-        console.log(1)
+    'mousemove .kt-portlet--sortable': (event)=>{
+        event.preventDefault();
+        let indx = parseInt($(event.currentTarget).attr("id"));
+        let tarMark = carStopmap._layers[markers_id[indx]];
+        let latval = tarMark._latlng.lat;
+        let lngval = tarMark._latlng.lng;
+        tarMark.openPopup();
+        window.carStopmap.setView([latval, lngval], 14);
     },
-    'drag .kt-portlet--sortable': function(event, t) {
-        let targetID = event.target.getAttribute('id'),
-            ID_order = [],
-            modPos;
-        if (event.drag.type === 'dragend') {
-            $('.carStopContainer').children('div').each(function() {
-                if ($(this).attr('id') != undefined) {
-                    if ($(this).attr('id') != targetID) {
-                        ID_order.push($(this).attr('id'));
-                    }
-                } else {
-                    ID_order.push(targetID);
-                    modPos = ID_order.length - 1; //điểm di chuyển
-                }
-            })
-            if (ID_order != stopPointOrder) {
-                console.log(ID_order)
-                stopPointCoors = reArrange(defaultStopPoint, [], ID_order)
-                removeLayerByID(polyID)
-                console.log(stopPointCoors)
-                drawPath(stopPointCoors)
-            } else {
-                console.log(2)
-            }
-
+    'click .confirmButton': confirmPath,
+    'click .autoDirect': (event)=>{
+        
+        removeLayerByID(polyID)
+        stopPointCoors = DistanceAutoCal([21.040276, 105.782988], stopPointCoors);
+        carStopIDs = reArrange(carStopIDs, [], stopPointOrder);
+        //console.log(carStopIDs)
+        drawPath(stopPointCoors)
+        htmlSortable = ''
+        for (let i = 0; i <=stopPointOrder.length - 1; i++) {
+            
+            htmlSortable +=
+                `<div class="kt-portlet kt-portlet--mobile kt-portlet--sortable" id="${stopPointOrder[i]}">
+                    <div class="kt-portlet__head ui-sortable-handle">
+                        <div class="kt-portlet__head-label">
+                            <h3 class="kt-portlet__head-title title="${studentStopPoint[stopPointOrder[i]].address}">
+                                ${studentStopPoint[stopPointOrder[i]].name}        
+                            </h3>
+                        </div>
+                    </div>
+                    
+                </div>`
+                //<div class="kt-portlet__body">${studentStopPoint[stopPointOrder[i]].address}</div>
         }
-    }
+        setSortableData(htmlSortable)
+    },
+    'drag .kt-portlet--sortable': dragTab
 })
 
 function initClassSelect2() {
     MeteorCall(_METHODS.class.GetAll, null, accessToken).then(result => {
+        //console.log(result)
         if (result.data) {
             let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.name}</option>`)
             $('#classSelect').html(htmlClassOption.join('')).select2({
@@ -154,12 +161,14 @@ function reloadTable() {
     return MeteorCall(_METHODS.studentList.GetById, {
         _id: studentListID
     }, accessToken).then(result => {
-        //console.log(result);
+        //console.log(result)
         studentIDs = result.studentIDs;
         studentStopPoint = result.carStops;
+        carStopIDs = result.carStopIDs;
+        defaultCarStop = result.carStopIDs;
         studentStopPoint.map((data, index) => {
             stopPointOrder.push(index);
-            setMarker(data.location, data.name)
+            setMarker(data.location, data.name, data.address)
             stopPointCoors.push(data.location);
         })
         renderStudentTable($('#studentTable'), result.students)
@@ -210,17 +219,32 @@ function clickStudentCheckBox(e) {
 
 }
 
-function setMarker(arr, des) {
+function setMarker(arr, des, address) {
     let mark = L.marker(arr).bindTooltip(des, { permanent: false }).addTo(carStopmap);
+    markers_id.push(markerGroup.getLayerId(mark))
+    let popup = `
+                <div class="font-14">
+                    <dl class="row mr-0 mb-0">
+                        <dt class="col-sm-3">Tên điểm dừng: </dt>
+                        <dt class="col-sm-9">${des}</dt>
+                        <dt class="col-sm-3">Địa chỉ: </dt>
+                        <dt class="col-sm-9">${address}</dt>
+                    </dl>
+                </div>
+            `
+    mark.bindPopup(popup, {
+        minWidth: 301
+    });
 }
 
 function setSortableData(str) {
+    document.getElementById("kt_sortable_portlets").innerHTML = " ";
     document.getElementById("kt_sortable_portlets").innerHTML += str;
 }
 
 function addPoly(arr) {
     let poly = L.polyline(arr, { color: 'blue', weight: 4, opacity: 0.5, smoothFactor: 1 }).addTo(markerGroup);
-    console.log(markerGroup)
+   
     polyID = markerGroup.getLayerId(poly)
 }
 
@@ -301,4 +325,47 @@ function drawPath(arr){
         pol.push(arr[0])
         addPoly(pol)
     }).catch(handleError);
+}
+
+function dragTab(event) {
+        let targetID = event.target.getAttribute('id'),
+            ID_order = [],
+            modPos;
+        if (event.drag.type === 'dragend') {
+            $('.carStopContainer').children('div').each(function() {
+                if ($(this).attr('id') != undefined) {
+                    if ($(this).attr('id') != targetID) {
+                        ID_order.push($(this).attr('id'));
+                    }
+                } else {
+                    ID_order.push(targetID);
+                    modPos = ID_order.length - 1; //điểm di chuyển
+                }
+            })
+            if (ID_order != stopPointOrder) {
+               //console.log(ID_order)
+                stopPointCoors = reArrange(defaultStopPoint, [], ID_order)
+                carStopIDs = reArrange(defaultCarStop, [], ID_order)
+                removeLayerByID(polyID)
+                //console.log(stopPointCoors)
+                //console.log(carStopIDs)
+                drawPath(stopPointCoors)
+            } else {
+                //console.log(2)
+            }
+        }
+    }
+
+function confirmPath(event) {
+    let studentListID = FlowRouter.getParam("id")
+    MeteorCall(_METHODS.studentList.Update, { _id: studentListID, carStopIDs: carStopIDs }, accessToken).then(result=>{
+        //console.log(result)
+    }) 
+}
+//tạo loading modal while drawing path
+//confirm button
+export {
+    drawPath,
+    addPoly,
+    swapPcs
 }

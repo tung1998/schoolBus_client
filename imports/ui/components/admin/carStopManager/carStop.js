@@ -34,12 +34,27 @@ Template.minimap.onRendered(function() {
     }).addTo(minimap);
 
     let marker = L.marker([21.03709858, 105.78349972]).addTo(minimap);
-    minimap.on('move', function() {
+    minimap.on('drag', function() {
         marker.setLatLng(minimap.getCenter());
+        document.getElementById("confirm-button").disabled = true;
     });
 
+    minimap.on('zoomend', function() {
+        let coor = $("#location").val().split(" ")
+        coor[0] = parseFloat(coor[0]);
+        coor[1] = parseFloat(coor[1]);
+        if ((coor[0]) && (coor[1])) {
+            marker.setLatLng([coor[0], coor[1]]);
+            minimap.panTo(new L.LatLng(coor[0], coor[1]));
+        } else {
+            minimap.panTo(new L.LatLng(21.03709858, 105.78349972));
+            marker.setLatLng([21.03709858, 105.78349972]);
+        }
+
+    })
     //Dragend event of map for update marker position
     minimap.on('dragend', function(e) {
+        document.getElementById("confirm-button").disabled = true;
         let cnt = minimap.getCenter();
         let position = marker.getLatLng();
         lat = Number(position['lat']);

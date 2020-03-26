@@ -27,6 +27,7 @@ let currentPage = 1;
 
 Template.studentListManager.onCreated(() => {
     accessToken = Cookies.get('accessToken');
+    console.log(accessToken)
     Session.set(_SESSION.isSuperadmin, true)
     Session.set('schools', [])
 });
@@ -46,9 +47,9 @@ Template.studentListManager.onRendered(() => {
 Template.studentListManager.events({
     'click #addStudentListButton': clickAddStudentListButton,
     'click #studentListModalSubmit': clickEditListModalSubmit,
-    'click #table-body .modify-button': clickEditStudentListButton,
-    'click #table-body .delete-button': clickDeleteStudentListButton,
-    'click #table-body tr': clickStudentListRow,
+    'click #studentListData .modify-button': clickEditStudentListButton,
+    'click #studentListData .delete-button': clickDeleteStudentListButton,
+    'click #studentListData tr': clickStudentListRow,
     "click .kt-datatable__pager-link": (e) => {
         reloadTable(parseInt($(e.currentTarget).data('page')), getLimitDocPerPage());
         $(".kt-datatable__pager-link").removeClass("kt-datatable__pager-link--active");

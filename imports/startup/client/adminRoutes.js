@@ -279,28 +279,6 @@ FlowRouter.route('/carStop', {
     },
 });
 
-FlowRouter.route('/parentFeedback', {
-    name: 'feedback',
-    action() {
-        BlazeLayout.setRoot("body")
-        BlazeLayout.render('App_body', {
-            main: 'App_home',
-            content: 'parentFeedback',
-        });
-    },
-});
-
-FlowRouter.route('/parrentRequest', {
-    name: 'feedback',
-    action() {
-        BlazeLayout.setRoot("body")
-        BlazeLayout.render('App_body', {
-            main: 'App_home',
-            content: 'absentRequest',
-        });
-    },
-});
-
 FlowRouter.route('/moduleManager', {
     name: 'App.home',
     action() {
@@ -311,29 +289,6 @@ FlowRouter.route('/moduleManager', {
         })
     }
 });
-//DRIVER
-
-FlowRouter.route('/upCommingTripInfo', {
-    name: 'App.home',
-    action() {
-        BlazeLayout.render('App_body', {
-            main: 'App_home',
-            content: 'upCommingTripInfo',
-        });
-    },
-});
-
-FlowRouter.route('/carMaintenanceReport', {
-    name: 'App.home',
-    action() {
-        BlazeLayout.setRoot("body"),
-            BlazeLayout.render('App_body', {
-                main: 'App_home',
-                content: 'carMaintenanceReport',
-            panel: 'panel'
-            });
-    },
-});
 
 FlowRouter.route('/carManager', {
     name: 'App.home',
@@ -343,16 +298,6 @@ FlowRouter.route('/carManager', {
             content: 'carManager',
             panel: 'panel',
             panelData: 'carFilter'
-        });
-    },
-});
-
-FlowRouter.route('/tripHistoryDriver', {
-    name: 'notification',
-    action() {
-        BlazeLayout.render('App_body', {
-            main: 'App_home',
-            content: 'tripHistoryDriver',
         });
     },
 });
@@ -395,49 +340,6 @@ FlowRouter.route('/trip/listStudent', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'tripListStudent',
-        });
-    },
-});
-
-//teacher
-//xem danh sách học sinh
-FlowRouter.route('/teacher/class', {
-    name: 'teacher',
-    action() {
-        BlazeLayout.render('App_body', {
-            main: 'App_home',
-            content: 'listClass',
-        });
-    },
-});
-
-FlowRouter.route('/teacher/class/:idClass([0-9a-fA-F]{24})', {
-    name: 'teacher',
-    action() {
-        BlazeLayout.render('App_body', {
-            main: 'App_home',
-            content: 'studentListByClass',
-        });
-    },
-});
-
-//xem danh sách yêu cầu xin nghỉ
-FlowRouter.route('/teacher/listAbsentRequest', {
-    name: 'teacher',
-    action() {
-        BlazeLayout.render('App_body', {
-            main: 'App_home',
-            content: 'absentRequestManager',
-        });
-    },
-});
-//nhắn tin
-FlowRouter.route('/teacher/chat', {
-    name: 'teacher',
-    action() {
-        BlazeLayout.render('App_body', {
-            main: 'App_home',
-            content: 'chatParent',
         });
     },
 });

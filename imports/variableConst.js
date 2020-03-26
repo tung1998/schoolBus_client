@@ -259,6 +259,9 @@ const _SESSION = {
     avata: 'avata',
     name: 'name',
     isLoading: 'isLoading',
+
+    //chat
+    roomID: 'roomID',
 }
 
 const _TRIP_STUDENT = {
