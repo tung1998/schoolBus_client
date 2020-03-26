@@ -50,6 +50,33 @@ Template.route.events({
     }
 })
 
+Template.routeFilter.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    },
+    schools() {
+        return Session.get('schools')
+    },
+});
+
+Template.routeFilter.events({
+    'click #filter-button': routeFilter,
+    'click #refresh-button': refreshFilter,
+    'keypress .filter-input': (e) => {
+        if (e.which === 13) {
+            routeFilter()
+        }
+    },
+    'change #school-filter': (e) => {
+        let options = [{
+            text: "adminType",
+            value: $('#school-filter').val()
+        }]
+        reloadTable(1, getLimitDocPerPage(), options)
+    }
+})
+
+
 function initSelect2() {
     initCarSelect2()
     initDriverSelect2()
@@ -186,11 +213,12 @@ function getLimitDocPerPage() {
     return parseInt($("#limit-doc").val());
 }
 
-function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
-    let table = $('#table-body');
+function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options = null) {
+    let table = $('#routeData');
     MeteorCall(_METHODS.route.GetByPage, {
         page: page,
-        limit: limitDocPerPage
+        limit: limitDocPerPage,
+        options
     }, accessToken).then(result => {
         handlePaging(table, result.count, page, limitDocPerPage)
         createTable(table, result, limitDocPerPage)
@@ -232,3 +260,39 @@ function createRow(result) {
             </tr>
             `
 }
+
+
+function routeFilter() {
+    let options = [{
+        text: "schoolID",
+        value: $('#school-filter').val()
+    }, {
+        text: "name",
+        value: $('#name-filter').val()
+    }, {
+        text: "car/numberPlate",
+        value: $('#car-filter').val()
+    }, {
+        text: "driver/user/name",
+        value: $('#driver-filter').val()
+    }, {
+        text: "nanny/user/name",
+        value: $('#driver-filter').val()
+    }, {
+        text: "studentList/name",
+        value: $('#studentList-filter').val()
+    }]
+    console.log(options);
+    reloadTable(1, getLimitDocPerPage(), options)
+  }
+  
+  function refreshFilter() {
+    $('#school-filter').val('')
+    $('#name-filter').val('')
+    $('#car-filter').val('')
+    $('#driver-filter').val('')
+    $('#nanny-filter').val('')
+    $('#studentList-filter').val('')
+
+    reloadTable(1, getLimitDocPerPage(), null)
+  }

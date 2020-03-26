@@ -41,15 +41,17 @@
                             <!--begin::Section-->
                             <div class="kt-section">
                                 <div class="kt-section__content">
-                                    <button type="button" id="add-module" class="btn btn-outline-brand mb-4" data-toggle="modal"
-                                        data-target="#editModuleModal">Thêm mới</button>
-                                    <div class="kt-datatable kt-datatable--default kt-datatable--brand kt-datatable--loaded">
+                                    <button type="button" id="add-module" class="btn btn-outline-brand mb-4"
+                                        data-toggle="modal" data-target="#editModuleModal">Thêm mới</button>
+                                    <div
+                                        class="kt-datatable kt-datatable--default kt-datatable--brand kt-datatable--loaded">
                                         <table class="table table-bordered table-hover" id="moduleTable">
                                             <thead class="thead-light">
                                                 <tr>
                                                     <th>ID</th>
                                                     <th>Tên module</th>
                                                     <th>Mô tả</th>
+                                                    <th>Icon</th>
                                                     <th>Đường dẫn</th>
                                                     <th>Cấp phép cho</th>
                                                     <th>Thời gian khởi tạo</th>
@@ -57,7 +59,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody id="table-body">
-                                                
+
                                             </tbody>
                                         </table>
                                     </div>
@@ -91,7 +93,8 @@
                         <div class="kt-portlet__body">
                             <input type="hidden" id="module-id" value="">
                             <div class="form-group row">
-                                <label for="module-name" class="col-3 col-form-label required-input-label" >Tên Module</label>
+                                <label for="module-name" class="col-3 col-form-label required-input-label">Tên
+                                    Module</label>
                                 <div class="col-9">
                                     <input class="form-control" type="text" value="" id="module-name" name="module-name"
                                         placeholder="Tên Module">
@@ -105,7 +108,8 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label for="module-route" class="col-3 col-form-label required-input-label">Đường dẫn</label>
+                                <label for="module-route" class="col-3 col-form-label required-input-label">Đường
+                                    dẫn</label>
                                 <div class="col-9">
                                     <input class="form-control" type="text" value="" id="module-route"
                                         name="module-route" placeholder="Đường dẫn">
@@ -117,9 +121,9 @@
                                     <select id="module-parent-route" class="form-control" name="parent-route">
                                         <option></option>
                                         {{#each modulesData}}
-                                            <option value="{{route}}">
-                                                {{route}}
-                                            </option>
+                                        <option value="{{route}}">
+                                            {{route}}
+                                        </option>
                                         {{/each}}
                                     </select>
                                 </div>
@@ -138,9 +142,10 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label for="module-permission" class="col-3 col-form-label required-input-label">Chọn quyền</label>
+                                <label for="module-permission" class="col-3 col-form-label required-input-label">Chọn
+                                    quyền</label>
                                 <div class="col-9">
-                                    <select id="module-permission" class="form-control" multiple="multiple" >
+                                    <select id="module-permission" class="form-control" multiple="multiple">
                                         <option value="admin">Quản trị viên</option>
                                         <option value="driver">Lái xe</option>
                                         <option value="parent">Phụ huynh</option>
@@ -159,4 +164,36 @@
             </div>
         </div>
     </div>
+</template>
+
+<template name="moduleFilter">
+    <div class="form-group mb-2">
+        <label for="module-name" class="col-form-label">Tên Module</label>
+        <input class="form-control filter-input" type="text" value="" id="module-name-filter" name="module-name"
+            placeholder="Tên Module">
+    </div>
+    <div class="form-group mb-2">
+        <label for="module-route" class="col-form-label">Đường dẫn</label>
+        <input class="form-control filter-input" type="text" value="" id="module-route-filter" name="module-route"
+            placeholder="Đường dẫn">
+    </div>
+    <div class="form-group mb-2">
+        <label for="module-parent-route">Đường dẫn cha</label>
+        <input class="form-control filter-input" type="text" value="" id="module-parentRoute-filter"
+            name="module-description" placeholder="Mô Tả">
+    </div>
+    <div class="form-group mb-2">
+        <label for="module-permission" class="col-form-label">Chọn quyền</label>
+        <select id="module-permission-filter" class="form-control filter-input">
+            <option value="all" selected>Tất cả</option>
+            <option value="admin">Quản trị viên</option>
+            <option value="driver">Lái xe</option>
+            <option value="parent">Phụ huynh</option>
+            <option value="teacher">Giáo viên</option>
+        </select>
+    </div>
+    <div class="form-group mt-4">
+        <button type="submit" class="btn btn-primary btn-sm" id="filter-button">Tìm kiếm</button>
+        <button type="submit" class="btn btn-success btn-sm" id="refresh-button">Refresh</button>
+      </div>
 </template>

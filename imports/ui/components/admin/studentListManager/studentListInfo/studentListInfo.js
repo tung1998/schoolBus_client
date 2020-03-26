@@ -178,7 +178,7 @@ function reloadTable() {
 
 function htmlRow(data, index, type = false) {
     return ` <tr studentID="${data._id}">
-                <th scope="row">${index}</th>
+                <th scope="row">${index + 1}</th>
                 <td>${data.IDStudent}</td>
                 <td>${data.user.name}</td>
                 <td>${data.class?data.class.name:""}</td>

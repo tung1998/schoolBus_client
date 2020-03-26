@@ -48,6 +48,17 @@ Template.schoolManager.events({
     }
 })
 
+
+Template.schoolFilter.events({
+    'click #filter-button': schoolFilter,
+    'click #refresh-button': refreshFilter,
+    'keypress .filter-input': (e) => {
+        if (e.which === 13) {
+            schoolFilter()
+        }
+    },
+})
+
 function ClickModifyButton(e) {
     let schoolData = $(e.currentTarget).data("json");
     $("#editSchoolModal").attr("schoolID", schoolData._id);
@@ -105,10 +116,10 @@ function ClickDeleteButton(e) {
             MeteorCall(_METHODS.school.Delete, data, accessToken).then(result => {
                 // console.log(result);
                 Swal.fire({
-					icon: "success",
-					text: "Đã xóa thành công",
-					timer: 3000
-				})
+                    icon: "success",
+                    text: "Đã xóa thành công",
+                    timer: 3000
+                })
                 reloadTable(currentPage, getLimitDocPerPage());
             }).catch(handleError)
         } else {
@@ -141,9 +152,13 @@ function getLimitDocPerPage() {
     return parseInt($("#limit-doc").val());
 }
 
-function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
+function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options = null) {
     let table = $('#table-body');
-    MeteorCall(_METHODS.school.GetByPage, { page: page, limit: limitDocPerPage }, accessToken).then(result => {
+    MeteorCall(_METHODS.school.GetByPage, {
+        page: page,
+        limit: limitDocPerPage,
+        options
+    }, accessToken).then(result => {
         handlePaging(table, result.count, page, limitDocPerPage)
         createTable(table, result, limitDocPerPage)
     })
@@ -176,4 +191,24 @@ function createRow(result) {
             </td>
         </tr>
         `
+}
+
+
+function schoolFilter() {
+    let options = [{
+        text: "name",
+        value: $('#schoolName-filter').val()
+    }, {
+        text: "address",
+        value: $('#address-filter').val()
+    }]
+    console.log(options);
+    reloadTable(1, getLimitDocPerPage(), options)
+}
+
+function refreshFilter() {
+    $('#schoolName-filter').val('')
+    $('#address-filter').val('')
+
+    reloadTable(1, getLimitDocPerPage(), null)
 }

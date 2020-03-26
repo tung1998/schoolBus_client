@@ -43,7 +43,6 @@ Template.administratorManager.onRendered(() => {
         minimumResultsForSearch: Infinity
 
     })
-
     addPaging($('#administratorTable'))
     addRequiredInputLabel()
     reloadTable(1);
@@ -52,6 +51,15 @@ Template.administratorManager.onRendered(() => {
 
 Template.administratorManager.onDestroyed(() => {
     dropzone = null
+});
+
+Template.editAdministratorModal.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    },
+    schools() {
+        return Session.get('schools')
+    },
 });
 
 Template.administratorManager.events({
@@ -72,7 +80,24 @@ Template.administratorManager.events({
     "change #admintype-input": adminTypeChange
 });
 
-Template.editAdministratorModal.helpers({
+Template.administratorFilter.events({
+    'click #filter-button': adminstratorFilter,
+    'click #refresh-button': refreshFilter,
+    'keypress .filter-input': (e) => {
+        if (e.which === 13) {
+            adminstratorFilter()
+        }
+    },
+    'change #admin-type-filter': (e) => {
+        let options = [{
+            text: "adminType",
+            value: Number($('#admin-type-filter').val())
+        }]
+        reloadTable(1, getLimitDocPerPage(), options)
+    }
+})
+
+Template.administratorFilter.helpers({
     isSuperadmin() {
         return Session.get(_SESSION.isSuperadmin)
     },
@@ -80,6 +105,8 @@ Template.editAdministratorModal.helpers({
         return Session.get('schools')
     },
 });
+
+
 
 function dzPreviewClick() {
     dropzone.hiddenFileInput.click()
@@ -167,10 +194,10 @@ async function SubmitForm(event) {
                     reloadTable(1, getLimitDocPerPage())
                     handleSuccess("Đã thêm")
                 }).catch(handleError);
-            } else {
-                data._id = modify;
-                console.log(data);
-                MeteorCall(_METHODS.admin.Update, data, accessToken)
+        } else {
+            data._id = modify;
+            console.log(data);
+            MeteorCall(_METHODS.admin.Update, data, accessToken)
                 .then(result => {
                     $("#editAdministratorModal").modal("hide");
                     handleSuccess("Đã sửa!")
@@ -227,15 +254,16 @@ function getLimitDocPerPage() {
     return parseInt($("#limit-doc").val());
 }
 
-function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
+function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options = null) {
     let table = $('#table-body');
     MeteorCall(_METHODS.admin.GetByPage, {
         page: page,
-        limit: limitDocPerPage
+        limit: limitDocPerPage,
+        options
     }, accessToken).then(result => {
         handlePaging(table, result.count, page, limitDocPerPage)
         createTable(table, result, limitDocPerPage)
-    })
+    }).catch(handleError)
 }
 
 function createTable(table, result, limitDocPerPage) {
@@ -246,7 +274,7 @@ function createTable(table, result, limitDocPerPage) {
     table.html(htmlRow.join(''))
 }
 
-function createRow(result, index) {
+function createRow(result) {
     let data = {
         _id: result._id,
         name: result.user.name,
@@ -258,7 +286,7 @@ function createRow(result, index) {
         schoolName: result.school ? result.school.name : '',
         schoolID: result.schoolID ? result.schoolID : ''
     }
-   
+
     return `
         <tr id="${data._id}" class="table-row">
             <td>${result.index + 1}</td>
@@ -278,6 +306,36 @@ function createRow(result, index) {
             </td>
         </tr>
         `
+}
+
+function adminstratorFilter() {
+    let options = [{
+        text: "user/name",
+        value: $('#admin-name-filter').val()
+    }, {
+        text: "user/phone",
+        value: $('#admin-phone-filter').val()
+    }, {
+        text: "user/email",
+        value: $('#admin-email-filter').val()
+    }, {
+        text: "adminType",
+        value: $('#admin-type-filter').val() ? Number($('#admin-type-filter').val()) : ''
+    }, {
+        text: "schoolID",
+        value: $('#admin-school-filter').val()
+    }]
+    console.log(options);
+    reloadTable(1, getLimitDocPerPage(), options)
+}
+
+function refreshFilter() {
+    $('#admin-name-filter').val('')
+    $('#admin-phone-filter').val('')
+    $('#admin-email-filter').val('')
+    $('#admin-type-filter').val('')
+    $('#student-school-filter').val('')
+    reloadTable(1, getLimitDocPerPage(), null)
 }
 
 function initSchoolSelect2() {

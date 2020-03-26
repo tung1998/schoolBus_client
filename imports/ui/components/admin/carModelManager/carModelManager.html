@@ -1,51 +1,51 @@
 <template name="carModelManager">
-    <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-      <!-- begin:: Subheader -->
-      <div class="kt-subheader   kt-grid__item" id="kt_subheader">
-        <div class="kt-container  kt-container--fluid ">
-          <div class="kt-subheader__main">
-            <h3 class="kt-subheader__title">
-  
-              Quản lý loại xe </h3>
-  
-            <span class="kt-subheader__separator kt-hidden"></span>
-            <div class="kt-subheader__breadcrumbs">
-              <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
-              <span class="kt-subheader__breadcrumbs-separator"></span>
-              <a href="" class="kt-subheader__breadcrumbs-link">
-                SchoolBus </a>
-              <span class="kt-subheader__breadcrumbs-separator"></span>
-              <a href="" class="kt-subheader__breadcrumbs-link">
-                Quản lý loại xe</a>
-            </div>
+  <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+    <!-- begin:: Subheader -->
+    <div class="kt-subheader   kt-grid__item" id="kt_subheader">
+      <div class="kt-container  kt-container--fluid ">
+        <div class="kt-subheader__main">
+          <h3 class="kt-subheader__title">
+
+            Quản lý loại xe </h3>
+
+          <span class="kt-subheader__separator kt-hidden"></span>
+          <div class="kt-subheader__breadcrumbs">
+            <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
+            <span class="kt-subheader__breadcrumbs-separator"></span>
+            <a href="" class="kt-subheader__breadcrumbs-link">
+              SchoolBus </a>
+            <span class="kt-subheader__breadcrumbs-separator"></span>
+            <a href="" class="kt-subheader__breadcrumbs-link">
+              Quản lý loại xe</a>
           </div>
         </div>
       </div>
-      <!-- end:: Subheader -->
-  
-      <!-- begin:: Content -->
-      <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-        <div class="row">
-          <div class="col">
-  
-            <div class="kt-portlet">
-              <div class="kt-portlet__head">
-                <div class="kt-portlet__head-label">
-                  <h3 class="kt-portlet__head-title">
-                    Danh sách loại xe
-                  </h3>
-                </div>
+    </div>
+    <!-- end:: Subheader -->
+
+    <!-- begin:: Content -->
+    <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+      <div class="row">
+        <div class="col">
+
+          <div class="kt-portlet">
+            <div class="kt-portlet__head">
+              <div class="kt-portlet__head-label">
+                <h3 class="kt-portlet__head-title">
+                  Danh sách loại xe
+                </h3>
               </div>
-  
-              <div class="kt-portlet__body">
-                <!--begin::Section-->
-                <div class="kt-section">
-                  <div class="kt-section__content">
-                    <button type="button" class="btn btn-outline-brand mb-4 add-more" >Thêm mới</button>
-                    <div class="kt-datatable kt-datatable--default kt-datatable--brand">
-                      <p id="empty-data" class="text-muted font-14 d-none">
-                        Không có dữ liệu
-                      </p>
+            </div>
+
+            <div class="kt-portlet__body">
+              <!--begin::Section-->
+              <div class="kt-section">
+                <div class="kt-section__content">
+                  <button type="button" class="btn btn-outline-brand mb-4 add-more">Thêm mới</button>
+                  <div class="kt-datatable kt-datatable--default kt-datatable--brand">
+                    <p id="empty-data" class="text-muted font-14 d-none">
+                      Không có dữ liệu
+                    </p>
                     <table class="table table-bordered table-hover" id="carModelTable">
                       <thead class="thead-light">
                         <tr>
@@ -61,26 +61,26 @@
                         </tr>
                       </thead>
                       <tbody id="table-body">
-                      
+
                       </tbody>
                     </table>
-                    </div>
                   </div>
                 </div>
-                <!--end::Section-->
               </div>
+              <!--end::Section-->
             </div>
           </div>
         </div>
       </div>
-      <!-- end:: Content -->
     </div>
-    {{> editCarModelModal}}
-  </template>
-  
-  
-  <template name="editCarModelModal">
-    <div class="modal fade" id="editCarModelModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    <!-- end:: Content -->
+  </div>
+  {{> editCarModelModal}}
+</template>
+
+
+<template name="editCarModelModal">
+  <div class="modal fade" id="editCarModelModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
@@ -106,7 +106,7 @@
               </div>
               {{/if}}
               <div class="form-group row">
-                <label for="example-text-input" class="col-2 col-form-label required-input-label" >Hãng xe</label>
+                <label for="example-text-input" class="col-2 col-form-label required-input-label">Hãng xe</label>
                 <div class="col-10">
                   <input class="form-control" type="text" id="example-text-input" name="brand-input">
                 </div>
@@ -154,8 +154,46 @@
             </div>
           </form>
         </div>
-        
+
       </div>
     </div>
   </div>
-  </template>
+</template>
+
+<template name="carModelFilter">
+  <div class="form-group mb-2">
+    <label for="admin-name" class="col-form-label">Hãng xe</label>
+    <input class="form-control filter-input" type="text" placeholder="Hãng xe" id="carModel-brand-filter">
+  </div>
+  <div class="form-group mb-2">
+    <label for="admin-parent-route" class="col-form-label">Nhãn hiệu xe</label>
+    <input class="form-control filter-input" type="text" placeholder="Nhãn hiệu xe" id="carModel-model-filter">
+  </div>
+  <div class="form-group mb-2">
+    <label for="admin-parent-route" class="col-form-label">Số ghế</label>
+    <input class="form-control filter-input" type="text" placeholder="Số ghế" id="carModel-seatNumber-filter">
+  </div>
+  <div class="form-group mb-2">
+    <label for="admin-parent-route" class="col-form-label">Loai nhiên liệu</label>
+    <input class="form-control filter-input" type="text" placeholder="Loại nhiên liệu" id="carModel-fuelType-filter">
+  </div>
+  <div class="form-group mb-2">
+    <label for="admin-parent-route" class="col-form-label">Dung tích</label>
+    <input class="form-control filter-input" type="text" placeholder="Dung tích" id="carModel-fuelCapacity-filter">
+  </div>
+  {{#if isSuperadmin}}
+  <div class="form-group mb-2">
+    <label for="admin-parent-route" class="col-form-label">Trường</label>
+    <select class="form-control filter-input" id="school-filter">
+      <option value="">Chọn trường</option>
+      {{#each schools}}
+      <option value="{{_id}}">{{name}}</option>
+      {{/each}}
+    </select>
+  </div>
+  {{/if}}
+  <div class="form-group mt-4">
+    <button type="submit" class="btn btn-primary btn-sm" id="filter-button">Tìm kiếm</button>
+    <button type="submit" class="btn btn-success btn-sm" id="refresh-button">Refresh</button>
+  </div>
+</template>

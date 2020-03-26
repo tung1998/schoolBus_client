@@ -42,7 +42,7 @@
               <div class="kt-section">
                 <div class="kt-section__content">
                   <button type="button" class="btn btn-outline-brand mb-4 add-button" data-toggle="modal"
-                    data-target="#editStudentModal">Thêm mới</button>
+                    data-target="#editadminModal">Thêm mới</button>
                   <div class="kt-datatable kt-datatable--default kt-datatable--brand">
                     <p id="empty-data" class="text-muted font-14 d-none">
                       Không có dữ liệu
@@ -171,5 +171,44 @@
 
       </div>
     </div>
+  </div>
+</template>
+
+<template name="administratorFilter">
+  <div class="form-group mb-2">
+    <label for="admin-name" class="col-form-label">Họ tên</label>
+    <input class="form-control filter-input" type="text" placeholder="Họ tên" id="admin-name-filter" name="admin-name">
+  </div>
+  <div class="form-group mb-2">
+    <label for="admin-parent-route" class="col-form-label">Số điện thoại</label>
+    <input class="form-control filter-input" type="text" placeholder="Số điện thoại" id="admin-phone-filter"
+      name="admin-phone">
+  </div>
+  <div class="form-group mb-2">
+    <label for="admin-parent-route" class="col-form-label">Email</label>
+    <input class="form-control filter-input" type="text" placeholder="Email" id="admin-email-filter" name="admin-email">
+  </div>
+  {{#if isSuperadmin}}
+  <div class="form-group mb-2">
+    <label for="admin--route" class="col-form-label">Loại admin</label>
+    <select class="form-control filter-input" id="admin-type-filter">
+      <option value="">Chọn</option>
+      <option value="0">Quản trị viên tổng</option>
+      <option value="1">Quản trị viên trường</option>
+    </select>
+  </div>
+  <div class="form-group mb-2">
+    <label for="admin-parent-route" class="col-form-label">Trường</label>
+    <select class="form-control filter-input" id="admin-school-filter">
+      <option value="">Chọn trường</option>
+      {{#each schools}}
+      <option value="{{_id}}">{{name}}</option>
+      {{/each}}
+    </select>
+  </div>
+  {{/if}}
+  <div class="form-group mt-4">
+    <button type="submit" class="btn btn-primary btn-sm" id="filter-button">Tìm kiếm</button>
+    <button type="submit" class="btn btn-success btn-sm" id="refresh-button">Refresh</button>
   </div>
 </template>
