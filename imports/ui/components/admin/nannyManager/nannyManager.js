@@ -81,6 +81,33 @@ function dzPreviewClick() {
     dropzone.hiddenFileInput.click()
 }
 
+Template.nannyFilter.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    },
+    schools() {
+        return Session.get('schools')
+    },
+});
+
+Template.nannyFilter.events({
+    'click #filter-button': nannyFilter,
+    'click #refresh-button': refreshFilter,
+    'keypress .filter-input': (e) => {
+        if (e.which === 13) {
+            nannyFilter()
+        }
+    },
+    'change #school-filter': (e) => {
+        let options = [{
+            text: "adminType",
+            value: $('#school-filter').val()
+        }]
+        reloadTable(1, getLimitDocPerPage(), options)
+    }
+})
+
+
 
 function ClickAddmoreButton(event) {
     $(".modal-title").html("Thêm mới");
@@ -252,11 +279,12 @@ function getLimitDocPerPage() {
     return parseInt($("#limit-doc").val());
 }
 
-function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
+function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options = null) {
     let table = $('#table-body');
     MeteorCall(_METHODS.Nanny.GetByPage, {
         page: page,
-        limit: limitDocPerPage
+        limit: limitDocPerPage,
+        options
     }, accessToken).then(result => {
         handlePaging(table, result.count, page, limitDocPerPage)
         createTable(table, result, limitDocPerPage)
@@ -316,3 +344,34 @@ function initSchoolSelect2() {
         })
     }).catch(handleError)
 }
+
+function nannyFilter() {
+    let options = [{
+        text: "schoolID",
+        value: $('#school-filter').val()
+    }, {
+        text: "user/name",
+        value: $('#name-filter').val()
+    }, {
+        text: "user/phone",
+        value: $('#phone-filter').val()
+    }, {
+        text: "user/email",
+        value: $('#email-filter').val()
+    }, {
+        text: "IDNumber",
+        value: $('#cccd-filter').val()
+    }]
+    console.log(options);
+    reloadTable(1, getLimitDocPerPage(), options)
+  }
+  
+  function refreshFilter() {
+    $('#school-filter').val('')
+    $('#name-filter').val('')
+    $('#phone-filter').val('')
+    $('#email-filter').val('')
+    $('#cccd-filter').val('')
+
+    reloadTable(1, getLimitDocPerPage(), null)
+  }

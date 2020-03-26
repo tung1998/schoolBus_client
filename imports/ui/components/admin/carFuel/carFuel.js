@@ -23,12 +23,17 @@ import {
 
 let accessToken;
 let currentPage = 1;
+let isSuperadmin
 
 Template.carFuel.onCreated(() => {
     accessToken = Cookies.get("accessToken");
+    isSuperadmin = Session.get(_SESSION.isSuperadmin)
+    Session.set('schools', [])
 });
 
 Template.carFuel.onRendered(() => {
+    if (isSuperadmin)
+        initSchoolSelect2()
     reloadTable();
     addRequiredInputLabel()
     addPaging($('#carFuelTable'))
@@ -38,6 +43,15 @@ Template.carFuel.onRendered(() => {
         minimumResultsForSearch: Infinity,
     })
     renderCarOption();
+});
+
+Template.editCarFuelModal.helpers({
+    isSuperadmin() {
+        return isSuperadmin
+    },
+    schools() {
+        return Session.get('schools')
+    },
 });
 
 Template.carFuel.events({
@@ -55,6 +69,33 @@ Template.carFuel.events({
         reloadTable(1, getLimitDocPerPage());
     },
 });
+
+Template.carFuelFilter.events({
+    'click #filter-button': carFuelFilter,
+    'click #refresh-button': refreshFilter,
+    'keypress .filter-input': (e) => {
+        if (e.which === 13) {
+            carFuelFilter()
+        }
+    },
+    'change #school-filter': (e) => {
+        let options = [{
+            text: "schoolID",
+            value: $('#school-filter').val()
+        }]
+        reloadTable(1, getLimitDocPerPage(), options)
+    }
+})
+
+Template.carFuelFilter.helpers({
+    isSuperadmin() {
+        return isSuperadmin
+    },
+    schools() {
+        return Session.get('schools')
+    },
+});
+
 
 function renderCarOption() {
     MeteorCall(_METHODS.car.GetAll, null, accessToken)
@@ -84,7 +125,11 @@ function ClickModifyButton(event) {
     $("#editCarFuelModal").attr("carFuelID", carFuelData._id);
     $("#editCarFuelModal").modal("show");
 
+    if (Session.get(_SESSION.isSuperadmin)) {
+        $('#school-input').val(carFuelData.schoolID).trigger('change')
+    }
 
+    $('#car-select').val(carFuelData.carID).trigger('change')
     $('input[name="volume-input"]').val(carFuelData.volume);
     $('input[name="cost-input"]').val(carFuelData.price);
 }
@@ -107,6 +152,10 @@ function SubmitForm(event) {
             volume: $('input[name="volume-input"]').val(),
             price: $('input[name="cost-input"]').val()
         };
+
+        if (Session.get(_SESSION.isSuperadmin)) {
+            data.schoolID = $('#school-input').val()
+        }
 
         let modify = $("#editCarFuelModal").attr("carFuelID");
         if (modify == "") {
@@ -134,6 +183,7 @@ function checkInput() {
     let cost = $('input[name="cost-input"]').val();
     let car = $("#car-select").val();
 
+
     if (!volume || !cost || !car) {
         Swal.fire({
             icon: "error",
@@ -142,6 +192,18 @@ function checkInput() {
         })
         return false;
     } else {
+        if (Session.get(_SESSION.isSuperadmin)) {
+            let schoolID = $('#school-input').val()
+            if (!schoolID) {
+                Swal.fire({
+                    icon: "error",
+                    text: "Chưa chọn trường!",
+                    timer: 2000
+                })
+                return false;
+            }
+
+        }
         return true;
     }
 
@@ -150,17 +212,21 @@ function checkInput() {
 function clearForm() {
     $('input[name="volume-input"]').val("");
     $('input[name="cost-input"]').val("");
+    if (Session.get(_SESSION.isSuperadmin)) {
+        $('#school-input').val('').trigger('change')
+    }
 }
 
 function getLimitDocPerPage() {
     return parseInt($("#limit-doc").val());
 }
 
-function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
+function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options = null) {
     let table = $('#table-body');
     MeteorCall(_METHODS.carFuel.GetByPage, {
         page: page,
-        limit: limitDocPerPage
+        limit: limitDocPerPage,
+        options
     }, accessToken).then(result => {
         handlePaging(table, result.count, page, limitDocPerPage)
         createTable(table, result, limitDocPerPage)
@@ -177,8 +243,10 @@ function createTable(table, result, limitDocPerPage) {
 }
 
 function createRow(result) {
+    console.log(result);
     let data = {
         _id: result._id,
+        carID: result.carID,
         numberPlate: result.car.numberPlate,
         volume: result.volume,
         price: result.price,
@@ -199,4 +267,32 @@ function createRow(result) {
             </td>
         </tr>
         `
+}
+
+function initSchoolSelect2() {
+    MeteorCall(_METHODS.school.GetAll, null, accessToken).then(result => {
+        Session.set('schools', result.data)
+        $('#school-input').select2({
+            width: '100%',
+            placeholder: "Chọn trường"
+        })
+    }).catch(handleError)
+}
+
+function carFuelFilter() {
+    let options = [{
+        text: "car/numberPlate",
+        value: $('#carFuel-numberPlate-filter').val()
+    }, {
+        text: "schoolID",
+        value: $('#school-filter').val()
+    }]
+    console.log(options);
+    reloadTable(1, getLimitDocPerPage(), options)
+}
+
+function refreshFilter() {
+    $('#carFuel-numberPlate-filter').val('')
+    $('#school-filter').val('')
+    reloadTable(1, getLimitDocPerPage(), null)
 }

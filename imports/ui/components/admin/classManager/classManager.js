@@ -69,6 +69,33 @@ Template.editClassModal.helpers({
   },
 });
 
+Template.classFilter.helpers({
+  isSuperadmin() {
+    return Session.get(_SESSION.isSuperadmin)
+  },
+  schools() {
+    return Session.get('schools')
+  },
+});
+
+Template.classFilter.events({
+  'click #filter-button': classFilter,
+    'click #refresh-button': refreshFilter,
+    'keypress .filter-input': (e) => {
+        if (e.which === 13) {
+          classFilter()
+        }
+    },
+    'change #school-filter': (e) => {
+        let options = [{
+            text: "adminType",
+            value: $('#school-filter').val()
+        }]
+        reloadTable(1, getLimitDocPerPage(), options)
+    }
+})
+
+
 
 function renderTeacherName(teacherID = '') {
   let _id = $('#school-input').val()
@@ -220,11 +247,12 @@ function getLimitDocPerPage() {
   return parseInt($("#limit-doc").val());
 }
 
-function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
+function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options = null) {
   let table = $('#table-body');
   MeteorCall(_METHODS.class.GetByPage, {
     page: page,
-    limit: limitDocPerPage
+    limit: limitDocPerPage,
+    options
   }, accessToken).then(result => {
     handlePaging(table, result.count, page, limitDocPerPage)
     createTable(table, result, limitDocPerPage)
@@ -286,4 +314,27 @@ function initTeacherSelect2() {
       width: "100%"
     })
   }).catch(handleError)
+}
+
+
+function classFilter() {
+  let options = [{
+      text: "schoolID",
+      value: $('#school-filter').val()
+  }, {
+      text: "name",
+      value: $('#class-filter').val()
+  }, {
+      text: "teacher/user/name",
+      value: $('#teacher-filter').val()
+  }]
+  console.log(options);
+  reloadTable(1, getLimitDocPerPage(), options)
+}
+
+function refreshFilter() {
+  $('#class-filter').val('')
+  $('#teacher-filter').val('')
+  $('#school-filter').val('')
+  reloadTable(1, getLimitDocPerPage(), null)
 }

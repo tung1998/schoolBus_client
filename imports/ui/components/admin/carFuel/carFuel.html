@@ -41,8 +41,8 @@
                             <!--begin::Section-->
                             <div class="kt-section">
                                 <div class="kt-section__content">
-                                    <button type="button" class="btn btn-outline-brand mb-4 add-more" data-toggle="modal"
-                                        data-target="#editCarFuelModal">Thêm mới</button>
+                                    <button type="button" class="btn btn-outline-brand mb-4 add-more"
+                                        data-toggle="modal" data-target="#editCarFuelModal">Thêm mới</button>
                                     <table class="table table-bordered table-hover" id="carFuelTable">
                                         <thead class="thead-light">
                                             <tr>
@@ -56,7 +56,7 @@
                                             </tr>
                                         </thead>
                                         <tbody id="table-body">
-                                    
+
                                         </tbody>
                                     </table>
                                 </div>
@@ -87,27 +87,39 @@
                     <form class="kt-form kt-form--label-right">
                         <div class="kt-portlet__body">
                             <div class="form-group row">
-                                <label class="col-2 col-form-label required-input-label"
-                                  >Chọn xe</label
-                                >
+                                <label class="col-2 col-form-label required-input-label">Chọn xe</label>
                                 <div class="col-10">
-                                  <select id="car-select"></select>
+                                    <select id="car-select"></select>
                                 </div>
-                              </div>
+                            </div>
                             <div class="form-group row">
-                                <label for="example-search-input" class="col-2 col-form-label required-input-label">Thể tích</label>
+                                <label for="example-search-input" class="col-2 col-form-label required-input-label">Thể
+                                    tích</label>
                                 <div class="col-10">
                                     <input class="form-control" type="text" id="example-search-input"
                                         name="volume-input">
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label for="example-email-input" class="col-2 col-form-label required-input-label">Đơn giá</label>
+                                <label for="example-email-input" class="col-2 col-form-label required-input-label">Đơn
+                                    giá</label>
                                 <div class="col-10">
-                                    <input class="form-control" type="text" id="example-email-input"
-                                        name="cost-input">
+                                    <input class="form-control" type="text" id="example-email-input" name="cost-input">
                                 </div>
                             </div>
+                            {{#if isSuperadmin}}
+                            <div class="form-group row">
+                                <label for="example-email-input" class="col-2 col-form-label required-input-label">Trường</label>
+                                <div class="col-10">
+                                    <select class="form-control filter-input" id="school-input">
+                                        <option value=""></option>
+                                        {{#each schools}}
+                                        <option value="{{_id}}">{{name}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                            </div>
+                            {{/if}}
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary cancel-button"
@@ -119,5 +131,27 @@
 
             </div>
         </div>
+    </div>
+</template>
+
+<template name="carFuelFilter">
+    <div class="form-group mb-2">
+        <label for="admin-name" class="col-form-label">Biển số</label>
+        <input class="form-control filter-input" type="text" placeholder="Biển số" id="carFuel-numberPlate-filter">
+    </div>
+    {{#if isSuperadmin}}
+    <div class="form-group mb-2">
+        <label for="admin-parent-route" class="col-form-label">Trường</label>
+        <select class="form-control filter-input" id="school-filter">
+            <option value="">Chọn trường</option>
+            {{#each schools}}
+            <option value="{{_id}}">{{name}}</option>
+            {{/each}}
+        </select>
+    </div>
+    {{/if}}
+    <div class="form-group mt-4">
+        <button type="submit" class="btn btn-primary btn-sm" id="filter-button">Tìm kiếm</button>
+        <button type="submit" class="btn btn-success btn-sm" id="refresh-button">Refresh</button>
     </div>
 </template>
