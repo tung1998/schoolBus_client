@@ -25,7 +25,7 @@
 
         <!-- begin:: Content -->
         <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-            <div class="kt-portlet kt-portlet--tabs">
+            <div class="kt-portlet kt-portlet--tabs" id="tripData">
                 <div class="kt-portlet__head">
                     <div class="kt-portlet__head-toolbar">
                         <ul class="nav nav-tabs nav-tabs-space-xl nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand"
@@ -140,24 +140,31 @@
                             <!--begin::Section-->
                             <div class="kt-section">
                                 <div class="kt-section__content">
-                                  <div class="row">
-                                    <div class="col-4 anchorHeight" style="overflow: auto;">
-                                      <div class="carStopContainer" id="carStopContainer">
-                                        
-                                      </div>
-                                    </div>
-                                    
-                                    <div class="col-8">
-                                      <!--<button data-toggle="collapse" data-target=".collapse" class="floatingContent confirmButton btn btn-primary btn-sm"><i
+                                    <div class="row">
+                                        <div class="col-4 anchorHeight" style="overflow: auto;">
+                                            <div class="carStopContainer" id="carStopContainer">
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col-8">
+                                            <!--<button data-toggle="collapse" data-target=".collapse" class="floatingContent confirmButton btn btn-primary btn-sm"><i
                                         class="fas fa-check" style="right: 20px !important"></i>Xác nhận lộ trình
                                       </button>-->
-                                        {{>tripMap}}
+                                            {{>tripMap}}
+                                        </div>
                                     </div>
-                                  </div>
                                 </div>
-                              </div>
+                            </div>
                             <!--end::Section-->
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="kt-portlet kt-hidden" id="noData">
+                <div class="kt-portlet__head">
+                    <div class="kt-portlet__head-toolbar">
+                        Không có dữ liệu
                     </div>
                 </div>
             </div>
@@ -212,7 +219,102 @@
                     </button>
                 </div>
                 <div class="modal-body studentInfoModal-body">
+                    <div class="row">
+                        <div class="fa-pull-left col-3">
+                            <img style="width: 100px; height: 100px" src={{studenInfoData.image}} alt="image">
+                        </div>
+                        <div class="col-9">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="fa-pull-left">
+                                        <label for="studentID" class="form-control-label"><b>Mã học sinh: </b></label>
+                                    </div>
+                                    <div class="fa-pull-right">
+                                        <span class="studentID">{{studenInfoData.student.IDStudent}}</span>
+                                    </div>
+                                </div>
+                            </div>
 
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="fa-pull-left">
+                                        <label for="studentName" class="form-control-label"><b>Tên học sinh:
+                                            </b></label>
+                                    </div>
+                                    <div class="fa-pull-right">
+                                        <span class="studentName">{{studenInfoData.student.user.name}}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="fa-pull-left">
+                                        <label for="phone" class="form-control-label"><b>Số điện thoại: </b></label>
+                                    </div>
+                                    <div class="fa-pull-right">
+                                        <span class="phone">{{studenInfoData.student.user.phone}}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="fa-pull-left">
+                                        <label for="className" class="form-control-label"><b>Lớp: </b></label>
+                                    </div>
+                                    <div class="fa-pull-right">
+                                        <span class="className">{{studenInfoData.student.class.name}}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="fa-pull-left">
+                                        <label for="teacherName" class="form-control-label"><b>Giáo viên: </b></label>
+                                    </div>
+                                    <div class="fa-pull-right">
+                                        <span class="teacherName">{{studenInfoData.student.class.teacher.name}}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="fa-pull-left">
+                                        <label for="teacherName" class="form-control-label"><b>Trường: </b></label>
+                                    </div>
+                                    <div class="fa-pull-right">
+                                        <span class="teacherName">{{studenInfoData.student.school.name}}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="fa-pull-left">
+                                        <label for="teacherName" class="form-control-label"><b>Địa chỉ trường:
+                                            </b></label>
+                                    </div>
+                                    <div class="fa-pull-right">
+                                        <span class="teacherName">{{studenInfoData.student.school.address}}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div></div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="fa-pull-right">
+                                {{{studenInfoData.buttonHtml}}}
+                                <button type="button" class="btn btn-success" tripID="{{studenInfoData.tripID}}"
+                                    studentID="{{studenInfoData.studentID}}" id="takePhoto">Chụp ảnh</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

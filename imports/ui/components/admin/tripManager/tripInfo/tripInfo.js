@@ -32,16 +32,15 @@ export {
 }
 
 let accessToken
-let tripID
 let studentList = []
 let carStopList = []
 let stopCoor = []
 let markers_id = []
 let htmlStopPane = ''
-Template.tripDetail.onCreated(() => {
+
+Template.tripDetail.onCreated(async () => {
     accessToken = Cookies.get('accessToken')
-    tripID = FlowRouter.getParam('tripID')
-    
+    Session.set('hasData', false)
 })
 
 Template.tripDetail.onRendered(() => {
@@ -61,16 +60,23 @@ Template.tripDetail.onRendered(() => {
             'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         id: 'mapbox.streets'
     }).addTo(tripMap);
-    setInterval(() => { tripMap.invalidateSize(); }, 0) //invalidate Size of map
+    setInterval(() => {
+        tripMap.invalidateSize();
+    }, 0) //invalidate Size of map
     window.markerGroup = L.layerGroup().addTo(tripMap); //create markerGroup
 })
 
+Template.tripDetail.events({
+    hasData(){
+        return Session.get('hasData')
+    }
+})
 
 Template.tripDetail.events({
     'click .status-btn': clickStatusButton,
     'click #openScannerModal': clickOpenScannerModal,
     'click .studentRow': clickStudentRow,
-    'click .addressTab': (event)=>{
+    'click .addressTab': (event) => {
         event.preventDefault();
         let indx = parseInt($(event.currentTarget).attr("id"));
         let tarMark = tripMap._layers[markers_id[indx]];
@@ -79,7 +85,7 @@ Template.tripDetail.events({
         tarMark.openPopup();
         window.tripMap.setView([latval, lngval], 25);
     },
-    'mousemove .addressTab': (event)=>{
+    'mousemove .addressTab': (event) => {
         event.preventDefault();
         let indx = parseInt($(event.currentTarget).attr("id"));
         let tarMark = routeMiniMap._layers[markers_id[indx]];
@@ -91,24 +97,26 @@ Template.tripDetail.events({
 })
 
 Template.tripDetail.onDestroyed(() => {
-    studentList = null
-    tripID = null
+    studentList = null,
+    carStopList = null
+    stopCoor = null
+    markers_id = null
+    htmlStopPane = null
+    Session.delete('hasData')
 })
 
+Template.studentInfoModal.helpers({
+    studenInfoData(){
+        return Session.get('studenInfoData')
+    }
+})
 
-function clickStudentRow(e){
+function clickStudentRow(e) {
     renderStudentInfoModal($(e.currentTarget).attr("id"))
 }
 
 function checkStudentInfo(studentID) {
-    let result = null;
-    console.log(studentList)
-    studentList.map(student => {
-        if(student.studentID == studentID) {
-            result = student;
-        }
-    })
-    return result;
+    return studentList.filter(student => student.studentID == studentID)[0]
 }
 
 function clickStatusButton(e) {
@@ -122,8 +130,8 @@ function clickStatusButton(e) {
         status,
         studentID
     }, accessToken).then(async result => {
-        handleSuccess('Cập nhật', "tình trạng học sinh")
-        await reloadData()
+        handleSuccess('Đã cập nhật')
+        reloadData()
         renderStudentInfoModal(studentID)
     }).catch(handleError)
 }
@@ -132,25 +140,34 @@ function clickOpenScannerModal() {
     $('#instascannerModal').modal('show')
 }
 
-function reloadData() {
+async function reloadData() {
+    let tripData
+    let routeName = FlowRouter.getRouteName()
+    try {
+        if (routeName == 'tripManager.tripDetail')
+            tripData = await MeteorCall(_METHODS.trip.GetById, {
+                _id: FlowRouter.getParam('tripID')
+            }, accessToken)
+        else if (routeName == 'driver.upCommingTripInfo')
+            tripData = await MeteorCall(_METHODS.trip.GetNext, null, accessToken)
 
-    return MeteorCall(_METHODS.trip.GetById, {
-        _id: tripID
-    }, accessToken).then(result => {
         //get info trip
-        console.log(result);
+        console.log(tripData);
+        Session.set('tripID',tripData._id)
         let dataTrip = {
-            driverName: result.route.driver.user.name,
-            driverPhone: result.route.driver.user.phone,
-            nannyName: result.route.nanny.user.name,
-            nannyPhone: result.route.nanny.user.phone,
-            carNunberPlate: result.route.car.numberPlate,
-            startTime: result.startTime,
+            driverName: tripData.route.driver.user.name,
+            driverPhone: tripData.route.driver.user.phone,
+            nannyName: tripData.route.nanny.user.name,
+            nannyPhone: tripData.route.nanny.user.phone,
+            carNunberPlate: tripData.route.car.numberPlate,
+            startTime: tripData.startTime,
         }
-        carStopList = result.route.studentList.carStops;
-        carStopList.map((data, index)=>{
+        carStopList = tripData.route.studentList.carStops;
+        carStopList.map((data, index) => {
             stopCoor.push(data.location);
-            let mark = L.marker(data.location).bindTooltip(data.name, { permanent: false }).addTo(tripMap);
+            let mark = L.marker(data.location).bindTooltip(data.name, {
+                permanent: false
+            }).addTo(tripMap);
             markers_id.push(markerGroup.getLayerId(mark))
             let popup = `
                 <div class="font-14">
@@ -165,7 +182,7 @@ function reloadData() {
             mark.bindPopup(popup, {
                 minWidth: 301
             });
-                htmlStopPane += 
+            htmlStopPane +=
                 `<div class="kt-portlet kt-portlet--mobile addressTab" id="${index}">
                     <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label">
@@ -179,7 +196,7 @@ function reloadData() {
         })
         drawPath(stopCoor)
         document.getElementById("carStopContainer").innerHTML += htmlStopPane;
-        
+
         $('#driver-name').html(dataTrip.driverName)
         $('.phone:eq(0)').html(`Số điện thoại: ${dataTrip.driverPhone}`)
         $('#nanny-name').html(dataTrip.nannyName)
@@ -188,11 +205,15 @@ function reloadData() {
         $('#start-time').html(dataTrip.startTime)
 
         //data học sinh
-        studentList = result.students
+        studentList = tripData.students
         let table = $('#table-studentList')
         let row = studentList.map(htmlRow)
         table.find("tbody").html(row.join(""))
-    }).catch(handleError)
+    } catch (error) {
+        handleError(error,'Không có dữ liệu')
+        $('tripData').addClass('kt-hidden')
+        $('noData').removeClass('kt-hidden')
+    }
 }
 
 

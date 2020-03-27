@@ -212,7 +212,8 @@ const _METHODS = {
         Update: 'trip.update',
         Delete: 'trip.delete',
         Attendace: 'trip.attendance',
-        Image: 'trip.image'
+        Image: 'trip.image',
+        GetNext: 'trip.getNext'
     },
     tripLocation: {
         GetAll: 'tripLocation.getAll',
