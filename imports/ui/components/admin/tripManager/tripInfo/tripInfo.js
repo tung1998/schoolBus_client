@@ -36,11 +36,11 @@ let studentList = []
 let carStopList = []
 let stopCoor = []
 let markers_id = []
-let htmlStopPane = ''
 
 Template.tripDetail.onCreated(async () => {
     accessToken = Cookies.get('accessToken')
-    Session.set('hasData', false)
+    Session.set('studentTripData', [])
+    Session.set('studenInfoData', {})
 })
 
 Template.tripDetail.onRendered(() => {
@@ -66,9 +66,9 @@ Template.tripDetail.onRendered(() => {
     window.markerGroup = L.layerGroup().addTo(tripMap); //create markerGroup
 })
 
-Template.tripDetail.events({
-    hasData(){
-        return Session.get('hasData')
+Template.tripDetail.helpers({
+    studentTripData() {
+        return Session.get('studentTripData')
     }
 })
 
@@ -98,15 +98,15 @@ Template.tripDetail.events({
 
 Template.tripDetail.onDestroyed(() => {
     studentList = null,
-    carStopList = null
+        carStopList = null
     stopCoor = null
     markers_id = null
-    htmlStopPane = null
-    Session.delete('hasData')
+    Session.delete('studentTripData')
+    Session.delete('studenInfoData')
 })
 
 Template.studentInfoModal.helpers({
-    studenInfoData(){
+    studenInfoData() {
         return Session.get('studenInfoData')
     }
 })
@@ -153,7 +153,7 @@ async function reloadData() {
 
         //get info trip
         console.log(tripData);
-        Session.set('tripID',tripData._id)
+        Session.set('tripID', tripData._id)
         let dataTrip = {
             driverName: tripData.route.driver.user.name,
             driverPhone: tripData.route.driver.user.phone,
@@ -163,7 +163,7 @@ async function reloadData() {
             startTime: tripData.startTime,
         }
         carStopList = tripData.route.studentList.carStops;
-        carStopList.map((data, index) => {
+        carStopList.forEach((data, index) => {
             stopCoor.push(data.location);
             let mark = L.marker(data.location).bindTooltip(data.name, {
                 permanent: false
@@ -182,21 +182,8 @@ async function reloadData() {
             mark.bindPopup(popup, {
                 minWidth: 301
             });
-            htmlStopPane +=
-                `<div class="kt-portlet kt-portlet--mobile addressTab" id="${index}">
-                    <div class="kt-portlet__head">
-                        <div class="kt-portlet__head-label">
-                            <h3 class="kt-portlet__head-title title="${data.name}">
-                                ${data.name}        
-                            </h3>
-                        </div>
-                    </div>
-                    
-                </div>`
         })
         drawPath(stopCoor)
-        document.getElementById("carStopContainer").innerHTML += htmlStopPane;
-
         $('#driver-name').html(dataTrip.driverName)
         $('.phone:eq(0)').html(`Số điện thoại: ${dataTrip.driverPhone}`)
         $('#nanny-name').html(dataTrip.nannyName)
@@ -205,39 +192,13 @@ async function reloadData() {
         $('#start-time').html(dataTrip.startTime)
 
         //data học sinh
-        studentList = tripData.students
-        let table = $('#table-studentList')
-        let row = studentList.map(htmlRow)
-        table.find("tbody").html(row.join(""))
+        Session.set('studentTripData', tripData.students.map((item, index) => {
+            item.index = index + 1
+            return item
+        }))
     } catch (error) {
-        handleError(error,'Không có dữ liệu')
+        handleError(error, 'Không có dữ liệu')
         $('tripData').addClass('kt-hidden')
         $('noData').removeClass('kt-hidden')
     }
-}
-
-
-function htmlRow(key, index) {
-    let studentInfo = {
-        _id: key.studentID,
-        IDStudent: key.student ? key.student.IDStudent : '',
-        name: key.student.user.name,
-        phone: key.student.user.phone,
-        class: key.student.class ? key.student.class.name : '',
-        teacher: key.student.class ? key.student.class.teacher.user.name : '',
-        school: key.student.class ? key.student.class.school.name : '',
-        schoolAddress: key.student.class ? key.student.class.school.address : '',
-        status: key.status
-    }
-    // <td>${studentInfo.class}</td>
-    // <td>${studentInfo.teacher}</td>
-    // <td>${studentInfo.school}</td>
-    // <td>${studentInfo.schoolAddress}</td>
-
-    return `<tr id="${studentInfo._id}" class="studentRow">
-                <th scope="row">${index + 1}</th>
-                <td>${studentInfo.IDStudent}</td>
-                <td>${studentInfo.name}</td>
-                <td>${studentInfo.phone}</td>
-        </tr>`
 }

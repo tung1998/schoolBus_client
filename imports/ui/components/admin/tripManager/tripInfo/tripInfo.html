@@ -120,15 +120,12 @@
                                                 <th>Mã HS</th>
                                                 <th>Tên HS</th>
                                                 <th>Số điện thoại</th>
-                                                <!-- <th>Lớp</th>
-                                                <th>Giáo viên</th>
-                                                <th>Trường</th>
-                                                <th>Địa chỉ trường</th>
-                                                <th>Điểm danh</th> -->
                                             </tr>
                                         </thead>
                                         <tbody id="table-body">
-
+                                            {{#each studentTripData}}
+                                            {{> studentTripRow}}
+                                            {{/each}}
                                         </tbody>
 
                                     </table>
@@ -140,20 +137,7 @@
                             <!--begin::Section-->
                             <div class="kt-section">
                                 <div class="kt-section__content">
-                                    <div class="row">
-                                        <div class="col-4 anchorHeight" style="overflow: auto;">
-                                            <div class="carStopContainer" id="carStopContainer">
-
-                                            </div>
-                                        </div>
-
-                                        <div class="col-8">
-                                            <!--<button data-toggle="collapse" data-target=".collapse" class="floatingContent confirmButton btn btn-primary btn-sm"><i
-                                        class="fas fa-check" style="right: 20px !important"></i>Xác nhận lộ trình
-                                      </button>-->
-                                            {{>tripMap}}
-                                        </div>
-                                    </div>
+                                    {{>tripMap}}
                                 </div>
                             </div>
                             <!--end::Section-->
@@ -220,18 +204,16 @@
                 </div>
                 <div class="modal-body studentInfoModal-body">
                     <div class="row">
-                        <div class="fa-pull-left col-3">
+                        <div class="fa-pull-left col-md-3 col-sm-12">
                             <img style="width: 100px; height: 100px" src={{studenInfoData.image}} alt="image">
                         </div>
-                        <div class="col-9">
+                        <div class="col-sm-9 col-sm-12">
                             <div class="row">
-                                <div class="col-12">
-                                    <div class="fa-pull-left">
-                                        <label for="studentID" class="form-control-label"><b>Mã học sinh: </b></label>
-                                    </div>
-                                    <div class="fa-pull-right">
-                                        <span class="studentID">{{studenInfoData.student.IDStudent}}</span>
-                                    </div>
+                                <div class="fa-pull-left">
+                                    <label for="studentID" class="form-control-label"><b>Mã học sinh: </b></label>
+                                </div>
+                                <div class="fa-pull-right">
+                                    <span class="studentID">{{studenInfoData.student.IDStudent}}</span>
                                 </div>
                             </div>
 
@@ -323,4 +305,13 @@
 
 <template name="tripMap">
     <div id="tripMap" style="padding: 0px; z-index: 0; height: 450px !important;"></div>
+</template>
+
+<template name="studentTripRow">
+    <tr id="{{_id}}" class="studentRow">
+        <th scope="row">{{index}}</th>
+        <td>{{student.IDStudent}}</td>
+        <td>{{student.user.name}}</td>
+        <td>{{student.user.phone}}</td>
+    </tr>
 </template>
