@@ -24,7 +24,8 @@ if (Meteor.isServer) {
         'trip.attendance': attendanceTrip,
         'trip.image': imageTrip,
         'trip.getByTime': getTripByTime,
-        'trip.getNext': getNextTrip
+        'trip.getNext': getNextTrip,
+        'trip.getLogByTripID': getTripLogByTripID
     });
 }
 
@@ -97,6 +98,13 @@ function imageTrip(data, accessToken = '') {
 
 function getNextTrip(data, accessToken = '') {
     let url = `${AUTH_TRIP}/next`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    })
+}
+
+function getTripLogByTripID(data, accessToken = '') {
+    let url = `${AUTH_TRIP}/${data.tripID}/log`
     return httpDefault(METHOD.get, url, {
         token: accessToken
     })

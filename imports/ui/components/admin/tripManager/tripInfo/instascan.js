@@ -5,9 +5,6 @@ import {
     makeID
 } from '../../../../../functions'
 
-import {
-    checkStudentInfo
-} from './tripInfo'
 import { _METHODS } from '../../../../../variableConst'
 
 export {
@@ -144,10 +141,10 @@ function renderStudentInfoModal(studentID) {
     $("#studentInfoModal").modal("show")
     $('#instascannerModal').modal('hide')
     let studenInfoData = checkStudentInfo(studentID)
+    console.log(studenInfoData)
 
     studenInfoData.tripID = Session.get('tripID')
 
-    console.log(studenInfoData)
     switch (studenInfoData.status) {
         case 0:
             studenInfoData.buttonHtml = `<button type="button" class="btn btn-success status-btn" tripID="${studenInfoData.tripID}"  studentID="${studenInfoData.studentID}" status="1" >Điểm danh</button>
@@ -172,4 +169,9 @@ function renderStudentInfoModal(studentID) {
         studenInfoData.image = `/assets/media/users/user5.jpg`
     }
     Session.set('studenInfoData',studenInfoData)
+}
+
+function checkStudentInfo(studentID) {
+    console.log(studentID)
+    return Session.get('studentTripData').filter(student => student.studentID == studentID)[0]
 }

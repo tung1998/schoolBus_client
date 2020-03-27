@@ -4,6 +4,7 @@ export {
     _TRIP_STUDENT,
     LIMIT_DOCUMENT_PAGE,
     _URL_images,
+    _TRIP,
     _FEEDBACK
 }
 const _URL_images = 'http://192.168.100.69:3000/images'
@@ -213,7 +214,8 @@ const _METHODS = {
         Delete: 'trip.delete',
         Attendace: 'trip.attendance',
         Image: 'trip.image',
-        GetNext: 'trip.getNext'
+        GetNext: 'trip.getNext',
+        GetTripLogByTripID: 'trip.getLogByTripID',
     },
     tripLocation: {
         GetAll: 'tripLocation.getAll',
@@ -283,9 +285,13 @@ const _TRIP_STUDENT = {
             text: "Xuống xe",
             number: 2
         },
+        request: {
+            text: "Xin Nghỉ",
+            number: 3
+        },
         absent: {
             text: "Vắng mặt",
-            number: 3
+            number: 4
         }
     }
 }

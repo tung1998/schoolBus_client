@@ -27,12 +27,7 @@ import {
     renderStudentInfoModal
 } from './instascan'
 
-export {
-    checkStudentInfo
-}
-
 let accessToken
-let studentList = []
 let carStopList = []
 let stopCoor = []
 let markers_id = []
@@ -85,6 +80,7 @@ Template.tripDetail.events({
         tarMark.openPopup();
         window.tripMap.setView([latval, lngval], 25);
     },
+    'click .nav-link[href="#timeline"]': renderTimeLine,
     'mousemove .addressTab': (event) => {
         event.preventDefault();
         let indx = parseInt($(event.currentTarget).attr("id"));
@@ -97,12 +93,12 @@ Template.tripDetail.events({
 })
 
 Template.tripDetail.onDestroyed(() => {
-    studentList = null,
-        carStopList = null
+    carStopList = null
     stopCoor = null
     markers_id = null
     Session.delete('studentTripData')
     Session.delete('studenInfoData')
+    Session.delete('tripID')
 })
 
 Template.studentInfoModal.helpers({
@@ -113,10 +109,6 @@ Template.studentInfoModal.helpers({
 
 function clickStudentRow(e) {
     renderStudentInfoModal($(e.currentTarget).attr("id"))
-}
-
-function checkStudentInfo(studentID) {
-    return studentList.filter(student => student.studentID == studentID)[0]
 }
 
 function clickStatusButton(e) {
@@ -152,7 +144,6 @@ async function reloadData() {
             tripData = await MeteorCall(_METHODS.trip.GetNext, null, accessToken)
 
         //get info trip
-        console.log(tripData);
         Session.set('tripID', tripData._id)
         let dataTrip = {
             driverName: tripData.route.driver.user.name,
@@ -201,4 +192,12 @@ async function reloadData() {
         $('tripData').addClass('kt-hidden')
         $('noData').removeClass('kt-hidden')
     }
+}
+
+function renderTimeLine() {
+    MeteorCall(_METHODS.trip.GetTripLogByTripID, {
+        tripID: Session.get('tripID')
+    }, accessToken).then(result => {
+        console.log(result)
+    })
 }

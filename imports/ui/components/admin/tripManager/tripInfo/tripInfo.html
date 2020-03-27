@@ -45,6 +45,11 @@
                                     <i class="fa fa-user"></i> Cung đường
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#timeline" role="tab">
+                                    <i class="flaticon2-time"></i> Cung đường
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -134,13 +139,10 @@
                             <!--end::Section-->
                         </div>
                         <div class="tab-pane" id="routeMap" role="tabpanel">
-                            <!--begin::Section-->
-                            <div class="kt-section">
-                                <div class="kt-section__content">
-                                    {{>tripMap}}
-                                </div>
-                            </div>
-                            <!--end::Section-->
+                            {{>tripMap}}
+                        </div>
+                        <div class="tab-pane" id="timeline" role="tabpanel">
+                            123
                         </div>
                     </div>
                 </div>
@@ -308,7 +310,7 @@
 </template>
 
 <template name="studentTripRow">
-    <tr id="{{_id}}" class="studentRow">
+    <tr id="{{studentID}}" class="studentRow">
         <th scope="row">{{index}}</th>
         <td>{{student.IDStudent}}</td>
         <td>{{student.user.name}}</td>
