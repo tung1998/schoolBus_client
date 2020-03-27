@@ -18,9 +18,8 @@ Template.childrenInfo.onCreated(() => {
 
 Template.childrenInfo.onRendered(() => {
     MeteorCall(_METHODS.token.GetUserInfo, null, accessToken).then(result => {
-        let childrenInfo = result.student
-        console.log(childrenInfo)
-        $('#childrenList').html(htmlChilrent(childrenInfo))
+        let childrenInfo = result.students
+        $('#childrenList').html(childrenInfo.map(htmlChilrent).join(''))
     }).catch(handleError)
 });
 
