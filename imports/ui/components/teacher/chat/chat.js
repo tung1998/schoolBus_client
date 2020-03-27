@@ -92,11 +92,11 @@ function renderMessages(messages) {
 function renderRightMessage(message) {
     return `<div class="kt-chat__message kt-chat__message--right">
                 <div class="kt-chat__user">
+                    <span class="kt-chat__datetime">${moment(message.updatedTime).startOf('hour').fromNow()}</span>
+                    <a href="#" class="kt-chat__username">${username}</a>
                     <span class="kt-media kt-media--circle kt-media--sm"> 
                         <img src=${userImage} alt="image">   
                     </span>
-                    <a href="#" class="kt-chat__username">${username}</a>
-                    <span class="kt-chat__datetime">${moment(message.updatedTime).startOf('hour').fromNow()}</span>
                 </div>
                 <div class="kt-chat__text kt-bg-light-success">
                    ${message.text}
