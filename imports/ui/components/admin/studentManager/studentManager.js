@@ -18,7 +18,8 @@ import {
     getBase64,
     makeID,
     initDropzone,
-    handlePaging
+    handlePaging,
+    getLimitDocPerPage
 } from "../../../../functions";
 
 import {
@@ -326,10 +327,6 @@ function initSelect2() {
     })
 
 
-}
-
-function getLimitDocPerPage() {
-    return parseInt($("#limit-doc").val());
 }
 
 function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options = null) {

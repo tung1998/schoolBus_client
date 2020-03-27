@@ -46,18 +46,21 @@
                                     <table class="table table-bordered table-hover" id="feedbackTable">
                                         <thead class="thead-light">
                                             <tr>
-                                                <th>ID</th>
-                                                <th>ID người dùng</th>
+                                                <th>#</th>
+                                                <th>Người dùng</th>
                                                 <th>Loại</th>
-                                                <th>Nội dung phản ánh</th>
+                                                <th>Tiêu đề</th>
                                                 <th>Thời gian nhận</th>
-                                                <th>Hồi đáp bởi</th>
-                                                <th>Thời gian hồi đáp</th>
-                                                <th>Nội dung hồi đáp</th>
+                                                <th>Tình trạng</th>
+                                                <th>Phản hồi bởi</th>
+                                                <th>Thời gian phản hồi</th>
+                                                <th></th>
                                             </tr>
                                         </thead>
                                         <tbody id="table-body">
-                                            
+                                            {{#each feedback}}
+                                                {{>feedbackRow}}
+                                            {{/each}}
                                         </tbody>
                                     </table>
                                 </div>
@@ -70,5 +73,25 @@
         </div>
         <!-- end:: Content -->
     </div>
-    <!--{{> editRoute}}-->
+</template>
+
+<template name="feedbackRow">
+    <tr feedbackID="{{_id}}" class="table-row" title="{{content}}">
+        <td>{{index}}</td>
+        <td>{{user.name}}</td>
+        <td>
+            <span class="kt-badge kt-badge--{{feedbackType.classname}} kt-badge--inline kt-badge--pill kt-badge--rounded">{{feedbackType.text}}</span>
+        </td>
+        <td>{{title}}</td>
+        <td>{{createdTime}}</td>
+        <td>
+            <span class="kt-badge kt-badge--{{feedbackStatus.classname}} kt-badge--inline kt-badge--pill kt-badge--rounded">{{feedbackStatus.text}}
+            </span>
+        </td>
+        <td></td>
+        <td></td>
+        <td>
+            <button type="button" class="btn btn-outline-brand modify-button" feedbackID="{{_id}}">Phản hồi</button>
+        </td>
+    </tr>
 </template>
