@@ -20,7 +20,8 @@ export {
     handlePaging,
     initDropzone,
     removeDuplicated,
-    getJsonDefault
+    getJsonDefault,
+    getLimitDocPerPage
 }
 
 function MeteorCall(method = "", data = null, accessToken = "") {
@@ -268,4 +269,8 @@ function removeDuplicated(arr, key = 'id') {
 function getJsonDefault(json, field, value) {
     let key = Object.keys(json).find(item => json[item][field] === value)
     return Object.assign({}, json[key]);
+}
+
+function getLimitDocPerPage() {
+    return parseInt($("#limit-doc").val());
 }
