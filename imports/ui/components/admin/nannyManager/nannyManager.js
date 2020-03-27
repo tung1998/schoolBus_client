@@ -94,7 +94,7 @@ Template.nannyFilter.events({
     'click #filter-button': nannyFilter,
     'click #refresh-button': refreshFilter,
     'keypress .filter-input': (e) => {
-        if (e.which === 13) {
+        if (e.which === 13 || e.keyCode == 13) {
             nannyFilter()
         }
     },

@@ -40,7 +40,6 @@ Template.carFuel.onRendered(() => {
     $("#car-select").select2({
         placeholder: "Chọn Xe",
         width: "100%",
-        minimumResultsForSearch: Infinity,
     })
     renderCarOption();
 });
@@ -70,11 +69,18 @@ Template.carFuel.events({
     },
 });
 
+Template.carFuelFilter.onRendered(() => {
+    $('#school-filter').select2({
+        width: "100%",
+        placeholder: "Chọn"
+    })
+})
+
 Template.carFuelFilter.events({
     'click #filter-button': carFuelFilter,
     'click #refresh-button': refreshFilter,
     'keypress .filter-input': (e) => {
-        if (e.which === 13) {
+        if (e.which === 13 || e.keyCode == 13) {
             carFuelFilter()
         }
     },
@@ -293,6 +299,6 @@ function carFuelFilter() {
 
 function refreshFilter() {
     $('#carFuel-numberPlate-filter').val('')
-    $('#school-filter').val('')
+    $('#school-filter').val('').trigger('change')
     reloadTable(1, getLimitDocPerPage(), null)
 }

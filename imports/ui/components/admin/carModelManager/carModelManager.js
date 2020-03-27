@@ -23,7 +23,6 @@ let currentPage = 1;
 
 Template.carModelManager.onCreated(() => {
     accessToken = Cookies.get("accessToken");
-    Session.set(_SESSION.isSuperadmin, true)
     Session.set('schools', [])
 });
 
@@ -31,12 +30,8 @@ Template.carModelManager.onRendered(() => {
     addRequiredInputLabel()
     addPaging($('#carModelTable'))
     reloadTable();
-
-    MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
-        Session.set(_SESSION.isSuperadmin, result)
-        if (result)
-            initSchoolSelect2()
-    }).catch(handleError)
+    if (Session.get(_SESSION.isSuperadmin))
+        initSchoolSelect2()
 })
 
 Template.carModelManager.events({
@@ -77,7 +72,7 @@ Template.carModelFilter.events({
     'click #filter-button': carModelilter,
     'click #refresh-button': refreshFilter,
     'keypress .filter-input': (e) => {
-        if (e.which === 13) {
+        if (e.which === 13 || e.keyCode == 13) {
             carModelilter()
         }
     },

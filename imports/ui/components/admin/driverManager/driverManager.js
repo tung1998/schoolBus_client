@@ -99,7 +99,7 @@ Template.driverFilter.events({
     'click #filter-button': driverFilter,
     'click #refresh-button': refreshFilter,
     'keypress .filter-input': (e) => {
-        if (e.which === 13) {
+        if (e.which === 13 || e.keyCode == 13) {
             driverFilter()
         }
     },

@@ -43,7 +43,11 @@
                                 <div class="kt-section__content">
                                     <button type="button" class="btn btn-outline-brand mb-4 add-more"
                                         data-toggle="modal" data-target="#editCarFuelModal">Thêm mới</button>
+                                        <p id="empty-data" class="text-muted font-14 d-none">
+                                            Không có dữ liệu
+                                          </p>
                                     <table class="table table-bordered table-hover" id="carFuelTable">
+                                        
                                         <thead class="thead-light">
                                             <tr>
                                                 <th scope="row"></th>
@@ -56,7 +60,6 @@
                                             </tr>
                                         </thead>
                                         <tbody id="table-body">
-
                                         </tbody>
                                     </table>
                                 </div>
@@ -79,7 +82,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+                    <h5 class="modal-title" id="exampleModalLabel"></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
@@ -97,14 +100,14 @@
                                     tích</label>
                                 <div class="col-10">
                                     <input class="form-control" type="text" id="example-search-input"
-                                        name="volume-input">
+                                        name="volume-input" placeholder="Thể tích xe">
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label for="example-email-input" class="col-2 col-form-label required-input-label">Đơn
                                     giá</label>
                                 <div class="col-10">
-                                    <input class="form-control" type="text" id="example-email-input" name="cost-input">
+                                    <input class="form-control" type="text" id="example-email-input" name="cost-input" placeholder="Đơn giá">
                                 </div>
                             </div>
                             {{#if isSuperadmin}}
@@ -143,7 +146,7 @@
     <div class="form-group mb-2">
         <label for="admin-parent-route" class="col-form-label">Trường</label>
         <select class="form-control filter-input" id="school-filter">
-            <option value="">Chọn trường</option>
+            <option value=""></option>
             {{#each schools}}
             <option value="{{_id}}">{{name}}</option>
             {{/each}}

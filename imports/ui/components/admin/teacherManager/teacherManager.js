@@ -31,7 +31,6 @@ let dropzone
 
 Template.teacherManager.onCreated(() => {
   accessToken = Cookies.get("accessToken");
-  Session.set(_SESSION.isSuperadmin, true)
   Session.set('schools', [])
 });
 
@@ -43,11 +42,9 @@ Template.teacherManager.onRendered(() => {
   dropzone = initDropzone("#kt_dropzone_1")
   this.dropzone = dropzone
 
-  MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
-    Session.set(_SESSION.isSuperadmin, result)
-    if (result)
-      initSchoolSelect2()
-  }).catch(handleError)
+  if (Session.get(_SESSION.isSuperadmin))
+    initSchoolSelect2()
+
 });
 
 
@@ -80,6 +77,39 @@ Template.editTeacherModal.helpers({
     return Session.get('schools')
   },
 });
+
+Template.teacherFilter.onRendered(() => {
+  $('#school-filter').select2({
+    placeholder: "Chọn",
+    width: "100%"
+  })
+})
+
+Template.teacherFilter.helpers({
+  isSuperadmin() {
+    return Session.get(_SESSION.isSuperadmin)
+  },
+  schools() {
+    return Session.get('schools')
+  },
+});
+
+Template.teacherFilter.events({
+  'click #filter-button': teacherFilter,
+  'click #refresh-button': refreshFilter,
+  'keypress .filter-input': (e) => {
+    if (e.which === 13 || e.keyCode == 13) {
+      teacherFilter()
+    }
+  },
+  'change #school-filter': (e) => {
+    let options = [{
+      text: "schoolID",
+      value: $('#school-filter').val()
+    }]
+    reloadTable(1, getLimitDocPerPage(), options)
+  }
+})
 
 function dzPreviewClick() {
   dropzone.hiddenFileInput.click()
@@ -252,11 +282,12 @@ function getLimitDocPerPage() {
   return parseInt($("#limit-doc").val());
 }
 
-function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
+function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options = null) {
   let table = $('#table-body');
   MeteorCall(_METHODS.teacher.GetByPage, {
     page: page,
-    limit: limitDocPerPage
+    limit: limitDocPerPage,
+    options
   }, accessToken).then(result => {
     handlePaging(table, result.count, page, limitDocPerPage)
     createTable(table, result, limitDocPerPage)
@@ -266,8 +297,8 @@ function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
 
 function createTable(table, result, limitDocPerPage) {
   let htmlRow = result.data.map((key, index) => {
-      key.index = index + (result.page - 1) * limitDocPerPage;
-      return createRow(key);
+    key.index = index + (result.page - 1) * limitDocPerPage;
+    return createRow(key);
   });
   table.html(htmlRow.join(''))
 }
@@ -300,6 +331,34 @@ function createRow(result) {
   </td>
   </tr>`;
 
+}
+
+function teacherFilter() {
+  let options = [{
+    text: "schoolID",
+    value: $('#school-filter').val()
+  }, {
+    text: "user/name",
+    value: $('#name-filter').val()
+  }, {
+    text: "user/phone",
+    value: $('#phone-filter').val()
+  }, {
+    text: "user/email",
+    value: $('#email-filter').val()
+  }]
+  console.log(options);
+  reloadTable(1, getLimitDocPerPage(), options)
+}
+
+function refreshFilter() {
+  $('#school-filter').val('').trigger('change')
+  $('#name-filter').val('')
+  $('#phone-filter').val('')
+  $('#email-filter').val('')
+
+
+  reloadTable(1, getLimitDocPerPage(), null)
 }
 
 function initSchoolSelect2() {

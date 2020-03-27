@@ -24,7 +24,6 @@ let currentPage = 1;
 
 Template.carManager.onCreated(() => {
     accessToken = Cookies.get("accessToken");
-    Session.set(_SESSION.isSuperadmin, true)
     Session.set('schools', [])
 });
 
@@ -34,13 +33,10 @@ Template.carManager.onRendered(() => {
     reloadTable();
     renderModelOption();
 
-    MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
-        Session.set(_SESSION.isSuperadmin, result)
-        if (result)
+    if (Session.get(_SESSION.isSuperadmin))
             initSchoolSelect2()
-    }).catch(handleError)
-});
 
+})
 Template.editCarManagerModal.helpers({
     isSuperadmin() {
         return Session.get(_SESSION.isSuperadmin)
@@ -66,11 +62,18 @@ Template.carManager.events({
     }
 });
 
+Template.carFilter.onRendered(() => {
+    $('#school-filter').select2({
+        width: "100%",
+        placeholder: "Chọn"
+    })
+})
+
 Template.carFilter.events({
     'click #filter-button': carFilter,
     'click #refresh-button': refreshFilter,
     'keypress .filter-input': (e) => {
-        if (e.which === 13) {
+        if (e.which == 13 || e.keyCode == 13) {
             carFilter()
         }
     },
@@ -318,6 +321,6 @@ function refreshFilter() {
     $('#car-brand-filter').val('')
     $('#car-numberPlate-filter').val('')
     $('#car-status-filter').val('')
-    $('#school-filter').val('')
+    $('#school-filter').val('').trigger('change')
     reloadTable(1, getLimitDocPerPage(), null)
 }

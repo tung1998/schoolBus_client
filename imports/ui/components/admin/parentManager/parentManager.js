@@ -100,6 +100,40 @@ Template.editParentModal.helpers({
   },
 });
 
+Template.parentFilter.onRendered(() => {
+  $('#school-filter').select2({
+    width: "100%",
+    placeholder: "Chọn"
+})
+})
+
+Template.parentFilter.helpers({
+  isSuperadmin() {
+      return Session.get(_SESSION.isSuperadmin)
+  },
+  schools() {
+      return Session.get('schools')
+  },
+});
+
+Template.parentFilter.events({
+  'click #filter-button': parentFilter,
+  'click #refresh-button': refreshFilter,
+  'keypress .filter-input': (e) => {
+      if (e.which === 13 || e.keyCode == 13) {
+          parentFilter()
+      }
+  },
+  'change #school-filter': (e) => {
+      let options = [{
+          text: "adminType",
+          value: $('#school-filter').val()
+      }]
+      reloadTable(1, getLimitDocPerPage(), options)
+  }
+})
+
+
 function dzPreviewClick() {
   dropzone.hiddenFileInput.click()
 }
@@ -298,11 +332,12 @@ function getLimitDocPerPage() {
   return parseInt($("#limit-doc").val());
 }
 
-function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
+function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options = null) {
   let table = $('#table-body');
   MeteorCall(_METHODS.Parent.GetByPage, {
     page: page,
-    limit: limitDocPerPage
+    limit: limitDocPerPage,
+    options
   }, accessToken).then(result => {
     handlePaging(table, result.count, page, limitDocPerPage)
     createTable(table, result, limitDocPerPage)
@@ -322,10 +357,10 @@ function createRow(result) {
   let students = result.students
   let studentHtml
   if (Session.get(_SESSION.isSuperadmin)) {
-    studentHtml = students.map(item => `<li>${item.user?item.user.name||'':''}-${item.class?item.class.name||'':''}-${item.school?item.class.name||'':''}</li>`)
+    studentHtml = students.map(item => `<li>${item.user?item.user.name||'':''}-${item.class?item.class.name||'':''}-${item.school?item.school.name||'':''}</li>`)
   } else {
     studentHtml = students.filter(item => item.schoolID = Session.get(_SESSION.schoolID))
-      .map(item => `<li studentID="${item._id}">${item.user?item.user.name||'':''}-${item.class?item.class.name||'':''} <li>`)
+      .map(item => `<li studentID="${item._id}">${item.user?item.user.name||'':''}-${item.class?item.school.name||'':''} <li>`)
   }
   let data = {
     _id: result._id,
@@ -373,4 +408,32 @@ function addStudentClick(e) {
 
 function deleteStudentClick(e) {
   $(e.currentTarget).parent().remove()
+}
+
+
+function parentFilter() {
+  let options = [{
+      text: "schoolID",
+      value: $('#school-filter').val()
+  }, {
+      text: "user/name",
+      value: $('#name-filter').val()
+  }, {
+      text: "user/phone",
+      value: $('#phone-filter').val()
+  }, {
+      text: "user/email",
+      value: $('#email-filter').val()
+  }]
+  console.log(options);
+  reloadTable(1, getLimitDocPerPage(), options)
+}
+
+function refreshFilter() {
+  $('#school-filter').val('').trigger('change')
+  $('#name-filter').val('')
+  $('#phone-filter').val('')
+  $('#email-filter').val('')
+
+  reloadTable(1, getLimitDocPerPage(), null)
 }

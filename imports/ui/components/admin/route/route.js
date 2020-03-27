@@ -16,7 +16,8 @@ import {
 
 import {
     _METHODS,
-    LIMIT_DOCUMENT_PAGE
+    LIMIT_DOCUMENT_PAGE,
+    _SESSION
 } from '../../../../variableConst';
 
 let accessToken;
@@ -27,6 +28,9 @@ Template.route.onCreated(() => {
 });
 
 Template.route.onRendered(() => {
+    if (Session.get(_SESSION.isSuperadmin)) {
+        initSchoolSelect2()
+    }
     initSelect2();
     addRequiredInputLabel();
     addPaging($('#routeTable'));
@@ -50,6 +54,13 @@ Template.route.events({
     }
 })
 
+Template.routeFilter.onRendered(() => {
+    $('#school-filter').select2({
+        placeholder: "Chọn",
+        width: "100%"
+    })
+})
+
 Template.routeFilter.helpers({
     isSuperadmin() {
         return Session.get(_SESSION.isSuperadmin)
@@ -63,13 +74,13 @@ Template.routeFilter.events({
     'click #filter-button': routeFilter,
     'click #refresh-button': refreshFilter,
     'keypress .filter-input': (e) => {
-        if (e.which === 13) {
+        if (e.which === 13 || e.keyCode == 13) {
             routeFilter()
         }
     },
     'change #school-filter': (e) => {
         let options = [{
-            text: "adminType",
+            text: "schoolID",
             value: $('#school-filter').val()
         }]
         reloadTable(1, getLimitDocPerPage(), options)
@@ -287,7 +298,7 @@ function routeFilter() {
   }
   
   function refreshFilter() {
-    $('#school-filter').val('')
+    $('#school-filter').val('').trigger('change')
     $('#name-filter').val('')
     $('#car-filter').val('')
     $('#driver-filter').val('')
@@ -296,3 +307,13 @@ function routeFilter() {
 
     reloadTable(1, getLimitDocPerPage(), null)
   }
+
+  function initSchoolSelect2() {
+    MeteorCall(_METHODS.school.GetAll, null, accessToken).then(result => {
+        Session.set('schools', result.data)
+        $('#school-input').select2({
+            width: '100%',
+            placeholder: 'Chọn trường'
+        }).trigger('change')
+    }).catch(handleError)
+}

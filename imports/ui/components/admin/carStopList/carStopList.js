@@ -80,7 +80,7 @@ Template.carStopListFilter.events({
     'click #filter-button': carStopListFilter,
     'click #refresh-button': refreshFilter,
     'keypress .filter-input': (e) => {
-        if (e.which === 13) {
+        if (e.which === 13 || e.keyCode == 13) {
             carStopListFilter()
         }
     },

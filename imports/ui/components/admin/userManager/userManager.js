@@ -32,15 +32,14 @@ Template.userManager.onCreated(() => {
 });
 
 Template.userManager.onRendered(() => {
-    MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
-        Session.set(_SESSION.isSuperadmin, result)
-        if (result)
-            initSchoolSelect2()
-    }).catch(handleError)
+
+    if (Session.get(_SESSION.isSuperadmin))
+        initSchoolSelect2()
+
     addRequiredInputLabel();
     addPaging($('#userTable'));
     reloadTable()
-    
+
     dropzone = initDropzone("#user-dropzone")
     this.dropzone = dropzone
 })
@@ -61,8 +60,7 @@ Template.userManager.events({
         let checkAll = $('#user-checkbox-all').prop('checked')
         if (checkAll) {
             $(".user-checkbox").prop("checked", true);
-        }
-        else {
+        } else {
             $(".user-checkbox").prop("checked", false);
         }
     },
@@ -84,6 +82,41 @@ Template.userManager.events({
     },
     'click .dz-preview': dzPreviewClick,
 })
+
+
+Template.userFilter.onRendered(() => {
+    $('#school-filter').select2({
+        placeholder: "Chọn",
+        width: "100%"
+    })
+})
+
+Template.userFilter.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    },
+    schools() {
+        return Session.get('schools')
+    },
+});
+
+Template.userFilter.events({
+    'click #filter-button': userFilter,
+    'click #refresh-button': refreshFilter,
+    'keypress .filter-input': (e) => {
+        if (e.which === 13 || e.keyCode == 13) {
+            userFilter()
+        }
+    },
+    'change #school-filter': (e) => {
+        let options = [{
+            text: "schoolID",
+            value: $('#school-filter').val()
+        }]
+        reloadTable(1, getLimitDocPerPage(), options)
+    }
+})
+
 
 function dzPreviewClick() {
     dropzone.hiddenFileInput.click()
@@ -218,8 +251,20 @@ function clickUnBlockUser(e) {
 
 }
 
-function clickDeleteUser() {
-
+function clickDeleteUser(e) {
+    handleConfirm().then(result => {
+        if (result.value) {
+            let data = $(e.currentTarget).data('json')
+            MeteorCall(_METHODS.user.Delete, data, accessToken).then(() => {
+                Swal.fire({
+                    icon: "success",
+                    text: "Đã xóa thành công",
+                    timer: 3000
+                })
+                reloadTable(currentPage, getLimitDocPerPage())
+            })
+        }
+    })
 }
 
 function getLimitDocPerPage() {
@@ -364,3 +409,30 @@ function clearForm() {
     dropzone.removeAllFiles(true)
 }
 
+function userFilter() {
+    let options = [{
+        text: "schoolID",
+        value: $('#school-filter').val()
+    }, {
+        text: "user/name",
+        value: $('#name-filter').val()
+    }, {
+        text: "user/phone",
+        value: $('#phone-filter').val()
+    }, {
+        text: "user/email",
+        value: $('#email-filter').val()
+    }]
+    console.log(options);
+    reloadTable(1, getLimitDocPerPage(), options)
+}
+
+function refreshFilter() {
+    $('#school-filter').val('').trigger('change')
+    $('#name-filter').val('')
+    $('#phone-filter').val('')
+    $('#email-filter').val('')
+
+
+    reloadTable(1, getLimitDocPerPage(), null)
+}

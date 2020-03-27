@@ -94,6 +94,12 @@ Template.editStudentModal.helpers({
 
 Template.studentFilter.events({
     "click #filter-button": fillterBtnClick,
+    "keypress .filter-input": (e) => {
+        if (e.which == 13 || e.keyCode == 13) {
+            fillterBtnClick(e)
+        }
+    },
+    "click #refresh-button": refreshFilter
 });
 
 function dzPreviewClick() {
@@ -118,7 +124,7 @@ function getSelectData(options = null, classID = null, carStopID = null) {
     MeteorCall(_METHODS.class.GetAll, {
         options
     }, accessToken).then(result => {
-        if (options&&options.length) result.data = result.data.filter(item => item.schoolID == options[0].value)
+        if (options && options.length) result.data = result.data.filter(item => item.schoolID == options[0].value)
         Session.set('class', result.data)
         if (classID) $("#class-select").val(classID).trigger('change')
     }).catch(handleError)
@@ -416,4 +422,15 @@ function fillterBtnClick(e) {
     }]
 
     reloadTable(1, getLimitDocPerPage(), options)
+}
+
+function refreshFilter() {
+    $('#student-name-filter').val('')
+    $('#student-address-filter').val('')
+    $('#student-phone-filter').val('')
+    $('#student-email-filter').val('')
+    $('#student-school-filter').val('')
+    $('#student-class-filter').val('')
+
+    reloadTable(1, getLimitDocPerPage(), null)
 }
