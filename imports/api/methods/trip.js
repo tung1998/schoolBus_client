@@ -23,7 +23,9 @@ if (Meteor.isServer) {
         'trip.delete': deleteTrip,
         'trip.attendance': attendanceTrip,
         'trip.image': imageTrip,
-        'trip.getByTime': getTripByTime
+        'trip.getByTime': getTripByTime,
+        'trip.getNext': getNextTrip,
+        'trip.getLogByTripID': getTripLogByTripID
     });
 }
 
@@ -46,8 +48,6 @@ function getTripByTime(data, accessToken = '') {
     if (data.startTime) url += `startTime=${data.startTime}`
     if (data.endTime) url += `&endTime=${data.endTime}`
     if (data.extra) url += `extra=${data.extra}`
-    console.log(data)
-    console.log(url)
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });
@@ -88,12 +88,24 @@ function attendanceTrip(data, accessToken = '') {
 
 function imageTrip(data, accessToken = '') {
     let url = `${AUTH_TRIP}/${data.tripID}/student/${data.studentID}/image`
-    console.log(url);
-    console.log(data.image)
     return httpDefault(METHOD.put, url, {
         body: {
             image: data.image
         },
+        token: accessToken
+    })
+}
+
+function getNextTrip(data, accessToken = '') {
+    let url = `${AUTH_TRIP}/next`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    })
+}
+
+function getTripLogByTripID(data, accessToken = '') {
+    let url = `${AUTH_TRIP}/${data.tripID}/log`
+    return httpDefault(METHOD.get, url, {
         token: accessToken
     })
 }
