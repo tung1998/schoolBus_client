@@ -61,6 +61,13 @@ Template.studentListManager.events({
     }
 })
 
+Template.studentListFilter.onRendered(() => {
+    $('#school-filter').select2({
+        placeholder: "Chọn trường", 
+        width: "100%"
+    })
+})
+
 Template.studentListFilter.helpers({
     isSuperadmin() {
         return Session.get(_SESSION.isSuperadmin)
@@ -80,7 +87,7 @@ Template.studentListFilter.events({
     },
     'change #school-filter': (e) => {
         let options = [{
-            text: "adminType",
+            text: "schoolID",
             value: $('#school-filter').val()
         }]
         reloadTable(1, getLimitDocPerPage(), options)
@@ -199,7 +206,6 @@ function createTable(table, result, limitDocPerPage) {
 }
 
 function createRow(result) {
-    console.log(result)
     let data = {
         _id: result._id,
         name: result.name,
@@ -208,7 +214,7 @@ function createRow(result) {
     }
     return `
         <tr id="${data._id}" class="table-row">
-            <td>${result.index}</td>
+            <td>${result.index + 1}</td>
             <td>${data.name}</td>
             <td>${data.schoolName}</td>
             <td>${moment(data.createdTime).format('l')}</td>
@@ -244,7 +250,7 @@ function studentListFilter() {
 }
 
 function refreshFilter() {
-    $('#school-filter').val('')
+    $('#school-filter').val('').trigger('change')
     $('#name-filter').val('')
 
     reloadTable(1, getLimitDocPerPage(), null)

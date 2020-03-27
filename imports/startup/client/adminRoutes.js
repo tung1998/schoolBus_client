@@ -226,6 +226,8 @@ FlowRouter.route('/feedback', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'feedback',
+            panel: 'panel',
+            panelData: 'feedbackFilter'
         });
     },
 });

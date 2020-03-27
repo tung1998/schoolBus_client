@@ -43,6 +43,9 @@
                                 <div class="kt-section__content">
                                     <button type="button" class="btn btn-outline-brand mb-4" data-toggle="modal"
                                         data-target="#editRouteModal">Thêm mới</button>
+                                        <p id="empty-data" class="text-muted font-14 d-none">
+                                            Không có dữ liệu
+                                          </p>
                                     <table class="table table-bordered table-hover" id="feedbackTable">
                                         <thead class="thead-light">
                                             <tr>
@@ -59,7 +62,7 @@
                                         </thead>
                                         <tbody id="table-body">
                                             {{#each feedback}}
-                                                {{>feedbackRow}}
+                                            {{>feedbackRow}}
                                             {{/each}}
                                         </tbody>
                                     </table>
@@ -80,12 +83,14 @@
         <td>{{index}}</td>
         <td>{{user.name}}</td>
         <td>
-            <span class="kt-badge kt-badge--{{feedbackType.classname}} kt-badge--inline kt-badge--pill kt-badge--rounded">{{feedbackType.text}}</span>
+            <span
+                class="kt-badge kt-badge--{{feedbackType.classname}} kt-badge--inline kt-badge--pill kt-badge--rounded">{{feedbackType.text}}</span>
         </td>
         <td>{{title}}</td>
         <td>{{createdTime}}</td>
         <td>
-            <span class="kt-badge kt-badge--{{feedbackStatus.classname}} kt-badge--inline kt-badge--pill kt-badge--rounded">{{feedbackStatus.text}}
+            <span
+                class="kt-badge kt-badge--{{feedbackStatus.classname}} kt-badge--inline kt-badge--pill kt-badge--rounded">{{feedbackStatus.text}}
             </span>
         </td>
         <td></td>
@@ -94,4 +99,53 @@
             <button type="button" class="btn btn-outline-brand modify-button" feedbackID="{{_id}}">Phản hồi</button>
         </td>
     </tr>
+</template>
+
+<template name="feedbackFilter">
+    {{#if isSuperadmin}}
+    <div class="form-group mb-2">
+        <label for="admin-parent-route" class="col-form-label">Trường</label>
+        <select class="form-control filter-input" id="school-filter">
+            <option value="">Chọn trường</option>
+            {{#each schools}}
+            <option value="{{_id}}">{{name}}</option>
+            {{/each}}
+        </select>
+    </div>
+    {{/if}}
+    <div class="form-group mb-2">
+        <label for="" class="col-form-label">Người dùng</label>
+        <input class="form-control filter-input" type="text" placeholder="Tên người dùng" id="name-filter">
+    </div>
+    <div class="form-group mb-2">
+        <label for="admin-parent-route" class="col-form-label">Loại</label>
+        <select class="form-control filter-input" id="type-filter">
+            <option value=""></option>
+            <option value="1">Phản ảnh tiêu cực</option>
+            <option value="2">Phản ảnh lỗi ứng dụng</option>
+            <option value="3">Đóng góp ý kiến</option>
+            <option value="0">Khác</option>
+        </select>
+    </div>
+    <div class="form-group mb-2">
+        <label for="" class="col-form-label">Tiêu đề</label>
+        <input class="form-control filter-input" type="text" placeholder="Tiêu đề" id="title-filter">
+    </div>
+    <div class="form-group mb-2">
+        <label for="admin-parent-route" class="col-form-label">Tình trạng</label>
+        <select class="form-control filter-input" id="status-filter">
+            <option value=""></option>
+            <option value="0">Đã gửi</option>
+            <option value="1">Đã tiếp nhận</option>
+            <option value="2">Được phản bội</option>
+        </select>
+    </div>
+    <!-- <div class="form-group mb-2">
+        <label for="" class="col-form-label">Căn cước công dân</label>
+        <input class="form-control filter-input" type="text" placeholder="Căn cước công dân" id="cccd-filter">
+    </div> -->
+    <div class="form-group mt-4">
+        <button type="submit" class="btn btn-primary btn-sm" id="filter-button">Tìm kiếm</button>
+        <button type="submit" class="btn btn-success btn-sm" id="refresh-button">Refresh</button>
+    </div>
 </template>
