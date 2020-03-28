@@ -87,6 +87,7 @@ FlowRouter.route('/login', {
 FlowRouter.route('/profile', {
     name: 'App.home',
     action() {
+        BlazeLayout.render("administratorManager"),
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'profile',

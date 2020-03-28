@@ -49,7 +49,7 @@ Template.studentListInfo.onRendered(() => {
         //append HTML sortable tabs to tab-pane
         for (let i = 0; i <= stopPointOrder.length - 1; i++) {
             htmlSortable +=
-                `<div class="kt-portlet kt-portlet--mobile kt-portlet--sortable" id="${stopPointOrder[i]}">
+                `<div class="kt-portlet kt-portlet--mobile addressTab" id="${stopPointOrder[i]}">
                     <div class="kt-portlet__head ui-sortable-handle">
                         <div class="kt-portlet__head-label">
                             <h3 class="kt-portlet__head-title title="${studentStopPoint[stopPointOrder[i]].address}">
@@ -62,6 +62,9 @@ Template.studentListInfo.onRendered(() => {
                 //<div class="kt-portlet__body">${studentStopPoint[stopPointOrder[i]].address}</div>
         }
         setSortableData(htmlSortable)
+        setColor(0, "destination");
+        console.log(stopPointOrder[stopPointOrder.length - 1])
+        setColor(parseInt(stopPointOrder[stopPointOrder.length-1]), "start")
     })
 });
 
@@ -91,7 +94,7 @@ Template.carStopList_studentListInfo.onRendered(() => {
 })
 
 Template.carStopList_studentListInfo.events({
-    'mousemove .kt-portlet--sortable': (event)=>{
+    'mousemove .addressTab': (event)=>{
         event.preventDefault();
         let indx = parseInt($(event.currentTarget).attr("id"));
         let tarMark = carStopmap._layers[markers_id[indx]];
@@ -100,7 +103,7 @@ Template.carStopList_studentListInfo.events({
         tarMark.openPopup();
         window.carStopmap.setView([latval, lngval], 14);
     },
-    'click .confirmButton': confirmPath,
+    /*'click .confirmButton': confirmPath,
     'click .autoDirect': (event)=>{
         
         removeLayerByID(polyID)
@@ -126,7 +129,7 @@ Template.carStopList_studentListInfo.events({
         }
         setSortableData(htmlSortable)
     },
-    'drag .kt-portlet--sortable': dragTab
+    'drag .kt-portlet--sortable': dragTab*/
 })
 
 function initClassSelect2() {
@@ -244,8 +247,7 @@ function setSortableData(str) {
 
 function addPoly(arr) {
     let poly = L.polyline(arr, { color: 'blue', weight: 4, opacity: 0.5, smoothFactor: 1 }).addTo(markerGroup);
-   
-    polyID = markerGroup.getLayerId(poly)
+    polyID = markerGroup.getLayerId(poly);
 }
 
 function swapPcs(arr){
@@ -264,6 +266,7 @@ function removeLayerByID(id) {
 }
 
 function reArrange(arr1, arr2, idxArr){
+    console.log(arr1)
     for (let i=0; i<idxArr.length; i++){
         if (arr1[idxArr[i]]!=undefined){
             arr2[i] = arr1[idxArr[i]];
@@ -344,6 +347,7 @@ function dragTab(event) {
             })
             if (ID_order != stopPointOrder) {
                //console.log(ID_order)
+               console.log(stopPointCoors, carStopIDs)
                 stopPointCoors = reArrange(defaultStopPoint, [], ID_order)
                 carStopIDs = reArrange(defaultCarStop, [], ID_order)
                 removeLayerByID(polyID)
@@ -364,8 +368,22 @@ function confirmPath(event) {
 }
 //tạo loading modal while drawing path
 //confirm button
+
+function setColor(id, pos){
+    if (pos == 'destination'){
+        let element = document.getElementById(`${id}`);
+        element.classList.add(`kt-portlet--skin-solid`, `kt-bg-danger`);
+    } else if (pos == 'start'){
+        let element = document.getElementById(`${id}`);
+        element.classList.add(`kt-portlet--skin-solid`,  `kt-bg-brand`);
+        console.log(element)
+    }
+}
 export {
     drawPath,
     addPoly,
-    swapPcs
+    swapPcs,
+    dragTab,
+    removeLayerByID,
+    reArrange
 }

@@ -16,7 +16,8 @@ import {
 
 import {
     _METHODS,
-    LIMIT_DOCUMENT_PAGE
+    LIMIT_DOCUMENT_PAGE,
+    _SESSION
 } from '../../../../variableConst';
 
 let accessToken;
@@ -78,15 +79,14 @@ Template.routeFilter.events({
 
 
 function initSelect2() {
-    initCarSelect2()
-    initDriverSelect2()
-    initNannySelect2()
+    //initCarSelect2()
+    //initDriverSelect2()
+    //initNannySelect2()
     initStudentListSelect2()
 }
 
 function initCarSelect2() {
     MeteorCall(_METHODS.car.GetAll, null, accessToken).then(result => {
-
         if (result.data) {
             let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.numberPlate}</option>`)
             $('#carSelect').html('<option></option>').append(htmlClassOption.join('')).select2({
@@ -99,7 +99,6 @@ function initCarSelect2() {
 
 function initDriverSelect2() {
     MeteorCall(_METHODS.driver.GetAll, null, accessToken).then(result => {
-        console.log(result);
         if (result.data) {
             let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.user.name}</option>`)
             $('#driverSelect').html('<option></option>').append(htmlClassOption.join('')).select2({
@@ -126,6 +125,7 @@ function initNannySelect2() {
 
 function initStudentListSelect2() {
     MeteorCall(_METHODS.studentList.GetAll, {}, accessToken).then(result => {
+        console.log(result)
         if (result.data) {
             let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.name}</option>`)
             $('#studentListSelect').html('<option></option>').append(htmlClassOption.join('')).select2({
@@ -207,6 +207,7 @@ function clickDeleteRouteButton(e) {
 function clickRouteRow(e) {
     let routeID = e.currentTarget.getAttribute("id")
     FlowRouter.go(`/routeManager/${routeID}`)
+    window.location.reload(false)
 }
 
 function getLimitDocPerPage() {
@@ -220,6 +221,7 @@ function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options = 
         limit: limitDocPerPage,
         options
     }, accessToken).then(result => {
+        console.log(result)
         handlePaging(table, result.count, page, limitDocPerPage)
         createTable(table, result, limitDocPerPage)
     })
