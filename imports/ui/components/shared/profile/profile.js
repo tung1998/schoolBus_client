@@ -98,26 +98,30 @@ function appendNewPass(event) {
         username: Session.get(_SESSION.username),
         password: oldPass
     }
-    console.log(data.username)
+    //console.log(data.username)
     MeteorCall(_METHODS.token.LoginByUsername, data, null).then(result => {
-        if (checkNewPass(oldPass, newPass)) {
-            handleError(null, "Mật khẩu cũ và mới không được giống nhau!")
+        if (newPass == ""){
+            handleError(null, "Vui lòng điền đủ thông tin");
         } else {
-            if (checkNewPass(newPass, confirmation)) {
-                MeteorCall(_METHODS.user.UpdatePassword, {
-                        password: newPass
-                    }, accessToken)
-                    .then(result => {
-                        console.log(result)
-                        handleSuccess("", "Đổi mật khẩu")
-                        Cookies.remove('accessToken');
-                        FlowRouter.go('/login')
-                    })
-                    .catch(handleError);
+            if (checkNewPass(oldPass, newPass)) {
+                handleError(null, "Mật khẩu cũ và mới không được giống nhau!")
             } else {
-                handleError(null, "Xác nhận mật khẩu sai!")
+                if (checkNewPass(newPass, confirmation)) {
+                    MeteorCall(_METHODS.user.UpdatePassword, {
+                            password: newPass
+                        }, accessToken)
+                        .then(result => {
+                            console.log(result)
+                            handleSuccess("", "Đổi mật khẩu")
+                            Cookies.remove('accessToken');
+                            FlowRouter.go('/login')
+                        })
+                        .catch(handleError);
+                } else {
+                    handleError(null, "Xác nhận mật khẩu sai!")
+                }
             }
-        }
+        }  
     }).catch(handleError)
 
 }

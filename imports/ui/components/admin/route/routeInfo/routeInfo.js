@@ -4,10 +4,6 @@ import {
 } from 'meteor/kadira:flow-router';
 
 import {
-
-} from '../../studentListManager/studentListInfo/studentListInfo.js'
-
-import {
     MeteorCall,
     handleError,
     handleConfirm,
@@ -35,6 +31,25 @@ let studentListID;
 let address = [];
 let name = [];
 let schoolID;
+
+let destinationPoint = L.icon({
+    iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+
+let startPoint = L.icon({
+    iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+
 Template.routeInfo.onCreated(() => {
     accessToken = Cookies.get('accessToken');
 });
@@ -61,7 +76,7 @@ Template.routeInfo.onRendered(() => {
 
 Template.routeInfo.events({
     // 'click #addRouteButton': clickAddRouteButton,
-    'click .addressTab': (event)=>{
+    'click .addressTab': (event) => {
         event.preventDefault();
         let indx = parseInt($(event.currentTarget).attr("id"));
         let tarMark = markerGroup._layers[markers_id[indx]];
@@ -70,7 +85,7 @@ Template.routeInfo.events({
         tarMark.openPopup();
         window.routeMiniMap.setView([latval, lngval], 25);
     },
-    'mousemove .addressTab': (event)=>{
+    'mousemove .addressTab': (event) => {
         event.preventDefault();
         let indx = parseInt($(event.currentTarget).attr("id"));
         let tarMark = markerGroup._layers[markers_id[indx]];
@@ -92,9 +107,9 @@ Template.routeInfo.onDestroyed(() => {
     Session.delete('studenInfoData')
     Session.delete('tripID')
     document.getElementById("kt_sortable_portlets").innerHTML = '';
-    markerGroup.eachLayer((layer)=>{
-			markerGroup.removeLayer(layer)
-	});	
+    markerGroup.eachLayer((layer) => {
+        markerGroup.removeLayer(layer)
+    });
 
 })
 
@@ -124,7 +139,8 @@ function reloadData() {
         }
         studentListID = result.studentListID;
         carStopList = result.studentList.carStops;
-        carStopList.map((data, index)=>{
+        let len = carStopList.length;
+        carStopList.map((data, index) => {
             address.push(data.address);
             name.push(data.name);
             stopPointCoors.push(data.location);
@@ -132,9 +148,22 @@ function reloadData() {
             carStopIDs.push(data._id);
             defaultCarStop.push(data._id);
             stopPointOrder.push(index);
-            let mark = L.marker(data.location).bindTooltip(data.name, { permanent: false }).addTo(markerGroup);
-            markers_id.push(markerGroup.getLayerId(mark))
-            let popup = `
+            let mark;
+            if (index === 0) {
+                document.getElementById("addPane").innerHTML +=
+                    `<div class="kt-portlet kt-portlet--mobile addressTab kt-portlet--skin-solid kt-bg-danger" id="${index}">
+                        <div class="kt-portlet__head">
+                            <div class="kt-portlet__head-label">
+                                <h3 class="kt-portlet__head-title title="${data.name}">
+                                    ${data.name}        
+                                </h3>
+                            </div>
+                        </div> 
+                    </div>
+                    <div class="ui-sortable carStopContainer" id="kt_sortable_portlets">`
+                let mark = L.marker(data.location, { icon: destinationPoint }).bindTooltip(data.name, { permanent: false }).addTo(markerGroup);
+                markers_id.push(markerGroup.getLayerId(mark))
+                let popup = `
                 <div class="font-14">
                     <dl class="row mr-0 mb-0">
                         <dt class="col-sm-3">Tên điểm dừng: </dt>
@@ -144,21 +173,64 @@ function reloadData() {
                     </dl>
                 </div>
             `
-            mark.bindPopup(popup, {
-                minWidth: 301
-            });
-                htmlStopPane += 
-                `<div class="kt-portlet kt-portlet--mobile addressTab kt-portlet--sortable" id="${index}">
-                    <div class="kt-portlet__head ui-sortable-handle">
-                        <div class="kt-portlet__head-label">
-                            <h3 class="kt-portlet__head-title title="${data.name}">
-                                ${data.name}        
-                            </h3>
+                mark.bindPopup(popup, {
+                    minWidth: 301
+                });
+            } else if (index === len - 1) {
+                document.getElementById("addPane").innerHTML +=
+                    `<div class="kt-portlet kt-portlet--mobile addressTab kt-portlet--skin-solid kt-bg-brand" id="${index}">
+                            <div class="kt-portlet__head">
+                                <div class="kt-portlet__head-label">
+                                    <h3 class="kt-portlet__head-title title="${data.name}">
+                                        ${data.name}        
+                                    </h3>
+                                </div>
+                            </div> 
+                        </div>`
+                let mark = L.marker(data.location, { icon: startPoint }).bindTooltip(data.name, { permanent: false }).addTo(markerGroup);
+                markers_id.push(markerGroup.getLayerId(mark))
+                let popup = `
+                <div class="font-14">
+                    <dl class="row mr-0 mb-0">
+                        <dt class="col-sm-3">Tên điểm dừng: </dt>
+                        <dt class="col-sm-9">${data.name}</dt>
+                        <dt class="col-sm-3">Địa chỉ: </dt>
+                        <dt class="col-sm-9">${data.address}</dt>
+                    </dl>
+                </div>
+            `
+                mark.bindPopup(popup, {
+                    minWidth: 301
+                });
+            } else {
+                htmlStopPane +=
+                    `<div class="kt-portlet kt-portlet--mobile addressTab" id="${index}">
+                        <div class="kt-portlet__head">
+                            <div class="kt-portlet__head-label">
+                                <h3 class="kt-portlet__head-title title="${data.name}">
+                                    ${data.name}        
+                                </h3>
+                            </div>
                         </div>
-                    </div>
-                    
-                </div>`
+                    </div>`
+                let mark = L.marker(data.location).bindTooltip(data.name, { permanent: false }).addTo(markerGroup);
+                markers_id.push(markerGroup.getLayerId(mark))
+                let popup = `
+                <div class="font-14">
+                    <dl class="row mr-0 mb-0">
+                        <dt class="col-sm-3">Tên điểm dừng: </dt>
+                        <dt class="col-sm-9">${data.name}</dt>
+                        <dt class="col-sm-3">Địa chỉ: </dt>
+                        <dt class="col-sm-9">${data.address}</dt>
+                    </dl>
+                </div>
+            `
+                mark.bindPopup(popup, {
+                    minWidth: 301
+                });
+            }
         })
+        htmlStopPane += `</div>`
         addPoly(stopPointCoors);
         document.getElementById("kt_sortable_portlets").innerHTML += htmlStopPane;
         //setColor(0, 'destination');
@@ -210,7 +282,7 @@ function dragTab(event) {
         ID_order = [],
         modPos;
     if (event.drag.type === 'dragend') {
-        $('.carStopContainer').children('div').each(function() {
+        $('.carStopContainer').children('div').each(function () {
             if ($(this).attr('id') != undefined) {
                 if ($(this).attr('id') != targetID) {
                     ID_order.push($(this).attr('id'));
@@ -221,7 +293,7 @@ function dragTab(event) {
             }
         })
         if (ID_order != stopPointOrder) {
-           //console.log(ID_order)
+            //console.log(ID_order)
 
             stopPointCoors = reArrange(defaultStopPoint, [], ID_order)
             carStopIDs = reArrange(defaultCarStop, [], ID_order)
@@ -243,24 +315,24 @@ function addPoly(arr) {
 }
 
 function removeLayerByID(id) {
-	markerGroup.eachLayer(function (layer) {
-		if (layer._leaflet_id === id){
-			markerGroup.removeLayer(layer)
-		}
-	});	
+    markerGroup.eachLayer(function (layer) {
+        if (layer._leaflet_id === id) {
+            markerGroup.removeLayer(layer)
+        }
+    });
 }
 
-function reArrange(arr1, arr2, idxArr){
-    
-    for (let i=0; i<idxArr.length; i++){
-        if (arr1[idxArr[i]]!=undefined){
+function reArrange(arr1, arr2, idxArr) {
+
+    for (let i = 0; i < idxArr.length; i++) {
+        if (arr1[idxArr[i]] != undefined) {
             arr2[i] = arr1[idxArr[i]];
         }
     }
     return arr2;
 }
 
-function drawPath(arr){
+function drawPath(arr) {
     MeteorCall(_METHODS.wemap.getDrivePath, arr, accessToken).then(result => {
         let pol = []
         let a = result.routes[0].legs
@@ -276,24 +348,24 @@ function drawPath(arr){
     }).catch(handleError);
 }
 
-function swapPcs(arr){
-    let c=arr[1];
-    arr[1]=arr[0];
-    arr[0]=c;
+function swapPcs(arr) {
+    let c = arr[1];
+    arr[1] = arr[0];
+    arr[0] = c;
     return arr;
 }
 
-function autoDirect(event){
-        event.preventDefault();
-        removeLayerByID(polyID)
-        stopPointCoors = DistanceAutoCal([21.040276, 105.782988], stopPointCoors);
-        carStopIDs = reArrange(carStopIDs, [], stopPointOrder);
-        drawPath(stopPointCoors)
-        console.log(stopPointOrder)
-        htmlStopPane = ''
-        for (let i = 0; i <=stopPointOrder.length - 1; i++) {
-            
-            htmlStopPane +=
+function autoDirect(event) {
+    event.preventDefault();
+    removeLayerByID(polyID)
+    stopPointCoors = DistanceAutoCal([21.040276, 105.782988], stopPointCoors);
+    carStopIDs = reArrange(carStopIDs, [], stopPointOrder);
+    drawPath(stopPointCoors)
+    console.log(stopPointOrder)
+    htmlStopPane = ''
+    for (let i = 0; i <= stopPointOrder.length - 1; i++) {
+
+        htmlStopPane +=
             `<div class="kt-portlet kt-portlet--mobile addressTab kt-portlet--sortable" id="${stopPointOrder[i]}">
             <div class="kt-portlet__head ui-sortable-handle">
                 <div class="kt-portlet__head-label">
@@ -304,32 +376,32 @@ function autoDirect(event){
             </div>
             
         </div>`
-                //<div class="kt-portlet__body">${studentStopPoint[stopPointOrder[i]].address}</div>
-        }
-        document.getElementById("kt_sortable_portlets").innerHTML = htmlStopPane;
-        //setColor(0, 'destination');
-        //setColor(stopPointOrder[stopPointOrder.length], 'start');
+        //<div class="kt-portlet__body">${studentStopPoint[stopPointOrder[i]].address}</div>
+    }
+    document.getElementById("kt_sortable_portlets").innerHTML = htmlStopPane;
+    //setColor(0, 'destination');
+    //setColor(stopPointOrder[stopPointOrder.length], 'start');
 }
 
 function confirmPath(event) {
-    MeteorCall(_METHODS.studentList.Update, { _id: studentListID, carStopIDs: carStopIDs }, accessToken).then(result=>{
+    MeteorCall(_METHODS.studentList.Update, { _id: studentListID, carStopIDs: carStopIDs }, accessToken).then(result => {
         console.log(result);
     }).catch(handleError)
 }
 
-function DistanceAutoCal(dest, coorArr){
+function DistanceAutoCal(dest, coorArr) {
     let distance = [];
     let distOrder = [];
     let finalCoorOrder = [];
-    for (let i=0; i<coorArr.length; i++){
-        distance.push(getDistance(dest,coorArr[i]));
+    for (let i = 0; i < coorArr.length; i++) {
+        distance.push(getDistance(dest, coorArr[i]));
         //console.log(getDistance(dest,coorArr[i]))
         distOrder.push(i);
     }
 
     distOrder.sort(function (a, b) { return distance[a] < distance[b] ? -1 : distance[a] > distance[b] ? 1 : 0; });
     stopPointOrder = distOrder;
-    for (let i=0; i<distOrder.length; i++){
+    for (let i = 0; i < distOrder.length; i++) {
         finalCoorOrder.push(coorArr[distOrder[i]]);
     }
     //console.log(finalCoorOrder);
@@ -346,14 +418,14 @@ function getDistance(origin, destination) {
     let deltaLat = lat2 - lat1;
     let deltaLon = lon2 - lon1;
 
-    let a = Math.pow(Math.sin(deltaLat/2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(deltaLon/2), 2);
+    let a = Math.pow(Math.sin(deltaLat / 2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(deltaLon / 2), 2);
     let c = 2 * Math.asin(Math.sqrt(a));
     let EARTH_RADIUS = 6371;
     return c * EARTH_RADIUS * 1000;
 }
 
 function toRadian(degree) {
-    return degree*Math.PI/180;
+    return degree * Math.PI / 180;
 }
 
 /*function setColor(id, pos){
