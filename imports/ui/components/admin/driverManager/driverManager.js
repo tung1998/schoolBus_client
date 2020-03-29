@@ -105,7 +105,7 @@ Template.driverFilter.events({
     },
     'change #school-filter': (e) => {
         let options = [{
-            text: "adminType",
+            text: "schoolID",
             value: $('#school-filter').val()
         }]
         reloadTable(1, getLimitDocPerPage(), options)
