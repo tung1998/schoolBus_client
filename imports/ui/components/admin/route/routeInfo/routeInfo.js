@@ -56,8 +56,7 @@ Template.routeInfo.onCreated(() => {
 
 Template.routeInfo.onRendered(() => {
     reloadData();
-    schoolID = Session.get(_SESSION.schoolID);
-    console.log(schoolID)
+    
     L.Icon.Default.imagePath = '/packages/bevanhunt_leaflet/images/';
     window.routeMiniMap = L.map('routeMiniMap', {
         drawControl: true,
@@ -94,7 +93,7 @@ Template.routeInfo.events({
         tarMark.openPopup();
         window.routeMiniMap.setView([latval, lngval], 14);
     },
-    'drag .kt-portlet--sortable': dragTab,
+    'drag .addressTab': dragTab,
     'click .autoDirect': autoDirect,
     'click .confirmButton': confirmPath,
 })
@@ -150,7 +149,7 @@ function reloadData() {
             stopPointOrder.push(index);
             let mark;
             if (index === 0) {
-                document.getElementById("addPane").innerHTML +=
+                document.getElementById("des").innerHTML +=
                     `<div class="kt-portlet kt-portlet--mobile addressTab kt-portlet--skin-solid kt-bg-danger" id="${index}">
                         <div class="kt-portlet__head">
                             <div class="kt-portlet__head-label">
@@ -159,8 +158,7 @@ function reloadData() {
                                 </h3>
                             </div>
                         </div> 
-                    </div>
-                    <div class="ui-sortable carStopContainer" id="kt_sortable_portlets">`
+                    </div>`
                 let mark = L.marker(data.location, { icon: destinationPoint }).bindTooltip(data.name, { permanent: false }).addTo(markerGroup);
                 markers_id.push(markerGroup.getLayerId(mark))
                 let popup = `
@@ -177,7 +175,7 @@ function reloadData() {
                     minWidth: 301
                 });
             } else if (index === len - 1) {
-                document.getElementById("addPane").innerHTML +=
+                document.getElementById("start").innerHTML +=
                     `<div class="kt-portlet kt-portlet--mobile addressTab kt-portlet--skin-solid kt-bg-brand" id="${index}">
                             <div class="kt-portlet__head">
                                 <div class="kt-portlet__head-label">
@@ -204,8 +202,8 @@ function reloadData() {
                 });
             } else {
                 htmlStopPane +=
-                    `<div class="kt-portlet kt-portlet--mobile addressTab" id="${index}">
-                        <div class="kt-portlet__head">
+                    `<div class="kt-portlet kt-portlet--mobile addressTab kt-portlet--sortable" id="${index}">
+                        <div class="kt-portlet__head ui-sortable-handle">
                             <div class="kt-portlet__head-label">
                                 <h3 class="kt-portlet__head-title title="${data.name}">
                                     ${data.name}        
@@ -224,13 +222,13 @@ function reloadData() {
                         <dt class="col-sm-9">${data.address}</dt>
                     </dl>
                 </div>
-            `
+                `
                 mark.bindPopup(popup, {
                     minWidth: 301
                 });
             }
         })
-        htmlStopPane += `</div>`
+        
         addPoly(stopPointCoors);
         document.getElementById("kt_sortable_portlets").innerHTML += htmlStopPane;
         //setColor(0, 'destination');
@@ -279,7 +277,7 @@ function htmlRow(key, index) {
 
 function dragTab(event) {
     let targetID = event.target.getAttribute('id'),
-        ID_order = [],
+        ID_order = [0],
         modPos;
     if (event.drag.type === 'dragend') {
         $('.carStopContainer').children('div').each(function () {
@@ -292,15 +290,16 @@ function dragTab(event) {
                 modPos = ID_order.length - 1; //điểm di chuyển
             }
         })
+        ID_order.push(ID_order.length);
         if (ID_order != stopPointOrder) {
-            //console.log(ID_order)
+            console.log(ID_order)
 
             stopPointCoors = reArrange(defaultStopPoint, [], ID_order)
             carStopIDs = reArrange(defaultCarStop, [], ID_order)
             removeLayerByID(polyID)
             console.log(stopPointCoors, carStopIDs)
-            //console.log(stopPointCoors)
-            //console.log(carStopIDs)
+            console.log(stopPointCoors)
+            console.log(carStopIDs)
             drawPath(stopPointCoors)
         } else {
             //console.log(2)
@@ -323,8 +322,9 @@ function removeLayerByID(id) {
 }
 
 function reArrange(arr1, arr2, idxArr) {
-
-    for (let i = 0; i < idxArr.length; i++) {
+    arr2[0]=arr1[0];
+    arr2[idxArr.length-1]=arr1[idxArr.length-1]
+    for (let i = 1; i < idxArr.length-1; i++) {
         if (arr1[idxArr[i]] != undefined) {
             arr2[i] = arr1[idxArr[i]];
         }
@@ -363,7 +363,7 @@ function autoDirect(event) {
     drawPath(stopPointCoors)
     console.log(stopPointOrder)
     htmlStopPane = ''
-    for (let i = 0; i <= stopPointOrder.length - 1; i++) {
+    for (let i = 1; i < stopPointOrder.length - 1; i++) {
 
         htmlStopPane +=
             `<div class="kt-portlet kt-portlet--mobile addressTab kt-portlet--sortable" id="${stopPointOrder[i]}">

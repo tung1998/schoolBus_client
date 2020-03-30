@@ -43,10 +43,14 @@
                                         id="address">
                                 </div>
                                 <div class="form-group">
-                                    <label>Trường: *</label>
-                                    <input type="text" class="form-control school" placeholder="Nhập tên trường" name="school"
-                                        id="address">
-                                </div>
+                                    <label>Trường</label>
+                                    <select class="form-control filter-input" id="admin-school-filter">
+                                      <option value="">Chọn trường</option>
+                                      {{#each schools}}
+                                      <option value="{{_id}}">{{name}}</option>
+                                      {{/each}}
+                                    </select>
+                                  </div>
                                 <div class="kt-form__actions">
                                     <button type="submit" class="btn btn-primary confirm-button" id="confirm-button">Gửi</button>
                                     <a href="/carStopList"><button  type="reset" class="btn btn-secondary">Xem danh sách điểm
