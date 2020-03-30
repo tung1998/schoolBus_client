@@ -185,7 +185,7 @@ async function SubmitForm(event) {
         if (Session.get(_SESSION.isSuperadmin)) {
             data.adminType = Number($('#admintype-input').val())
             if (data.adminType == 1) data.schoolID = $('#school-input').val()
-            console.log(data);
+            //console.log(data);
         }
         let imagePreview = $('#kt_dropzone_1').find('div.dz-image-preview')
         if (imagePreview.length) {
@@ -213,7 +213,7 @@ async function SubmitForm(event) {
                 }).catch(handleError);
         } else {
             data._id = modify;
-            console.log(data);
+            //console.log(data);
             MeteorCall(_METHODS.admin.Update, data, accessToken)
                 .then(result => {
                     $("#editAdministratorModal").modal("hide");
@@ -343,7 +343,7 @@ function adminstratorFilter() {
         text: "schoolID",
         value: $('#admin-school-filter').val()
     }]
-    console.log(options);
+    //console.log(options);
     reloadTable(1, getLimitDocPerPage(), options)
 }
 
@@ -358,6 +358,7 @@ function refreshFilter() {
 
 function initSchoolSelect2() {
     MeteorCall(_METHODS.school.GetAll, null, accessToken).then(result => {
+        //console.log(result)
         Session.set('schools', result.data)
         $('#school-input').select2({
             width: '100%',
@@ -370,4 +371,8 @@ function adminTypeChange(e) {
     let value = e.currentTarget.value
     if (value == 0) $('#school-input').parent().parent().addClass('kt-hidden')
     else $('#school-input').parent().parent().removeClass('kt-hidden')
+}
+
+export {
+    initSchoolSelect2
 }

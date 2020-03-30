@@ -266,6 +266,7 @@ const _SESSION = {
     avata: 'avata',
     name: 'name',
     isLoading: 'isLoading',
+    isLocalAdmin: 'isLocalAdmin',
 
     //chat
     roomID: 'roomID',
