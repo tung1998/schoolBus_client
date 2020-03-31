@@ -41,6 +41,15 @@ Template.carManager.onRendered(() => {
     }).catch(handleError)
 });
 
+Template.editCarManagerModal.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    },
+    schools() {
+        return Session.get('schools')
+    },
+});
+
 Template.carManager.events({
     "submit form": SubmitForm,
     "click .modify-button": ClickModifyButton,
@@ -57,7 +66,24 @@ Template.carManager.events({
     }
 });
 
-Template.editCarManagerModal.helpers({
+Template.carFilter.events({
+    'click #filter-button': carFilter,
+    'click #refresh-button': refreshFilter,
+    'keypress .filter-input': (e) => {
+        if (e.which === 13) {
+            carFilter()
+        }
+    },
+    'change #school-filter': (e) => {
+        let options = [{
+            text: "adminType",
+            value: $('#school-filter').val()
+        }]
+        reloadTable(1, getLimitDocPerPage(), options)
+    }
+})
+
+Template.carFilter.helpers({
     isSuperadmin() {
         return Session.get(_SESSION.isSuperadmin)
     },
@@ -144,11 +170,11 @@ function SubmitForm(event) {
         if (modify == "") {
             MeteorCall(_METHODS.car.Create, data, accessToken)
                 .then(result => {
-                   handleSuccess("Thêm").then(() => {
-                            $("#editStudentModal").modal("hide");
-                            reloadTable(1, getLimitDocPerPage())
-                            clearForm()
-                        })
+                    handleSuccess("Thêm").then(() => {
+                        $("#editStudentModal").modal("hide");
+                        reloadTable(1, getLimitDocPerPage())
+                        clearForm()
+                    })
                 })
                 .catch(handleError);
         } else {
@@ -201,7 +227,7 @@ function clearForm() {
     $(".model-result").html("Chọn Model");
     $('input[name="licensePlate-input"]').val();
     $('input[name="status-input"]').val();
-    
+
     if (Session.get(_SESSION.isSuperadmin)) {
         $('#school-input').val('').trigger('change')
     }
@@ -211,11 +237,12 @@ function getLimitDocPerPage() {
     return parseInt($("#limit-doc").val());
 }
 
-function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
+function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options = null) {
     let table = $('#table-body');
     MeteorCall(_METHODS.car.GetByPage, {
         page: page,
-        limit: limitDocPerPage
+        limit: limitDocPerPage,
+        options
     }, accessToken).then(result => {
         handlePaging(table, result.count, page, limitDocPerPage)
         createTable(table, result, limitDocPerPage)
@@ -232,8 +259,10 @@ function createTable(table, result, limitDocPerPage) {
 }
 
 function createRow(result) {
+    console.log(result);
     let data = {
         modelName: result.carModel.model,
+        brandName: result.carModel.brand,
         numberPlate: result.numberPlate,
         status: result.status
     }
@@ -241,6 +270,7 @@ function createRow(result) {
         <tr id="${data._id}">
             <th scope="row">${result.index + 1}</th>
             <td>${data.modelName}</td>
+            <td>${data.brandName}</td>
             <td>${data.numberPlate}</td>
             <td>${data.status}</td>
             <td>
@@ -260,4 +290,34 @@ function initSchoolSelect2() {
             placeholder: "Chọn trường"
         })
     }).catch(handleError)
+}
+
+function carFilter() {
+    let options = [{
+        text: "carModel/model",
+        value: $('#car-model-filter').val()
+    }, {
+        text: "carModel/brand",
+        value: $('#car-brand-filter').val()
+    }, {
+        text: "numberPlate",
+        value: $('#car-numberPlate-filter').val()
+    }, {
+        text: "status",
+        value: $('#car-status-filter').val()
+    }, {
+        text: "schoolID",
+        value: $('#school-filter').val()
+    }]
+    console.log(options);
+    reloadTable(1, getLimitDocPerPage(), options)
+}
+
+function refreshFilter() {
+    $('#car-model-filter').val('')
+    $('#car-brand-filter').val('')
+    $('#car-numberPlate-filter').val('')
+    $('#car-status-filter').val('')
+    $('#school-filter').val('')
+    reloadTable(1, getLimitDocPerPage(), null)
 }

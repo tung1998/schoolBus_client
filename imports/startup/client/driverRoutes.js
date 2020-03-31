@@ -8,7 +8,7 @@ driverRoutes.route('/upCommingTripInfo', {
     action() {
         BlazeLayout.render('App_body', {
             main: 'App_home',
-            content: 'upCommingTripInfo',
+            content: 'tripDetail',
         });
     },
 });
@@ -20,7 +20,6 @@ driverRoutes.route('/carMaintenanceReport', {
             BlazeLayout.render('App_body', {
                 main: 'App_home',
                 content: 'carMaintenanceReport',
-                panel: 'panel'
             });
     },
 });

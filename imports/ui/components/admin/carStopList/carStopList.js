@@ -76,6 +76,33 @@ Template.carStopList.events({
     },
 });
 
+Template.carStopListFilter.events({
+    'click #filter-button': carStopListFilter,
+    'click #refresh-button': refreshFilter,
+    'keypress .filter-input': (e) => {
+        if (e.which === 13) {
+            carStopListFilter()
+        }
+    },
+    'change #school-filter': (e) => {
+        let options = [{
+            text: "adminType",
+            value: $('#school-filter').val()
+        }]
+        reloadTable(1, getLimitDocPerPage(), options)
+    }
+})
+
+Template.carStopListFilter.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    },
+    schools() {
+        return Session.get('schools')
+    },
+});
+
+
 function ClickModifyButton(event) {
 
     let carStopData = $(event.currentTarget).data("json");
@@ -134,11 +161,16 @@ function SubmitForm(event) {
         .catch(handleError);
 }
 
-function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
+function getLimitDocPerPage() {
+    return parseInt($("#limit-doc").val());
+  }
+
+function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options = null) {
     let table = $('#table-body');
     MeteorCall(_METHODS.carStop.GetByPage, {
         page: page,
-        limit: limitDocPerPage
+        limit: limitDocPerPage,
+        options
     }, accessToken).then(result => {
         handlePaging(table, result.count, page, limitDocPerPage)
         createTable(table, result, limitDocPerPage)
@@ -184,6 +216,32 @@ function getLatLng(string) {
     return LatLng;
 }
 
+
+function carStopListFilter() {
+    let options = [{
+        text: "stopType",
+        value: $('#carStop-type-filter').val()
+    }, {
+        text: "name",
+        value: $('#carStop-name-filter').val()
+    }, {
+        text: "address",
+        value: $('#carStop-address-filter').val()
+    }, {
+        text: "schoolID",
+        value: $('#school-filter').val()
+    }]
+    console.log(options);
+    reloadTable(1, getLimitDocPerPage(), options)
+}
+
+function refreshFilter() {
+    $('#carStop-type-filter').val('')
+    $('#carStop-name-filter').val('')
+    $('#carStop-address-filter').val('')
+    $('#school-filter').val('')
+    reloadTable(1, getLimitDocPerPage(), null)
+}
 function setMapHeight() {
     setInterval(() => {
         //console.log(1), 1000

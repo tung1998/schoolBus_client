@@ -26,7 +26,12 @@ if (Meteor.isServer) {
 }
 
 function getAllCarStop(data, accessToken = '') {
-    let url = `${AUTH_CARSTOP}`
+    let url = `${AUTH_CARSTOP}?`
+    if (data && data.options && data.options.length)
+        data.options.forEach(item => {
+            if (item.value != '') url += `${encodeURIComponent(item.text)}=${encodeURIComponent(item.value)}&`
+        })
+        console.log(url)
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });
@@ -41,6 +46,10 @@ function getCarStopByID(data, accessToken = '') {
 
 function getCarStopByPage(data, accessToken = '') {
     let url = `${AUTH_CARSTOP}/${data.page}?limit=${data.limit}`
+    if (data.options && data.options.length)
+        data.options.forEach(item => {
+            if (item.value) url += `&${encodeURIComponent(item.text)}=${encodeURIComponent(item.value)}`
+        })
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });

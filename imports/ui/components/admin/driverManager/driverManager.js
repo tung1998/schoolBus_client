@@ -86,6 +86,33 @@ Template.editDriverModal.helpers({
     },
 })
 
+Template.driverFilter.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    },
+    schools() {
+        return Session.get('schools')
+    },
+});
+
+Template.driverFilter.events({
+    'click #filter-button': driverFilter,
+    'click #refresh-button': refreshFilter,
+    'keypress .filter-input': (e) => {
+        if (e.which === 13) {
+            driverFilter()
+        }
+    },
+    'change #school-filter': (e) => {
+        let options = [{
+            text: "adminType",
+            value: $('#school-filter').val()
+        }]
+        reloadTable(1, getLimitDocPerPage(), options)
+    }
+})
+
+
 function dzPreviewClick() {
     dropzone.hiddenFileInput.click()
 }
@@ -212,8 +239,8 @@ function checkInput() {
     let IDIssueBy = $('#driver-IDIssueBy').val();
     let DLNumber = $('#driver-DLNumber').val();
     let DLIssueDate = $('#driver-DLIssueDate').val();
-    if (!name || !phone || !address ||!IDNumber || !IDIssueBy || !IDIssueDate || !DLNumber || !DLIssueDate) {
-        
+    if (!name || !phone || !address || !IDNumber || !IDIssueBy || !IDIssueDate || !DLNumber || !DLIssueDate) {
+
         Swal.fire({
             icon: "error",
             text: "Chưa đủ thông tin!",
@@ -231,7 +258,7 @@ function checkInput() {
                 })
                 return false;
             }
-            
+
         }
         return true;
     }
@@ -244,7 +271,7 @@ function clearForm(e) {
     $('#driver-address').val('')
 
     if (Session.get(_SESSION.isSuperadmin)) {
-       $('#school-input').val('').trigger('change')
+        $('#school-input').val('').trigger('change')
     }
 
     $('#driver-IDNumber').val('')
@@ -261,11 +288,12 @@ function getLimitDocPerPage() {
     return parseInt($("#limit-doc").val());
 }
 
-function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
+function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options) {
     let table = $('#table-body');
     MeteorCall(_METHODS.driver.GetByPage, {
         page: page,
-        limit: limitDocPerPage
+        limit: limitDocPerPage,
+        options
     }, accessToken).then(result => {
         handlePaging(table, result.count, page, limitDocPerPage)
         createTable(table, result, limitDocPerPage)
@@ -281,8 +309,7 @@ function createTable(table, result, limitDocPerPage) {
     table.html(htmlRow.join(''))
 }
 
-function createRow(result) 
-{   
+function createRow(result) {
 
     let data = {
         _id: result._id,
@@ -299,7 +326,6 @@ function createRow(result)
         DLNumber: result.DLNumber,
         DLIssueDate: result.DLIssueDate,
     }
-    console.log(data._id)
     return `<tr id="${data._id}">
                 <th scope="row">${result.index + 1}</th>
                 <td>${data.name}</td>
@@ -328,3 +354,38 @@ function initSchoolSelect2() {
         })
     }).catch(handleError)
 }
+
+function driverFilter() {
+    let options = [{
+        text: "schoolID",
+        value: $('#school-filter').val()
+    }, {
+        text: "user/name",
+        value: $('#name-filter').val()
+    }, {
+        text: "user/phone",
+        value: $('#phone-filter').val()
+    }, {
+        text: "user/email",
+        value: $('#email-filter').val()
+    }, {
+        text: "IDNumber",
+        value: $('#cccd-filter').val()
+    }, {
+        text: "DLNumber",
+        value: $('#dl-filter').val()
+    }]
+    console.log(options);
+    reloadTable(1, getLimitDocPerPage(), options)
+  }
+  
+  function refreshFilter() {
+    $('#school-filter').val('')
+    $('#name-filter').val('')
+    $('#phone-filter').val('')
+    $('#email-filter').val('')
+    $('#cccd-filter').val('')
+    $('#dl-filter').val('')
+
+    reloadTable(1, getLimitDocPerPage(), null)
+  }

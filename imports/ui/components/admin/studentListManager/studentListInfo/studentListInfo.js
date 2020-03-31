@@ -30,6 +30,7 @@ let polyID;
 let polyCoor = [];
 let defaultCarStop = [];
 let carStopIDs = [];
+let markers_id = [];
 Template.studentListInfo.onCreated(() => {
     accessToken = Cookies.get('accessToken');
 });
@@ -44,10 +45,6 @@ Template.studentListInfo.onRendered(() => {
             //sort stopPointsCoor by distance to anchor point
         defaultStopPoint = stopPointCoors;
         drawPath(defaultStopPoint)
-        
-        
-
-
         //}
         //append HTML sortable tabs to tab-pane
         for (let i = 0; i <= stopPointOrder.length - 1; i++) {
@@ -94,16 +91,22 @@ Template.carStopList_studentListInfo.onRendered(() => {
 })
 
 Template.carStopList_studentListInfo.events({
-    /*'mousemove .kt-portlet--sortable': function(event) {
-        console.log(1)
-    },*/
+    'mousemove .kt-portlet--sortable': (event)=>{
+        event.preventDefault();
+        let indx = parseInt($(event.currentTarget).attr("id"));
+        let tarMark = carStopmap._layers[markers_id[indx]];
+        let latval = tarMark._latlng.lat;
+        let lngval = tarMark._latlng.lng;
+        tarMark.openPopup();
+        window.carStopmap.setView([latval, lngval], 14);
+    },
     'click .confirmButton': confirmPath,
-    'click .autoDirect': function(event) {
+    'click .autoDirect': (event)=>{
         
         removeLayerByID(polyID)
         stopPointCoors = DistanceAutoCal([21.040276, 105.782988], stopPointCoors);
         carStopIDs = reArrange(carStopIDs, [], stopPointOrder);
-        console.log(carStopIDs)
+        //console.log(carStopIDs)
         drawPath(stopPointCoors)
         htmlSortable = ''
         for (let i = 0; i <=stopPointOrder.length - 1; i++) {
@@ -128,7 +131,7 @@ Template.carStopList_studentListInfo.events({
 
 function initClassSelect2() {
     MeteorCall(_METHODS.class.GetAll, null, accessToken).then(result => {
-        console.log(result)
+        //console.log(result)
         if (result.data) {
             let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.name}</option>`)
             $('#classSelect').html(htmlClassOption.join('')).select2({
@@ -158,14 +161,14 @@ function reloadTable() {
     return MeteorCall(_METHODS.studentList.GetById, {
         _id: studentListID
     }, accessToken).then(result => {
-        console.log(result)
+        //console.log(result)
         studentIDs = result.studentIDs;
         studentStopPoint = result.carStops;
         carStopIDs = result.carStopIDs;
         defaultCarStop = result.carStopIDs;
         studentStopPoint.map((data, index) => {
             stopPointOrder.push(index);
-            setMarker(data.location, data.name)
+            setMarker(data.location, data.name, data.address)
             stopPointCoors.push(data.location);
         })
         renderStudentTable($('#studentTable'), result.students)
@@ -175,7 +178,7 @@ function reloadTable() {
 
 function htmlRow(data, index, type = false) {
     return ` <tr studentID="${data._id}">
-                <th scope="row">${index}</th>
+                <th scope="row">${index + 1}</th>
                 <td>${data.IDStudent}</td>
                 <td>${data.user.name}</td>
                 <td>${data.class?data.class.name:""}</td>
@@ -216,8 +219,22 @@ function clickStudentCheckBox(e) {
 
 }
 
-function setMarker(arr, des) {
+function setMarker(arr, des, address) {
     let mark = L.marker(arr).bindTooltip(des, { permanent: false }).addTo(carStopmap);
+    markers_id.push(markerGroup.getLayerId(mark))
+    let popup = `
+                <div class="font-14">
+                    <dl class="row mr-0 mb-0">
+                        <dt class="col-sm-3">Tên điểm dừng: </dt>
+                        <dt class="col-sm-9">${des}</dt>
+                        <dt class="col-sm-3">Địa chỉ: </dt>
+                        <dt class="col-sm-9">${address}</dt>
+                    </dl>
+                </div>
+            `
+    mark.bindPopup(popup, {
+        minWidth: 301
+    });
 }
 
 function setSortableData(str) {
@@ -326,15 +343,15 @@ function dragTab(event) {
                 }
             })
             if (ID_order != stopPointOrder) {
-               console.log(ID_order)
+               //console.log(ID_order)
                 stopPointCoors = reArrange(defaultStopPoint, [], ID_order)
                 carStopIDs = reArrange(defaultCarStop, [], ID_order)
                 removeLayerByID(polyID)
-                console.log(stopPointCoors)
-                console.log(carStopIDs)
+                //console.log(stopPointCoors)
+                //console.log(carStopIDs)
                 drawPath(stopPointCoors)
             } else {
-                console.log(2)
+                //console.log(2)
             }
         }
     }
@@ -342,8 +359,13 @@ function dragTab(event) {
 function confirmPath(event) {
     let studentListID = FlowRouter.getParam("id")
     MeteorCall(_METHODS.studentList.Update, { _id: studentListID, carStopIDs: carStopIDs }, accessToken).then(result=>{
-        console.log(result)
+        //console.log(result)
     }) 
 }
 //tạo loading modal while drawing path
 //confirm button
+export {
+    drawPath,
+    addPoly,
+    swapPcs
+}

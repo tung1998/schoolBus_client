@@ -3,9 +3,11 @@ export {
     _SESSION,
     _TRIP_STUDENT,
     LIMIT_DOCUMENT_PAGE,
-    _URL_images
+    _URL_images,
+    _TRIP,
+    _FEEDBACK
 }
-const _URL_images = 'http://14.231.130.100:3000/images'
+const _URL_images = 'http://113.190.128.251:3000/images'
 const _METHODS = {
     student: {
         GetAll: 'student.getAll',
@@ -97,6 +99,7 @@ const _METHODS = {
     feedback: {
         GetAll: 'feedback.getAll',
         GetById: 'feedback.getByID',
+        GetByPage: 'feedback.getByPage',
         Create: 'feedback.create',
         Update: 'feedback.update',
         Delete: 'feedback.delete',
@@ -210,7 +213,9 @@ const _METHODS = {
         Update: 'trip.update',
         Delete: 'trip.delete',
         Attendace: 'trip.attendance',
-        Image: 'trip.image'
+        Image: 'trip.image',
+        GetNext: 'trip.getNext',
+        GetTripLogByTripID: 'trip.getLogByTripID',
     },
     tripLocation: {
         GetAll: 'tripLocation.getAll',
@@ -253,6 +258,8 @@ const _SESSION = {
     accessToken: 'accessToken',
     userID: 'userID',
     username: 'username',
+    userType: 'userType',
+    schoolID: 'schoolID',
     modules: 'modules',
     mapHeight: 'mapHeight',
     isSuperadmin: 'isSuperadmin',
@@ -278,9 +285,13 @@ const _TRIP_STUDENT = {
             text: "Xuống xe",
             number: 2
         },
+        request: {
+            text: "Xin Nghỉ",
+            number: 3
+        },
         absent: {
             text: "Vắng mặt",
-            number: 3
+            number: 4
         }
     }
 }
@@ -303,6 +314,48 @@ const _TRIP = {
             text: "Gặp sự cố",
             number: 3
         }
+    }
+}
+
+const _FEEDBACK = {
+    status: {
+        received: {
+            text: "Đã gủi",
+            classname: 'primary',
+            number: 0
+        },
+        readed: {
+            text: "Đã tiếp nhận",
+            classname: 'success',
+            number: 1
+        },
+        response: {
+            text: "Được phản hồi",
+            classname: 'info',
+            number: 2
+        },
+    },
+    type: {
+        other: {
+            text: "Khác",
+            classname: 'primary',
+            number: 0
+        },
+        negative: {
+            text: "Phản ánh tiêu cực",
+            classname: 'danger',
+            number: 1
+        },
+        appError: {
+            text: "Phản ánh lỗi ứng dụng",
+            classname: 'info',
+            number: 2
+        },
+        opinion: {
+            text: "Đóng góp ý kiến",
+            classname: 'warning',
+            number: 3
+        },
     }
 }
 

@@ -23,20 +23,16 @@ let userID;
 let username;
 let userImage;
 let partnerImage;
-let partnerName
+let partnerName;
+let partnerID;
 
 Template.chatParent.onCreated(() => {
     accessToken = Cookies.get("accessToken");
+    Meteor.subscribe("message.publish.All");
 })
 
 Template.chatParent.onRendered(() => {
-    $(document).ready(() => {
-        $(".kt-chat__title").html("Nhắn tin với phụ huynh")
-        $(".kt-chat__status").hide();
 
-        $(".box_messages_foot").hide();
-        // $(".kt-chat__messages").html(``)
-    })
     this.getUserID = Tracker.autorun(() => {
         userID = Session.get(_SESSION.userID)
         username = Session.get(_SESSION.name)
@@ -44,55 +40,49 @@ Template.chatParent.onRendered(() => {
         console.log(userImage, username, userID)
         console.log(userID)
     })
-
     renderListParents()
-
-    this.loadMessagesInChatRoom = Tracker.autorun(() => {
+    this.loadMessagesInChatRooms = Tracker.autorun(() => {
         let roomID = Session.get(_SESSION.roomID)
-        if (roomID) {
-            Meteor.subscribe("message.publish.byRoomID", roomID);
-            loadMessagesInChatRoom()
+        let messages = COLLECTION_Messages.find({ roomID: roomID, isDeleted: false }).fetch();
+        renderListParents()
+        if (messages) {
+            loadMessagesInChatRoom(messages)
         }
     })
 })
 
 Template.chatParent.onDestroyed(() => {
     if (this.getUserID) this.getUserID = null;
-    if (this.loadMessagesInChatRoom) this.loadMessagesInChatRoom = null;
+    if (this.loadMessagesInChatRooms) this.loadMessagesInChatRoom = null;
+    if (this.renderListParentss) this.renderListParents = null;
 })
 
 Template.chatParent.events({
     'click .kt-widget__username': ClickUserName,
     'submit form': SubmitForm,
-
 })
 
-function loadMessagesInChatRoom() {
-    let roomID = Session.get(_SESSION.roomID)
-    let messages = COLLECTION_Messages.find({ roomID: roomID }).fetch();
+function loadMessagesInChatRoom(messages) {
     renderMessages(messages)
 }
 
 function renderMessages(messages) {
-    console.log(partnerName)
     $(".kt-chat__title").html(partnerName)
     $(".box_messages_foot").show();
     let messagesData = messages.map(message => {
-        console.log(message)
         if (message.sendBy == userID) {
             return renderRightMessage(message)
         } else {
             return renderLeftMessage(message)
         }
     })
-
     $(".kt-chat__messages").html(messagesData.join(" "));
 }
 
 function renderRightMessage(message) {
     return `<div class="kt-chat__message kt-chat__message--right">
                 <div class="kt-chat__user">
-                    <span class="kt-chat__datetime">${moment(message.updatedTime).startOf('hour').fromNow()}</span>
+                    <span class="kt-chat__datetime">${moment(message.updatedTime).startOf('second').fromNow()}</span>
                     <a href="#" class="kt-chat__username">${username}</a>
                     <span class="kt-media kt-media--circle kt-media--sm"> 
                         <img src=${userImage} alt="image">   
@@ -111,7 +101,7 @@ function renderLeftMessage(message) {
                         <img src=${partnerImage} alt="image">   
                     </span>
                     <a href="#" class="kt-chat__username">${partnerName}</a>
-                    <span class="kt-chat__datetime">${moment(message.updatedTime).startOf('hour').fromNow()}</span>
+                    <span class="kt-chat__datetime">${moment(message.updatedTime).startOf('second').fromNow()}</span>
                 </div>
                 <div class="kt-chat__text kt-bg-light-success">
                    ${message.text}
@@ -125,7 +115,8 @@ function ClickUserName(e) {
     Session.set(_SESSION.roomID, $(e.currentTarget).attr("roomID"));
     console.log(Session.get(_SESSION.roomID))
     partnerImage = $(e.currentTarget).attr("partnerImage");
-    partnerName = $(e.currentTarget).attr("partnerName")
+    partnerName = $(e.currentTarget).attr("partnerName");
+    partnerID = $(e.currentTarget).attr("partnerID");
 }
 
 function SubmitForm(e) {
@@ -142,7 +133,11 @@ function SubmitForm(e) {
         sendBy: userID,
         roomID: Session.get(_SESSION.roomID),
         status: 0
+    }, (result, err) => {
+        if (err) throw err;
+        else {}
     })
+    updateStatus(Session.get(_SESSION.roomID), partnerID);
 }
 
 function renderListParents() {
@@ -163,6 +158,7 @@ function parentRow(data) {
     let roomID = data.user._id + userID;
     let img
     let partnerImg
+    let unreaIcon
     if (data.user.image == null) {
         img = `<img src="/assets/media/users/default.jpg" alt="image">`
         partnerImg = "/assets/media/users/default.jpg"
@@ -170,24 +166,71 @@ function parentRow(data) {
         img = `<img src="${_URL_images}/${data.user.image}/0" alt="image">`
         partnerImg = `${_URL_images}/${data.user.image}/0`
     }
+    let messageInfo = getLastestAndCountUnSeenMessage(roomID);
+    if (messageInfo[0] == 0) {
+        unreaIcon = "";
+    } else {
+        unreaIcon = `<span class="kt-badge kt-badge--success kt-font-bold unreadMessage" unreadID=${roomID}> ${messageInfo[0]}</span>`
+    }
     return `<div class="kt-widget__item" >
                 <span class="kt-media kt-media--circle"> 
                     ${img}  
                 </span>
                 <div class="kt-widget__info">
                     <div class="kt-widget__section">
-                        <a href="#" class="kt-widget__username" partnerImage=${partnerImg} partnerName="${data.user.name}" roomID="${roomID}">${data.user.name}</a>
+                        <a href="#" class="kt-widget__username" partnerID=${data.user._id} partnerImage=${partnerImg} partnerName="${data.user.name}" roomID="${roomID}">${data.user.name}</a>
                         <span class="kt-badge kt-badge--success kt-badge--dot"></span>
                     </div>
 
                     <span class="kt-widget__desc">
-                       Lời nhắn cuối cùng
+                       ${messageInfo[1]}
                     </span>
                 </div>
                 <div class="kt-widget__action">
-                    <span class="kt-widget__date">giây phút cuối</span>
-                    <span class="kt-badge kt-badge--success kt-font-bold">10</span>
+                    ${unreaIcon}
                 </div>
             </div>
         `
+}
+
+function getLastestAndCountUnSeenMessage(roomID) {
+    let messages = COLLECTION_Messages.find({ roomID: roomID, sendBy: { $ne: userID }, isDeleted: false }, { sort: { createdTime: -1 } }).fetch();
+    let result = [];
+    console.log(messages);
+    result.push(getUnSeenMessages(messages));
+    if (messages[0]) {
+        result.push(messages[0].text);
+    } else {
+        result.push("");
+    }
+    return result;
+}
+
+function getUnSeenMessages(messages) {
+    let count = 0;
+    messages.map(msg => {
+        if (msg.status == 0) {
+            count++;
+        }
+    })
+    if (count <= 10) {
+        return count;
+    } else {
+        return "10+";
+    }
+}
+
+function updateStatus(roomID, sendBy) {
+    console.log("status")
+    Meteor.call('message.update', roomID, sendBy, (result, err) => {
+        if (err) throw err;
+        else {
+            updateUnreadIcon(roomID)
+        }
+    })
+}
+
+function updateUnreadIcon(roomID) {
+    console.log("unread")
+    $(`[unreadID='${roomID}']`).hide();
 }

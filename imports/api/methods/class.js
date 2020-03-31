@@ -26,7 +26,12 @@ if (Meteor.isServer) {
 }
 
 function getAllClass(data, accessToken = '') {
-    let url = `${AUTH_CLASS}`
+    let url = `${AUTH_CLASS}?`
+    if (data && data.options && data.options.length)
+        data.options.forEach(item => {
+            if (item.value != '') url += `${encodeURIComponent(item.text)}=${encodeURIComponent(item.value)}&`
+        })
+        console.log(url)
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });
@@ -41,6 +46,10 @@ function getClassByID(data, accessToken = '') {
 
 function getClassByPage(data, accessToken = '') {
     let url = `${AUTH_CLASS}/${data.page}?limit=${data.limit}`
+    if (data.options && data.options.length)
+        data.options.forEach(item => {
+            if (item.value) url += `&${encodeURIComponent(item.text)}=${encodeURIComponent(item.value)}`
+        })
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });

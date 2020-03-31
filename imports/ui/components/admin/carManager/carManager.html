@@ -52,6 +52,7 @@
                                                 <tr>
                                                     <th>#</th>
                                                     <th>Hãng xe</th>
+                                                    <th>Nhãn hiệu</th>
                                                     <th>Biển số</th>
                                                     <th>Trạng thái</th>
                                                     <th></th>
@@ -82,7 +83,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+                    <h5 class="modal-title" id="exampleModalLabel"></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
@@ -115,7 +116,7 @@
                                 <label for="example-search-input" class="col-2 col-form-label required-input-label">Biển
                                     số</label>
                                 <div class="col-10">
-                                    <input class="form-control" type="text" id="example-search-input"
+                                    <input class="form-control" type="text" id="number-plate" placeholder="Biến số"
                                         name="licensePlate-input">
                                 </div>
                             </div>
@@ -124,7 +125,7 @@
                                     thái</label>
                                 <div class="col-10">
                                     <input class="form-control" type="text" id="example-email-input"
-                                        name="status-input">
+                                        placeholder="Trạng thái" name="status-input">
                                 </div>
                             </div>
                         </div>
@@ -138,5 +139,40 @@
 
             </div>
         </div>
+    </div>
+</template>
+
+
+<template name="carFilter">
+    <div class="form-group mb-2">
+        <label for="admin-name" class="col-form-label">Hãng xe</label>
+        <input class="form-control filter-input" type="text" placeholder="Hãng xe" id="car-model-filter">
+    </div>
+    <div class="form-group mb-2">
+        <label for="admin-parent-route" class="col-form-label">Nhãn hiệu xe</label>
+        <input class="form-control filter-input" type="text" placeholder="Nhãn hiệu xe" id="car-brand-filter">
+    </div>
+    <div class="form-group mb-2">
+        <label for="admin-parent-route" class="col-form-label">Biển số</label>
+        <input class="form-control filter-input" type="text" placeholder="Biển số" id="car-numberPlate-filter">
+    </div>
+    <div class="form-group mb-2">
+        <label for="admin-parent-route" class="col-form-label">Trạng thái</label>
+        <input class="form-control filter-input" type="text" placeholder="Trạng thái" id="car-status-filter">
+    </div>
+    {{#if isSuperadmin}}
+    <div class="form-group mb-2">
+        <label for="admin-parent-route" class="col-form-label">Trường</label>
+        <select class="form-control filter-input" id="school-filter">
+            <option value="">Chọn trường</option>
+            {{#each schools}}
+            <option value="{{_id}}">{{name}}</option>
+            {{/each}}
+        </select>
+    </div>
+    {{/if}}
+    <div class="form-group mt-4">
+        <button type="submit" class="btn btn-primary btn-sm" id="filter-button">Tìm kiếm</button>
+        <button type="submit" class="btn btn-success btn-sm" id="refresh-button">Refresh</button>
     </div>
 </template>

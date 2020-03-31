@@ -30,7 +30,6 @@ Template.moduleManager.onRendered(() => {
     });
     addRequiredInputLabel()
     initSelect2()
-    initFilter()
     reloadData()
 });
 
@@ -56,6 +55,16 @@ Template.moduleManager.events({
     'click .delete-button': clickDelButton,
 })
 
+Template.moduleFilter.events({
+    'click #filter-button': reloadTable,
+    'click #refresh-button': refreshFilter,
+    'keypress .filter-input': (e) => {
+        if (e.which == 13) {
+            reloadTable()
+        }
+    }
+})
+
 function submitButton(e) {
     let data = getInputData()
     if (checkInput()) {
@@ -63,13 +72,15 @@ function submitButton(e) {
             MeteorCall(_METHODS.modules.Create, data, accessToken).then(result => {
                 reloadData()
                 clearForm()
-                handleSuccess("Thêm", "module")
+                handleSuccess("Thêm")
+                $('#editModuleModal').modal('hide')
             }).catch(handleError)
         } else {
             MeteorCall(_METHODS.modules.Update, data, accessToken).then(result => {
                 reloadData()
                 clearForm()
-                handleSuccess("Cập nhật", "module")
+                handleSuccess("Cập nhật")
+                $('#editModuleModal').modal('hide')
             }).catch(handleError)
         }
     }
@@ -168,9 +179,12 @@ function clearForm() {
 
 function htmlRow(key, index) {
     return `<tr id="${key._id}">
-                <th scope="row">${index + 1}</th>
+                <th>${index + 1}</th>
                 <td>${key.name}</td>
                 <td>${key.description}</td>
+                <td>
+                    <i class="${key.icon}"></i><span>&nbsp;${key.icon}</span>
+                </td>
                 <td>${key.route}</td>
                 <td>${key.permission}</td>
                 <td>${key.createdTime}</td>
@@ -192,6 +206,13 @@ function reloadTable() {
     if (moduleRouteFilter) modulesData = modulesData.filter(item => item.route.match(new RegExp(`${moduleRouteFilter}`, 'i')))
     if (moduleParentRouteFilter) modulesData = modulesData.filter(item => item.parentRoute.match(new RegExp(`${moduleParentRouteFilter}`, 'i')))
     if (modulePermissionFilter != 'all') modulesData = modulesData.filter(item => item.permission == modulePermissionFilter)
+    let htmlTable = modulesData.map(htmlRow)
+
+    $("#table-body").html(htmlTable.join(""))
+}
+
+function refreshFilter() {
+    let modulesData = Session.get('modulesData')
     let htmlTable = modulesData.map(htmlRow)
 
     $("#table-body").html(htmlTable.join(""))
@@ -226,44 +247,3 @@ function initSelect2() {
 function formatText(icon) {
     return $('<span><i class="' + $(icon.element).data('icon') + '"></i> ' + icon.text + '</span>');
 };
-
-function initFilter() {
-    let filterHtml = `
-    <div class="form-group row">
-        <label for="module-name" class="col-3 col-form-label">Tên Module</label>
-        <div class="col-9">
-            <input class="form-control filter-input" type="text" value="" id="module-name-filter" name="module-name"
-                placeholder="Tên Module">
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="module-route" class="col-3 col-form-label">Đường dẫn</label>
-        <div class="col-9">
-            <input class="form-control filter-input" type="text" value="" id="module-route-filter"
-                name="module-route" placeholder="Đường dẫn">
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="module-parent-route" class="col-3 col-form-label">Đường dẫn cha</label>
-        <div class="col-9">
-        <input class="form-control filter-input" type="text" value="" id="module-parentRoute-filter"
-        name="module-description" placeholder="Mô Tả">
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="module-permission" class="col-3 col-form-label">Chọn quyền</label>
-        <div class="col-9">
-            <select id="module-permission-filter" class="form-control filter-input">
-                <option value="all" selected>Tất cả</option>
-                <option value="admin">Quản trị viên</option>
-                <option value="driver">Lái xe</option>
-                <option value="parent">Phụ huynh</option>
-                <option value="teacher">Giáo viên</option>
-            </select>
-        </div>
-    </div>`
-    $('.kt-demo-panel__body').html(filterHtml)
-    $('.filter-input').on('change', e => {
-        reloadTable()
-    })
-}

@@ -64,6 +64,32 @@ Template.editCarModelModal.helpers({
     },
 });
 
+Template.carModelFilter.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    },
+    schools() {
+        return Session.get('schools')
+    },
+});
+
+Template.carModelFilter.events({
+    'click #filter-button': carModelilter,
+    'click #refresh-button': refreshFilter,
+    'keypress .filter-input': (e) => {
+        if (e.which === 13) {
+            carModelilter()
+        }
+    },
+    'change #school-filter': (e) => {
+        let options = [{
+            text: "adminType",
+            value: $('#school-filter').val()
+        }]
+        reloadTable(1, getLimitDocPerPage(), options)
+    }
+})
+
 function ClickAddmoreButton(event) {
     $(".modal-title").html("Thêm mới");
     $(".confirm-button").html("Thêm");
@@ -208,11 +234,12 @@ function getLimitDocPerPage() {
     return parseInt($("#limit-doc").val());
 }
 
-function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
+function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options = null) {
     let table = $('#table-body');
     MeteorCall(_METHODS.carModel.GetByPage, {
         page: page,
-        limit: limitDocPerPage
+        limit: limitDocPerPage,
+        options
     }, accessToken).then(result => {
         handlePaging(table, result.count, page, limitDocPerPage)
         createTable(table, result, limitDocPerPage)
@@ -265,4 +292,39 @@ function initSchoolSelect2() {
             placeholder: "Chọn trường"
         })
     }).catch(handleError)
+}
+
+
+function carModelilter() {
+    let options = [{
+        text: "model",
+        value: $('#carModel-model-filter').val()
+    }, {
+        text: "brand",
+        value: $('#carModel-brand-filter').val()
+    }, {
+        text: "seatNumber",
+        value: $('#carModel-seatNumber-filter').val()
+    }, {
+        text: "fuelType",
+        value: $('#carModel-fuelType-filter').val()
+    }, {
+        text: "fuelCapacity",
+        value: $('#carModel-fuelCapacity-filter').val()
+    }, {
+        text: "schoolID",
+        value: $('#school-filter').val()
+    }]
+    console.log(options);
+    reloadTable(1, getLimitDocPerPage(), options)
+}
+
+function refreshFilter() {
+    $('#carModel-model-filter').val('')
+    $('#carModel-brand-filter').val('')
+    $('#carModel-seatNumber-filter').val('')
+    $('#carModel-fuelType-filter').val('')
+    $('#carModel-fuelCapacity-filter')
+    $('#school-filter').val('')
+    reloadTable(1, getLimitDocPerPage(), null)
 }

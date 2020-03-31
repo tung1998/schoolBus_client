@@ -33,16 +33,25 @@ let dropzone
 
 Template.parentManager.onCreated(() => {
   accessToken = Cookies.get('accessToken')
+  Session.set('schools', [])
+  Session.set('class', [])
+  Session.set('students', [])
 });
 
 Template.parentManager.onRendered(() => {
   addPaging($('#parentTable'))
-  reloadTable()
-  addRequiredInputLabel()
-  renderSchoolSelect()
   initSelect2()
+  if (Session.get(_SESSION.isSuperadmin)) {
+    initSchoolSelect2()
+  } else
+    getClassData()
+  addRequiredInputLabel()
+  reloadTable()
   dropzone = initDropzone("#kt_dropzone_1")
   this.dropzone = dropzone
+  Session.delete('schools')
+  Session.delete('class')
+  Session.delete('students')
 })
 
 Template.parentManager.onDestroyed(() => {
@@ -69,57 +78,58 @@ Template.parentManager.events({
   "change #limit-doc": (e) => {
     reloadTable(1, getLimitDocPerPage());
   },
-  "change #school-select": renderClassSelect,
-  "change #class-select": renderStudentSelect,
-  "click #edit-student": (e) => {
-    $('.kt-portlet__body:eq(2)').show()
-  },
+  "change #school-select": getClassData,
+  "change #class-select": getStudentData,
+  "click #addStudent": addStudentClick,
+  "click .delete-tudent-btn ": deleteStudentClick,
   "click .dz-preview": dzPreviewClick,
 })
+
+Template.editParentModal.helpers({
+  isSuperadmin() {
+    return Session.get(_SESSION.isSuperadmin)
+  },
+  schools() {
+    return Session.get('schools')
+  },
+  class() {
+    return Session.get('class')
+  },
+  students() {
+    return Session.get('students')
+  },
+});
 
 function dzPreviewClick() {
   dropzone.hiddenFileInput.click()
 }
 
-function renderSchoolSelect() {
-  MeteorCall(_METHODS.school.GetAll, {}, accessToken)
-    .then(result => {
-      let optionSelects = result.data.map((key) => {
-        return `<option value="${key._id}">${key.name}</option>`;
-      });
-      $("#school-select").append(optionSelects.join(""));
+function initSchoolSelect2() {
+  MeteorCall(_METHODS.school.GetAll, null, accessToken).then(result => {
+    Session.set('schools', result.data)
+    $('#school-select').select2({
+      width: '100%',
+      placeholder: 'Chọn trường'
     })
-    .catch(handleError);
+  }).catch(handleError)
 }
 
-function renderClassSelect() {
+function getClassData() {
   let schoolID = $("#school-select").val()
-  MeteorCall(_METHODS.class.GetAll, {}, accessToken)
-    .then(result => {
-      let optionSelects = result.data.map((key) => {
-        if (key.schoolID === schoolID) {
-          return `<option value="${key._id}">${key.name}</option>`;
-        }
-      });
-
-      $("#class-select").html('<option></option>').append(optionSelects.join(" "));
-    })
-    .catch(handleError);
+  MeteorCall(_METHODS.class.GetAll, {}, accessToken).then(result => {
+    if (schoolID)
+      result.data = result.data.filter(item => item.schoolID == schoolID)
+    Session.set('class', result.data)
+  }).catch(handleError);
 }
 
-function renderStudentSelect() {
+function getStudentData() {
   let classID = $('#class-select').val()
   MeteorCall(_METHODS.student.GetByClass, {
-      classID
-    }, accessToken)
-    .then(result => {
-      console.log(result)
-      let optionSelects = result.map((key) => {
-        return `<option value="${key._id}">${key.user.name}</option>`;
-      });
-
-      $("#student-select").html('<option></option>').append(optionSelects.join(" "));
-    })
+    classID
+  }, accessToken).then(result => {
+    Session.set('students', result)
+  })
 }
 
 function getInputData() {
@@ -128,11 +138,13 @@ function getInputData() {
     phone: $('#parent-phone').val(),
     email: $('#parent-email').val(),
     address: $('#parent-address').val(),
-    studentID: $('#student-select').val(),
+    studentIDs: [],
     username: $('#parent-phone').val(),
     password: '12345678'
-
   }
+  $('#student-info').find('li').each((index, item) => {
+    data.studentIDs.push(item.getAttribute('studentID'))
+  })
   if ($('#parent-id').val()) {
     data._id = $('#parent-id').val()
   }
@@ -158,12 +170,12 @@ function checkForm() {
     $('#parent-phone').val(),
     $('#parent-email').val(),
     $('#parent-address').val(),
-    $('#student-select').val()
+    $('#student-info').children().length
   ]
   let check = true
   data.map((value) => {
     if (!value) {
-      check = fasle
+      check = false
     }
   })
   if (check == false) {
@@ -200,19 +212,22 @@ function clickEditButton(event) {
   //edit modal
   $('.modal-title').html(`Cập nhật thông tin phụ huynh: ${data.name}`);
   $('.modal-footer').find('.btn.btn-primary').html("Cập nhật")
-  $('.kt-portlet__body:eq(2)').hide()
-  $('#parent-student').find('span').html(`<a href="#" id="edit-student">Sửa &nbsp;<i class="fas fa-pen"></i></a>`)
-  $('#student-info').html(
-    `<h6>Họ và tên: ${data.studentName}</h6><h6>Lớp: ${data.className}</h6><h6>Trường: ${data.schoolName}</h6>`
-  )
+
+  studentHtml = data.students.map(item => `<li studentID="${item._id}">${item.user.name} - ${item.class.name} - ${item.school.name}
+                                          <button type="button" class="delete-tudent-btn btn btn-outline-hover-danger btn-sm btn-icon btn-circle">
+                                            <i class="flaticon2-delete"></i>
+                                          </button>
+                                        </li>`)
+  $('#student-info').html(studentHtml.join(''))
 
 }
 
 async function clickSubmitButton(event) {
   event.preventDefault();
-  try {
-    if (checkForm()) {
+  if (checkForm())
+    try {
       let data = getInputData()
+      console.log(data)
       let imagePreview = $('#kt_dropzone_1').find('div.dz-image-preview')
       if (imagePreview.length) {
         if (imagePreview.hasClass('dz-success')) {
@@ -229,24 +244,19 @@ async function clickSubmitButton(event) {
       }
       if (!data._id) {
         await MeteorCall(_METHODS.Parent.Create, data, accessToken)
-        console.log("đã thêm mới");
-        handleSuccess("Thêm", `phụ huynh: ${data.name}`).then(() => {
-          $('#editparentModal').modal("hide")
-        })
+        handleSuccess(`Thêm phụ huynh: ${data.name}`)
 
       } else {
         await MeteorCall(_METHODS.Parent.Update, data, accessToken)
-        handleSuccess("Cập nhật", `phụ huynh: ${data.name}`).then(() => {
-          $('#editparentModal').modal("hide")
-        })
-        console.log("đã update");
+        handleSuccess(`Cập nhật phụ huynh: ${data.name}`)
       }
+      $('#editparentModal').modal("hide")
       reloadTable(1, getLimitDocPerPage())
       clearForm()
+    } catch (error) {
+      handleError(error)
     }
-  } catch (eror) {
-    handleError(error)
-  }
+  else handleError(null, "Vui lòng điền đầy đủ thông tin")
 }
 
 function clickDelButton(event) {
@@ -267,18 +277,12 @@ function clickDelButton(event) {
 
 function initSelect2() {
   let initSelect2 = [{
-      id: 'school-select',
-      name: 'Chọn trường'
-    },
-    {
-      id: 'class-select',
-      name: 'Chọn lớp'
-    },
-    {
-      id: 'student-select',
-      name: 'Chọn học sinh'
-    }
-  ]
+    id: 'class-select',
+    name: 'Chọn lớp'
+  }, {
+    id: 'student-select',
+    name: 'Chọn học sinh'
+  }]
   initSelect2.map((key) => {
     $(`#${key.id}`).select2({
       placeholder: key.name,
@@ -315,6 +319,14 @@ function createTable(table, result, limitDocPerPage) {
 }
 
 function createRow(result) {
+  let students = result.students
+  let studentHtml
+  if (Session.get(_SESSION.isSuperadmin)) {
+    studentHtml = students.map(item => `<li>${item.user?item.user.name||'':''}-${item.class?item.class.name||'':''}-${item.school?item.class.name||'':''}</li>`)
+  } else {
+    studentHtml = students.filter(item => item.schoolID = Session.get(_SESSION.schoolID))
+      .map(item => `<li studentID="${item._id}">${item.user?item.user.name||'':''}-${item.class?item.class.name||'':''} <li>`)
+  }
   let data = {
     _id: result._id,
     image: result.user.image,
@@ -322,24 +334,43 @@ function createRow(result) {
     username: result.user.username,
     phone: result.user.phone,
     email: result.user.email,
-    address: result.student.address,
-    studentID: result.studentID,
-    studentName: result.student.user.name,
-    className: result.student.class.name,
-    schoolName: result.student.class.school.name,
+    address: result.address || '',
+    studentIDs: result.studentIDs,
+    students: result.students,
   }
   return ` <tr id="${data._id}">
               <th scope="row">${result.index + 1}</th>
               <td>${data.name}</td>
-              <td>${data.username}</td>
               <td>${data.phone}</td>
               <td>${data.email}</td>
               <td>${data.address}</td>
-              <td>${data.studentName}</td>
+              <td>
+                <ul>${studentHtml.join('')}</ul>
+              </td>
               <td>
                   <button type="button" class="btn btn-outline-brand dz-remove" data-toggle="modal" id="edit-button" data-target="#editParentModal" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
                   <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
               </td>
             </tr>
           `
+}
+
+function addStudentClick(e) {
+  let schoolName = $('#school-select option:selected').text()
+  let className = $('#class-select option:selected').text()
+  let studentID = $('#student-select').val()
+  let studentName = $('#student-select option:selected').text()
+  if (!schoolName || !className || !studentID) {
+    handleError(null, 'Vui lòng chọn học sinh')
+    return false
+  }
+  $('#student-info').append(`<li studentID="${studentID}">${studentName} - ${className} - ${schoolName}
+                                <button type="button" class="delete-tudent-btn btn btn-outline-hover-danger btn-sm btn-icon btn-circle">
+                                  <i class="flaticon2-delete"></i>
+                                </button>
+                              </li>`)
+}
+
+function deleteStudentClick(e) {
+  $(e.currentTarget).parent().remove()
 }
