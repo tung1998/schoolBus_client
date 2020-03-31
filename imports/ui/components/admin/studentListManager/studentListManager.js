@@ -162,6 +162,7 @@ function clickStudentListRow(e) {
     // e.preventDefault();
     let studentListID = $(e.currentTarget).attr('id')
     FlowRouter.go(`/studentlistManager/${studentListID}`)
+    window.location.reload(false)
 }
 
 Template.studentListModal.helpers({

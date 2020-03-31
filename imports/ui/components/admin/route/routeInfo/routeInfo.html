@@ -138,22 +138,34 @@
                                 <!--begin::Section-->
                                 <div class="kt-section">
                                     <div class="kt-section__content">
-                                      <div class="row">
-                                        <div class="col-4 anchorHeight" style="overflow: auto;">
-                                          <div class="carStopContainer" id="carStopContainer">
+                                        <div class="row">
+                                            <div class="col-4 anchorHeight" id="addPane" style="overflow: auto;">
+                                                <div id="des">
+                                                </div>
+                                                <div class="ui-sortable carStopContainer" id="kt_sortable_portlets">
+                                                </div>
+                                                <div id="start">
+                                                </div>
+                                                
                                             
-                                          </div>
+                                            </div>
+
+                                            <div class="col-8">
+                                                <button data-toggle="collapse" data-target=".collapse"
+                                                    class="floatingContent confirmButton btn btn-primary btn-sm"><i
+                                                        class="fas fa-check" style="right: 20px !important"></i>Xác nhận
+                                                    lộ trình
+                                                </button>
+                                                <button data-toggle="collapse" data-target=".collapse"
+                                                    class="floatingContentB autoDirect btn btn-primary btn-sm"><i
+                                                        class="fas fa-compass" style="right: 100px !important"></i>Tự
+                                                    động định tuyến
+                                                </button>
+                                                {{>routeMap}}
+                                            </div>
                                         </div>
-                                        
-                                        <div class="col-8">
-                                          <!--<button data-toggle="collapse" data-target=".collapse" class="floatingContent confirmButton btn btn-primary btn-sm"><i
-                                            class="fas fa-check" style="right: 20px !important"></i>Xác nhận lộ trình
-                                          </button>-->
-                                            {{>routeMap}}
-                                        </div>
-                                      </div>
                                     </div>
-                                  </div>
+                                </div>
                                 <!--end::Section-->
                             </div>
                         </div>

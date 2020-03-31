@@ -13,6 +13,9 @@ import {
     _URL_images
 } from "../../../../variableConst";
 const Cookies = require("js-cookie");
+import {
+    initSchoolSelect2
+} from "../../admin/administratorManager/administratorManager"
 
 
 let accessToken;
@@ -25,15 +28,18 @@ Template.profile.onCreated(() => {
 
 Template.profile.onRendered(() => {
     dropzone = initDropzone("#profile-dropzone")
-    this.dropzone = dropzone
-
-
+    this.dropzone = dropzone;
     MeteorCall(_METHODS.user.GetCurrentInfor, null, accessToken).then(result => {
+        console.log(result);
         Session.set(_SESSION.username, result.username);
         //$(document).ready(() => {
         //type: 0 ADMIN, schoolID = null
-        userID = result._id
-
+        if ((result.userType == 0) && (Session.get(_SESSION.isSuperadmin)==false)){
+            Session.set(_SESSION.isLocalAdmin, true);
+            //Session.set('schools', Session.get(_SESSION.schoolID));
+            console.log(Session.get('schools'))
+        }
+        userID = result._id;
         let userData = {
             name: result.name,
             phoneNumber: result.phone,
@@ -92,26 +98,30 @@ function appendNewPass(event) {
         username: Session.get(_SESSION.username),
         password: oldPass
     }
-    console.log(data.username)
+    //console.log(data.username)
     MeteorCall(_METHODS.token.LoginByUsername, data, null).then(result => {
-        if (checkNewPass(oldPass, newPass)) {
-            handleError(null, "Mật khẩu cũ và mới không được giống nhau!")
+        if (newPass == ""){
+            handleError(null, "Vui lòng điền đủ thông tin");
         } else {
-            if (checkNewPass(newPass, confirmation)) {
-                MeteorCall(_METHODS.user.UpdatePassword, {
-                        password: newPass
-                    }, accessToken)
-                    .then(result => {
-                        console.log(result)
-                        handleSuccess("", "Đổi mật khẩu")
-                        Cookies.remove('accessToken');
-                        FlowRouter.go('/login')
-                    })
-                    .catch(handleError);
+            if (checkNewPass(oldPass, newPass)) {
+                handleError(null, "Mật khẩu cũ và mới không được giống nhau!")
             } else {
-                handleError(null, "Xác nhận mật khẩu sai!")
+                if (checkNewPass(newPass, confirmation)) {
+                    MeteorCall(_METHODS.user.UpdatePassword, {
+                            password: newPass
+                        }, accessToken)
+                        .then(result => {
+                            console.log(result)
+                            handleSuccess("", "Đổi mật khẩu")
+                            Cookies.remove('accessToken');
+                            FlowRouter.go('/login')
+                        })
+                        .catch(handleError);
+                } else {
+                    handleError(null, "Xác nhận mật khẩu sai!")
+                }
             }
-        }
+        }  
     }).catch(handleError)
 
 }

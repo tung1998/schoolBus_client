@@ -31,26 +31,28 @@ let polyCoor = [];
 let defaultCarStop = [];
 let carStopIDs = [];
 let markers_id = [];
+let poly;
 Template.studentListInfo.onCreated(() => {
     accessToken = Cookies.get('accessToken');
+    
 });
 
 Template.studentListInfo.onRendered(() => {
     reloadTable().then(result => {
-        
+
         initClassSelect2()
         $(".anchorHeight").css({
-                "height": 400
-            }) //set fixxed height of sortable tabs
-            //sort stopPointsCoor by distance to anchor point
+            "height": 400
+        }) //set fixxed height of sortable tabs
+        //sort stopPointsCoor by distance to anchor point
         defaultStopPoint = stopPointCoors;
         drawPath(defaultStopPoint)
         //}
         //append HTML sortable tabs to tab-pane
         for (let i = 0; i <= stopPointOrder.length - 1; i++) {
             htmlSortable +=
-                `<div class="kt-portlet kt-portlet--mobile kt-portlet--sortable" id="${stopPointOrder[i]}">
-                    <div class="kt-portlet__head ui-sortable-handle">
+                `<div class="kt-portlet kt-portlet--mobile addressTab" id="${stopPointOrder[i]}">
+                    <div class="kt-portlet__head">
                         <div class="kt-portlet__head-label">
                             <h3 class="kt-portlet__head-title title="${studentStopPoint[stopPointOrder[i]].address}">
                                 ${studentStopPoint[stopPointOrder[i]].name}        
@@ -59,14 +61,21 @@ Template.studentListInfo.onRendered(() => {
                     </div>
                     
                 </div>`
-                //<div class="kt-portlet__body">${studentStopPoint[stopPointOrder[i]].address}</div>
+            //<div class="kt-portlet__body">${studentStopPoint[stopPointOrder[i]].address}</div>
         }
         setSortableData(htmlSortable)
+        let idx = parseInt(stopPointOrder[stopPointOrder.length - 1])
+        setColor(0, "destination", studentStopPoint[stopPointOrder[0]].address);
+        setColor(idx, "start", studentStopPoint[idx].address)
     })
 });
 
 Template.studentListInfo.onDestroyed(() => {
     studentIDs = null
+    document.getElementById("kt_sortable_portlets").innerHTML = '';
+    markerGroup.eachLayer((layer) => {
+        markerGroup.removeLayer(layer)
+    });
 });
 
 Template.studentListInfo.events({
@@ -91,7 +100,7 @@ Template.carStopList_studentListInfo.onRendered(() => {
 })
 
 Template.carStopList_studentListInfo.events({
-    'mousemove .kt-portlet--sortable': (event)=>{
+    'mousemove .addressTab': (event) => {
         event.preventDefault();
         let indx = parseInt($(event.currentTarget).attr("id"));
         let tarMark = carStopmap._layers[markers_id[indx]];
@@ -100,7 +109,11 @@ Template.carStopList_studentListInfo.events({
         tarMark.openPopup();
         window.carStopmap.setView([latval, lngval], 14);
     },
-    'click .confirmButton': confirmPath,
+    'click .polyToggle': (event) => {
+        event.preventDefault();
+        removeLayerByID(polyID);
+    }
+    /*'click .confirmButton': confirmPath,
     'click .autoDirect': (event)=>{
         
         removeLayerByID(polyID)
@@ -126,7 +139,18 @@ Template.carStopList_studentListInfo.events({
         }
         setSortableData(htmlSortable)
     },
-    'drag .kt-portlet--sortable': dragTab
+    'drag .kt-portlet--sortable': dragTab*/
+})
+
+Template.carStopList_studentListInfo.onDestroyed(() => {
+    carStopList = null
+    stopCoor = null
+    markers_id = null
+    document.getElementById("carStopContainer").innerHTML = '';
+    markerGroup.eachLayer((layer) => {
+        markerGroup.removeLayer(layer)
+    });
+
 })
 
 function initClassSelect2() {
@@ -157,6 +181,15 @@ function renderStudentTable(jqEl, data, type) {
 }
 
 function reloadTable() {
+    $(".anchorHeight").css({
+        "height": 400
+    })
+    $(".kt-content").css({
+        "padding-bottom": 0
+    })
+    $(".kt-footer--fixed").css({
+        "padding-bottom": 0
+    })
     let studentListID = FlowRouter.getParam("id")
     return MeteorCall(_METHODS.studentList.GetById, {
         _id: studentListID
@@ -181,18 +214,18 @@ function htmlRow(data, index, type = false) {
                 <th scope="row">${index + 1}</th>
                 <td>${data.IDStudent}</td>
                 <td>${data.user.name}</td>
-                <td>${data.class?data.class.name:""}</td>
+                <td>${data.class ? data.class.name : ""}</td>
                 <td>${data.user.email}</td>
                 <td>${data.user.phone}</td>
                 
-                ${type?`<td>
+                ${type ? `<td>
                             <div class="from-group">
                                 <label class="kt-checkbox kt-checkbox--brand">
-                                <input type="checkbox" class="student-checkbox" studentID="${data._id}" ${studentIDs.includes(data._id)?'checked':''}>
+                                <input type="checkbox" class="student-checkbox" studentID="${data._id}" ${studentIDs.includes(data._id) ? 'checked' : ''}>
                                 <span></span>
                                 </label>
                             </div>
-                        </td>`:''}
+                        </td>`: ''}
             </tr>`
 }
 //event
@@ -238,80 +271,30 @@ function setMarker(arr, des, address) {
 }
 
 function setSortableData(str) {
-    document.getElementById("kt_sortable_portlets").innerHTML = " ";
-    document.getElementById("kt_sortable_portlets").innerHTML += str;
+    document.getElementById("carStopContainer").innerHTML = " ";
+    document.getElementById("carStopContainer").innerHTML += str;
 }
 
 function addPoly(arr) {
-    let poly = L.polyline(arr, { color: 'blue', weight: 4, opacity: 0.5, smoothFactor: 1 }).addTo(markerGroup);
-   
-    polyID = markerGroup.getLayerId(poly)
+    poly = L.polyline(arr, { color: 'blue', weight: 4, opacity: 0.5, smoothFactor: 1 }).addTo(markerGroup);
+    polyID = markerGroup.getLayerId(poly);
 }
 
-function swapPcs(arr){
-    let c=arr[1];
-    arr[1]=arr[0];
-    arr[0]=c;
-    return arr;
-}
 
 function removeLayerByID(id) {
-	markerGroup.eachLayer(function (layer) {
-		if (layer._leaflet_id === id){
-			markerGroup.removeLayer(layer)
-		}
-	});	
-}
-
-function reArrange(arr1, arr2, idxArr){
-    for (let i=0; i<idxArr.length; i++){
-        if (arr1[idxArr[i]]!=undefined){
-            arr2[i] = arr1[idxArr[i]];
+    let found = false
+    markerGroup.eachLayer(function (layer) {
+        if (layer._leaflet_id === id) {
+            markerGroup.removeLayer(layer);
+            found = true;
         }
+    });
+    if (found == false) {
+        addPoly(stopPointCoors)
     }
-    return arr2;
 }
 
-function DistanceAutoCal(dest, coorArr){
-    let distance = [];
-    let distOrder = [];
-    let finalCoorOrder = [];
-    for (let i=0; i<coorArr.length; i++){
-        distance.push(getDistance(dest,coorArr[i]));
-        //console.log(getDistance(dest,coorArr[i]))
-        distOrder.push(i);
-    }
-
-    distOrder.sort(function (a, b) { return distance[a] < distance[b] ? -1 : distance[a] > distance[b] ? 1 : 0; });
-    stopPointOrder = distOrder;
-    for (let i=0; i<distOrder.length; i++){
-        finalCoorOrder.push(coorArr[distOrder[i]]);
-    }
-    //console.log(finalCoorOrder);
-    return finalCoorOrder;
-} //dest: [[lat,lng]] //coorArr: tập hợp các carStop
-
-function getDistance(origin, destination) {
-    // return distance in meters
-    var lon1 = toRadian(origin[1]),
-        lat1 = toRadian(origin[0]),
-        lon2 = toRadian(destination[1]),
-        lat2 = toRadian(destination[0]);
-
-    var deltaLat = lat2 - lat1;
-    var deltaLon = lon2 - lon1;
-
-    var a = Math.pow(Math.sin(deltaLat/2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(deltaLon/2), 2);
-    var c = 2 * Math.asin(Math.sqrt(a));
-    var EARTH_RADIUS = 6371;
-    return c * EARTH_RADIUS * 1000;
-}
-
-function toRadian(degree) {
-    return degree*Math.PI/180;
-}
-
-function drawPath(arr){
+function drawPath(arr) {
     MeteorCall(_METHODS.wemap.getDrivePath, arr, accessToken).then(result => {
         let pol = []
         let a = result.routes[0].legs
@@ -323,49 +306,30 @@ function drawPath(arr){
             }
         }
         pol.push(arr[0])
-        addPoly(pol)
+        //addPoly(pol)
     }).catch(handleError);
 }
 
-function dragTab(event) {
-        let targetID = event.target.getAttribute('id'),
-            ID_order = [],
-            modPos;
-        if (event.drag.type === 'dragend') {
-            $('.carStopContainer').children('div').each(function() {
-                if ($(this).attr('id') != undefined) {
-                    if ($(this).attr('id') != targetID) {
-                        ID_order.push($(this).attr('id'));
-                    }
-                } else {
-                    ID_order.push(targetID);
-                    modPos = ID_order.length - 1; //điểm di chuyển
-                }
-            })
-            if (ID_order != stopPointOrder) {
-               //console.log(ID_order)
-                stopPointCoors = reArrange(defaultStopPoint, [], ID_order)
-                carStopIDs = reArrange(defaultCarStop, [], ID_order)
-                removeLayerByID(polyID)
-                //console.log(stopPointCoors)
-                //console.log(carStopIDs)
-                drawPath(stopPointCoors)
-            } else {
-                //console.log(2)
-            }
-        }
-    }
 
-function confirmPath(event) {
-    let studentListID = FlowRouter.getParam("id")
-    MeteorCall(_METHODS.studentList.Update, { _id: studentListID, carStopIDs: carStopIDs }, accessToken).then(result=>{
-        //console.log(result)
-    }) 
+function setColor(id, pos, name) {
+    if (pos == 'destination') {
+        let element = document.getElementById(`${id}`);
+        element.classList.add(`kt-portlet--skin-solid`, `kt-bg-danger`);
+    } else if (pos == 'start') {
+        let element = document.getElementById(`${id}`);
+        element.classList.add(`kt-portlet--skin-solid`, `kt-bg-brand`);
+    }
 }
-//tạo loading modal while drawing path
-//confirm button
+
+function swapPcs(arr){
+    let c=arr[1];
+    arr[1]=arr[0];
+    arr[0]=c;
+    return arr;
+}
+
 export {
     drawPath,
     addPoly,
-    swapPcs
+    swapPcs,
 }

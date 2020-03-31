@@ -3,7 +3,9 @@ import './carStop.html'
 const Cookies = require("js-cookie");
 import {
     MeteorCall,
-    handleError
+    handleError,
+    handleConfirm,
+    handleSuccess
 } from "../../../../functions";
 import {
     _METHODS
@@ -18,7 +20,7 @@ Template.carStop.onRendered(() => {
     //reloadTable();
 });
 
-Template.minimap.onRendered(function() {
+Template.minimap.onRendered(function () {
     setMapHeight()
     L.Icon.Default.imagePath = '/packages/bevanhunt_leaflet/images/';
     let minimap = L.map('minimap', {
@@ -34,12 +36,12 @@ Template.minimap.onRendered(function() {
     }).addTo(minimap);
 
     let marker = L.marker([21.03709858, 105.78349972]).addTo(minimap);
-    minimap.on('drag', function() {
+    minimap.on('drag', function () {
         marker.setLatLng(minimap.getCenter());
         document.getElementById("confirm-button").disabled = true;
     });
 
-    minimap.on('zoomend', function() {
+    minimap.on('zoomend', function () {
         let coor = $("#location").val().split(" ")
         coor[0] = parseFloat(coor[0]);
         coor[1] = parseFloat(coor[1]);
@@ -53,8 +55,8 @@ Template.minimap.onRendered(function() {
 
     })
     //Dragend event of map for update marker position
-    minimap.on('dragend', function(e) {
-        document.getElementById("confirm-button").disabled = true;
+    minimap.on('dragend', function (e) {
+        document.getElementById("confirm-button").disabled = false;
         let cnt = minimap.getCenter();
         let position = marker.getLatLng();
         lat = Number(position['lat']);
@@ -93,22 +95,41 @@ Template.carStop.events({
             stopType: event.target.stopType.value,
             name: event.target.stopName.value,
             address: event.target.address.value,
+            school: event.target.school.value,
             location: getLatLng(event.target.location.value)
         }
-        event.target.stopType.value = " ";
-        event.target.stopName.value = " ";
-        event.target.address.value = " ";
-        event.target.location.value = " ";
-        MeteorCall(_METHODS.carStop.Create, carStopInfo, accessToken)
-            .then(result => {
-                console.log(result)
 
+        console.log(carStopInfo.school)
+        if ((carStopInfo.school == "") || (carStopInfo.school == undefined)) {
+            handleError(null, "Xin vui lòng điền đủ thông tin!");
+        } else {
+
+            //document.getElementById("confirm-button").disabled = false;
+            MeteorCall(_METHODS.carStop.Create, carStopInfo, accessToken)
+            .then(result => {
+                handleSuccess("", "Thêm điểm dừng")
+                console.log(result)
                 //let htmlTable = result.data.map(htmlRow);
                 //$("#table-body").html(htmlTable.join(" "));
             })
             .catch(handleError);
+            event.target.stopType.value = " ";
+        event.target.stopName.value = " ";
+        event.target.address.value = " ";
+        event.target.location.value = " ";
+        
+        }
     }
 })
+
+Template.carStop.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    },
+    schools() {
+        return Session.get('schools')
+    },
+});
 
 function setMapHeight() {
     let windowHeight = $(window).height();
@@ -116,11 +137,6 @@ function setMapHeight() {
     let sHeaderHeight = $(".kt-subheader").height();
     let footerHeight = $("#kt_footer").height();
     let topBarHeight = $("#kt_header").height();
-    console.log(windowHeight - topBarHeight - sHeaderHeight - footerHeight)
-    console.log(windowHeight);
-    console.log(topBarHeight);
-    console.log(sHeaderHeight);
-    console.log(footerHeight);
     if ($(window).width() < 1024) {
         topBarHeight = $("#kt_header_mobile").height();
         $("#minimap").css({
