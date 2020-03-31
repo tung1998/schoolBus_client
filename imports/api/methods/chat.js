@@ -37,8 +37,8 @@ function createMessage(data) {
     data.updatedTime = Date.now()
     data.isDeleted = false
     return COLLECTION_Messages.insert(data, (err, result) => {
-        if (err) reject(err);
-        else resolve(result)
+        if (err) throw (err);
+        else {}
     });
 }
 
