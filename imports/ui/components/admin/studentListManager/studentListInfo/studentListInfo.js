@@ -34,6 +34,7 @@ let markers_id = [];
 let poly;
 Template.studentListInfo.onCreated(() => {
     accessToken = Cookies.get('accessToken');
+    
 });
 
 Template.studentListInfo.onRendered(() => {
@@ -71,6 +72,10 @@ Template.studentListInfo.onRendered(() => {
 
 Template.studentListInfo.onDestroyed(() => {
     studentIDs = null
+    document.getElementById("kt_sortable_portlets").innerHTML = '';
+    markerGroup.eachLayer((layer) => {
+        markerGroup.removeLayer(layer)
+    });
 });
 
 Template.studentListInfo.events({
@@ -176,6 +181,15 @@ function renderStudentTable(jqEl, data, type) {
 }
 
 function reloadTable() {
+    $(".anchorHeight").css({
+        "height": 400
+    })
+    $(".kt-content").css({
+        "padding-bottom": 0
+    })
+    $(".kt-footer--fixed").css({
+        "padding-bottom": 0
+    })
     let studentListID = FlowRouter.getParam("id")
     return MeteorCall(_METHODS.studentList.GetById, {
         _id: studentListID

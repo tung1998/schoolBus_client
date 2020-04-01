@@ -137,6 +137,15 @@ Template.carStop.events({
     }
 })
 
+Template.carStop.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    },
+    schools() {
+        return Session.get('schools')
+    },
+});
+
 function setMapHeight() {
     let windowHeight = $(window).height();
     let mapHeight = $("#minimap").height();

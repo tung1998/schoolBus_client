@@ -7,9 +7,13 @@ export {
     _TRIP,
     _FEEDBACK
 }
+<<<<<<< HEAD
 // const _URL_images = 'http://192.168.100.69:3000/images'
 const _URL_images = 'http://113.190.128.251:3000/images'
 
+=======
+const _URL_images = 'http://113.190.128.251:3000/images'
+>>>>>>> cabde2fd5b02dc59552ff3f32bec72a6b528032a
 const _METHODS = {
     student: {
         GetAll: 'student.getAll',
@@ -237,7 +241,7 @@ const _METHODS = {
         UpdatePassword: 'user.updatePassword',
         IsSuperadmin: 'user.isSuperadmin',
         BlockUser: 'user.blockUser',
-        UnblockUser: 'user.unblockUser' 
+        UnblockUser: 'user.unblockUser'
     },
     sms: {
         GetAll: 'sms.getSMS',
@@ -332,13 +336,13 @@ const _FEEDBACK = {
             classname: 'success',
             number: 1
         },
-        response : {
+        response: {
             text: "Được phản hồi",
             classname: 'info',
             number: 2
         },
     },
-    type:{
+    type: {
         other: {
             text: "Khác",
             classname: 'primary',
