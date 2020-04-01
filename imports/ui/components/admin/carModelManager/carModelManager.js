@@ -34,6 +34,12 @@ Template.carModelManager.onRendered(() => {
         initSchoolSelect2()
 })
 
+Template.carModelManager.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    }
+})
+
 Template.carModelManager.events({
     "submit form": SubmitForm,
     "click .modify-button": ClickModifyButton,
@@ -68,6 +74,13 @@ Template.carModelFilter.helpers({
     },
 });
 
+Template.carModelFilter.onRendered(() => {
+    $('#school-filter').select2({
+        placeholder: "Chọn trường",
+        width: "100%"
+    })
+})
+
 Template.carModelFilter.events({
     'click #filter-button': carModelilter,
     'click #refresh-button': refreshFilter,
@@ -78,7 +91,7 @@ Template.carModelFilter.events({
     },
     'change #school-filter': (e) => {
         let options = [{
-            text: "adminType",
+            text: "schoolID",
             value: $('#school-filter').val()
         }]
         reloadTable(1, getLimitDocPerPage(), options)
@@ -251,6 +264,7 @@ function createTable(table, result, limitDocPerPage) {
 }
 
 function createRow(result) {
+    console.log(result);
     let data = {
         _id: result._id,
         brand: result.brand,
@@ -259,11 +273,14 @@ function createRow(result) {
         fuelType: result.fuelType,
         fuelCapacity: result.fuelCapacity,
         maintenanceDay: result.maintenanceDay,
-        maintenanceDistance: result.maintenanceDistance
+        maintenanceDistance: result.maintenanceDistance,
+        schoolID: result.schoolID,
+        schoolName: result.school.name
     }
     return `
         <tr id="${data._id}">
-            <th scope="row">${result.index + 1}</th>
+            <th class="text-center">${result.index + 1}</th>
+            ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>`: ''}
             <td>${data.brand}</td>
             <td>${data.model}</td>
             <td>${data.seatNumber}</td>
@@ -271,7 +288,7 @@ function createRow(result) {
             <td>${data.fuelCapacity}</td>
             <td>${data.maintenanceDay}</td>
             <td>${data.maintenanceDistance}</td>
-            <td>
+            <td class="text-center">
             <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
             <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
             </td>
@@ -320,6 +337,6 @@ function refreshFilter() {
     $('#carModel-seatNumber-filter').val('')
     $('#carModel-fuelType-filter').val('')
     $('#carModel-fuelCapacity-filter')
-    $('#school-filter').val('')
+    $('#school-filter').val('').trigger('change')
     reloadTable(1, getLimitDocPerPage(), null)
 }

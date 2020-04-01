@@ -47,6 +47,12 @@ Template.teacherManager.onRendered(() => {
 
 });
 
+Template.teacherManager.helpers({
+  isSuperadmin() {
+    return Session.get(_SESSION.isSuperadmin)
+  }
+})
+
 
 Template.teacherManager.onDestroyed(() => {
   dropzone = null
@@ -80,7 +86,7 @@ Template.editTeacherModal.helpers({
 
 Template.teacherFilter.onRendered(() => {
   $('#school-filter').select2({
-    placeholder: "Chọn",
+    placeholder: "Chọn trường",
     width: "100%"
   })
 })
@@ -130,11 +136,11 @@ function ClickModifyButton(e) {
   $(".confirm-button").html("Sửa");
   $("#editTeacherModal").modal("show");
 
-  $(' input[name="name"]').val(teacherData.name);
-  $(' input[name="phoneNumber"]').val(teacherData.phone);
-  $(' input[name="email"]').val(teacherData.email);
-  $(' #school-select').val(teacherData.school).trigger('change');
-  $(' input[name="class"]').val(teacherData.class);
+  $('input[name="name"]').val(teacherData.name);
+  $('input[name="phoneNumber"]').val(teacherData.phone);
+  $('input[name="email"]').val(teacherData.email);
+  $('#school-select').val(teacherData.school).trigger('change');
+  $('input[name="class"]').val(teacherData.class);
 
   if (Session.get(_SESSION.isSuperadmin)) {
     $('#school-input').val(teacherData.schoolID).trigger('change')
@@ -315,21 +321,18 @@ function createRow(result) {
     image: result.user.image
   };
   return `<tr id="${data._id}" class="table-row">
-                <td scope="row">${result.index + 1}</td>
+                <td class="text-center">${result.index + 1}</td>
                 <td>${data.name}</td>
                 <td>${data.username}</td>
                 <td>${data.phone}</td>
                 <td>${data.email}</td>
-                <td>${data.schoolName}</td>
-                <td>
-                <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
-    data
-  )}\'>Sửa</button>
-                <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(
-    data
-  )}\'>Xóa</button>
-  </td>
-  </tr>`;
+                ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>` : ''}
+                
+                <td class="text-center">
+                  <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
+                  <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
+                </td>
+          </tr>`;
 
 }
 

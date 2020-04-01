@@ -8,17 +8,30 @@ import {
     handleSuccess
 } from "../../../../functions";
 import {
-    _METHODS
+    _METHODS,
+    _SESSION,
+
 } from "../../../../variableConst";
 let accessToken;
 //let position = [0, 0];
 Template.carStop.onCreated(() => {
     accessToken = Cookies.get("accessToken");
+    Session.set('schools', [])
 });
 
 Template.carStop.onRendered(() => {
-    //reloadTable();
+    if (Session.get(_SESSION.isSuperadmin))
+        initSchoolSelect2()
 });
+
+Template.carStop.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    },
+    schools() {
+        return Session.get('schools')
+    }
+})
 
 Template.minimap.onRendered(function () {
     setMapHeight()
@@ -64,7 +77,10 @@ Template.minimap.onRendered(function () {
         let adr = getAddress(lat, lng);
         console.log(adr)
 
-        MeteorCall(_METHODS.wemap.getAddress, { lat: lat, lng: lng }, accessToken).then(result => {
+        MeteorCall(_METHODS.wemap.getAddress, {
+            lat: lat,
+            lng: lng
+        }, accessToken).then(result => {
             let props = result.features[0].properties;
             let cor = result.features[0].geometry.coordinates;
             let addressElement = {
@@ -95,30 +111,29 @@ Template.carStop.events({
             stopType: event.target.stopType.value,
             name: event.target.stopName.value,
             address: event.target.address.value,
-            school: event.target.school.value,
             location: getLatLng(event.target.location.value)
         }
 
-        console.log(carStopInfo.school)
-        if ((carStopInfo.school == "") || (carStopInfo.school == undefined)) {
-            handleError(null, "Xin vui lòng điền đủ thông tin!");
-        } else {
+        if (Session.get(_SESSION.isSuperadmin)) carStopInfo.schoolID = $('#school-select').val()
 
-            //document.getElementById("confirm-button").disabled = false;
-            MeteorCall(_METHODS.carStop.Create, carStopInfo, accessToken)
+
+
+        //document.getElementById("confirm-button").disabled = false;
+        MeteorCall(_METHODS.carStop.Create, carStopInfo, accessToken)
             .then(result => {
-                handleSuccess("", "Thêm điểm dừng")
+                handleSuccess("Thêm điểm dừng")
                 console.log(result)
                 //let htmlTable = result.data.map(htmlRow);
                 //$("#table-body").html(htmlTable.join(" "));
             })
             .catch(handleError);
-            event.target.stopType.value = " ";
+        event.target.stopType.value = " ";
         event.target.stopName.value = " ";
         event.target.address.value = " ";
         event.target.location.value = " ";
-        
-        }
+        $('#school-select').val('').trigger('change')
+
+
     }
 })
 
@@ -152,7 +167,10 @@ function getLatLng(string) {
 
 async function getAddress(lat, lng) {
     try {
-        let result = await MeteorCall(_METHODS.wemap.getAddress, { lat: lat, lng: lng }, accessToken);
+        let result = await MeteorCall(_METHODS.wemap.getAddress, {
+            lat: lat,
+            lng: lng
+        }, accessToken);
         console.log(result)
         let props = result.features[0].properties;
         let addressElement = {
@@ -175,4 +193,14 @@ async function getAddress(lat, lng) {
     } catch (err) {
         handleError(err)
     }
+}
+
+function initSchoolSelect2() {
+    MeteorCall(_METHODS.school.GetAll, null, accessToken).then(result => {
+        Session.set('schools', result.data)
+        $('#school-select').select2({
+            width: '100%',
+            placeholder: "Chọn trường"
+        })
+    }).catch(handleError)
 }

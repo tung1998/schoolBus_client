@@ -49,14 +49,16 @@
                     </p>
                     <table class="table table-bordered table-hover" id="teacherTable">
                       <thead class="thead-light">
-                        <tr>
+                        <tr class="text-center">
                           <th>#</th>
                           <th>Họ tên</th>
                           <th>Tên đang nhập</th>
                           <th>Số điện thoại</th>
                           <th>Email</th>
+                          {{#if isSuperadmin}}
                           <th>Trường</th>
-                          <th>Hành động</th>
+                          {{/if}}
+                          <th width="13%">Hành động</th>
                         </tr>
                       </thead>
                       <tbody id="table-body">

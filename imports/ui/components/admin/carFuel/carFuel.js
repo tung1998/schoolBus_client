@@ -141,13 +141,17 @@ function ClickModifyButton(event) {
 }
 
 function ClickDeleteButton(event) {
-    let data = $(event.currentTarget).data("json");
-    console.log(data._id)
-    MeteorCall(_METHODS.carFuel.Delete, data, accessToken)
-        .then(result => {
-            reloadTable(currentPage, getLimitDocPerPage())
-        })
-        .catch(handleError);
+    handleConfirm().then(result => {
+        if (result.value) {
+            let data = $(event.currentTarget).data("json");
+            console.log(data._id)
+            MeteorCall(_METHODS.carFuel.Delete, data, accessToken)
+                .then(result => {
+                    reloadTable(currentPage, getLimitDocPerPage())
+                })
+                .catch(handleError);
+        }
+    })
 }
 
 function SubmitForm(event) {
@@ -168,6 +172,7 @@ function SubmitForm(event) {
             MeteorCall(_METHODS.carFuel.Create, data, accessToken)
                 .then(result => {
                     $("#editCarFuelModal").modal("hide");
+                    handleSuccess('Thêm')
                     reloadTable(1, getLimitDocPerPage())
                 })
                 .catch(handleError);
@@ -177,6 +182,7 @@ function SubmitForm(event) {
                 .then(result => {
                     $("#editCarFuelModal").modal("hide");
                     reloadTable(currentPage, getLimitDocPerPage())
+                    handleSuccess('Cập nhật')
                 })
                 .catch(handleError);
         }
@@ -218,6 +224,8 @@ function checkInput() {
 function clearForm() {
     $('input[name="volume-input"]').val("");
     $('input[name="cost-input"]').val("");
+    $('#car-select').val("").trigger('change');
+
     if (Session.get(_SESSION.isSuperadmin)) {
         $('#school-input').val('').trigger('change')
     }
@@ -257,7 +265,9 @@ function createRow(result) {
         volume: result.volume,
         price: result.price,
         createdTime: result.createdTime,
-        updatedTime: result.updatedTime
+        updatedTime: result.updatedTime,
+        schoolID: result.schoolID,
+        schoolName: result.school.name
     }
     return `
         <tr id="${data._id}" class="table-row">
@@ -267,6 +277,7 @@ function createRow(result) {
             <td>${data.price}</td>
             <td>${moment(data.createdTime).format('L')}</td>
             <td>${moment(data.updatedTime).format('L')}</td>
+            ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>` : ''}
             <td>
             <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
             <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>

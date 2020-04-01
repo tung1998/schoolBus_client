@@ -33,6 +33,10 @@ Template.carStopList.onRendered(() => {
     addRequiredInputLabel();
     addPaging($('#carStopTable'));
     reloadTable();
+
+    if(Session.get(_SESSION.isSuperadmin)) {
+        initSchoolSelect2()
+    }
 });
 
 Template.micromap.onRendered(() => {
@@ -150,6 +154,10 @@ function SubmitForm(event) {
     event.target.stopName.value = " ";
     event.target.address.value = " ";
     event.target.location.value = " ";
+
+    if(Session.get(_SESSION.isSuperadmin)) {
+        carStopUpdate.schoolID = $('#school-input').val()
+    }
     MeteorCall(_METHODS.carStop.Update, carStopUpdate, accessToken)
         .then(result => {
             handleSuccess("Thêm").then(() => {
@@ -258,4 +266,14 @@ function setMapHeight() {
             "height": 474.5
         })
     }
+}
+
+function initSchoolSelect2() {
+    MeteorCall(_METHODS.school.GetAll, null, accessToken).then(result => {
+        Session.set('schools', result.data)
+        $('#school-input').select2({
+            width: '100%',
+            placeholder: "Chọn trường"
+        })
+    }).catch(handleError)
 }

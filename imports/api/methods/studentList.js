@@ -28,7 +28,11 @@ if (Meteor.isServer) {
 }
 
 function getAllStudentList(data, accessToken = '') {
-    let url = `${AUTH_STUDENT_LIST}`
+    let url = `${AUTH_STUDENT_LIST}?`
+    if (data && data.options && data.options.length)
+        data.options.forEach(item => {
+            if (item.value) url += `${encodeURIComponent(item.text)}=${encodeURIComponent(item.value)}&`
+        })
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });

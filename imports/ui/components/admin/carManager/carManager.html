@@ -49,8 +49,11 @@
                                         </p>
                                         <table class="table table-bordered table-hover" id="carTable">
                                             <thead class="thead-light">
-                                                <tr>
+                                                <tr class="text-center">
                                                     <th>#</th>
+                                                    {{#if isSuperadmin}}
+                                                    <th>Trường</th>
+                                                    {{/if}}
                                                     <th>Hãng xe</th>
                                                     <th>Nhãn hiệu</th>
                                                     <th>Biển số</th>

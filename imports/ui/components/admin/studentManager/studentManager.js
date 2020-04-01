@@ -78,6 +78,12 @@ Template.studentManager.events({
     "click .dz-preview": dzPreviewClick,
 });
 
+Template.studentManager.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    }
+})
+
 Template.editStudentModal.helpers({
     isSuperadmin() {
         return Session.get(_SESSION.isSuperadmin)
@@ -108,11 +114,12 @@ function dzPreviewClick() {
 }
 
 function schoolInputChange(e) {
-    if ($('#school-input').val())
+    if ($('#school-input').val()){
         getSelectData([{
             text: 'schoolID',
             value: $('#school-input').val()
         }])
+    }
 }
 
 function getSelectData(options = null, classID = null, carStopID = null) {
@@ -370,16 +377,16 @@ function createRow(result) {
     // _id is tripID
     return `
         <tr id="${data._id}" class="table-row">
-            <td>${result.index + 1}</td>
+            <td class="text-center">${result.index + 1}</td>
             <td>${data.name}</td>
             <td>${data.IDStudent}</td>
             <td>${data.address}</td>
             <td>${data.phone}</td>
             <td>${data.email}</td>
-            <td>${data.schoolName}</td>
+            ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>` : ''}
             <td>${data.className}</td>
             <td>${data.carStop}</td>
-            <td>
+            <td class="text-center">
             <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
             <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
             </td>

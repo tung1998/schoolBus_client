@@ -37,6 +37,12 @@ Template.carManager.onRendered(() => {
             initSchoolSelect2()
 
 })
+
+Template.carManager.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin) 
+    }
+})
 Template.editCarManagerModal.helpers({
     isSuperadmin() {
         return Session.get(_SESSION.isSuperadmin)
@@ -65,7 +71,7 @@ Template.carManager.events({
 Template.carFilter.onRendered(() => {
     $('#school-filter').select2({
         width: "100%",
-        placeholder: "Chọn"
+        placeholder: "Chọn trường"
     })
 })
 
@@ -131,6 +137,9 @@ function ClickModifyButton(event) {
     $("#model-select").val(carData.carModelID).trigger('change')
     $('input[name="licensePlate-input"]').val(carData.numberPlate);
     $('input[name="status-input"]').val(carData.status);
+    if (Session.get(_SESSION.isSuperadmin)) {
+        $('#school-input').val(carData.schoolID).trigger('change')
+    }
 
 }
 
@@ -139,7 +148,7 @@ function ClickDeleteButton(event) {
         console.log(result);
         if (result.value) {
             let data = $(event.currentTarget).data("json");
-            MMeteorCall(_METHODS.car.Delete, data, accessToken)
+            MeteorCall(_METHODS.car.Delete, data, accessToken)
                 .then(result => {
                     console.log(result);
                     Swal.fire({
@@ -228,8 +237,9 @@ function checkInput() {
 function clearForm() {
     $(".model-result").attr("carModelID", "");
     $(".model-result").html("Chọn Model");
-    $('input[name="licensePlate-input"]').val();
-    $('input[name="status-input"]').val();
+    $('input[name="licensePlate-input"]').val('');
+    $('input[name="status-input"]').val('');
+    $('#model-select').val('').trigger('change')
 
     if (Session.get(_SESSION.isSuperadmin)) {
         $('#school-input').val('').trigger('change')
@@ -264,21 +274,25 @@ function createTable(table, result, limitDocPerPage) {
 function createRow(result) {
     console.log(result);
     let data = {
+        carModelID: result.carModelID,
         modelName: result.carModel.model,
         brandName: result.carModel.brand,
         numberPlate: result.numberPlate,
-        status: result.status
+        status: result.status,
+        schoolID: result.schoolID,
+        schoolName: result.school.name
     }
     return `
         <tr id="${data._id}">
-            <th scope="row">${result.index + 1}</th>
+            <th class="text-center">${result.index + 1}</th>
+            ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>`: ''}
             <td>${data.modelName}</td>
             <td>${data.brandName}</td>
             <td>${data.numberPlate}</td>
             <td>${data.status}</td>
-            <td>
-            <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(result)}\'>Sửa</button>
-            <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(result)}\'>Xóa</button>
+            <td class="text-center">
+            <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
+            <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
             </td>
         </tr>
         `

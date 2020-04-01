@@ -50,13 +50,16 @@
                                         
                                         <thead class="thead-light">
                                             <tr>
-                                                <th scope="row"></th>
+                                                <th width="5%">#</th>
+                                                {{#if isSuperadmin}}
+                                                    <th>Trường</th>
+                                                {{/if}}
                                                 <th>Biển số</th>
                                                 <th>Thể tích (lít)</th>
                                                 <th>Đơn giá (VND)</th>
                                                 <th>Thời gian</th>
                                                 <th>Thời gian cập nhật</th>
-                                                <th>Hành Động</th>
+                                                <th width="13%">Hành Động</th>
                                             </tr>
                                         </thead>
                                         <tbody id="table-body">
@@ -89,6 +92,19 @@
                 <div class="modal-body">
                     <form class="kt-form kt-form--label-right">
                         <div class="kt-portlet__body">
+                            {{#if isSuperadmin}}
+                            <div class="form-group row">
+                                <label for="example-email-input" class="col-2 col-form-label required-input-label">Trường</label>
+                                <div class="col-10">
+                                    <select class="form-control filter-input" id="school-input">
+                                        <option value=""></option>
+                                        {{#each schools}}
+                                        <option value="{{_id}}">{{name}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                            </div>
+                            {{/if}}
                             <div class="form-group row">
                                 <label class="col-2 col-form-label required-input-label">Chọn xe</label>
                                 <div class="col-10">
@@ -110,19 +126,6 @@
                                     <input class="form-control" type="text" id="example-email-input" name="cost-input" placeholder="Đơn giá">
                                 </div>
                             </div>
-                            {{#if isSuperadmin}}
-                            <div class="form-group row">
-                                <label for="example-email-input" class="col-2 col-form-label required-input-label">Trường</label>
-                                <div class="col-10">
-                                    <select class="form-control filter-input" id="school-input">
-                                        <option value=""></option>
-                                        {{#each schools}}
-                                        <option value="{{_id}}">{{name}}</option>
-                                        {{/each}}
-                                    </select>
-                                </div>
-                            </div>
-                            {{/if}}
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary cancel-button"

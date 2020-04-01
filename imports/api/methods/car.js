@@ -26,7 +26,11 @@ if (Meteor.isServer) {
 }
 
 function getAllCar(data, accessToken = '') {
-    let url = `${AUTH_CAR}`
+    let url = `${AUTH_CAR}?`
+    if (data && data.options && data.options.length)
+        data.options.forEach(item => {
+            if (item.value != '') url += `${encodeURIComponent(item.text)}=${encodeURIComponent(item.value)}&`
+        })
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });

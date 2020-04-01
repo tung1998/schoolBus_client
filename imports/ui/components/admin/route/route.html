@@ -46,14 +46,14 @@
                                         </p>
                                         <table class="table table-bordered table-hover" id="routeTable">
                                             <thead class="thead-light">
-                                                <tr>
-                                                    <th>#</th>
+                                                <tr class="text-center">
+                                                    <th width="4%">#</th>
                                                     <th>Tên cung đường</th>
                                                     <th>Xe</th>
                                                     <th>Tài xế</th>
                                                     <th>Bảo mẫu</th>
                                                     <th>Nhóm học sinh</th>
-                                                    <th></th>
+                                                    <th width="13%">Hành động</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="routeData">
@@ -85,34 +85,70 @@
                 </div>
                 <div class="modal-body">
                     <form>
-                        <div class="form-group">
-                            <label for="route-name" class="form-control-label required-input-label">Tên cung
+                        {{#if isSuperadmin}}
+                        <div class="form-group row">
+                            <label for="example-tel-input" class="col-3 col-form-label required-input-label">Chọn
+                                trường</label>
+                            <div class="col-9">
+                                <select class="form-control" name="school" id="school-input">
+                                    <option value=""></option>
+                                    {{#each schools}}
+                                    <option value="{{_id}}">{{name}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                        </div>
+                        {{/if}}
+                        <div class="form-group row">
+                            <label for="route-name" class="col-3 required-input-label">Tên cung
                                 đường:</label>
-                            <input type="text" class="form-control" id="route-name">
+                            <div class="col-9">
+                                <input type="text" class="form-control" id="route-name" placeholder="Tên cung đường">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label class="required-input-label">Gán xe</label>
-                            <div></div>
-                            <select class="custom-select form-control" id="carSelect">
-                            </select>
+                        <div class="form-group row">
+                            <label class="col-3 required-input-label">Gán xe</label>
+                            <div class="col-9">
+                                <select class="custom-select form-control" id="carSelect">
+                                    <option value=""></option>
+                                    {{#each cars}}
+                                    <option value="{{_id}}">{{carModel.brand}} - {{carModel.model}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label class="required-input-label">Gán tài xế</label>
-                            <div></div>
-                            <select class="custom-select form-control" id="driverSelect">
-                            </select>
+                        <div class="form-group row">
+                            <label class="col-3 required-input-label">Gán tài xế</label>
+                            <div class="col-9">
+                                <select class="custom-select form-control" id="driverSelect">
+                                    <option value=""></option>
+                                    {{#each drivers}}
+                                    <option value="{{_id}}">{{user.name}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label class="required-input-label">Gán bảo mẫu</label>
-                            <div></div>
-                            <select class="custom-select form-control" id="nannySelect">
-                            </select>
+                        <div class="form-group row">
+                            <label class="col-3  required-input-label">Gán bảo mẫu</label>
+                            <div class="col-9">
+                                <select class="custom-select form-control" id="nannySelect">
+                                    <option value=""></option>
+                                    {{#each nannys}}
+                                    <option value="{{_id}}">{{user.name}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label class="required-input-label">Chọn nhóm học sinh</label>
-                            <div></div>
-                            <select class="custom-select form-control" id="studentListSelect">
-                            </select>
+                        <div class="form-group row">
+                            <label class="col-3 required-input-label">Chọn nhóm học sinh</label>
+                            <div class="col-9">
+                                <select class="custom-select form-control" id="studentListSelect">
+                                    <option value=""></option>
+                                    {{#each studentList}}
+                                    <option value="{{_id}}">{{name}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
                         </div>
                     </form>
                 </div>

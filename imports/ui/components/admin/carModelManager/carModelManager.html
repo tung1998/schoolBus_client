@@ -48,8 +48,11 @@
                     </p>
                     <table class="table table-bordered table-hover" id="carModelTable">
                       <thead class="thead-light">
-                        <tr>
+                        <tr class="text-center">
                           <th>#</th>
+                          {{#if isSuperadmin}}
+                          <th>Trường</th>
+                          {{/if}}
                           <th>Hãng xe</th>
                           <th>Model</th>
                           <th>Số ghế</th>
@@ -161,6 +164,17 @@
 </template>
 
 <template name="carModelFilter">
+  {{#if isSuperadmin}}
+  <div class="form-group mb-2">
+    <label for="admin-parent-route" class="col-form-label">Trường</label>
+    <select class="form-control filter-input" id="school-filter">
+      <option value="">Chọn trường</option>
+      {{#each schools}}
+      <option value="{{_id}}">{{name}}</option>
+      {{/each}}
+    </select>
+  </div>
+  {{/if}}
   <div class="form-group mb-2">
     <label for="admin-name" class="col-form-label">Hãng xe</label>
     <input class="form-control filter-input" type="text" placeholder="Hãng xe" id="carModel-brand-filter">
@@ -181,17 +195,6 @@
     <label for="admin-parent-route" class="col-form-label">Dung tích</label>
     <input class="form-control filter-input" type="text" placeholder="Dung tích" id="carModel-fuelCapacity-filter">
   </div>
-  {{#if isSuperadmin}}
-  <div class="form-group mb-2">
-    <label for="admin-parent-route" class="col-form-label">Trường</label>
-    <select class="form-control filter-input" id="school-filter">
-      <option value="">Chọn trường</option>
-      {{#each schools}}
-      <option value="{{_id}}">{{name}}</option>
-      {{/each}}
-    </select>
-  </div>
-  {{/if}}
   <div class="form-group mt-4">
     <button type="submit" class="btn btn-primary btn-sm" id="filter-button">Tìm kiếm</button>
     <button type="submit" class="btn btn-success btn-sm" id="refresh-button">Refresh</button>
