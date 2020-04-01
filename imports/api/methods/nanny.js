@@ -36,7 +36,7 @@ if (Meteor.isServer) {
 }
 //THÊM
 function createNanny(data, accessToken = '') {
-    let url = `${AUTH_Nanny}/`
+    let url = `${AUTH_Nanny}`
     return httpDefault(METHOD.post, url, {
         body: data,
         token: accessToken
@@ -45,6 +45,10 @@ function createNanny(data, accessToken = '') {
 //XEM HẾT
 function getNannys(data, accessToken = '') {
     let url = `${AUTH_Nanny}?extra=${data.extra}`;
+    if (data && data.options && data.options.length)
+    data.options.forEach(item => {
+        if (item.value) url += `&${encodeURIComponent(item.text)}=${encodeURIComponent(item.value)}`
+    })
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });

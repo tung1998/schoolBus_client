@@ -40,11 +40,9 @@ Template.nannyManager.onRendered(() => {
     dropzone = initDropzone("#kt_dropzone_1")
     this.dropzone = dropzone
 
-    MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
-        Session.set(_SESSION.isSuperadmin, result)
-        if (result)
-            initSchoolSelect2()
-    }).catch(handleError)
+    if (Session.get(_SESSION.isSuperadmin))
+        initSchoolSelect2()
+
 });
 
 Template.editNannyModal.helpers({
@@ -59,6 +57,12 @@ Template.editNannyModal.helpers({
 Template.nannyManager.onDestroyed(() => {
     dropzone = null
 });
+
+Template.nannyManager.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    }
+})
 
 Template.nannyManager.events({
     "submit form": SubmitForm,
@@ -81,6 +85,13 @@ function dzPreviewClick() {
     dropzone.hiddenFileInput.click()
 }
 
+Template.nannyFilter.onRendered(() => {
+    $('#school-filter').select2({
+        placeholder: "Chọn trường",
+        width: "100%"
+    })
+})
+
 Template.nannyFilter.helpers({
     isSuperadmin() {
         return Session.get(_SESSION.isSuperadmin)
@@ -94,13 +105,13 @@ Template.nannyFilter.events({
     'click #filter-button': nannyFilter,
     'click #refresh-button': refreshFilter,
     'keypress .filter-input': (e) => {
-        if (e.which === 13) {
+        if (e.which === 13 || e.keyCode == 13) {
             nannyFilter()
         }
     },
     'change #school-filter': (e) => {
         let options = [{
-            text: "adminType",
+            text: "schoolID",
             value: $('#school-filter').val()
         }]
         reloadTable(1, getLimitDocPerPage(), options)
@@ -253,7 +264,7 @@ function checkInput() {
                 })
                 return false;
             }
-            
+
         }
         return true;
     }
@@ -271,7 +282,7 @@ function clearForm() {
     $("#status-input").val("");
     if (Session.get(_SESSION.isSuperadmin)) {
         $('#school-input').val('').trigger('change')
-     }
+    }
     dropzone.removeAllFiles(true)
 }
 
@@ -309,6 +320,7 @@ function createRow(result) {
         username: result.user.username,
         address: result.address,
         schoolID: result.schoolID,
+        schoolName: result.school.name,
         IDNumber: result.IDNumber,
         IDIssueDate: result.IDIssueDate,
         IDIssueBy: result.IDIssueBy,
@@ -317,7 +329,8 @@ function createRow(result) {
     }
     return `
         <tr id="${data._id}" class="table-row">
-            <th scope="row">${result.index + 1}</th>
+            <th class="text-center">${result.index + 1}</th>
+            ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>`: ''}
             <td>${data.name}</td>
             <td>${data.username}</td>
             <td>${data.phone}</td>
@@ -327,7 +340,7 @@ function createRow(result) {
             <td>${data.IDIssueDate}</td>
             <td>${data.IDIssueBy}</td>
             <td>${data.status}</td>
-            <td>
+            <td class="text-center>
                 <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
                 <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
             </td>
@@ -364,14 +377,14 @@ function nannyFilter() {
     }]
     console.log(options);
     reloadTable(1, getLimitDocPerPage(), options)
-  }
-  
-  function refreshFilter() {
-    $('#school-filter').val('')
+}
+
+function refreshFilter() {
+    $('#school-filter').val('').trigger('change')
     $('#name-filter').val('')
     $('#phone-filter').val('')
     $('#email-filter').val('')
     $('#cccd-filter').val('')
 
     reloadTable(1, getLimitDocPerPage(), null)
-  }
+}

@@ -40,7 +40,11 @@ if (Meteor.isServer) {
 
 //XEM
 function getDrivers(data, accessToken = '') {
-    let url = AUTH_DRIVER;
+    let url = `${AUTH_DRIVER}?`;
+    if (data && data.options && data.options.length)
+        data.options.forEach(item => {
+            if (item.value != '') url += `${encodeURIComponent(item.text)}=${encodeURIComponent(item.value)}&`
+        })
     return httpDefault(METHOD.get, url, {
         token: accessToken
     })

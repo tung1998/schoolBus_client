@@ -59,7 +59,7 @@ Template.moduleFilter.events({
     'click #filter-button': reloadTable,
     'click #refresh-button': refreshFilter,
     'keypress .filter-input': (e) => {
-        if (e.which == 13) {
+        if (e.which == 13 || e.keyCode == 13) {
             reloadTable()
         }
     }

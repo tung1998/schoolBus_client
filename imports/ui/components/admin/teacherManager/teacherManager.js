@@ -31,7 +31,6 @@ let dropzone
 
 Template.teacherManager.onCreated(() => {
   accessToken = Cookies.get("accessToken");
-  Session.set(_SESSION.isSuperadmin, true)
   Session.set('schools', [])
 });
 
@@ -43,12 +42,16 @@ Template.teacherManager.onRendered(() => {
   dropzone = initDropzone("#kt_dropzone_1")
   this.dropzone = dropzone
 
-  MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
-    Session.set(_SESSION.isSuperadmin, result)
-    if (result)
-      initSchoolSelect2()
-  }).catch(handleError)
+  if (Session.get(_SESSION.isSuperadmin))
+    initSchoolSelect2()
+
 });
+
+Template.teacherManager.helpers({
+  isSuperadmin() {
+    return Session.get(_SESSION.isSuperadmin)
+  }
+})
 
 
 Template.teacherManager.onDestroyed(() => {
@@ -81,6 +84,39 @@ Template.editTeacherModal.helpers({
   },
 });
 
+Template.teacherFilter.onRendered(() => {
+  $('#school-filter').select2({
+    placeholder: "Chọn trường",
+    width: "100%"
+  })
+})
+
+Template.teacherFilter.helpers({
+  isSuperadmin() {
+    return Session.get(_SESSION.isSuperadmin)
+  },
+  schools() {
+    return Session.get('schools')
+  },
+});
+
+Template.teacherFilter.events({
+  'click #filter-button': teacherFilter,
+  'click #refresh-button': refreshFilter,
+  'keypress .filter-input': (e) => {
+    if (e.which === 13 || e.keyCode == 13) {
+      teacherFilter()
+    }
+  },
+  'change #school-filter': (e) => {
+    let options = [{
+      text: "schoolID",
+      value: $('#school-filter').val()
+    }]
+    reloadTable(1, getLimitDocPerPage(), options)
+  }
+})
+
 function dzPreviewClick() {
   dropzone.hiddenFileInput.click()
 }
@@ -100,11 +136,11 @@ function ClickModifyButton(e) {
   $(".confirm-button").html("Sửa");
   $("#editTeacherModal").modal("show");
 
-  $(' input[name="name"]').val(teacherData.name);
-  $(' input[name="phoneNumber"]').val(teacherData.phone);
-  $(' input[name="email"]').val(teacherData.email);
-  $(' #school-select').val(teacherData.school).trigger('change');
-  $(' input[name="class"]').val(teacherData.class);
+  $('input[name="name"]').val(teacherData.name);
+  $('input[name="phoneNumber"]').val(teacherData.phone);
+  $('input[name="email"]').val(teacherData.email);
+  $('#school-select').val(teacherData.school).trigger('change');
+  $('input[name="class"]').val(teacherData.class);
 
   if (Session.get(_SESSION.isSuperadmin)) {
     $('#school-input').val(teacherData.schoolID).trigger('change')
@@ -252,11 +288,12 @@ function getLimitDocPerPage() {
   return parseInt($("#limit-doc").val());
 }
 
-function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
+function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options = null) {
   let table = $('#table-body');
   MeteorCall(_METHODS.teacher.GetByPage, {
     page: page,
-    limit: limitDocPerPage
+    limit: limitDocPerPage,
+    options
   }, accessToken).then(result => {
     handlePaging(table, result.count, page, limitDocPerPage)
     createTable(table, result, limitDocPerPage)
@@ -266,8 +303,8 @@ function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
 
 function createTable(table, result, limitDocPerPage) {
   let htmlRow = result.data.map((key, index) => {
-      key.index = index + (result.page - 1) * limitDocPerPage;
-      return createRow(key);
+    key.index = index + (result.page - 1) * limitDocPerPage;
+    return createRow(key);
   });
   table.html(htmlRow.join(''))
 }
@@ -284,22 +321,47 @@ function createRow(result) {
     image: result.user.image
   };
   return `<tr id="${data._id}" class="table-row">
-                <td scope="row">${result.index + 1}</td>
+                <td class="text-center">${result.index + 1}</td>
                 <td>${data.name}</td>
                 <td>${data.username}</td>
                 <td>${data.phone}</td>
                 <td>${data.email}</td>
-                <td>${data.schoolName}</td>
-                <td>
-                <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
-    data
-  )}\'>Sửa</button>
-                <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(
-    data
-  )}\'>Xóa</button>
-  </td>
-  </tr>`;
+                ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>` : ''}
+                
+                <td class="text-center">
+                  <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
+                  <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
+                </td>
+          </tr>`;
 
+}
+
+function teacherFilter() {
+  let options = [{
+    text: "schoolID",
+    value: $('#school-filter').val()
+  }, {
+    text: "user/name",
+    value: $('#name-filter').val()
+  }, {
+    text: "user/phone",
+    value: $('#phone-filter').val()
+  }, {
+    text: "user/email",
+    value: $('#email-filter').val()
+  }]
+  console.log(options);
+  reloadTable(1, getLimitDocPerPage(), options)
+}
+
+function refreshFilter() {
+  $('#school-filter').val('').trigger('change')
+  $('#name-filter').val('')
+  $('#phone-filter').val('')
+  $('#email-filter').val('')
+
+
+  reloadTable(1, getLimitDocPerPage(), null)
 }
 
 function initSchoolSelect2() {
