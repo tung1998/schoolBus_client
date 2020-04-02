@@ -133,7 +133,7 @@ function htmlRow(data) {
                             </a>
 
                             <div class="kt-widget__action">
-                                <span class="btn btn-label-brand btn-sm btn-bold btn-upper">Biển số: ${data.car.numberPlate}</span>
+                                <span class="btn btn-label-brand btn-sm btn-bold btn-upper">Biển số: ${data.car?data.car.numberPlate:''}</span>
                                 <span class="btn btn-label-brand btn-sm btn-bold btn-upper">ĐANG THỰC HIỆN</span>
                             </div>
                         </div>
