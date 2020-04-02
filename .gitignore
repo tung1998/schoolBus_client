@@ -1,3 +1,4 @@
 node_modules/
 .history/
 imports/api/config.js
+imports/variableConst.js

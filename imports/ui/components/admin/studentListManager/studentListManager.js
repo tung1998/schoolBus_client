@@ -34,7 +34,7 @@ Template.studentListManager.onCreated(() => {
 
 Template.studentListManager.onRendered(() => {
     addRequiredInputLabel();
-    addPaging($('studentListTable'));
+    addPaging($('#studentListTable'));
     reloadTable();
 
     MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
@@ -158,7 +158,7 @@ function clickDeleteStudentListButton(e) {
         MeteorCall(_METHODS.studentList.Delete, {
             _id: studentListID
         }, accessToken).then(result => {
-            reloadTable(currentPage, getLimitDocPerPage)
+            reloadTable(currentPage, getLimitDocPerPage())
             handleSuccess('Xóa', "Danh sách")
         }).catch(handleError)
     })
@@ -211,14 +211,14 @@ function createRow(result) {
         _id: result._id,
         name: result.name,
         schoolName: result.school ? result.school.name: '',
-        createTime: result.createdTime
+        createdTime: result.createdTime
     }
     return `
         <tr id="${data._id}" class="table-row">
             <td>${result.index + 1}</td>
             <td>${data.name}</td>
             <td>${data.schoolName}</td>
-            <td>${moment(data.createdTime).format('l')}</td>
+            <td>${moment(data.createdTime).format('L')}</td>
             <td>
             <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
             <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
