@@ -7,7 +7,10 @@ export {
     _TRIP,
     _FEEDBACK
 }
+<<<<<<< HEAD
 // const _URL_images = 'http://192.168.100.69:3000/images'
+=======
+>>>>>>> b5750a80895d3584d6a740bbaec37e55c43353dd
 const _URL_images = 'http://113.190.128.251:3000/images'
 
 const _METHODS = {
