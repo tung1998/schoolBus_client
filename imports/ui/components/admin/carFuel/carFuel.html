@@ -43,20 +43,26 @@
                                 <div class="kt-section__content">
                                     <button type="button" class="btn btn-outline-brand mb-4 add-more"
                                         data-toggle="modal" data-target="#editCarFuelModal">Thêm mới</button>
+                                        <p id="empty-data" class="text-muted font-14 d-none">
+                                            Không có dữ liệu
+                                          </p>
                                     <table class="table table-bordered table-hover" id="carFuelTable">
+                                        
                                         <thead class="thead-light">
                                             <tr>
-                                                <th scope="row"></th>
+                                                <th width="5%">#</th>
+                                                {{#if isSuperadmin}}
+                                                    <th>Trường</th>
+                                                {{/if}}
                                                 <th>Biển số</th>
                                                 <th>Thể tích (lít)</th>
                                                 <th>Đơn giá (VND)</th>
                                                 <th>Thời gian</th>
                                                 <th>Thời gian cập nhật</th>
-                                                <th>Hành Động</th>
+                                                <th width="13%">Hành Động</th>
                                             </tr>
                                         </thead>
                                         <tbody id="table-body">
-
                                         </tbody>
                                     </table>
                                 </div>
@@ -79,34 +85,13 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+                    <h5 class="modal-title" id="exampleModalLabel"></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
                 <div class="modal-body">
                     <form class="kt-form kt-form--label-right">
                         <div class="kt-portlet__body">
-                            <div class="form-group row">
-                                <label class="col-2 col-form-label required-input-label">Chọn xe</label>
-                                <div class="col-10">
-                                    <select id="car-select"></select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="example-search-input" class="col-2 col-form-label required-input-label">Thể
-                                    tích</label>
-                                <div class="col-10">
-                                    <input class="form-control" type="text" id="example-search-input"
-                                        name="volume-input">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="example-email-input" class="col-2 col-form-label required-input-label">Đơn
-                                    giá</label>
-                                <div class="col-10">
-                                    <input class="form-control" type="text" id="example-email-input" name="cost-input">
-                                </div>
-                            </div>
                             {{#if isSuperadmin}}
                             <div class="form-group row">
                                 <label for="example-email-input" class="col-2 col-form-label required-input-label">Trường</label>
@@ -120,6 +105,27 @@
                                 </div>
                             </div>
                             {{/if}}
+                            <div class="form-group row">
+                                <label class="col-2 col-form-label required-input-label">Chọn xe</label>
+                                <div class="col-10">
+                                    <select id="car-select"></select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="example-search-input" class="col-2 col-form-label required-input-label">Thể
+                                    tích</label>
+                                <div class="col-10">
+                                    <input class="form-control" type="text" id="example-search-input"
+                                        name="volume-input" placeholder="Thể tích xe">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="example-email-input" class="col-2 col-form-label required-input-label">Đơn
+                                    giá</label>
+                                <div class="col-10">
+                                    <input class="form-control" type="text" id="example-email-input" name="cost-input" placeholder="Đơn giá">
+                                </div>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary cancel-button"
@@ -143,7 +149,7 @@
     <div class="form-group mb-2">
         <label for="admin-parent-route" class="col-form-label">Trường</label>
         <select class="form-control filter-input" id="school-filter">
-            <option value="">Chọn trường</option>
+            <option value=""></option>
             {{#each schools}}
             <option value="{{_id}}">{{name}}</option>
             {{/each}}

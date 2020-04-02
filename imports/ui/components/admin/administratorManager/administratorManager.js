@@ -26,17 +26,13 @@ let dropzone
 
 Template.administratorManager.onCreated(() => {
     accessToken = Cookies.get("accessToken");
-    Session.set(_SESSION.isSuperadmin, true)
     Session.set('schools', [])
 });
 
 Template.administratorManager.onRendered(() => {
-    MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
-        //console.log(result)
-        Session.set(_SESSION.isSuperadmin, result)
-        if (result)
-            initSchoolSelect2()
-    }).catch(handleError)
+    if (Session.get(_SESSION.isSuperadmin)) {
+        initSchoolSelect2()
+    }
 
     $('#admintype-input').select2({
         width: "100%",
@@ -81,11 +77,24 @@ Template.administratorManager.events({
     "change #admintype-input": adminTypeChange
 });
 
+Template.administratorFilter.onRendered(() => {
+    $('#admin-school-filter').select2({
+        width: "100%",
+        placeholder: "Chọn"
+    })
+    $('#admin-type-filter').select2({
+        width: "100%",
+        placeholder: "Chọn",
+        minimumResultsForSearch: Infinity
+    })
+
+})
+
 Template.administratorFilter.events({
     'click #filter-button': adminstratorFilter,
     'click #refresh-button': refreshFilter,
     'keypress .filter-input': (e) => {
-        if (e.which === 13) {
+        if (e.which === 13 || e.keyCode == 13) {
             adminstratorFilter()
         }
     },
@@ -93,6 +102,13 @@ Template.administratorFilter.events({
         let options = [{
             text: "adminType",
             value: Number($('#admin-type-filter').val())
+        }]
+        reloadTable(1, getLimitDocPerPage(), options)
+    },
+    'change #admin-school-filter': (e) => {
+        let options = [{
+            text: "schoolID",
+            value: $('#admin-school-filter').val()
         }]
         reloadTable(1, getLimitDocPerPage(), options)
     }
@@ -309,6 +325,7 @@ function createRow(result) {
         `
 }
 
+
 function adminstratorFilter() {
     let options = [{
         text: "user/name",
@@ -334,8 +351,8 @@ function refreshFilter() {
     $('#admin-name-filter').val('')
     $('#admin-phone-filter').val('')
     $('#admin-email-filter').val('')
-    $('#admin-type-filter').val('')
-    $('#student-school-filter').val('')
+    $('#admin-type-filter').val('').trigger('change')
+    $('#admin-school-filter').val('').trigger('change')
     reloadTable(1, getLimitDocPerPage(), null)
 }
 

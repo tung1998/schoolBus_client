@@ -17,7 +17,8 @@ FlowRouter.route('/teacherManager', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'teacherManager',
-            panel: 'panel'
+            panel: 'panel',
+            panelData: 'teacherFilter'
         });
     },
 });
@@ -76,7 +77,8 @@ FlowRouter.route('/parentManager', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'parentManager',
-            panel: 'panel'
+            panel: 'panel',
+            panelData: 'parentFilter'
         });
     },
 });
@@ -224,6 +226,8 @@ FlowRouter.route('/feedback', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'feedback',
+            panel: 'panel',
+            panelData: 'feedbackFilter'
         });
     },
 });
@@ -362,7 +366,8 @@ FlowRouter.route('/userManager', {
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'userManager',
-            panel: 'panel'
+            panel: 'panel',
+            panelData: 'userFilter'
         });
     },
 });

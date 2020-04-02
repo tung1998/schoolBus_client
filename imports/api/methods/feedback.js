@@ -32,10 +32,11 @@ function getFeedbackById(data, accessToken = '') {
 
 function getFeedbackByPage(data, accessToken = '') {
     let url = `${BASE_FEEDBACK}/${data.page}?limit=${data.limit}`
-    if (data.options && data.options.length)
+    if (data.options && data.options.length) {
         data.options.forEach(item => {
-            if (item.value) url += `&${encodeURIComponent(item.text)}=${encodeURIComponent(item.value)}`
+            if (item.value !== '') url += `&${encodeURIComponent(item.text)}=${encodeURIComponent(item.value)}`
         })
+    }
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });

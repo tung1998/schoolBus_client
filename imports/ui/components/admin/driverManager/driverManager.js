@@ -55,6 +55,12 @@ Template.driverManager.onDestroyed(() => {
     dropzone = null
 });
 
+Template.driverManager.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    }
+})
+
 Template.driverManager.events({
     'click #add-button': () => {
         $('.modal-title').html("Thêm lái xe mới");
@@ -99,13 +105,13 @@ Template.driverFilter.events({
     'click #filter-button': driverFilter,
     'click #refresh-button': refreshFilter,
     'keypress .filter-input': (e) => {
-        if (e.which === 13) {
+        if (e.which === 13 || e.keyCode == 13) {
             driverFilter()
         }
     },
     'change #school-filter': (e) => {
         let options = [{
-            text: "adminType",
+            text: "schoolID",
             value: $('#school-filter').val()
         }]
         reloadTable(1, getLimitDocPerPage(), options)
@@ -317,6 +323,7 @@ function createRow(result) {
         name: result.user.name,
         username: result.user.username,
         schoolID: result.schoolID,
+        schoolName: result.school.name,
         phone: result.user.phone,
         email: result.user.email,
         address: result.address,
@@ -327,7 +334,7 @@ function createRow(result) {
         DLIssueDate: result.DLIssueDate,
     }
     return `<tr id="${data._id}">
-                <th scope="row">${result.index + 1}</th>
+                <th class="text-center">${result.index + 1}</th>
                 <td>${data.name}</td>
                 <td>${data.phone}</td>
                 <td>${data.email}</td>
@@ -336,7 +343,8 @@ function createRow(result) {
                 <td>${data.IDIssueDate}</td>
                 <td>${data.DLNumber}</td>
                 <td>${data.DLIssueDate}</td>
-                <td>
+                ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>` : ''}
+                <td class="text-center">
                     <button type="button" class="btn btn-outline-brand dz-remove" data-dz-remove
                         data-toggle="modal" id="edit-button" data-target="#editdriverModal" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
                     <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>

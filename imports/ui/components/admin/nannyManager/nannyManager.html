@@ -49,8 +49,11 @@
                       </p>
                     <table class="table table-bordered table-hover" id="nannyTable">
                     <thead class="thead-light">
-                      <tr>
+                      <tr class="text-center">
                         <th>#</th>
+                        {{#if isSuperadmin}}
+                        <th>Trường</th>
+                        {{/if}}
                         <th>Họ tên</th>
                         <th>Tên đăng nhập</th>
                         <th>Số điện thoại</th>
@@ -60,7 +63,7 @@
                         <th>Ngày cấp</th>
                         <th>Nơi cấp</th>
                         <th>Trạng thái</th>
-                        <th></th>
+                        <th width="13%"></th>
                       </tr>
                     </thead>
                     <tbody id="table-body">

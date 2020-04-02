@@ -50,14 +50,14 @@
                     <table id="administratorTable" class="table table-bordered table-hover">
                       <thead class="thead-light">
                         <tr>
-                          <th>#</th>
+                          <th width="4%">#</th>
                           <th>Họ tên</th>
                           <th>Tên đăng nhập</th>
                           <th>Số điện thoại</th>
                           <th>Email</th>
                           <th>Loại admin</th>
                           <th>Trường quản lý</th>
-                          <th></th>
+                          <th widht="13%"></th>
                         </tr>
                       </thead>
                       <tbody id="table-body">
@@ -192,7 +192,7 @@
   <div class="form-group mb-2">
     <label for="admin--route" class="col-form-label">Loại admin</label>
     <select class="form-control filter-input" id="admin-type-filter">
-      <option value="">Chọn</option>
+      <option value=""></option>
       <option value="0">Quản trị viên tổng</option>
       <option value="1">Quản trị viên trường</option>
     </select>
@@ -200,7 +200,7 @@
   <div class="form-group mb-2">
     <label for="admin-parent-route" class="col-form-label">Trường</label>
     <select class="form-control filter-input" id="admin-school-filter">
-      <option value="">Chọn trường</option>
+      <option value=""></option>
       {{#each schools}}
       <option value="{{_id}}">{{name}}</option>
       {{/each}}

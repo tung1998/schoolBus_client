@@ -25,13 +25,22 @@ let currentPage = 1;
 
 Template.route.onCreated(() => {
     accessToken = Cookies.get('accessToken');
+    Session.set('cars', [])
+    Session.set('drivers', [])
+    Session.set('nannys', [])
+    Session.set('studentList', [])
 });
 
 Template.route.onRendered(() => {
-    initSelect2();
+    if (Session.get(_SESSION.isSuperadmin)) {
+        initSchoolSelect2()
+    } else {
+        getSelectData()
+    }
     addRequiredInputLabel();
     addPaging($('#routeTable'));
     reloadTable(1);
+    initSelect2()
 });
 
 Template.route.events({
@@ -48,7 +57,50 @@ Template.route.events({
     },
     "change #limit-doc": (e) => {
         reloadTable(1, getLimitDocPerPage());
+    },
+    'change #school-input': (e) => {
+        let option = [{
+            text: "schoolID",
+            value: $('#school-input').val()
+        }]
+
+        getSelectData(option)
     }
+})
+
+Template.routeModal.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    },
+    cars() {
+        return Session.get('cars')
+    },
+    drivers() {
+        return Session.get('drivers')
+    },
+    nannys() {
+        return Session.get('nannys')
+    },
+    studentList() {
+        return Session.get('studentList')
+    },
+    schools() {
+        return Session.get('schools')
+    }
+})
+
+Template.route.onDestroyed(() => {
+    Session.delete('cars')
+    Session.delete('drivers')
+    Session.delete('nannys')
+    Session.delete('studentList')
+})
+
+Template.routeFilter.onRendered(() => {
+    $('#school-filter').select2({
+        placeholder: "Chọn",
+        width: "100%"
+    })
 })
 
 Template.routeFilter.helpers({
@@ -64,13 +116,13 @@ Template.routeFilter.events({
     'click #filter-button': routeFilter,
     'click #refresh-button': refreshFilter,
     'keypress .filter-input': (e) => {
-        if (e.which === 13) {
+        if (e.which === 13 || e.keyCode == 13) {
             routeFilter()
         }
     },
     'change #school-filter': (e) => {
         let options = [{
-            text: "adminType",
+            text: "schoolID",
             value: $('#school-filter').val()
         }]
         reloadTable(1, getLimitDocPerPage(), options)
@@ -78,68 +130,61 @@ Template.routeFilter.events({
 })
 
 
-function initSelect2() {
-    //initCarSelect2()
-    //initDriverSelect2()
-    //initNannySelect2()
-    initStudentListSelect2()
-}
-
-function initCarSelect2() {
-    MeteorCall(_METHODS.car.GetAll, null, accessToken).then(result => {
-        if (result.data) {
-            let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.numberPlate}</option>`)
-            $('#carSelect').html('<option></option>').append(htmlClassOption.join('')).select2({
-                width: '100%',
-                placeholder: "Select car"
-            })
-        }
-    }).catch(handleError)
-}
-
-function initDriverSelect2() {
-    MeteorCall(_METHODS.driver.GetAll, null, accessToken).then(result => {
-        if (result.data) {
-            let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.user.name}</option>`)
-            $('#driverSelect').html('<option></option>').append(htmlClassOption.join('')).select2({
-                width: '100%',
-                placeholder: "Select driver"
-            })
-        }
-    }).catch(handleError)
-}
-
-function initNannySelect2() {
-    MeteorCall(_METHODS.Nanny.GetAll, {
-        extra: "user"
+function getSelectData(options = null, carID = null, driverID = null, nannyID = null, studentListID = null) {
+    MeteorCall(_METHODS.car.GetAll, {
+        options
     }, accessToken).then(result => {
         if (result.data) {
-            let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.user.name}</option>`)
-            $('#nannySelect').html('<option></option>').append(htmlClassOption.join('')).select2({
-                width: '100%',
-                placeholder: "Select nanny"
-            })
+            if (options && options.length) result.data = result.data.filter(item => item.schoolID == options[0].value)
+            Session.set('cars', result.data)
+            if (carID) $("#carSelect").val(carID).trigger('change')
+        }
+
+    }).catch(handleError)
+
+    MeteorCall(_METHODS.driver.GetAll, {
+        options
+    }, accessToken).then(result => {
+        if (result.data) {
+            if (options && options.length) result.data = result.data.filter(item => item.schoolID == options[0].value)
+            Session.set('drivers', result.data)
+            if (driverID) $("#carSelect").val(driverID).trigger('change')
         }
     }).catch(handleError)
-}
 
-function initStudentListSelect2() {
-    MeteorCall(_METHODS.studentList.GetAll, {}, accessToken).then(result => {
+    MeteorCall(_METHODS.Nanny.GetAll, {
+        extra: "user",
+        options
+    }, accessToken).then(result => {
+        if (result.data) {
+            if (options && options.length) result.data = result.data.filter(item => item.schoolID == options[0].value)
+            Session.set('nannys', result.data)
+            if (nannyID) $("#carSelect").val(nannyID).trigger('change')
+        }
+    }).catch(handleError)
+
+    MeteorCall(_METHODS.studentList.GetAll, {
+        options
+    }, accessToken).then(result => {
         console.log(result)
         if (result.data) {
-            let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.name}</option>`)
-            $('#studentListSelect').html('<option></option>').append(htmlClassOption.join('')).select2({
-                width: '100%',
-                placeholder: "Select student"
-            })
+            if (options && options.length) result.data = result.data.filter(item => item.schoolID == options[0].value)
+            Session.set('studentList', result.data)
+            if (studentListID) $("#carSelect").val(studentListID).trigger('change')
+            // let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.name}</option>`)
+            // $('#studentListSelect').html('<option></option>').append(htmlClassOption.join('')).select2({
+            //     width: '100%',
+            //     placeholder: "Select student"
+            // })
         }
     }).catch(handleError)
+
 }
 
 function clickAddRouteButton() {
     $('#routeModalSubmit').html('Thêm mới')
     $('#routeModal').removeAttr('routeID').modal('show')
-    // clearForm()
+    clearForm()
 
 }
 
@@ -156,6 +201,9 @@ function clickEditListModalSubmit() {
         handleError(null, 'Vui lòng điền tên chuyến đi')
         return
     }
+
+    if (Session.get(_SESSION.isSuperadmin)) data.schoolID = $('#school-input').val()
+
     let routeID = $('#routeModal').attr('routeID')
     if (routeID) {
         handleConfirm('Bạn muốn sửa danh sách?').then(result => {
@@ -183,6 +231,20 @@ function clickEditRouteButton(e) {
     e.preventDefault();
     let data = $(e.currentTarget).data('json')
     $('#route-name').val(data.name)
+    if(Session.get(_SESSION.isSuperadmin)) {
+        $('#school-input').val(data.schooID).trigger('change')
+        getSelectData([{
+            text: 'schoolID',
+            value: data.schoolID
+        }], data.carID, data.driverID, data.nannyID, data.studentListID)
+    }
+    else {
+        $('#carSelect').val(data.carID).trigger('change')
+        $('#driverSelect').val(data.carID).trigger('change')
+        $('#nannySelect').val(data.carID).trigger('change')
+        $('#studentListSelect').val(data.carID).trigger('change')
+    }
+
     $('#routeModalSubmit').html('Cập nhật')
     $('#routeModal').attr('routeID', data._id).modal('show')
     return false
@@ -243,11 +305,16 @@ function createRow(result) {
     let data = {
         _id: result._id,
         name: result.name,
-        carName: result.car?result.car.numberPlate:'',
-        driverName: result.driver?result.driver.user.name:'',
-        nannyName: result.nanny?result.nanny.user.name:'',
-        studentList: result.studentList?result.studentList.name||'':'',
+        carName: result.car ? result.car.numberPlate : '',
+        driverName: result.driver ? result.driver.user.name : '',
+        nannyName: result.nanny ? result.nanny.user.name : '',
+        studentList: result.studentList ? result.studentList.name || '' : '',
     }
+    // if (Session.get(_SESSION.isSuperadmin)) {
+    //     data.schoolID = result.schoolID
+    //     data.schoolName = result.school.name
+    // ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>` : ''}
+    // }
     return ` <tr id="${data._id}">
                 <td>${result.index}</td>
                 <td>${data.name}</td>
@@ -255,6 +322,7 @@ function createRow(result) {
                 <td>${data.driverName}</td>
                 <td>${data.nannyName}</td>
                 <td>${data.studentList}</td>
+               
                 <td>
                 <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
                 <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
@@ -286,10 +354,10 @@ function routeFilter() {
     }]
     console.log(options);
     reloadTable(1, getLimitDocPerPage(), options)
-  }
-  
-  function refreshFilter() {
-    $('#school-filter').val('')
+}
+
+function refreshFilter() {
+    $('#school-filter').val('').trigger('change')
     $('#name-filter').val('')
     $('#car-filter').val('')
     $('#driver-filter').val('')
@@ -297,4 +365,42 @@ function routeFilter() {
     $('#studentList-filter').val('')
 
     reloadTable(1, getLimitDocPerPage(), null)
-  }
+}
+
+function initSchoolSelect2() {
+    MeteorCall(_METHODS.school.GetAll, {}, accessToken).then(result => {
+        Session.set('schools', result.data)
+    }).catch(handleError)
+}
+
+function initSelect2() {
+    let option = [{
+        id: "school-input",
+        placeholder: "Chọn trường"
+    }, {
+        id: "carSelect",
+        placeholder: "Chọn xe"
+    }, {
+        id: "driverSelect",
+        placeholder: "Chọn lái xe"
+    }, {
+        id: "nannySelect",
+        placeholder: "Chọn bảo mẫu"
+    }, {
+        id: "studentListSelect",
+        placeholder: "Chọn danh sách"
+    }]
+    option.map(key => {
+        $(`#${key.id}`).select2({
+            placeholder: key.placeholder,
+            width: '100%'
+            // minimumResultsForSearch: option.search
+        })
+    })
+}
+
+function clearForm() {
+    if (Session.get(_SESSION.isSuperadmin)) {
+        $('#school-input').val('').trigger('change')
+    }
+}
