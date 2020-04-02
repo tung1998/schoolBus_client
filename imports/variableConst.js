@@ -7,13 +7,9 @@ export {
     _TRIP,
     _FEEDBACK
 }
-<<<<<<< HEAD
 // const _URL_images = 'http://192.168.100.69:3000/images'
 const _URL_images = 'http://113.190.128.251:3000/images'
 
-=======
-const _URL_images = 'http://113.190.128.251:3000/images'
->>>>>>> cabde2fd5b02dc59552ff3f32bec72a6b528032a
 const _METHODS = {
     student: {
         GetAll: 'student.getAll',

@@ -24,7 +24,6 @@ let currentPage = 1;
 
 Template.classManager.onCreated(() => {
   accessToken = Cookies.get("accessToken");
-  Session.set(_SESSION.isSuperadmin, true)
   Session.set('schools', [])
 });
 
@@ -32,15 +31,11 @@ Template.classManager.onRendered(() => {
   addPaging($('#classTable'));
   reloadTable();
   addRequiredInputLabel();
-  MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
-    Session.set(_SESSION.isSuperadmin, result)
-    console.log(result);
-    if (result) {
+    if ( Session.get(_SESSION.isSuperadmin)) {
       initSchoolSelect2()
     } else {
       initTeacherSelect2()
     }
-  }).catch(handleError)
 });
 
 Template.classManager.events({
