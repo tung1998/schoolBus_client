@@ -25,6 +25,7 @@ let currentPage = 1;
 
 Template.route.onCreated(() => {
     accessToken = Cookies.get('accessToken');
+    Session.set('schools', [])
     Session.set('cars', [])
     Session.set('drivers', [])
     Session.set('nannys', [])
@@ -42,6 +43,12 @@ Template.route.onRendered(() => {
     reloadTable(1);
     initSelect2()
 });
+
+Template.route.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    }
+})
 
 Template.route.events({
     'click #addRouteButton': clickAddRouteButton,
@@ -72,6 +79,9 @@ Template.routeModal.helpers({
     isSuperadmin() {
         return Session.get(_SESSION.isSuperadmin)
     },
+    schools() {
+        return Session.get('schools')
+    },
     cars() {
         return Session.get('cars')
     },
@@ -84,9 +94,6 @@ Template.routeModal.helpers({
     studentList() {
         return Session.get('studentList')
     },
-    schools() {
-        return Session.get('schools')
-    }
 })
 
 Template.route.onDestroyed(() => {
@@ -137,8 +144,8 @@ function getSelectData(options = null, carID = null, driverID = null, nannyID = 
         if (result.data) {
             if (options && options.length) result.data = result.data.filter(item => item.schoolID == options[0].value)
             Session.set('cars', result.data)
-            if (carID) $("#carSelect").val(carID).trigger('change')
         }
+        if (carID) $("#carSelect").val(carID).trigger('change')
 
     }).catch(handleError)
 
@@ -148,8 +155,8 @@ function getSelectData(options = null, carID = null, driverID = null, nannyID = 
         if (result.data) {
             if (options && options.length) result.data = result.data.filter(item => item.schoolID == options[0].value)
             Session.set('drivers', result.data)
-            if (driverID) $("#carSelect").val(driverID).trigger('change')
         }
+        if (driverID) $("#driverSelect").val(driverID).trigger('change')
     }).catch(handleError)
 
     MeteorCall(_METHODS.Nanny.GetAll, {
@@ -159,8 +166,8 @@ function getSelectData(options = null, carID = null, driverID = null, nannyID = 
         if (result.data) {
             if (options && options.length) result.data = result.data.filter(item => item.schoolID == options[0].value)
             Session.set('nannys', result.data)
-            if (nannyID) $("#carSelect").val(nannyID).trigger('change')
         }
+        if (nannyID) $("#nannySelect").val(nannyID).trigger('change')
     }).catch(handleError)
 
     MeteorCall(_METHODS.studentList.GetAll, {
@@ -170,13 +177,8 @@ function getSelectData(options = null, carID = null, driverID = null, nannyID = 
         if (result.data) {
             if (options && options.length) result.data = result.data.filter(item => item.schoolID == options[0].value)
             Session.set('studentList', result.data)
-            if (studentListID) $("#carSelect").val(studentListID).trigger('change')
-            // let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.name}</option>`)
-            // $('#studentListSelect').html('<option></option>').append(htmlClassOption.join('')).select2({
-            //     width: '100%',
-            //     placeholder: "Select student"
-            // })
         }
+        if (studentListID) $("#studentListSelect").val(studentListID).trigger('change')
     }).catch(handleError)
 
 }
@@ -230,15 +232,15 @@ function clickEditListModalSubmit() {
 function clickEditRouteButton(e) {
     e.preventDefault();
     let data = $(e.currentTarget).data('json')
+    console.log(data);
     $('#route-name').val(data.name)
-    if(Session.get(_SESSION.isSuperadmin)) {
-        $('#school-input').val(data.schooID).trigger('change')
+    if (Session.get(_SESSION.isSuperadmin)) {
+        $('#school-input').val(data.schoolID).trigger('change')
         getSelectData([{
             text: 'schoolID',
             value: data.schoolID
         }], data.carID, data.driverID, data.nannyID, data.studentListID)
-    }
-    else {
+    } else {
         $('#carSelect').val(data.carID).trigger('change')
         $('#driverSelect').val(data.carID).trigger('change')
         $('#nannySelect').val(data.carID).trigger('change')
@@ -305,25 +307,28 @@ function createRow(result) {
     let data = {
         _id: result._id,
         name: result.name,
+        carID: result.carID,
         carName: result.car ? result.car.numberPlate : '',
+        driverID: result.driverID,
         driverName: result.driver ? result.driver.user.name : '',
+        nannyID: result.nannyID,
         nannyName: result.nanny ? result.nanny.user.name : '',
+        studentListID: result.studentListID,
         studentList: result.studentList ? result.studentList.name || '' : '',
     }
-    // if (Session.get(_SESSION.isSuperadmin)) {
-    //     data.schoolID = result.schoolID
-    //     data.schoolName = result.school.name
-    // ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>` : ''}
-    // }
+    if (Session.get(_SESSION.isSuperadmin)) {
+        data.schoolID = result.schoolID
+        data.schoolName = result.school.name
+    }
     return ` <tr id="${data._id}">
-                <td>${result.index}</td>
+                <th class="text-center">${result.index + 1}</th>
+                ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>` : ''}
                 <td>${data.name}</td>
                 <td>${data.carName}</td>
                 <td>${data.driverName}</td>
                 <td>${data.nannyName}</td>
                 <td>${data.studentList}</td>
-               
-                <td>
+                <td class="text-center">
                 <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
                 <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
                 </td>
@@ -370,14 +375,15 @@ function refreshFilter() {
 function initSchoolSelect2() {
     MeteorCall(_METHODS.school.GetAll, {}, accessToken).then(result => {
         Session.set('schools', result.data)
+        $('#school-input').select2({
+            placeholder: "Chọn trường",
+            width: '100%'
+        })
     }).catch(handleError)
 }
 
 function initSelect2() {
     let option = [{
-        id: "school-input",
-        placeholder: "Chọn trường"
-    }, {
         id: "carSelect",
         placeholder: "Chọn xe"
     }, {

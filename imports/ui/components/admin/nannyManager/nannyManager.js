@@ -312,6 +312,7 @@ function createTable(table, result, limitDocPerPage) {
 }
 
 function createRow(result) {
+    console.log(result);
     let data = {
         _id: result._id,
         name: result.user.name,
@@ -319,28 +320,29 @@ function createRow(result) {
         email: result.user.email,
         username: result.user.username,
         address: result.address,
-        schoolID: result.schoolID,
-        schoolName: result.school.name,
         IDNumber: result.IDNumber,
         IDIssueDate: result.IDIssueDate,
         IDIssueBy: result.IDIssueBy,
         status: result.status,
         image: result.image
     }
+
+    if (Session.get(_SESSION.isSuperadmin)) {
+        data.schoolID = result.schoolID
+        data.schoolName = result.school.name
+    }
     return `
         <tr id="${data._id}" class="table-row">
             <th class="text-center">${result.index + 1}</th>
             ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>`: ''}
             <td>${data.name}</td>
-            <td>${data.username}</td>
             <td>${data.phone}</td>
             <td>${data.email}</td>
             <td>${data.address}</td>
             <td>${data.IDNumber}</td>
             <td>${data.IDIssueDate}</td>
             <td>${data.IDIssueBy}</td>
-            <td>${data.status}</td>
-            <td class="text-center>
+            <td class="text-center">
                 <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
                 <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
             </td>

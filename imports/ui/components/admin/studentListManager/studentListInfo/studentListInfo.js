@@ -171,7 +171,14 @@ function classChangeEvent(e) {
     MeteorCall(_METHODS.student.GetByClass, {
         classID
     }, accessToken).then(result => {
-        renderStudentTable($('#modalStudentTable'), result, true)
+        console.log(result);
+        if (result.length == 0) {
+            console.log(1);
+        }
+        else {
+            renderStudentTable($('#modalStudentTable'), result, true)
+        }
+        
     }).catch(handleError)
 }
 
