@@ -42,10 +42,12 @@ Template.studentManager.onCreated(() => {
 
 Template.studentManager.onRendered(() => {
     addRequiredInputLabel();
-    if (Session.get(_SESSION.isSuperadmin)) {
-        initSchoolSelect2()
-    } else
-        getSelectData()
+    this.checkIsSuperadmin = Tracker.autorun(() => {
+        if (Session.get(_SESSION.isSuperadmin)) {
+            initSchoolSelect2()
+        } else
+            getSelectData()
+    })
     initSelect2()
     dropzone = initDropzone("#kt_dropzone_1")
     addPaging($('#studentTable'));
@@ -53,6 +55,7 @@ Template.studentManager.onRendered(() => {
 });
 
 Template.studentManager.onDestroyed(() => {
+    if (this.checkIsSuperadmin) this.checkIsSuperadmin = null
     dropzone = null
     Session.delete('schools')
     Session.delete('class')
@@ -114,7 +117,7 @@ function dzPreviewClick() {
 }
 
 function schoolInputChange(e) {
-    if ($('#school-input').val()){
+    if ($('#school-input').val()) {
         getSelectData([{
             text: 'schoolID',
             value: $('#school-input').val()
