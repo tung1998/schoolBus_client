@@ -33,7 +33,6 @@ let dropzone
 
 Template.driverManager.onCreated(() => {
     accessToken = Cookies.get('accessToken')
-    Session.set(_SESSION.isSuperadmin, true)
     Session.set('schools', [])
 });
 
@@ -44,15 +43,17 @@ Template.driverManager.onRendered(() => {
     dropzone = initDropzone("#kt_dropzone_1")
     this.dropzone = dropzone
 
-    MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
-        Session.set(_SESSION.isSuperadmin, result)
-        if (result)
+    this.checkIsSuperAdmin = Tracker.autorun(() => {
+        if (Session.get(_SESSION.isSuperadmin))
             initSchoolSelect2()
-    }).catch(handleError)
+    })
+
 })
 
 Template.driverManager.onDestroyed(() => {
     dropzone = null
+    if(this.checkIsSuperAdmin) this.checkIsSuperAdmin = null
+    Session.delete('schools')
 });
 
 Template.driverManager.helpers({
@@ -322,8 +323,6 @@ function createRow(result) {
         image: result.user.image,
         name: result.user.name,
         username: result.user.username,
-        schoolID: result.schoolID,
-        schoolName: result.school.name,
         phone: result.user.phone,
         email: result.user.email,
         address: result.address,
@@ -332,6 +331,11 @@ function createRow(result) {
         IDIssueBy: result.IDIssueBy,
         DLNumber: result.DLNumber,
         DLIssueDate: result.DLIssueDate,
+    }
+
+    if(Session.get(_SESSION.isSuperadmin)) {
+        data.schoolID = result.schoolID
+        data.schoolName = result.school.name
     }
     return `<tr id="${data._id}">
                 <th class="text-center">${result.index + 1}</th>
@@ -360,6 +364,10 @@ function initSchoolSelect2() {
             width: '100%',
             placeholder: "Chọn trường"
         })
+        $('#school-filter').select2({
+            placeholder: "Chọn trường",
+            width: "100%"
+          })
     }).catch(handleError)
 }
 
@@ -385,9 +393,9 @@ function driverFilter() {
     }]
     console.log(options);
     reloadTable(1, getLimitDocPerPage(), options)
-  }
-  
-  function refreshFilter() {
+}
+
+function refreshFilter() {
     $('#school-filter').val('')
     $('#name-filter').val('')
     $('#phone-filter').val('')
@@ -396,4 +404,4 @@ function driverFilter() {
     $('#dl-filter').val('')
 
     reloadTable(1, getLimitDocPerPage(), null)
-  }
+}

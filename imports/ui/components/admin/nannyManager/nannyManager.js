@@ -28,7 +28,6 @@ let dropzone;
 
 Template.nannyManager.onCreated(() => {
     accessToken = Cookies.get("accessToken");
-    Session.set(_SESSION.isSuperadmin, true)
     Session.set('schools', [])
 });
 
@@ -38,10 +37,11 @@ Template.nannyManager.onRendered(() => {
     addPaging($('#nannyTable'))
     reloadTable();
     dropzone = initDropzone("#kt_dropzone_1")
-    this.dropzone = dropzone
-
-    if (Session.get(_SESSION.isSuperadmin))
-        initSchoolSelect2()
+    this.dropzone = dropzone 
+    this.checkIsSuperAdmin = Tracker.autorun(() => {
+        if (Session.get(_SESSION.isSuperadmin))
+            initSchoolSelect2()
+    })
 
 });
 
@@ -56,6 +56,7 @@ Template.editNannyModal.helpers({
 
 Template.nannyManager.onDestroyed(() => {
     dropzone = null
+    if(this.checkIsSuperAdmin) this.checkIsSuperAdmin = null
 });
 
 Template.nannyManager.helpers({

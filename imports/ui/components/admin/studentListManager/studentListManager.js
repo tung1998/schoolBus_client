@@ -28,7 +28,6 @@ let currentPage = 1;
 Template.studentListManager.onCreated(() => {
     accessToken = Cookies.get('accessToken');
     console.log(accessToken)
-    Session.set(_SESSION.isSuperadmin, true)
     Session.set('schools', [])
 });
 
@@ -36,13 +35,15 @@ Template.studentListManager.onRendered(() => {
     addRequiredInputLabel();
     addPaging($('#studentListTable'));
     reloadTable();
-
-    MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
-        Session.set(_SESSION.isSuperadmin, result)
-        if (result)
+    this.checkIsSuperAdmin = Tracker.autorun(() => {
+        if (Session.get(_SESSION.isSuperadmin))
             initSchoolSelect2()
-    }).catch(handleError)
+    })
 });
+
+Template.studentListManager.onDestroyed(() => {
+    if (this.checkIsSuperAdmin) this.checkIsSuperAdmin = null
+})
 
 Template.studentListManager.events({
     'click #addStudentListButton': clickAddStudentListButton,
@@ -63,7 +64,7 @@ Template.studentListManager.events({
 
 Template.studentListFilter.onRendered(() => {
     $('#school-filter').select2({
-        placeholder: "Chọn trường", 
+        placeholder: "Chọn trường",
         width: "100%"
     })
 })
@@ -210,7 +211,7 @@ function createRow(result) {
     let data = {
         _id: result._id,
         name: result.name,
-        schoolName: result.school ? result.school.name: '',
+        schoolName: result.school ? result.school.name : '',
         createdTime: result.createdTime
     }
     return `

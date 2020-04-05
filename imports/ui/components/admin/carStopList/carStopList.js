@@ -33,11 +33,16 @@ Template.carStopList.onRendered(() => {
     addRequiredInputLabel();
     addPaging($('#carStopTable'));
     reloadTable();
-
-    if(Session.get(_SESSION.isSuperadmin)) {
-        initSchoolSelect2()
-    }
+    this.checkIsSuperAdmin = Tracker.autorun(() => {
+        if (Session.get(_SESSION.isSuperadmin)) {
+            initSchoolSelect2()
+        }
+    })
 });
+
+Template.carStopList.onDestroyed(() => {
+    if(this.checkIsSuperAdmin) this.checkIsSuperAdmin = null
+})
 
 Template.micromap.onRendered(() => {
     setMapHeight()
@@ -65,6 +70,12 @@ Template.micromap.onRendered(() => {
     });
 })
 
+Template.carStopList.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    }
+})
+
 Template.carStopList.events({
     "submit form": SubmitForm,
     "click .modify-button": ClickModifyButton,
@@ -90,7 +101,7 @@ Template.carStopListFilter.events({
     },
     'change #school-filter': (e) => {
         let options = [{
-            text: "adminType",
+            text: "schoolID",
             value: $('#school-filter').val()
         }]
         reloadTable(1, getLimitDocPerPage(), options)
@@ -155,14 +166,14 @@ function SubmitForm(event) {
     event.target.address.value = " ";
     event.target.location.value = " ";
 
-    if(Session.get(_SESSION.isSuperadmin)) {
+    if (Session.get(_SESSION.isSuperadmin)) {
         carStopUpdate.schoolID = $('#school-input').val()
     }
     MeteorCall(_METHODS.carStop.Update, carStopUpdate, accessToken)
         .then(result => {
             handleSuccess("Thêm").then(() => {
                 $("#editCarStopModal").modal("hide");
-                reloadTable(1, getLimitDocPerPage())
+                reloadTable(currentPage, getLimitDocPerPage())
                 clearForm()
             })
         })
@@ -171,7 +182,7 @@ function SubmitForm(event) {
 
 function getLimitDocPerPage() {
     return parseInt($("#limit-doc").val());
-  }
+}
 
 function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options = null) {
     let table = $('#table-body');
@@ -201,11 +212,18 @@ function createRow(result) {
         name: result.name,
         address: result.address,
     }
+
+    if(Session.get(_SESSION.isSuperadmin)) {
+        data.schoolID = result.schoolID,
+        data.schoolName = result.school.name
+    }
+
     return ` <tr id = ${data._id}>
                 <th scope="row">${result.index + 1}</th>
                 <td>${data.stopType}</td>
                 <td>${data.name}</td>
                 <td>${data.address}</td>
+                ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>` : ''}
                 <td>
                     <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
                         data
@@ -250,6 +268,7 @@ function refreshFilter() {
     $('#school-filter').val('')
     reloadTable(1, getLimitDocPerPage(), null)
 }
+
 function setMapHeight() {
     setInterval(() => {
         //console.log(1), 1000
@@ -272,6 +291,10 @@ function initSchoolSelect2() {
     MeteorCall(_METHODS.school.GetAll, null, accessToken).then(result => {
         Session.set('schools', result.data)
         $('#school-input').select2({
+            width: '100%',
+            placeholder: "Chọn trường"
+        })
+        $('#school-filter').select2({
             width: '100%',
             placeholder: "Chọn trường"
         })

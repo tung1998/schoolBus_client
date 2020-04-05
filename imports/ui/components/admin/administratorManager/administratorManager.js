@@ -30,9 +30,11 @@ Template.administratorManager.onCreated(() => {
 });
 
 Template.administratorManager.onRendered(() => {
-    if (Session.get(_SESSION.isSuperadmin)) {
-        initSchoolSelect2()
-    }
+    this.checkisSuperAdmin = Tracker.autorun(() => {
+        if (Session.get(_SESSION.isSuperadmin)) {
+            initSchoolSelect2()
+        }
+    })
 
     $('#admintype-input').select2({
         width: "100%",
@@ -48,6 +50,7 @@ Template.administratorManager.onRendered(() => {
 
 Template.administratorManager.onDestroyed(() => {
     dropzone = null
+    if(this.checkisSuperAdmin) this.checkisSuperAdmin = null
 });
 
 Template.editAdministratorModal.helpers({

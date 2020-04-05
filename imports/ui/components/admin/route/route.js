@@ -33,11 +33,13 @@ Template.route.onCreated(() => {
 });
 
 Template.route.onRendered(() => {
-    if (Session.get(_SESSION.isSuperadmin)) {
-        initSchoolSelect2()
-    } else {
-        getSelectData()
-    }
+    this.checkIsSuperAdmin = Tracker.autorun(() => {
+        if (Session.get(_SESSION.isSuperadmin)) {
+            initSchoolSelect2()
+        } else {
+            getSelectData()
+        }
+    })
     addRequiredInputLabel();
     addPaging($('#routeTable'));
     reloadTable(1);
@@ -48,6 +50,10 @@ Template.route.helpers({
     isSuperadmin() {
         return Session.get(_SESSION.isSuperadmin)
     }
+})
+
+Template.route.onDestroyed(() => {
+    if (this.checkIsSuperAdmin) this.checkIsSuperAdmin = null
 })
 
 Template.route.events({
@@ -66,12 +72,14 @@ Template.route.events({
         reloadTable(1, getLimitDocPerPage());
     },
     'change #school-input': (e) => {
-        let option = [{
-            text: "schoolID",
-            value: $('#school-input').val()
-        }]
-
-        getSelectData(option)
+        if($('#school-input')) {
+            let option = [{
+                text: "schoolID",
+                value: $('#school-input').val()
+            }]
+    
+            getSelectData(option)
+        }  
     }
 })
 
@@ -191,41 +199,33 @@ function clickAddRouteButton() {
 }
 
 function clickEditListModalSubmit() {
-    let data = {
-        name: $('#route-name').val(),
-        carID: $('#carSelect').val(),
-        driverID: $('#driverSelect').val(),
-        nannyID: $('#nannySelect').val(),
-        studentListID: $('#studentListSelect').val(),
-    }
-    console.log(data)
-    if (!data.name) {
-        handleError(null, 'Vui lòng điền tên chuyến đi')
-        return
-    }
-
-    if (Session.get(_SESSION.isSuperadmin)) data.schoolID = $('#school-input').val()
-
-    let routeID = $('#routeModal').attr('routeID')
-    if (routeID) {
-        handleConfirm('Bạn muốn sửa danh sách?').then(result => {
-            if (result.dismiss) return
+    if(checkForm()) {
+        let data = {
+            name: $('#route-name').val(),
+            carID: $('#carSelect').val(),
+            driverID: $('#driverSelect').val(),
+            nannyID: $('#nannySelect').val(),
+            studentListID: $('#studentListSelect').val(),
+        }
+    
+        if (Session.get(_SESSION.isSuperadmin)) data.schoolID = $('#school-input').val()
+    
+        let routeID = $('#routeModal').attr('routeID')
+        if (routeID) {
             data._id = routeID
             MeteorCall(_METHODS.route.Update, data, accessToken).then(result => {
                 reloadTable(currentPage, getLimitDocPerPage())
-                handleSuccess('Cập nhật', "Danh sách")
+                handleSuccess('Cập nhật')
                 $('#routeModal').modal('hide')
-            }).catch(handleError)
-        })
-    } else {
-        handleConfirm('Bạn muốn thêm mới danh sách?').then(result => {
-            if (result.dismiss) return
+    
+            })
+        } else {
             MeteorCall(_METHODS.route.Create, data, accessToken).then(result => {
                 reloadTable(1, getLimitDocPerPage())
                 $('#routeModal').modal('hide')
-                handleSuccess('Thêm mới', "Danh sách")
-            }).catch(handleError)
-        })
+                handleSuccess('Thêm mới')
+            })
+        }
     }
 }
 
@@ -408,5 +408,36 @@ function initSelect2() {
 function clearForm() {
     if (Session.get(_SESSION.isSuperadmin)) {
         $('#school-input').val('').trigger('change')
+    }
+}
+
+function checkForm() {
+    let name = $('#route-name').val()
+    let carID = $('#carSelect').val()
+    let driverID = $('#driverSelect').val()
+    let nannyID = $('#nannySelect').val()
+    let studentListID = $('#studentListSelect').val()
+
+    if (!name || !carID || !driverID || !nannyID ||! studentListID) {
+        Swal.fire({
+            icon: "error",
+            text: "Chưa đủ thông tin!",
+            timer: 3000
+        })
+        return false;
+    } else {
+        if (Session.get(_SESSION.isSuperadmin)) {
+            let schoolID = $('#school-input').val()
+            if (!schoolID) {
+                Swal.fire({
+                    icon: "error",
+                    text: "Chưa chọn trường!",
+                    timer: 2000
+                })
+                return false;
+            }
+
+        }
+        return true;
     }
 }
