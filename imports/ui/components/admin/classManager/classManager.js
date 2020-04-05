@@ -31,11 +31,13 @@ Template.classManager.onRendered(() => {
   addPaging($('#classTable'));
   reloadTable();
   addRequiredInputLabel();
-    if ( Session.get(_SESSION.isSuperadmin)) {
+  this.checkIsSuperAdmin = Tracker.autorun(() => {
+    if (Session.get(_SESSION.isSuperadmin)) {
       initSchoolSelect2()
     } else {
       initTeacherSelect2()
     }
+  })
 });
 
 Template.classManager.events({
@@ -61,6 +63,11 @@ Template.classManager.helpers({
   }
 })
 
+Template.classManager.onDestroyed(() => {
+  if(this.checkIsSuperAdmin) this.checkIsSuperAdmin = null
+  Session.delete()
+})
+
 Template.editClassModal.helpers({
   isSuperadmin() {
     return Session.get(_SESSION.isSuperadmin)
@@ -69,13 +76,6 @@ Template.editClassModal.helpers({
     return Session.get('schools')
   },
 });
-
-Template.classFilter.onRendered(() => {
-  $('#school-filter').select2({
-    placeholder: "Chọn trường",
-    width: "100%"
-  })
-})
 
 Template.classFilter.helpers({
   isSuperadmin() {
@@ -286,7 +286,7 @@ function createRow(result) {
     teacherName: result.teacher.user.name
   }
   // let rowSchool = Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>`: ''
-  
+
   return `
         <tr id="${data._id}">
           <th class="text-center">${result.index + 1}</th>
@@ -307,6 +307,10 @@ function initSchoolSelect2() {
     $('#school-input').select2({
       width: '100%',
       placeholder: "Chọn trường"
+    })
+    $('#school-filter').select2({
+      placeholder: "Chọn trường",
+      width: "100%"
     })
   }).catch(handleError)
 }

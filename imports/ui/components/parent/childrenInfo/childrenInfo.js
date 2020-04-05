@@ -7,7 +7,8 @@ import {
 } from "../../../../functions";
 
 import {
-    _METHODS, _URL_images
+    _METHODS,
+    _URL_images
 } from "../../../../variableConst";
 
 let accessToken;
@@ -24,10 +25,11 @@ Template.childrenInfo.onRendered(() => {
 });
 
 Template.childrenInfo.events({
-
+    'click .next-tripBtn': getNextTripData
 });
 
 function htmlChilrent(childrenInfo) {
+    console.log(childrenInfo)
     return `<div class="kt-portlet kt-portlet--height-fluid">
                 <div class="kt-portlet__head kt-portlet__head--noborder"></div>
                 <div class="kt-portlet__body">
@@ -68,10 +70,19 @@ function htmlChilrent(childrenInfo) {
                         </div>
                         
                         <div class="kt-widget__footer">
-                            <button type="button" class="btn btn-label-warning btn-lg btn-upper">Thông tin chi tiết</button>
+                            <button type="button" class="btn btn-label-warning btn-lg btn-upper next-tripBtn" studentID="${childrenInfo._id}">Chuyến đi sắp tới</button>
                         </div>
                     </div>         
                     <!--end::Widget -->
                 </div>
             </div>`
+}
+
+function getNextTripData(e) {
+    let studentID = e.currentTarget.getAttribute('studentID')
+    MeteorCall(_METHODS.trip.GetNext, {
+        studentID
+    }, accessToken).then(result => {
+        console.log(result)
+    }).catch(handleError)
 }

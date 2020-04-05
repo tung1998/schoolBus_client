@@ -30,8 +30,10 @@ Template.carModelManager.onRendered(() => {
     addRequiredInputLabel()
     addPaging($('#carModelTable'))
     reloadTable();
-    if (Session.get(_SESSION.isSuperadmin))
-        initSchoolSelect2()
+    this.checkIsSuperAdmin = Tracker.autorun(() => {
+        if (Session.get(_SESSION.isSuperadmin))
+            initSchoolSelect2()
+    })
 })
 
 Template.carModelManager.helpers({
@@ -74,12 +76,6 @@ Template.carModelFilter.helpers({
     },
 });
 
-Template.carModelFilter.onRendered(() => {
-    $('#school-filter').select2({
-        placeholder: "Chọn trường",
-        width: "100%"
-    })
-})
 
 Template.carModelFilter.events({
     'click #filter-button': carModelilter,
@@ -274,8 +270,12 @@ function createRow(result) {
         fuelCapacity: result.fuelCapacity,
         maintenanceDay: result.maintenanceDay,
         maintenanceDistance: result.maintenanceDistance,
-        schoolID: result.schoolID,
-        schoolName: result.school.name
+       
+    }
+
+    if(Session.get(_SESSION.isSuperadmin)) {
+        data.schoolID = result.schoolID
+        data.schoolName = result.school.name
     }
     return `
         <tr id="${data._id}">
@@ -302,6 +302,10 @@ function initSchoolSelect2() {
         $('#school-input').select2({
             width: '100%',
             placeholder: "Chọn trường"
+        })
+        $('#school-filter').select2({
+            placeholder: "Chọn trường",
+            width: "100%"
         })
     }).catch(handleError)
 }

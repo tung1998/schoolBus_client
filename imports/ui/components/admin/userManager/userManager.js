@@ -308,8 +308,16 @@ function createRow(result) {
     let userType = getUserType(data.userType)
     let blockedText
     if (data.isBlocked == true) {
-        blockedText = `<button type="button" class="btn btn-success btn-sm unblock-user" data-json=\'${JSON.stringify({_id: data._id})}\'>Mở</button>`
-    } else blockedText = `<button type="button" class="btn btn-warning btn-sm block-user" data-json=\'${JSON.stringify({_id: data._id})}\'>Khóa</button>`
+        blockedText =`<div class="alert alert-warning" role="alert">
+                        <div class="alert-text">Khóa</div>
+                    </div>`
+        blockedButton = `<button type="button" class="btn btn-success btn-sm unblock-user" data-json=\'${JSON.stringify({_id: data._id})}\'>Mở</button>`
+    } else {
+        blockedText = `<div class="alert alert-success" role="alert">
+                        <div class="alert-text">Mở</div>
+                    </div>`
+        blockedButton = `<button type="button" class="btn btn-warning btn-sm block-user" data-json=\'${JSON.stringify({_id: data._id})}\'>Khóa</button>`
+    }
     return `
         <tr id="${data._id}" class="table-row">
             <td>${result.index + 1}</td>
@@ -317,7 +325,7 @@ function createRow(result) {
             <td>${data.username}</td>
             <td>${data.phone}</td>
             <td>${data.email}</td>
-            <td>${blockedText}</td>
+            <td>${blockedText}/${blockedButton}</td>
             <td>${data.blockedReason}</td>
             <td>${userType}</td>
 
