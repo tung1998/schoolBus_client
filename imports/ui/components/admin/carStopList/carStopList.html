@@ -43,6 +43,9 @@
                                 <div class="kt-section__content">
                                     <a href="/carStop"><button type="button" class="btn btn-outline-brand mb-4 add-more"
                                             data-toggle="modal" data-target="#editStudentModal">Thêm mới</button></a>
+                                    <p id="empty-data" class="text-muted font-14 d-none">
+                                        Không có dữ liệu
+                                    </p>
                                     <table class="table table-bordered table-hover" id="carStopTable">
                                         <thead class="thead-light">
                                             <tr>
@@ -50,6 +53,9 @@
                                                 <th>Loại điểm dừng</th>
                                                 <th>Tên điểm dừng</th>
                                                 <th>Địa chỉ</th>
+                                                {{#if isSuperadmin}}
+                                                <th>Trường</th>
+                                                {{/if}}
                                                 <th>Hành động</th>
                                             </tr>
                                         </thead>
@@ -143,6 +149,17 @@
 </template>
 
 <template name="carStopListFilter">
+    {{#if isSuperadmin}}
+    <div class="form-group mb-2">
+        <label for="admin-parent-route" class="col-form-label">Trường</label>
+        <select class="form-control filter-input" id="school-filter">
+            <option value="">Chọn trường</option>
+            {{#each schools}}
+            <option value="{{_id}}">{{name}}</option>
+            {{/each}}
+        </select>
+    </div>
+    {{/if}}
     <div class="form-group mb-2">
         <label for="admin-name" class="col-form-label">Loại điểm dừng</label>
         <input class="form-control filter-input" type="text" placeholder="Loại điểm dừng" id="carStop-type-filter">
@@ -155,17 +172,6 @@
         <label for="admin-parent-route" class="col-form-label">Địa chỉ</label>
         <input class="form-control filter-input" type="text" placeholder="Biển số" id="carStop-address-filter">
     </div>
-    {{#if isSuperadmin}}
-    <div class="form-group mb-2">
-        <label for="admin-parent-route" class="col-form-label">Trường</label>
-        <select class="form-control filter-input" id="school-filter">
-            <option value="">Chọn trường</option>
-            {{#each schools}}
-            <option value="{{_id}}">{{name}}</option>
-            {{/each}}
-        </select>
-    </div>
-    {{/if}}
     <div class="form-group mt-4">
         <button type="submit" class="btn btn-primary btn-sm" id="filter-button">Tìm kiếm</button>
         <button type="submit" class="btn btn-success btn-sm" id="refresh-button">Refresh</button>

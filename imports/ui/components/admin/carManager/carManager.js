@@ -31,16 +31,19 @@ Template.carManager.onRendered(() => {
     addRequiredInputLabel();
     addPaging($('#carTable'));
     reloadTable();
-    renderModelOption();
-
-    if (Session.get(_SESSION.isSuperadmin))
+    this.checkIsSuperAdmin = Tracker.autorun(() => {
+        if (Session.get(_SESSION.isSuperadmin)) {
             initSchoolSelect2()
-
+        }
+        else {
+            renderModelOption()
+        }
+    })
 })
 
 Template.carManager.helpers({
     isSuperadmin() {
-        return Session.get(_SESSION.isSuperadmin) 
+        return Session.get(_SESSION.isSuperadmin)
     }
 })
 Template.editCarManagerModal.helpers({
@@ -65,14 +68,18 @@ Template.carManager.events({
     },
     "change #limit-doc": (e) => {
         reloadTable(1, getLimitDocPerPage());
+    },
+    "change #school-input": (e) => {
+        renderModelOption([{
+            text: "schoolID",
+            value: $('#school-input').val()
+        }]);
     }
 });
 
-Template.carFilter.onRendered(() => {
-    $('#school-filter').select2({
-        width: "100%",
-        placeholder: "Chọn trường"
-    })
+Template.carManager.onDestroyed(() => {
+    if (this.checkIsSuperAdmin) this.checkIsSuperAdmin = null
+    Session.delete('schools')
 })
 
 Template.carFilter.events({
@@ -102,17 +109,22 @@ Template.carFilter.helpers({
 });
 
 
-function renderModelOption() {
-    MeteorCall(_METHODS.carModel.GetAll, null, accessToken)
+function renderModelOption(options = null, carModelID = null) {
+    MeteorCall(_METHODS.carModel.GetAll, {
+            options
+        }, accessToken)
         .then(result => {
-            let optionSelects = result.data.map(res => {
-                return `<option value="${res._id}">${res.brand}-${res.model}</option>`;
+            if (options && options.length) carModelData = result.data.filter(item => item.schoolID == options[0].value)
+            let optionSelects =carModelData.map(result => {
+                return `<option value="${result._id}">${result.brand}-${result.model}</option>`;
             });
             $("#model-select").html('<option></option>').append(optionSelects.join(" "));
             $("#model-select").select2({
                 placeholder: "Chọn model",
                 width: "100%"
             })
+
+            if(carModelID) $('#model-select').val(carModelID).trigger('change')
         })
         .catch(handleError);
 }
@@ -139,6 +151,10 @@ function ClickModifyButton(event) {
     $('input[name="status-input"]').val(carData.status);
     if (Session.get(_SESSION.isSuperadmin)) {
         $('#school-input').val(carData.schoolID).trigger('change')
+        renderModelOption([{
+            text: "schoolID",
+            value: $('#school-input').val()
+        }], carData.carModelID)
     }
 
 }
@@ -304,6 +320,10 @@ function initSchoolSelect2() {
         Session.set('schools', result.data)
         $('#school-input').select2({
             width: '100%',
+            placeholder: "Chọn trường"
+        })
+        $('#school-filter').select2({
+            width: "100%",
             placeholder: "Chọn trường"
         })
     }).catch(handleError)
