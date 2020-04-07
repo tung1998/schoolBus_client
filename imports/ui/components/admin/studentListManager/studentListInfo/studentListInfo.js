@@ -34,7 +34,7 @@ let markers_id = [];
 let poly;
 Template.studentListInfo.onCreated(() => {
     accessToken = Cookies.get('accessToken');
-    
+
 });
 
 Template.studentListInfo.onRendered(() => {
@@ -95,7 +95,9 @@ Template.carStopList_studentListInfo.onRendered(() => {
             'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         id: 'mapbox.streets'
     }).addTo(carStopmap);
-    setInterval(() => { carStopmap.invalidateSize(); }, 0) //invalidate Size of map
+    setInterval(() => {
+        carStopmap.invalidateSize();
+    }, 0) //invalidate Size of map
     window.markerGroup = L.layerGroup().addTo(carStopmap); //create markerGroup
 })
 
@@ -174,11 +176,10 @@ function classChangeEvent(e) {
         console.log(result);
         if (result.length == 0) {
             console.log(1);
-        }
-        else {
+        } else {
             renderStudentTable($('#modalStudentTable'), result, true)
         }
-        
+
     }).catch(handleError)
 }
 
@@ -201,18 +202,22 @@ function reloadTable() {
     return MeteorCall(_METHODS.studentList.GetById, {
         _id: studentListID
     }, accessToken).then(result => {
-        //console.log(result)
-        studentIDs = result.studentIDs;
-        studentStopPoint = result.carStops;
-        carStopIDs = result.carStopIDs;
-        defaultCarStop = result.carStopIDs;
-        studentStopPoint.map((data, index) => {
-            stopPointOrder.push(index);
-            setMarker(data.location, data.name, data.address)
-            stopPointCoors.push(data.location);
-        })
-        renderStudentTable($('#studentTable'), result.students)
-        return result
+        if (result.studentIDs.length) {
+            studentIDs = result.studentIDs;
+            studentStopPoint = result.carStops;
+            carStopIDs = result.carStopIDs;
+            defaultCarStop = result.carStopIDs;
+            studentStopPoint.map((data, index) => {
+                stopPointOrder.push(index);
+                setMarker(data.location, data.name, data.address)
+                stopPointCoors.push(data.location);
+            })
+            renderStudentTable($('#studentTable'), result.students)
+            return result
+        }
+        else {
+            $('#studentTable').html('<tr class="text-center"><td colspan="6">Danh sách trống</td></tr>')
+        }
     }).catch(handleError)
 }
 
@@ -260,7 +265,9 @@ function clickStudentCheckBox(e) {
 }
 
 function setMarker(arr, des, address) {
-    let mark = L.marker(arr).bindTooltip(des, { permanent: false }).addTo(carStopmap);
+    let mark = L.marker(arr).bindTooltip(des, {
+        permanent: false
+    }).addTo(carStopmap);
     markers_id.push(markerGroup.getLayerId(mark))
     let popup = `
                 <div class="font-14">
@@ -283,7 +290,12 @@ function setSortableData(str) {
 }
 
 function addPoly(arr) {
-    poly = L.polyline(arr, { color: 'blue', weight: 4, opacity: 0.5, smoothFactor: 1 }).addTo(markerGroup);
+    poly = L.polyline(arr, {
+        color: 'blue',
+        weight: 4,
+        opacity: 0.5,
+        smoothFactor: 1
+    }).addTo(markerGroup);
     polyID = markerGroup.getLayerId(poly);
 }
 
@@ -328,10 +340,10 @@ function setColor(id, pos, name) {
     }
 }
 
-function swapPcs(arr){
-    let c=arr[1];
-    arr[1]=arr[0];
-    arr[0]=c;
+function swapPcs(arr) {
+    let c = arr[1];
+    arr[1] = arr[0];
+    arr[0] = c;
     return arr;
 }
 
