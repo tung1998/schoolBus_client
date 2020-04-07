@@ -54,8 +54,8 @@ Template.userManager.events({
     'click #block-confirm-button': submitBlockUser,
     'click .block-user': clickBlockUser,
     'click .unblock-user': clickUnBlockUser,
-    'click #edit-user': clickEditUser,
-    'click #delete-user': clickDeleteUser,
+    'click .edit-user': clickEditUser,
+    'click .delete-user': clickDeleteUser,
     'click #user-checkbox-all': (e) => {
         let checkAll = $('#user-checkbox-all').prop('checked')
         if (checkAll) {
@@ -308,28 +308,26 @@ function createRow(result) {
     let userType = getUserType(data.userType)
     let blockedText
     if (data.isBlocked == true) {
-        blockedText =`<div class="alert alert-warning" role="alert">
-                        <div class="alert-text">Khóa</div>
-                    </div>`
-        blockedButton = `<button type="button" class="btn btn-success btn-sm unblock-user" data-json=\'${JSON.stringify({_id: data._id})}\'>Mở</button>`
+        blockedText = `<span class="kt-badge kt-badge--warning kt-badge--inline  kt-badge--pill kt-badge--rounded">Khóa</span>`
+        blockedButton = `<a class="dropdown-item unblock-user" href="#" data-json=\'${JSON.stringify({_id: data._id})}\'><i
+        class="la la-unlock-alt"></i> Mở</a>`
     } else {
-        blockedText = `<div class="alert alert-success" role="alert">
-                        <div class="alert-text">Mở</div>
-                    </div>`
-        blockedButton = `<button type="button" class="btn btn-warning btn-sm block-user" data-json=\'${JSON.stringify({_id: data._id})}\'>Khóa</button>`
+        blockedText = `<span class="kt-badge kt-badge--success kt-badge--inline kt-badge--pill kt-badge--rounded">Mở</span>`
+        blockedButton = `<a class="dropdown-item block-user" href="#" data-json=\'${JSON.stringify({_id: data._id})}\'><i
+        class="la la-unlock"></i> Khóa</a>`
     }
     return `
         <tr id="${data._id}" class="table-row">
-            <td>${result.index + 1}</td>
+            <td class="text-center">${result.index + 1}</td>
             <td>${data.name}</td>
             <td>${data.username}</td>
             <td>${data.phone}</td>
             <td>${data.email}</td>
-            <td>${blockedText}/${blockedButton}</td>
+            <td class="text-center">${blockedText}</td>
             <td>${data.blockedReason}</td>
             <td>${userType}</td>
 
-             <td>
+             <td class="text-center">
                 <div class="from-group">
                     <label class="kt-checkbox kt-checkbox--brand">
                     <input type="checkbox" class="user-checkbox">
@@ -337,7 +335,7 @@ function createRow(result) {
                     </label>
                 </div>
             </td>
-            <td>
+            <td class="text-center">
                 <div class="dropdown dropdown-inline">
                     <button type="button"
                     class="btn btn-hover-danger btn-elevate-hover btn-icon btn-sm btn-icon-md"
@@ -347,10 +345,11 @@ function createRow(result) {
                     <div class="dropdown-menu dropdown-menu-right">
                     <a class="dropdown-item" href="#" data-json=\'${JSON.stringify({_id: data._id})}\' data-toggle="modal"
                     data-target="#editPasswordModal"><i class="la la-key"></i> Đổi mật khẩu</a>
-                    <a class="dropdown-item" href="#" data-json=\'${JSON.stringify(data)}\' id="edit-user"><i
+                    <a class="dropdown-item edit-user" href="#" data-json=\'${JSON.stringify(data)}\'><i
                         class="la la-pencil-square"></i> Sửa thông tin</a>
+                    ${blockedButton}
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#" data-json=\'${JSON.stringify({_id: data._id})}\' id="delete-user"><i class="la la-trash"></i> Xóa</a>
+                    <a class="dropdown-item delete-user" href="#" data-json=\'${JSON.stringify({_id: data._id})}\'><i class="la la-trash"></i> Xóa</a>
                     </div>
                 </div>
             </td>
