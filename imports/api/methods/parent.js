@@ -22,8 +22,10 @@ if (Meteor.isServer) {
         'Parent.getAll': getParents,
         'Parent.getByID': getParentByID,
         'Parent.getByPage': getParentByPage,
+        'Parent.getByClass': getParentByClass,
         'Parent.update': updateParent,
-        'Parent.delete': deleteParent
+        'Parent.delete': deleteParent,
+
     });
 }
 //THÊM
@@ -59,6 +61,14 @@ function getParentByPage(data, accessToken = '') {
         token: accessToken
     });
 }
+
+function getParentByClass(data, accessToken = '') {
+    let url = `${AUTH_Parent}/byClass?classID=${data._id}`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
+}
+
 //UPDATE 
 function updateParent(data, accessToken = '') {
     let url = `${AUTH_Parent}/${data._id}`
