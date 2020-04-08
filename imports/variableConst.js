@@ -7,7 +7,9 @@ export {
     _TRIP,
     _FEEDBACK
 }
+// const _URL_images = 'http://192.168.100.69:3000/images'
 const _URL_images = 'http://113.190.128.251:3000/images'
+
 const _METHODS = {
     student: {
         GetAll: 'student.getAll',
@@ -75,11 +77,11 @@ const _METHODS = {
     },
     class: {
         GetAll: 'class.getAll',
-            GetByPage: 'class.getByPage',
-            GetById: 'class.getByID',
-            Create: 'class.create',
-            Update: 'class.update',
-            Delete: 'class.delete',
+        GetByPage: 'class.getByPage',
+        GetById: 'class.getByID',
+        Create: 'class.create',
+        Update: 'class.update',
+        Delete: 'class.delete',
     },
     config: {
         GetAll: 'config.getAll',

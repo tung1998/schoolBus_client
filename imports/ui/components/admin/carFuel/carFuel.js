@@ -23,31 +23,43 @@ import {
 
 let accessToken;
 let currentPage = 1;
-let isSuperadmin
-
 Template.carFuel.onCreated(() => {
     accessToken = Cookies.get("accessToken");
-    isSuperadmin = Session.get(_SESSION.isSuperadmin)
     Session.set('schools', [])
 });
 
 Template.carFuel.onRendered(() => {
-    if (isSuperadmin)
-        initSchoolSelect2()
+    this.checkIsSuperAdmin = Tracker.autorun(() => {
+        if (Session.get(_SESSION.isSuperadmin)) {
+            initSchoolSelect2()
+        }
+        else {
+            renderCarOption()
+        }
+    })
     reloadTable();
     addRequiredInputLabel()
     addPaging($('#carFuelTable'))
     $("#car-select").select2({
         placeholder: "Chọn Xe",
         width: "100%",
-        minimumResultsForSearch: Infinity,
     })
-    renderCarOption();
 });
+
+Template.carFuel.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    }
+})
+
+Template.carFuel.onDestroyed(() => {
+    if (this.checkIsSuperAdmin) this.checkIsSuperAdmin = null
+    Session.delete('schools')
+})
 
 Template.editCarFuelModal.helpers({
     isSuperadmin() {
-        return isSuperadmin
+        return Session.get(_SESSION.isSuperadmin)
     },
     schools() {
         return Session.get('schools')
@@ -68,13 +80,19 @@ Template.carFuel.events({
     "change #limit-doc": (e) => {
         reloadTable(1, getLimitDocPerPage());
     },
+    "change #school-input": (e) => {
+        renderCarOption([{
+            text: "schoolID",
+            value: $('#school-input').val()
+        }])
+    }
 });
 
 Template.carFuelFilter.events({
     'click #filter-button': carFuelFilter,
     'click #refresh-button': refreshFilter,
     'keypress .filter-input': (e) => {
-        if (e.which === 13) {
+        if (e.which === 13 || e.keyCode == 13) {
             carFuelFilter()
         }
     },
@@ -89,7 +107,7 @@ Template.carFuelFilter.events({
 
 Template.carFuelFilter.helpers({
     isSuperadmin() {
-        return isSuperadmin
+        return Session.get(_SESSION.isSuperadmin)
     },
     schools() {
         return Session.get('schools')
@@ -97,13 +115,18 @@ Template.carFuelFilter.helpers({
 });
 
 
-function renderCarOption() {
-    MeteorCall(_METHODS.car.GetAll, null, accessToken)
+function renderCarOption(options = null, carID = null) {
+    MeteorCall(_METHODS.car.GetAll, {
+            options
+        }, accessToken)
         .then(result => {
-            let optionSelects = result.data.map(res => {
+            if (options && options.length) carData = result.data.filter(item => item.schoolID == options[0].value)
+            console.log(carData);
+            let optionSelects = carData.map(res => {
                 return `<option value=${res._id}>Biển số:&nbsp;${res.numberPlate}&nbsp&nbsp${res.carModel.brand}-${res.carModel.model}</option>`;
             });
             $("#car-select").html('<option></option>').append(optionSelects.join(" "));
+            if (carID) $('#car-select').val(carID).trigger('change')
         })
         .catch(handleError);
 }
@@ -127,26 +150,37 @@ function ClickModifyButton(event) {
 
     if (Session.get(_SESSION.isSuperadmin)) {
         $('#school-input').val(carFuelData.schoolID).trigger('change')
+        renderCarOption([{
+            text: "schoolID",
+            value: $('#school-input').val()
+        }], carFuelData.carID)
+    }
+    else {
+        $('#car-select').val(carFuelData.carID).trigger('change')
     }
 
-    $('#car-select').val(carFuelData.carID).trigger('change')
+   
     $('input[name="volume-input"]').val(carFuelData.volume);
     $('input[name="cost-input"]').val(carFuelData.price);
 }
 
 function ClickDeleteButton(event) {
-    let data = $(event.currentTarget).data("json");
-    console.log(data._id)
-    MeteorCall(_METHODS.carFuel.Delete, data, accessToken)
-        .then(result => {
-            reloadTable(currentPage, getLimitDocPerPage())
-        })
-        .catch(handleError);
+    handleConfirm().then(result => {
+        if (result.value) {
+            let data = $(event.currentTarget).data("json");
+            console.log(data._id)
+            MeteorCall(_METHODS.carFuel.Delete, data, accessToken)
+                .then(result => {
+                    reloadTable(currentPage, getLimitDocPerPage())
+                })
+                .catch(handleError);
+        }
+    })
 }
 
 function SubmitForm(event) {
     event.preventDefault();
-    if (checkInput()) {
+    if (checkForm()) {
         let data = {
             carID: $("#car-select").val(),
             volume: $('input[name="volume-input"]').val(),
@@ -162,6 +196,7 @@ function SubmitForm(event) {
             MeteorCall(_METHODS.carFuel.Create, data, accessToken)
                 .then(result => {
                     $("#editCarFuelModal").modal("hide");
+                    handleSuccess('Thêm')
                     reloadTable(1, getLimitDocPerPage())
                 })
                 .catch(handleError);
@@ -171,6 +206,7 @@ function SubmitForm(event) {
                 .then(result => {
                     $("#editCarFuelModal").modal("hide");
                     reloadTable(currentPage, getLimitDocPerPage())
+                    handleSuccess('Cập nhật')
                 })
                 .catch(handleError);
         }
@@ -178,7 +214,7 @@ function SubmitForm(event) {
 
 }
 
-function checkInput() {
+function checkForm() {
     let volume = $('input[name="volume-input"]').val();
     let cost = $('input[name="cost-input"]').val();
     let car = $("#car-select").val();
@@ -212,6 +248,8 @@ function checkInput() {
 function clearForm() {
     $('input[name="volume-input"]').val("");
     $('input[name="cost-input"]').val("");
+    $('#car-select').val("").trigger('change');
+
     if (Session.get(_SESSION.isSuperadmin)) {
         $('#school-input').val('').trigger('change')
     }
@@ -251,7 +289,9 @@ function createRow(result) {
         volume: result.volume,
         price: result.price,
         createdTime: result.createdTime,
-        updatedTime: result.updatedTime
+        updatedTime: result.updatedTime,
+        schoolID: result.schoolID,
+        schoolName: result.school.name
     }
     return `
         <tr id="${data._id}" class="table-row">
@@ -261,6 +301,7 @@ function createRow(result) {
             <td>${data.price}</td>
             <td>${moment(data.createdTime).format('L')}</td>
             <td>${moment(data.updatedTime).format('L')}</td>
+            ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>` : ''}
             <td>
             <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
             <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
@@ -274,6 +315,10 @@ function initSchoolSelect2() {
         Session.set('schools', result.data)
         $('#school-input').select2({
             width: '100%',
+            placeholder: "Chọn trường"
+        })
+        $('#school-filter').select2({
+            width: "100%",
             placeholder: "Chọn trường"
         })
     }).catch(handleError)
@@ -293,6 +338,6 @@ function carFuelFilter() {
 
 function refreshFilter() {
     $('#carFuel-numberPlate-filter').val('')
-    $('#school-filter').val('')
+    $('#school-filter').val('').trigger('change')
     reloadTable(1, getLimitDocPerPage(), null)
 }

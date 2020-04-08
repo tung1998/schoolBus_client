@@ -28,7 +28,6 @@ let dropzone;
 
 Template.nannyManager.onCreated(() => {
     accessToken = Cookies.get("accessToken");
-    Session.set(_SESSION.isSuperadmin, true)
     Session.set('schools', [])
 });
 
@@ -38,13 +37,12 @@ Template.nannyManager.onRendered(() => {
     addPaging($('#nannyTable'))
     reloadTable();
     dropzone = initDropzone("#kt_dropzone_1")
-    this.dropzone = dropzone
-
-    MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
-        Session.set(_SESSION.isSuperadmin, result)
-        if (result)
+    this.dropzone = dropzone 
+    this.checkIsSuperAdmin = Tracker.autorun(() => {
+        if (Session.get(_SESSION.isSuperadmin))
             initSchoolSelect2()
-    }).catch(handleError)
+    })
+
 });
 
 Template.editNannyModal.helpers({
@@ -58,7 +56,14 @@ Template.editNannyModal.helpers({
 
 Template.nannyManager.onDestroyed(() => {
     dropzone = null
+    if(this.checkIsSuperAdmin) this.checkIsSuperAdmin = null
 });
+
+Template.nannyManager.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    }
+})
 
 Template.nannyManager.events({
     "submit form": SubmitForm,
@@ -81,6 +86,13 @@ function dzPreviewClick() {
     dropzone.hiddenFileInput.click()
 }
 
+Template.nannyFilter.onRendered(() => {
+    $('#school-filter').select2({
+        placeholder: "Chọn trường",
+        width: "100%"
+    })
+})
+
 Template.nannyFilter.helpers({
     isSuperadmin() {
         return Session.get(_SESSION.isSuperadmin)
@@ -94,13 +106,13 @@ Template.nannyFilter.events({
     'click #filter-button': nannyFilter,
     'click #refresh-button': refreshFilter,
     'keypress .filter-input': (e) => {
-        if (e.which === 13) {
+        if (e.which === 13 || e.keyCode == 13) {
             nannyFilter()
         }
     },
     'change #school-filter': (e) => {
         let options = [{
-            text: "adminType",
+            text: "schoolID",
             value: $('#school-filter').val()
         }]
         reloadTable(1, getLimitDocPerPage(), options)
@@ -253,7 +265,7 @@ function checkInput() {
                 })
                 return false;
             }
-            
+
         }
         return true;
     }
@@ -271,7 +283,7 @@ function clearForm() {
     $("#status-input").val("");
     if (Session.get(_SESSION.isSuperadmin)) {
         $('#school-input').val('').trigger('change')
-     }
+    }
     dropzone.removeAllFiles(true)
 }
 
@@ -301,6 +313,7 @@ function createTable(table, result, limitDocPerPage) {
 }
 
 function createRow(result) {
+    console.log(result);
     let data = {
         _id: result._id,
         name: result.user.name,
@@ -308,26 +321,29 @@ function createRow(result) {
         email: result.user.email,
         username: result.user.username,
         address: result.address,
-        schoolID: result.schoolID,
         IDNumber: result.IDNumber,
         IDIssueDate: result.IDIssueDate,
         IDIssueBy: result.IDIssueBy,
         status: result.status,
         image: result.image
     }
+
+    if (Session.get(_SESSION.isSuperadmin)) {
+        data.schoolID = result.schoolID
+        data.schoolName = result.school.name
+    }
     return `
         <tr id="${data._id}" class="table-row">
-            <th scope="row">${result.index + 1}</th>
+            <th class="text-center">${result.index + 1}</th>
+            ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>`: ''}
             <td>${data.name}</td>
-            <td>${data.username}</td>
             <td>${data.phone}</td>
             <td>${data.email}</td>
             <td>${data.address}</td>
             <td>${data.IDNumber}</td>
             <td>${data.IDIssueDate}</td>
             <td>${data.IDIssueBy}</td>
-            <td>${data.status}</td>
-            <td>
+            <td class="text-center">
                 <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
                 <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
             </td>
@@ -364,14 +380,14 @@ function nannyFilter() {
     }]
     console.log(options);
     reloadTable(1, getLimitDocPerPage(), options)
-  }
-  
-  function refreshFilter() {
-    $('#school-filter').val('')
+}
+
+function refreshFilter() {
+    $('#school-filter').val('').trigger('change')
     $('#name-filter').val('')
     $('#phone-filter').val('')
     $('#email-filter').val('')
     $('#cccd-filter').val('')
 
     reloadTable(1, getLimitDocPerPage(), null)
-  }
+}

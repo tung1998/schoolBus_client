@@ -144,13 +144,14 @@ async function reloadData() {
             tripData = await MeteorCall(_METHODS.trip.GetNext, null, accessToken)
 
         //get info trip
+        console.log(tripData)
         Session.set('tripID', tripData._id)
         let dataTrip = {
-            driverName: tripData.route.driver.user.name,
-            driverPhone: tripData.route.driver.user.phone,
-            nannyName: tripData.route.nanny.user.name,
-            nannyPhone: tripData.route.nanny.user.phone,
-            carNunberPlate: tripData.route.car.numberPlate,
+            driverName: tripData.driver.user.name,
+            driverPhone: tripData.driver.user.phone,
+            nannyName: tripData.nanny.user.name,
+            nannyPhone: tripData.nanny.user.phone,
+            carNunberPlate: tripData.car?tripData.car.numberPlate:'',
             startTime: tripData.startTime,
         }
         carStopList = tripData.route.studentList.carStops;

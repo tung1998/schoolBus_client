@@ -49,12 +49,14 @@
 										</p>
 										<table class="table table-bordered table-hover" id="classTable">
 											<thead class="thead-light">
-												<tr>
-													<th>#</th>
+												<tr class="text-center">
+													<th width="4%">#</th>
+													{{#if isSuperadmin}}
 													<th>Trường</th>
+													{{/if}}
 													<th>Lớp</th>
 													<th>Giáo viên</th>
-													<th></th>
+													<th width="13%"></th>
 												</tr>
 											</thead>
 											<tbody id="table-body">
@@ -90,7 +92,7 @@
 								<label for="example-date-input"
 									class="col-2 col-form-label required-input-label">Lớp</label>
 								<div class="col-10">
-									<input class="form-control" type="text" id="class-name" name="className">
+									<input class="form-control" type="text" id="class-name" name="className" placeholder="Tên lớp">
 								</div>
 							</div>
 							{{#if isSuperadmin}}
@@ -145,11 +147,11 @@
 	{{/if}}
 	<div class="form-group mb-2">
 			<label for="admin-name" class="col-form-label">Lớp</label>
-			<input class="form-control filter-input" type="text" placeholder="Lớp" id="class-filter">
+			<input class="form-control filter-input" type="text" placeholder="Tên lớp" id="class-filter">
 	</div>
 	<div class="form-group mb-2">
 			<label for="admin-parent-route" class="col-form-label">Giáo viên</label>
-			<input class="form-control filter-input" type="text" placeholder="Giáo viên" id="teacher-filter">
+			<input class="form-control filter-input" type="text" placeholder="Tên giáo viên" id="teacher-filter">
 	</div>
 	<div class="form-group mt-4">
 			<button type="submit" class="btn btn-primary btn-sm" id="filter-button">Tìm kiếm</button>

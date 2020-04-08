@@ -33,7 +33,6 @@ let dropzone
 
 Template.driverManager.onCreated(() => {
     accessToken = Cookies.get('accessToken')
-    Session.set(_SESSION.isSuperadmin, true)
     Session.set('schools', [])
 });
 
@@ -44,16 +43,24 @@ Template.driverManager.onRendered(() => {
     dropzone = initDropzone("#kt_dropzone_1")
     this.dropzone = dropzone
 
-    MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
-        Session.set(_SESSION.isSuperadmin, result)
-        if (result)
+    this.checkIsSuperAdmin = Tracker.autorun(() => {
+        if (Session.get(_SESSION.isSuperadmin))
             initSchoolSelect2()
-    }).catch(handleError)
+    })
+
 })
 
 Template.driverManager.onDestroyed(() => {
     dropzone = null
+    if(this.checkIsSuperAdmin) this.checkIsSuperAdmin = null
+    Session.delete('schools')
 });
+
+Template.driverManager.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    }
+})
 
 Template.driverManager.events({
     'click #add-button': () => {
@@ -99,13 +106,13 @@ Template.driverFilter.events({
     'click #filter-button': driverFilter,
     'click #refresh-button': refreshFilter,
     'keypress .filter-input': (e) => {
-        if (e.which === 13) {
+        if (e.which === 13 || e.keyCode == 13) {
             driverFilter()
         }
     },
     'change #school-filter': (e) => {
         let options = [{
-            text: "adminType",
+            text: "schoolID",
             value: $('#school-filter').val()
         }]
         reloadTable(1, getLimitDocPerPage(), options)
@@ -316,7 +323,6 @@ function createRow(result) {
         image: result.user.image,
         name: result.user.name,
         username: result.user.username,
-        schoolID: result.schoolID,
         phone: result.user.phone,
         email: result.user.email,
         address: result.address,
@@ -326,8 +332,13 @@ function createRow(result) {
         DLNumber: result.DLNumber,
         DLIssueDate: result.DLIssueDate,
     }
+
+    if(Session.get(_SESSION.isSuperadmin)) {
+        data.schoolID = result.schoolID
+        data.schoolName = result.school.name
+    }
     return `<tr id="${data._id}">
-                <th scope="row">${result.index + 1}</th>
+                <th class="text-center">${result.index + 1}</th>
                 <td>${data.name}</td>
                 <td>${data.phone}</td>
                 <td>${data.email}</td>
@@ -336,7 +347,8 @@ function createRow(result) {
                 <td>${data.IDIssueDate}</td>
                 <td>${data.DLNumber}</td>
                 <td>${data.DLIssueDate}</td>
-                <td>
+                ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>` : ''}
+                <td class="text-center">
                     <button type="button" class="btn btn-outline-brand dz-remove" data-dz-remove
                         data-toggle="modal" id="edit-button" data-target="#editdriverModal" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
                     <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
@@ -352,6 +364,10 @@ function initSchoolSelect2() {
             width: '100%',
             placeholder: "Chọn trường"
         })
+        $('#school-filter').select2({
+            placeholder: "Chọn trường",
+            width: "100%"
+          })
     }).catch(handleError)
 }
 
@@ -377,9 +393,9 @@ function driverFilter() {
     }]
     console.log(options);
     reloadTable(1, getLimitDocPerPage(), options)
-  }
-  
-  function refreshFilter() {
+}
+
+function refreshFilter() {
     $('#school-filter').val('')
     $('#name-filter').val('')
     $('#phone-filter').val('')
@@ -388,4 +404,4 @@ function driverFilter() {
     $('#dl-filter').val('')
 
     reloadTable(1, getLimitDocPerPage(), null)
-  }
+}

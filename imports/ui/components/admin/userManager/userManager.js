@@ -32,15 +32,14 @@ Template.userManager.onCreated(() => {
 });
 
 Template.userManager.onRendered(() => {
-    MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
-        Session.set(_SESSION.isSuperadmin, result)
-        if (result)
-            initSchoolSelect2()
-    }).catch(handleError)
+
+    if (Session.get(_SESSION.isSuperadmin))
+        initSchoolSelect2()
+
     addRequiredInputLabel();
     addPaging($('#userTable'));
     reloadTable()
-    
+
     dropzone = initDropzone("#user-dropzone")
     this.dropzone = dropzone
 })
@@ -55,14 +54,13 @@ Template.userManager.events({
     'click #block-confirm-button': submitBlockUser,
     'click .block-user': clickBlockUser,
     'click .unblock-user': clickUnBlockUser,
-    'click #edit-user': clickEditUser,
-    'click #delete-user': clickDeleteUser,
+    'click .edit-user': clickEditUser,
+    'click .delete-user': clickDeleteUser,
     'click #user-checkbox-all': (e) => {
         let checkAll = $('#user-checkbox-all').prop('checked')
         if (checkAll) {
             $(".user-checkbox").prop("checked", true);
-        }
-        else {
+        } else {
             $(".user-checkbox").prop("checked", false);
         }
     },
@@ -84,6 +82,41 @@ Template.userManager.events({
     },
     'click .dz-preview': dzPreviewClick,
 })
+
+
+Template.userFilter.onRendered(() => {
+    $('#school-filter').select2({
+        placeholder: "Chọn",
+        width: "100%"
+    })
+})
+
+Template.userFilter.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    },
+    schools() {
+        return Session.get('schools')
+    },
+});
+
+Template.userFilter.events({
+    'click #filter-button': userFilter,
+    'click #refresh-button': refreshFilter,
+    'keypress .filter-input': (e) => {
+        if (e.which === 13 || e.keyCode == 13) {
+            userFilter()
+        }
+    },
+    'change #school-filter': (e) => {
+        let options = [{
+            text: "schoolID",
+            value: $('#school-filter').val()
+        }]
+        reloadTable(1, getLimitDocPerPage(), options)
+    }
+})
+
 
 function dzPreviewClick() {
     dropzone.hiddenFileInput.click()
@@ -218,8 +251,20 @@ function clickUnBlockUser(e) {
 
 }
 
-function clickDeleteUser() {
-
+function clickDeleteUser(e) {
+    handleConfirm().then(result => {
+        if (result.value) {
+            let data = $(e.currentTarget).data('json')
+            MeteorCall(_METHODS.user.Delete, data, accessToken).then(() => {
+                Swal.fire({
+                    icon: "success",
+                    text: "Đã xóa thành công",
+                    timer: 3000
+                })
+                reloadTable(currentPage, getLimitDocPerPage())
+            })
+        }
+    })
 }
 
 function getLimitDocPerPage() {
@@ -263,20 +308,26 @@ function createRow(result) {
     let userType = getUserType(data.userType)
     let blockedText
     if (data.isBlocked == true) {
-        blockedText = `<button type="button" class="btn btn-success btn-sm unblock-user" data-json=\'${JSON.stringify({_id: data._id})}\'>Mở</button>`
-    } else blockedText = `<button type="button" class="btn btn-warning btn-sm block-user" data-json=\'${JSON.stringify({_id: data._id})}\'>Khóa</button>`
+        blockedText = `<span class="kt-badge kt-badge--warning kt-badge--inline  kt-badge--pill kt-badge--rounded">Khóa</span>`
+        blockedButton = `<a class="dropdown-item unblock-user" href="#" data-json=\'${JSON.stringify({_id: data._id})}\'><i
+        class="la la-unlock-alt"></i> Mở</a>`
+    } else {
+        blockedText = `<span class="kt-badge kt-badge--success kt-badge--inline kt-badge--pill kt-badge--rounded">Mở</span>`
+        blockedButton = `<a class="dropdown-item block-user" href="#" data-json=\'${JSON.stringify({_id: data._id})}\'><i
+        class="la la-unlock"></i> Khóa</a>`
+    }
     return `
         <tr id="${data._id}" class="table-row">
-            <td>${result.index + 1}</td>
+            <td class="text-center">${result.index + 1}</td>
             <td>${data.name}</td>
             <td>${data.username}</td>
             <td>${data.phone}</td>
             <td>${data.email}</td>
-            <td>${blockedText}</td>
+            <td class="text-center">${blockedText}</td>
             <td>${data.blockedReason}</td>
             <td>${userType}</td>
 
-             <td>
+             <td class="text-center">
                 <div class="from-group">
                     <label class="kt-checkbox kt-checkbox--brand">
                     <input type="checkbox" class="user-checkbox">
@@ -284,7 +335,7 @@ function createRow(result) {
                     </label>
                 </div>
             </td>
-            <td>
+            <td class="text-center">
                 <div class="dropdown dropdown-inline">
                     <button type="button"
                     class="btn btn-hover-danger btn-elevate-hover btn-icon btn-sm btn-icon-md"
@@ -294,10 +345,11 @@ function createRow(result) {
                     <div class="dropdown-menu dropdown-menu-right">
                     <a class="dropdown-item" href="#" data-json=\'${JSON.stringify({_id: data._id})}\' data-toggle="modal"
                     data-target="#editPasswordModal"><i class="la la-key"></i> Đổi mật khẩu</a>
-                    <a class="dropdown-item" href="#" data-json=\'${JSON.stringify(data)}\' id="edit-user"><i
+                    <a class="dropdown-item edit-user" href="#" data-json=\'${JSON.stringify(data)}\'><i
                         class="la la-pencil-square"></i> Sửa thông tin</a>
+                    ${blockedButton}
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#" data-json=\'${JSON.stringify({_id: data._id})}\' id="delete-user"><i class="la la-trash"></i> Xóa</a>
+                    <a class="dropdown-item delete-user" href="#" data-json=\'${JSON.stringify({_id: data._id})}\'><i class="la la-trash"></i> Xóa</a>
                     </div>
                 </div>
             </td>
@@ -364,3 +416,30 @@ function clearForm() {
     dropzone.removeAllFiles(true)
 }
 
+function userFilter() {
+    let options = [{
+        text: "schoolID",
+        value: $('#school-filter').val()
+    }, {
+        text: "user/name",
+        value: $('#name-filter').val()
+    }, {
+        text: "user/phone",
+        value: $('#phone-filter').val()
+    }, {
+        text: "user/email",
+        value: $('#email-filter').val()
+    }]
+    console.log(options);
+    reloadTable(1, getLimitDocPerPage(), options)
+}
+
+function refreshFilter() {
+    $('#school-filter').val('').trigger('change')
+    $('#name-filter').val('')
+    $('#phone-filter').val('')
+    $('#email-filter').val('')
+
+
+    reloadTable(1, getLimitDocPerPage(), null)
+}

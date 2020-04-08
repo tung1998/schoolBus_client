@@ -24,7 +24,6 @@ let currentPage = 1;
 
 Template.classManager.onCreated(() => {
   accessToken = Cookies.get("accessToken");
-  Session.set(_SESSION.isSuperadmin, true)
   Session.set('schools', [])
 });
 
@@ -32,15 +31,13 @@ Template.classManager.onRendered(() => {
   addPaging($('#classTable'));
   reloadTable();
   addRequiredInputLabel();
-  MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
-    Session.set(_SESSION.isSuperadmin, result)
-    console.log(result);
-    if (result) {
+  this.checkIsSuperAdmin = Tracker.autorun(() => {
+    if (Session.get(_SESSION.isSuperadmin)) {
       initSchoolSelect2()
     } else {
       initTeacherSelect2()
     }
-  }).catch(handleError)
+  })
 });
 
 Template.classManager.events({
@@ -59,6 +56,17 @@ Template.classManager.events({
     reloadTable(1, getLimitDocPerPage());
   }
 });
+
+Template.classManager.helpers({
+  isSuperadmin() {
+    return Session.get(_SESSION.isSuperadmin)
+  }
+})
+
+Template.classManager.onDestroyed(() => {
+  if(this.checkIsSuperAdmin) this.checkIsSuperAdmin = null
+  Session.delete()
+})
 
 Template.editClassModal.helpers({
   isSuperadmin() {
@@ -80,19 +88,19 @@ Template.classFilter.helpers({
 
 Template.classFilter.events({
   'click #filter-button': classFilter,
-    'click #refresh-button': refreshFilter,
-    'keypress .filter-input': (e) => {
-        if (e.which === 13) {
-          classFilter()
-        }
-    },
-    'change #school-filter': (e) => {
-        let options = [{
-            text: "adminType",
-            value: $('#school-filter').val()
-        }]
-        reloadTable(1, getLimitDocPerPage(), options)
+  'click #refresh-button': refreshFilter,
+  'keypress .filter-input': (e) => {
+    if (e.which === 13 || e.keyCode == 13) {
+      classFilter()
     }
+  },
+  'change #school-filter': (e) => {
+    let options = [{
+      text: "schoolID",
+      value: $('#school-filter').val()
+    }]
+    reloadTable(1, getLimitDocPerPage(), options)
+  }
 })
 
 
@@ -277,13 +285,15 @@ function createRow(result) {
     teacherID: result.teacherID,
     teacherName: result.teacher.user.name
   }
+  // let rowSchool = Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>`: ''
+
   return `
         <tr id="${data._id}">
-          <th scope="row">${result.index}</th>
-          <td>${data.schoolName}</td>
+          <th class="text-center">${result.index + 1}</th>
+         ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>`: ''}
           <td>${data.name}</td>
           <td>${data.teacherName}</td>
-          <td>
+          <td class="text-center">
               <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
               <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
           </td>
@@ -297,6 +307,10 @@ function initSchoolSelect2() {
     $('#school-input').select2({
       width: '100%',
       placeholder: "Chọn trường"
+    })
+    $('#school-filter').select2({
+      placeholder: "Chọn trường",
+      width: "100%"
     })
   }).catch(handleError)
 }
@@ -319,14 +333,14 @@ function initTeacherSelect2() {
 
 function classFilter() {
   let options = [{
-      text: "schoolID",
-      value: $('#school-filter').val()
+    text: "schoolID",
+    value: $('#school-filter').val()
   }, {
-      text: "name",
-      value: $('#class-filter').val()
+    text: "name",
+    value: $('#class-filter').val()
   }, {
-      text: "teacher/user/name",
-      value: $('#teacher-filter').val()
+    text: "teacher/user/name",
+    value: $('#teacher-filter').val()
   }]
   console.log(options);
   reloadTable(1, getLimitDocPerPage(), options)
@@ -335,6 +349,6 @@ function classFilter() {
 function refreshFilter() {
   $('#class-filter').val('')
   $('#teacher-filter').val('')
-  $('#school-filter').val('')
+  $('#school-filter').val('').trigger('change')
   reloadTable(1, getLimitDocPerPage(), null)
 }

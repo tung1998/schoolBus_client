@@ -61,6 +61,7 @@ function createRoute(data, accessToken = '') {
 function updateRoute(data, accessToken = '') {
     let url = `${AUTH_ROUTE}/${data._id}`
     return httpDefault(METHOD.put, url, {
+        body: data, 
         token: accessToken
     });
 }

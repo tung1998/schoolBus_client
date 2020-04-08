@@ -49,8 +49,11 @@
                                         </p>
                                         <table class="table table-bordered table-hover" id="carTable">
                                             <thead class="thead-light">
-                                                <tr>
+                                                <tr class="text-center">
                                                     <th>#</th>
+                                                    {{#if isSuperadmin}}
+                                                    <th>Trường</th>
+                                                    {{/if}}
                                                     <th>Hãng xe</th>
                                                     <th>Nhãn hiệu</th>
                                                     <th>Biển số</th>
@@ -164,7 +167,7 @@
     <div class="form-group mb-2">
         <label for="admin-parent-route" class="col-form-label">Trường</label>
         <select class="form-control filter-input" id="school-filter">
-            <option value="">Chọn trường</option>
+            <option value=""></option>
             {{#each schools}}
             <option value="{{_id}}">{{name}}</option>
             {{/each}}

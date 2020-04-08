@@ -15,33 +15,31 @@ import {
     _SESSION
 } from '../../../../../variableConst';
 
-let accessToken
-let tripID;
-let studentList = [];
-let carStopList = [];
-let stopPointCoors = [];
-let markers_id = [];
-let carStopIDs = [];
-let htmlStopPane = '';
-let defaultStopPoint = [];
-let defaultCarStop = [];
-let stopPointOrder = [];
-let polyID;
-let studentListID;
-let address = [];
-let name = [];
-let schoolID;
-
-let destinationPoint = L.icon({
+let accessToken, tripID, studentList = [],
+carStopList = [],
+stopPointCoors = [],
+markers_id = [],
+carStopIDs = [],
+htmlStopPane = '',
+defaultStopPoint = [],
+defaultCarStop = [],
+stopPointOrder = [],
+polyID,
+studentListID,
+address = [],
+name = [],
+schoolID,
+desCoor,
+startCoor,
+destinationPointMarker = L.icon({
     iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
   shadowSize: [41, 41]
-});
-
-let startPoint = L.icon({
+}),
+startPointMarker = L.icon({
     iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
   iconSize: [25, 41],
@@ -149,6 +147,7 @@ function reloadData() {
             stopPointOrder.push(index);
             let mark;
             if (index === 0) {
+                desCoor = data.location;
                 document.getElementById("des").innerHTML +=
                     `<div class="kt-portlet kt-portlet--mobile addressTab kt-portlet--skin-solid kt-bg-danger" id="${index}">
                         <div class="kt-portlet__head">
@@ -159,7 +158,7 @@ function reloadData() {
                             </div>
                         </div> 
                     </div>`
-                let mark = L.marker(data.location, { icon: destinationPoint }).bindTooltip(data.name, { permanent: false }).addTo(markerGroup);
+                let mark = L.marker(data.location, { icon: destinationPointMarker }).bindTooltip(data.name, { permanent: false }).addTo(markerGroup);
                 markers_id.push(markerGroup.getLayerId(mark))
                 let popup = `
                 <div class="font-14">
@@ -175,6 +174,7 @@ function reloadData() {
                     minWidth: 301
                 });
             } else if (index === len - 1) {
+                startCoor = data.location
                 document.getElementById("start").innerHTML +=
                     `<div class="kt-portlet kt-portlet--mobile addressTab kt-portlet--skin-solid kt-bg-brand" id="${index}">
                             <div class="kt-portlet__head">
@@ -185,7 +185,7 @@ function reloadData() {
                                 </div>
                             </div> 
                         </div>`
-                let mark = L.marker(data.location, { icon: startPoint }).bindTooltip(data.name, { permanent: false }).addTo(markerGroup);
+                let mark = L.marker(data.location, { icon: startPointMarker }).bindTooltip(data.name, { permanent: false }).addTo(markerGroup);
                 markers_id.push(markerGroup.getLayerId(mark))
                 let popup = `
                 <div class="font-14">
@@ -229,7 +229,7 @@ function reloadData() {
             }
         })
         
-        addPoly(stopPointCoors);
+        drawPath(stopPointCoors);
         document.getElementById("kt_sortable_portlets").innerHTML += htmlStopPane;
         //setColor(0, 'destination');
         //setColor(stopPointOrder[stopPointOrder.length], 'start');
@@ -358,7 +358,7 @@ function swapPcs(arr) {
 function autoDirect(event) {
     event.preventDefault();
     removeLayerByID(polyID)
-    stopPointCoors = DistanceAutoCal([21.040276, 105.782988], stopPointCoors);
+    stopPointCoors = DistanceAutoCal(desCoor, startCoor, stopPointCoors);
     carStopIDs = reArrange(carStopIDs, [], stopPointOrder);
     drawPath(stopPointCoors)
     console.log(stopPointOrder)
@@ -389,19 +389,23 @@ function confirmPath(event) {
     }).catch(handleError)
 }
 
-function DistanceAutoCal(dest, coorArr) {
+function DistanceAutoCal(dest, start, coorArr) {
     let distance = [];
     let distOrder = [];
-    let finalCoorOrder = [];
-    for (let i = 0; i < coorArr.length; i++) {
+    let finalCoorOrder = [dest];
+    console.log(coorArr);
+    for (let i = 1; i < coorArr.length-1; i++) {
         distance.push(getDistance(dest, coorArr[i]));
         //console.log(getDistance(dest,coorArr[i]))
         distOrder.push(i);
     }
-
+    //distOrder.push(coorArr.length - 1);
     distOrder.sort(function (a, b) { return distance[a] < distance[b] ? -1 : distance[a] > distance[b] ? 1 : 0; });
+    distOrder.unshift(0);
+    distOrder.push(coorArr.length - 1);
+    //console.log(distOrder);
     stopPointOrder = distOrder;
-    for (let i = 0; i < distOrder.length; i++) {
+    for (let i = 1; i < distOrder.length; i++) {
         finalCoorOrder.push(coorArr[distOrder[i]]);
     }
     //console.log(finalCoorOrder);

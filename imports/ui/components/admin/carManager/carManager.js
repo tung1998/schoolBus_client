@@ -24,7 +24,6 @@ let currentPage = 1;
 
 Template.carManager.onCreated(() => {
     accessToken = Cookies.get("accessToken");
-    Session.set(_SESSION.isSuperadmin, true)
     Session.set('schools', [])
 });
 
@@ -32,15 +31,21 @@ Template.carManager.onRendered(() => {
     addRequiredInputLabel();
     addPaging($('#carTable'));
     reloadTable();
-    renderModelOption();
-
-    MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
-        Session.set(_SESSION.isSuperadmin, result)
-        if (result)
+    this.checkIsSuperAdmin = Tracker.autorun(() => {
+        if (Session.get(_SESSION.isSuperadmin)) {
             initSchoolSelect2()
-    }).catch(handleError)
-});
+        }
+        else {
+            renderModelOption()
+        }
+    })
+})
 
+Template.carManager.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    }
+})
 Template.editCarManagerModal.helpers({
     isSuperadmin() {
         return Session.get(_SESSION.isSuperadmin)
@@ -63,14 +68,25 @@ Template.carManager.events({
     },
     "change #limit-doc": (e) => {
         reloadTable(1, getLimitDocPerPage());
+    },
+    "change #school-input": (e) => {
+        renderModelOption([{
+            text: "schoolID",
+            value: $('#school-input').val()
+        }]);
     }
 });
+
+Template.carManager.onDestroyed(() => {
+    if (this.checkIsSuperAdmin) this.checkIsSuperAdmin = null
+    Session.delete('schools')
+})
 
 Template.carFilter.events({
     'click #filter-button': carFilter,
     'click #refresh-button': refreshFilter,
     'keypress .filter-input': (e) => {
-        if (e.which === 13) {
+        if (e.which == 13 || e.keyCode == 13) {
             carFilter()
         }
     },
@@ -93,17 +109,22 @@ Template.carFilter.helpers({
 });
 
 
-function renderModelOption() {
-    MeteorCall(_METHODS.carModel.GetAll, null, accessToken)
+function renderModelOption(options = null, carModelID = null) {
+    MeteorCall(_METHODS.carModel.GetAll, {
+            options
+        }, accessToken)
         .then(result => {
-            let optionSelects = result.data.map(res => {
-                return `<option value="${res._id}">${res.brand}-${res.model}</option>`;
+            if (options && options.length) carModelData = result.data.filter(item => item.schoolID == options[0].value)
+            let optionSelects =carModelData.map(result => {
+                return `<option value="${result._id}">${result.brand}-${result.model}</option>`;
             });
             $("#model-select").html('<option></option>').append(optionSelects.join(" "));
             $("#model-select").select2({
                 placeholder: "Chọn model",
                 width: "100%"
             })
+
+            if(carModelID) $('#model-select').val(carModelID).trigger('change')
         })
         .catch(handleError);
 }
@@ -128,6 +149,13 @@ function ClickModifyButton(event) {
     $("#model-select").val(carData.carModelID).trigger('change')
     $('input[name="licensePlate-input"]').val(carData.numberPlate);
     $('input[name="status-input"]').val(carData.status);
+    if (Session.get(_SESSION.isSuperadmin)) {
+        $('#school-input').val(carData.schoolID).trigger('change')
+        renderModelOption([{
+            text: "schoolID",
+            value: $('#school-input').val()
+        }], carData.carModelID)
+    }
 
 }
 
@@ -136,7 +164,7 @@ function ClickDeleteButton(event) {
         console.log(result);
         if (result.value) {
             let data = $(event.currentTarget).data("json");
-            MMeteorCall(_METHODS.car.Delete, data, accessToken)
+            MeteorCall(_METHODS.car.Delete, data, accessToken)
                 .then(result => {
                     console.log(result);
                     Swal.fire({
@@ -225,8 +253,9 @@ function checkInput() {
 function clearForm() {
     $(".model-result").attr("carModelID", "");
     $(".model-result").html("Chọn Model");
-    $('input[name="licensePlate-input"]').val();
-    $('input[name="status-input"]').val();
+    $('input[name="licensePlate-input"]').val('');
+    $('input[name="status-input"]').val('');
+    $('#model-select').val('').trigger('change')
 
     if (Session.get(_SESSION.isSuperadmin)) {
         $('#school-input').val('').trigger('change')
@@ -261,21 +290,25 @@ function createTable(table, result, limitDocPerPage) {
 function createRow(result) {
     console.log(result);
     let data = {
+        carModelID: result.carModelID,
         modelName: result.carModel.model,
         brandName: result.carModel.brand,
         numberPlate: result.numberPlate,
-        status: result.status
+        status: result.status,
+        schoolID: result.schoolID,
+        schoolName: result.school.name
     }
     return `
         <tr id="${data._id}">
-            <th scope="row">${result.index + 1}</th>
+            <th class="text-center">${result.index + 1}</th>
+            ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>`: ''}
             <td>${data.modelName}</td>
             <td>${data.brandName}</td>
             <td>${data.numberPlate}</td>
             <td>${data.status}</td>
-            <td>
-            <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(result)}\'>Sửa</button>
-            <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(result)}\'>Xóa</button>
+            <td class="text-center">
+            <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
+            <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
             </td>
         </tr>
         `
@@ -287,6 +320,10 @@ function initSchoolSelect2() {
         Session.set('schools', result.data)
         $('#school-input').select2({
             width: '100%',
+            placeholder: "Chọn trường"
+        })
+        $('#school-filter').select2({
+            width: "100%",
             placeholder: "Chọn trường"
         })
     }).catch(handleError)
@@ -318,6 +355,6 @@ function refreshFilter() {
     $('#car-brand-filter').val('')
     $('#car-numberPlate-filter').val('')
     $('#car-status-filter').val('')
-    $('#school-filter').val('')
+    $('#school-filter').val('').trigger('change')
     reloadTable(1, getLimitDocPerPage(), null)
 }

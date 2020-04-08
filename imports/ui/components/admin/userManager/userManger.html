@@ -47,13 +47,13 @@
                     </p>
                     <table class="table table-bordered table-hover" id="userTable">
                       <thead class="thead-light">
-                        <tr>
+                        <tr class="text-center">
                           <th>#</th>
                           <th>Họ tên</th>
                           <th>Username</th>
                           <th>Số điện thoại</th>
                           <th>Email</th>
-                          <th>Khóa/Bị khóa</th>
+                          <th>Trạng thái</th>
                           <!-- <th>Người Khóa</th> -->
                           <th>Lý do</th>
                           <th>Loại tài khoản</th>
@@ -65,7 +65,21 @@
                               </label>
                           </div>
                           </th>
-                          <th></th>
+                          <th>
+                            <div class="dropdown dropdown-inline">
+                              <button type="button"
+                              class="btn btn-clean btn-icon btn-sm btn-icon-md"
+                              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              <i class="flaticon-more-1"></i>
+                              </button>
+                              <div class="dropdown-menu dropdown-menu-right">
+                              <a class="dropdown-item" href="#" data-toggle="modal"
+                              data-target="#editPasswordModal"><i class="la la-rotate-right"></i> Reset Mật khẩu</a>
+                              <div class="dropdown-divider"></div>
+                              <a class="dropdown-item delete-user" href="#"><i class="la la-trash"></i> Xóa</a>
+                              </div>
+                          </div>
+                          </th>
                         </tr>
                       </thead>
                       <tbody id="table-body">
@@ -210,12 +224,43 @@
               </div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-              <button type="button" class="btn btn-warning" id="block-confirm-button">Khóa</button>
+              <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Hủy</button>
+              <button type="button" class="btn btn-warning btn-sm" id="block-confirm-button">Khóa</button>
             </div>
           </form>
         </div>
       </div>
     </div>
+  </div>
+</template>
+
+
+<template name="userFilter">
+  {{#if isSuperadmin}}
+  <div class="form-group mb-2">
+    <label for="admin-parent-route" class="col-form-label">Trường</label>
+    <select class="form-control filter-input" id="school-filter">
+      <option value="">Chọn trường</option>
+      {{#each schools}}
+      <option value="{{_id}}">{{name}}</option>
+      {{/each}}
+    </select>
+  </div>
+  {{/if}}
+  <div class="form-group mb-2">
+    <label for="" class="col-form-label">Họ tên</label>
+    <input class="form-control filter-input" type="text" placeholder="Họ tên" id="name-filter">
+  </div>
+  <div class="form-group mb-2">
+    <label for="" class="col-form-label">Số điện thoại</label>
+    <input class="form-control filter-input" type="text" placeholder="Số điện thoại" id="phone-filter">
+  </div>
+  <div class="form-group mb-2">
+    <label for="" class="col-form-label">Email</label>
+    <input class="form-control filter-input" type="text" placeholder="Email" id="email-filter">
+  </div>
+  <div class="form-group mt-4">
+    <button type="submit" class="btn btn-primary btn-sm" id="filter-button">Tìm kiếm</button>
+    <button type="submit" class="btn btn-success btn-sm" id="refresh-button">Refresh</button>
   </div>
 </template>

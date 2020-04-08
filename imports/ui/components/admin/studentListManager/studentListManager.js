@@ -28,21 +28,22 @@ let currentPage = 1;
 Template.studentListManager.onCreated(() => {
     accessToken = Cookies.get('accessToken');
     console.log(accessToken)
-    Session.set(_SESSION.isSuperadmin, true)
     Session.set('schools', [])
 });
 
 Template.studentListManager.onRendered(() => {
     addRequiredInputLabel();
-    addPaging($('studentListTable'));
+    addPaging($('#studentListTable'));
     reloadTable();
-
-    MeteorCall(_METHODS.user.IsSuperadmin, null, accessToken).then(result => {
-        Session.set(_SESSION.isSuperadmin, result)
-        if (result)
+    this.checkIsSuperAdmin = Tracker.autorun(() => {
+        if (Session.get(_SESSION.isSuperadmin))
             initSchoolSelect2()
-    }).catch(handleError)
+    })
 });
+
+Template.studentListManager.onDestroyed(() => {
+    if (this.checkIsSuperAdmin) this.checkIsSuperAdmin = null
+})
 
 Template.studentListManager.events({
     'click #addStudentListButton': clickAddStudentListButton,
@@ -61,6 +62,13 @@ Template.studentListManager.events({
     }
 })
 
+Template.studentListFilter.onRendered(() => {
+    $('#school-filter').select2({
+        placeholder: "Chọn trường",
+        width: "100%"
+    })
+})
+
 Template.studentListFilter.helpers({
     isSuperadmin() {
         return Session.get(_SESSION.isSuperadmin)
@@ -74,13 +82,13 @@ Template.studentListFilter.events({
     'click #filter-button': studentListFilter,
     'click #refresh-button': refreshFilter,
     'keypress .filter-input': (e) => {
-        if (e.which === 13) {
+        if (e.which === 13 || e.keyCode == 13) {
             studentListFilter()
         }
     },
     'change #school-filter': (e) => {
         let options = [{
-            text: "adminType",
+            text: "schoolID",
             value: $('#school-filter').val()
         }]
         reloadTable(1, getLimitDocPerPage(), options)
@@ -151,7 +159,7 @@ function clickDeleteStudentListButton(e) {
         MeteorCall(_METHODS.studentList.Delete, {
             _id: studentListID
         }, accessToken).then(result => {
-            reloadTable(currentPage, getLimitDocPerPage)
+            reloadTable(currentPage, getLimitDocPerPage())
             handleSuccess('Xóa', "Danh sách")
         }).catch(handleError)
     })
@@ -200,19 +208,18 @@ function createTable(table, result, limitDocPerPage) {
 }
 
 function createRow(result) {
-    console.log(result)
     let data = {
         _id: result._id,
         name: result.name,
-        schoolName: result.school ? result.school.name: '',
-        createTime: result.createdTime
+        schoolName: result.school ? result.school.name : '',
+        createdTime: result.createdTime
     }
     return `
         <tr id="${data._id}" class="table-row">
-            <td>${result.index}</td>
+            <td>${result.index + 1}</td>
             <td>${data.name}</td>
             <td>${data.schoolName}</td>
-            <td>${moment(data.createdTime).format('l')}</td>
+            <td>${moment(data.createdTime).format('L')}</td>
             <td>
             <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
             <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
@@ -245,7 +252,7 @@ function studentListFilter() {
 }
 
 function refreshFilter() {
-    $('#school-filter').val('')
+    $('#school-filter').val('').trigger('change')
     $('#name-filter').val('')
 
     reloadTable(1, getLimitDocPerPage(), null)

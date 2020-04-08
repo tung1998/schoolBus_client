@@ -42,10 +42,12 @@ Template.studentManager.onCreated(() => {
 
 Template.studentManager.onRendered(() => {
     addRequiredInputLabel();
-    if (Session.get(_SESSION.isSuperadmin)) {
-        initSchoolSelect2()
-    } else
-        getSelectData()
+    this.checkIsSuperadmin = Tracker.autorun(() => {
+        if (Session.get(_SESSION.isSuperadmin)) {
+            initSchoolSelect2()
+        } else
+            getSelectData()
+    })
     initSelect2()
     dropzone = initDropzone("#kt_dropzone_1")
     addPaging($('#studentTable'));
@@ -53,6 +55,7 @@ Template.studentManager.onRendered(() => {
 });
 
 Template.studentManager.onDestroyed(() => {
+    if (this.checkIsSuperadmin) this.checkIsSuperadmin = null
     dropzone = null
     Session.delete('schools')
     Session.delete('class')
@@ -78,6 +81,12 @@ Template.studentManager.events({
     "click .dz-preview": dzPreviewClick,
 });
 
+Template.studentManager.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    }
+})
+
 Template.editStudentModal.helpers({
     isSuperadmin() {
         return Session.get(_SESSION.isSuperadmin)
@@ -95,6 +104,12 @@ Template.editStudentModal.helpers({
 
 Template.studentFilter.events({
     "click #filter-button": fillterBtnClick,
+    "keypress .filter-input": (e) => {
+        if (e.which == 13 || e.keyCode == 13) {
+            fillterBtnClick(e)
+        }
+    },
+    "click #refresh-button": refreshFilter
 });
 
 function dzPreviewClick() {
@@ -102,11 +117,12 @@ function dzPreviewClick() {
 }
 
 function schoolInputChange(e) {
-    if ($('#school-input').val())
+    if ($('#school-input').val()) {
         getSelectData([{
             text: 'schoolID',
             value: $('#school-input').val()
         }])
+    }
 }
 
 function getSelectData(options = null, classID = null, carStopID = null) {
@@ -119,7 +135,7 @@ function getSelectData(options = null, classID = null, carStopID = null) {
     MeteorCall(_METHODS.class.GetAll, {
         options
     }, accessToken).then(result => {
-        if (options&&options.length) result.data = result.data.filter(item => item.schoolID == options[0].value)
+        if (options && options.length) result.data = result.data.filter(item => item.schoolID == options[0].value)
         Session.set('class', result.data)
         if (classID) $("#class-select").val(classID).trigger('change')
     }).catch(handleError)
@@ -364,16 +380,16 @@ function createRow(result) {
     // _id is tripID
     return `
         <tr id="${data._id}" class="table-row">
-            <td>${result.index + 1}</td>
+            <td class="text-center">${result.index + 1}</td>
             <td>${data.name}</td>
             <td>${data.IDStudent}</td>
             <td>${data.address}</td>
             <td>${data.phone}</td>
             <td>${data.email}</td>
-            <td>${data.schoolName}</td>
+            ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>` : ''}
             <td>${data.className}</td>
             <td>${data.carStop}</td>
-            <td>
+            <td class="text-center">
             <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
             <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
             </td>
@@ -413,4 +429,15 @@ function fillterBtnClick(e) {
     }]
 
     reloadTable(1, getLimitDocPerPage(), options)
+}
+
+function refreshFilter() {
+    $('#student-name-filter').val('')
+    $('#student-address-filter').val('')
+    $('#student-phone-filter').val('')
+    $('#student-email-filter').val('')
+    $('#student-school-filter').val('')
+    $('#student-class-filter').val('')
+
+    reloadTable(1, getLimitDocPerPage(), null)
 }
