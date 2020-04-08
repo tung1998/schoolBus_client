@@ -35,3 +35,14 @@ parentRoutes.route('/request', {
         });
     },
 });
+
+parentRoutes.route('/chat', {
+    name: 'parents.chat',
+    action() {
+        BlazeLayout.setRoot('body');
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'chatTeacher',
+        });
+    },
+});
