@@ -261,6 +261,7 @@ async function SubmitForm(event) {
                     .then(result => {
                         $("#editStudentModal").modal("hide");
                         reloadTable(1, getLimitDocPerPage())
+                        handleSuccess("Thêm")
                         clearForm()
                     })
                     .catch(handleError);

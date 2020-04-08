@@ -52,7 +52,7 @@ Template.driverManager.onRendered(() => {
 
 Template.driverManager.onDestroyed(() => {
     dropzone = null
-    if(this.checkIsSuperAdmin) this.checkIsSuperAdmin = null
+    if (this.checkIsSuperAdmin) this.checkIsSuperAdmin = null
     Session.delete('schools')
 });
 
@@ -69,7 +69,7 @@ Template.driverManager.events({
         clearForm()
         $('.avatabox').addClass('kt-hidden')
     },
-    'click #edit-button': clickEditButton,
+    'click .edit-button': clickEditButton,
     'click .submit-button': clickSubmitButton,
     'click .delete-button': clickDelButton,
     "click .kt-datatable__pager-link": (e) => {
@@ -178,18 +178,20 @@ async function clickSubmitButton() {
             if (!data._id) {
                 await MeteorCall(_METHODS.driver.Create, data, accessToken)
                 console.log("đã thêm mới");
-                handleSuccess("Thêm", `tài xế ${data.name}`).then(() => {
-                    $('#editDriverModal').modal("hide")
-                })
+                handleSuccess("Thêm")
+                reloadTable(1, getLimitDocPerPage())
+                $('#editDriverModal').modal("hide")
+
 
             } else {
                 await MeteorCall(_METHODS.driver.Update, data, accessToken)
-                handleSuccess("Cập nhật", `tài xế ${data.name}`).then(() => {
-                    $('#editDriverModal').modal("hide")
-                })
+                handleSuccess("Cập nhật")
+                reloadTable(1, getLimitDocPerPage())
+                $('#editDriverModal').modal("hide")
+
                 console.log("đã update");
             }
-            reloadTable(1, getLimitDocPerPage())
+            
             clearForm()
         }
     } catch (error) {
@@ -333,7 +335,7 @@ function createRow(result) {
         DLIssueDate: result.DLIssueDate,
     }
 
-    if(Session.get(_SESSION.isSuperadmin)) {
+    if (Session.get(_SESSION.isSuperadmin)) {
         data.schoolID = result.schoolID
         data.schoolName = result.school.name
     }
@@ -349,8 +351,8 @@ function createRow(result) {
                 <td>${data.DLIssueDate}</td>
                 ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>` : ''}
                 <td class="text-center">
-                    <button type="button" class="btn btn-outline-brand dz-remove" data-dz-remove
-                        data-toggle="modal" id="edit-button" data-target="#editdriverModal" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
+                    <button type="button" class="btn btn-outline-brand edit-button"
+                        data-toggle="modal" data-target="#editDriverModal" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
                     <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
                 </td>
             </tr>
@@ -367,7 +369,7 @@ function initSchoolSelect2() {
         $('#school-filter').select2({
             placeholder: "Chọn trường",
             width: "100%"
-          })
+        })
     }).catch(handleError)
 }
 
