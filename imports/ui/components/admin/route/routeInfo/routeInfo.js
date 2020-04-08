@@ -229,7 +229,7 @@ function reloadData() {
             }
         })
         
-        addPoly(stopPointCoors);
+        drawPath(stopPointCoors);
         document.getElementById("kt_sortable_portlets").innerHTML += htmlStopPane;
         //setColor(0, 'destination');
         //setColor(stopPointOrder[stopPointOrder.length], 'start');
@@ -393,6 +393,7 @@ function DistanceAutoCal(dest, start, coorArr) {
     let distance = [];
     let distOrder = [];
     let finalCoorOrder = [dest];
+    console.log(coorArr);
     for (let i = 1; i < coorArr.length-1; i++) {
         distance.push(getDistance(dest, coorArr[i]));
         //console.log(getDistance(dest,coorArr[i]))
@@ -402,9 +403,9 @@ function DistanceAutoCal(dest, start, coorArr) {
     distOrder.sort(function (a, b) { return distance[a] < distance[b] ? -1 : distance[a] > distance[b] ? 1 : 0; });
     distOrder.unshift(0);
     distOrder.push(coorArr.length - 1);
-    console.log(distOrder);
+    //console.log(distOrder);
     stopPointOrder = distOrder;
-    for (let i = 0; i < distOrder.length; i++) {
+    for (let i = 1; i < distOrder.length; i++) {
         finalCoorOrder.push(coorArr[distOrder[i]]);
     }
     //console.log(finalCoorOrder);
