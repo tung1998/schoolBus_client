@@ -27,21 +27,21 @@ let partnerName;
 let partnerID;
 let listRoomID = [];
 
-Template.chatParent.onCreated(() => {
+
+Template.chatTeacher.onCreated(() => {
     accessToken = Cookies.get("accessToken");
     Meteor.subscribe("message.publish.All");
 })
 
-Template.chatParent.onRendered(() => {
-
+Template.chatTeacher.onRendered(() => {
     this.getUserID = Tracker.autorun(() => {
         userID = Session.get(_SESSION.userID)
         username = Session.get(_SESSION.name)
         userImage = Session.get(_SESSION.avata)
-        renderListParents()
+        renderListTeacher()
     })
 
-    this.renderListParentss = Tracker.autorun(() => {
+    this.renderListTeachers = Tracker.autorun(() => {
         let messages = COLLECTION_Messages.find({ isDeleted: false, sendBy: { $ne: userID } }).fetch();
         console.log(listRoomID)
         listRoomID.map(value => {
@@ -56,6 +56,7 @@ Template.chatParent.onRendered(() => {
                         countUnread++;
                     }
                 }
+
             })
             console.log(lastestMsg);
 
@@ -71,19 +72,19 @@ Template.chatParent.onRendered(() => {
     this.loadMessagesInChatRooms = Tracker.autorun(() => {
         let roomID = Session.get(_SESSION.roomID)
         let messages = COLLECTION_Messages.find({ roomID: roomID, isDeleted: false }).fetch();
-        if (roomID) {
+        if (messages) {
             loadMessagesInChatRoom(messages)
         }
     })
 })
 
-Template.chatParent.onDestroyed(() => {
+Template.chatTeacher.onDestroyed(() => {
     if (this.getUserID) this.getUserID = null;
-    if (this.loadMessagesInChatRooms) this.loadMessagesInChatRoom = null;
-    if (this.renderListParentss) this.renderListParents = null;
+    if (this.loadMessagesInChatRooms) this.loadMessagesInChatRooms = null;
+    if (this.renderListTeachers) this.renderListTeachers = null;
 })
 
-Template.chatParent.events({
+Template.chatTeacher.events({
     'click .kt-widget__username': ClickUserName,
     'submit form': SubmitForm,
 })
@@ -167,59 +168,53 @@ function SubmitForm(e) {
     $(`#${Session.get(_SESSION.roomID)}`).children(".kt-widget__action").html(``)
 }
 
-function renderListParents() {
-    MeteorCall(_METHODS.class.GetAll, null, accessToken)
+function renderListTeacher() {
+    console.log(userID)
+    MeteorCall(_METHODS.token.GetUserInfo, null, accessToken)
         .then(result => {
             console.log(result);
-            result.data.map(value => {
-                console.log(value._id)
-                MeteorCall(_METHODS.Parent.GetByClass, { _id: value._id }, accessToken)
-                    .then(parent => {
-                        console.log(parent)
-                        createParentsRow(parent)
-                    })
-                    .catch(handleError);
-            })
+            createTeachersRow(result);
         }).catch(handleError)
 }
 
-function createParentsRow(result) {
-    let listParent = []
-    let parentsRow = []
-    result.map(pr1 => {
+function createTeachersRow(result) {
+    let listTeacher = []
+    let teachersRow = []
+
+    result.students.map(std => {
         let check = true
-        listParent.map(pr => {
-            if (pr._id == pr1.user._id) {
+        listTeacher.map(tc => {
+            if (tc._id == std.class.teacher.user._id) {
                 check = false;
             }
         })
         if (check) {
-            parentsRow.push(pr1);
-            listParent.push(pr1.user);
+            teachersRow.push(std);
+            listTeacher.push(std.class.teacher.user);
         }
     })
-    let row = parentsRow.map(parentRow)
+    let row = teachersRow.map(teacherRow);
     $(".listParents").html(row.join(" "));
 }
 
-function parentRow(data) {
-    let roomID = data.user._id + userID;
+function teacherRow(data) {
+    let roomID = userID + data.class.teacher.user._id;
     listRoomID.push(roomID);
     let img
     let partnerImg
     let unreaIcon
-    if (data.user.image == null) {
+    if (data.class.teacher.user.image == null) {
         img = `<img src="/assets/media/users/default.jpg" alt="image">`
         partnerImg = "/assets/media/users/default.jpg"
     } else {
-        img = `<img src="${_URL_images}/${data.user.image}/0" alt="image">`
-        partnerImg = `${_URL_images}/${data.user.image}/0`
+        img = `<img src="${_URL_images}/${data.class.teacher.user.image}/0" alt="image">`
+        partnerImg = `${_URL_images}/${data.class.teacher.user.image}/0`
     }
     let messageInfo = getLastestAndCountUnSeenMessage(roomID);
     if (messageInfo[0] == 0) {
         unreaIcon = "";
     } else {
-        unreaIcon = `<span class="kt-badge kt-badge--success kt-font-bold unreadMessage" unreadID=${roomID}> ${messageInfo[0]}</span>`
+        unreaIcon = `<span class="kt-badge kt-badge--success kt-font-bold unreadMessage" > ${messageInfo[0]}</span>`
     }
     return `<div class="kt-widget__item" id=${roomID}>
                 <span class="kt-media kt-media--circle"> 
@@ -227,7 +222,7 @@ function parentRow(data) {
                 </span>
                 <div class="kt-widget__info">
                     <div class="kt-widget__section">
-                        <a href="#" class="kt-widget__username" partnerID=${data.user._id} partnerImage=${partnerImg} partnerName="${data.user.name}" roomID="${roomID}">${data.user.name}</a>
+                        <a href="#" class="kt-widget__username" partnerID=${data.class.teacher.user._id} partnerImage=${partnerImg} partnerName="${data.class.teacher.user.name}" roomID="${roomID}">${data.class.teacher.user.name}</a>
                         <span class="kt-badge kt-badge--success kt-badge--dot"></span>
                     </div>
 
