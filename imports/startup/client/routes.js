@@ -24,6 +24,7 @@ import {
 
 FlowRouter.triggers.enter([function(context, redirect) {
     let accessToken = Cookies.get('accessToken');
+    BlazeLayout.render("login")
     if (!accessToken) FlowRouter.go('/login');
     else {
         MeteorCall(_METHODS.token.GetUserInfo, null, accessToken).then(result => {

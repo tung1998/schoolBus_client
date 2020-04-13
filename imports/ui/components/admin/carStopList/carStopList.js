@@ -23,7 +23,7 @@ import {
 
 let accessToken;
 let currentPage = 1;
-
+let stopLocation = [];
 
 Template.carStopList.onCreated(() => {
     accessToken = Cookies.get("accessToken");
@@ -47,7 +47,7 @@ Template.carStopList.onDestroyed(() => {
 Template.micromap.onRendered(() => {
     setMapHeight()
     L.Icon.Default.imagePath = '/packages/bevanhunt_leaflet/images/';
-    let micromap = L.map('micromap', {
+    window.micromap = L.map('micromap', {
         drawControl: true
     }).setView([21.0388, 105.7886], 19);
     L.tileLayer('https://apis.wemap.asia/raster-tiles/styles/osm-bright/{z}/{x}/{y}@2x.png?key=vpstPRxkBBTLaZkOaCfAHlqXtCR', {
@@ -55,18 +55,66 @@ Template.micromap.onRendered(() => {
         id: 'mapbox.streets'
     }).addTo(micromap);
 
-    let marker = L.marker([21.03709858, 105.78349972]).addTo(micromap);
-    micromap.on('move', function () {
+    window.marker = L.marker([21.03709858, 105.78349972]).addTo(micromap);
+    
+    setInterval(() => {
+        micromap.invalidateSize();
+    }, 0)
+    //Dragend event of map for update marker position
+    
+
+    micromap.on('drag', function () {
         marker.setLatLng(micromap.getCenter());
+        document.getElementById("confirm-button").disabled = true;
     });
 
+    micromap.on('zoomend', function () {
+        let coor = $("#location").val().split(",")
+        coor[0] = parseFloat(coor[0]);
+        coor[1] = parseFloat(coor[1]);
+        if ((coor[0]) && (coor[1])) {
+            marker.setLatLng([coor[0], coor[1]]);
+            micromap.panTo(new L.LatLng(coor[0], coor[1]));
+        } else {
+            micromap.panTo(new L.LatLng(21.03709858, 105.78349972));
+            marker.setLatLng([21.03709858, 105.78349972]);
+        }
+
+    })
     //Dragend event of map for update marker position
     micromap.on('dragend', function (e) {
+        document.getElementById("confirm-button").disabled = false;
         let cnt = micromap.getCenter();
         let position = marker.getLatLng();
-        lat = Number(position['lat']).toFixed(5);
-        lng = Number(position['lng']).toFixed(5);
-        $('.position').val(lat + ' ' + lng);
+        lat = Number(position['lat']);
+        lng = Number(position['lng']);
+        //let adr = getAddress(lat, lng);
+        //console.log(adr)
+
+        MeteorCall(_METHODS.wemap.getAddress, {
+            lat: lat,
+            lng: lng
+        }, accessToken).then(result => {
+            let props = result.features[0].properties;
+            let cor = result.features[0].geometry.coordinates;
+            let addressElement = {
+                name: props.name,
+                housenumber: props.housenumber,
+                street: props.street,
+                city: props.city,
+                district: props.district,
+                state: props.state
+            }
+
+            address = addressElement.name + ', ' +
+                addressElement.housenumber + ', ' +
+                addressElement.street + ', ' +
+                addressElement.city + ', ' +
+                addressElement.district + ', ' +
+                addressElement.state + ', ';
+            $('.position').val(cor[1] + ',' + cor[0]);
+            $('.address').val(address);
+        }).catch(handleError)
     });
 })
 
@@ -90,6 +138,16 @@ Template.carStopList.events({
         reloadTable(1, getLimitDocPerPage());
     },
 });
+
+
+Template.editCarStopModal.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    },
+    schools() {
+        return Session.get('schools')
+    }
+})
 
 Template.carStopListFilter.events({
     'click #filter-button': carStopListFilter,
@@ -121,14 +179,12 @@ Template.carStopListFilter.helpers({
 function ClickModifyButton(event) {
 
     let carStopData = $(event.currentTarget).data("json");
+    
     $("#editCarStopModal").attr("carStopID", carStopData._id);
     $(".modal-title").html("Chỉnh Sửa");
     $(".confirm-button").html("Sửa");
-
-    $("#stopName").val(carStopData.name);
-    $("#stopType").val(carStopData.stopType);
-    $("#address").val(carStopData.address);
-    $("#editCarStopModal").modal("show");
+    getLocation(carStopData._id);
+    
 }
 
 function ClickDeleteButton(event) {
@@ -299,4 +355,17 @@ function initSchoolSelect2() {
             placeholder: "Chọn trường"
         })
     }).catch(handleError)
+}
+
+function getLocation(id){
+    MeteorCall(_METHODS.carStop.GetById, {_id: id}, accessToken).then(result => {
+        console.log(result.location)
+        $("#location").val(result.location);
+        $("#stopName").val(result.name);
+        $("#stopType").val(result.stopType);
+        $("#address").val(result.address);
+        $("#editCarStopModal").modal("show");
+        micromap.setView(result.location, 20);
+        marker.setLatLng(result.location);
+    })
 }
