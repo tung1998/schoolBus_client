@@ -139,7 +139,14 @@
                             <!--end::Section-->
                         </div>
                         <div class="tab-pane" id="routeMap" role="tabpanel">
-                            {{>tripMap}}
+                            <div class="col-12">
+                                <button data-toggle="collapse" data-target=".collapse"
+                                class="floatingContent polyToggle btn btn-primary btn-sm"><i class="fas fa-road"
+                                    style="right: 20px !important"></i>Hiện/Ẩn đường đi
+                                </button>
+                                {{>tripMap}}
+                            </div>
+                            
                         </div>
                         <div class="tab-pane" id="timeline" role="tabpanel">
                             123
