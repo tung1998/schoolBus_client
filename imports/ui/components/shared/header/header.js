@@ -28,5 +28,6 @@ function sightOutClick() {
     Session.set(_SESSION.avata, null)
     Session.set(_SESSION.username, null)
     Session.set(_SESSION.userID, null)
+    BlazeLayout.render("login");
     FlowRouter.go('/login')
 }
