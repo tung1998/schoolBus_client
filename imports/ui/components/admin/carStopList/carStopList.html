@@ -90,36 +90,50 @@
                     <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
                         <div class="row">
                             <div class="col-lg-6 col-xl-5 order-lg-1 order-xl-1 heightAnchor">
-                                <div class="kt-portlet">
+                                <div>
                                     <form class="kt-form">
-                                        <div class="kt-portlet__body anchorHeight">
+                                        <div class="anchorHeight">
                                             <div class="kt-section kt-section--first">
                                                 <div class="form-group">
                                                     <label>Vị trí:</label>
                                                     <input type="text" class="form-control position"
-                                                        placeholder="Vị trí" name="location" id="location">
+                                                        placeholder="Vị trí" name="location" id="location" disabled>
                                                     <span class="form-text text-muted"></span>
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Đặt tên điểm dừng:</label>
-                                                    <input type="text" class="form-control"
+                                                    <input type="text" class="form-control stopName"
                                                         placeholder="Nhập tên điểm dừng" name="stopName" id="stopName">
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Loại điểm dừng:</label>
-                                                    <input type="text" class="form-control" placeholder="Loại điểm dừng"
-                                                        name="stopType" id="stopType">
+                                                    <input type="text" class="form-control"
+                                                        placeholder="Nhập loại điểm dừng" name="stopType" id="stopType">
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Địa chỉ:</label>
-                                                    <input type="text" class="form-control" placeholder="Enter email"
-                                                        name="address" id="address">
+                                                    <input type="text" class="form-control address"
+                                                        placeholder="Nhập địa chỉ" name="address" id="address">
                                                 </div>
+                                                {{#if isSuperadmin}}
+                                                <div class="form-group">
+                                                    <label>Trường: *</label>
+                                                    <select id="school-select" class="form-control school"
+                                                        name="school">
+                                                        <option value=""></option>
+                                                        {{#each schools}}
+                                                        <option value="{{_id}}">{{name}}</option>
+                                                        {{/each}}
+                                                    </select>
+                                                </div>
+                                                {{/if}}
                                                 <div class="kt-form__actions">
-                                                    <button type="submit"
-                                                        class="btn btn-primary confirm-button">Gửi</button>
-                                                    <button type="submit" class="btn btn-secondary">Xem danh sách điểm
-                                                        dừng</button>
+                                                    <button type="submit" class="btn btn-primary confirm-button"
+                                                        id="confirm-button">Gửi</button>
+                                                    <a href="/carStopList"><button type="reset"
+                                                            class="btn btn-secondary">Xem danh sách
+                                                            điểm
+                                                            dừng</button></a>
                                                 </div>
                                             </div>
 
@@ -128,12 +142,8 @@
                                 </div>
                             </div>
                             <div class="col-lg-6 col-xl-7 order-lg-1 order-xl-1">
-                                <div class="kt-portlet">
-                                    <div class="kt-portlet__body">
-                                        <div class="kt-section kt-section--first">
-                                            {{>micromap}}
-                                        </div>
-                                    </div>
+                                <div class="kt-section kt-section--first">
+                                    {{>micromap}}
                                 </div>
                             </div>
                         </div>

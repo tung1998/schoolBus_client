@@ -29,8 +29,8 @@ import {
 
 let accessToken;
 let currentPage = 1
-let dropzone
-
+let dropzone;
+let localSchool;
 Template.parentManager.onCreated(() => {
   accessToken = Cookies.get('accessToken')
   Session.set('schools', [])
@@ -99,6 +99,7 @@ Template.editParentModal.helpers({
     return Session.get('class')
   },
   students() {
+    //console.log(Session.get('students'))
     return Session.get('students')
   },
 });
@@ -321,6 +322,7 @@ function initSelect2() {
     name: 'Chọn học sinh'
   }]
   initSelect2.map((key) => {
+    //console.log(key)
     $(`#${key.id}`).select2({
       placeholder: key.name,
       width: '100%',
@@ -360,10 +362,10 @@ function createRow(result) {
   let students = result.students
   let studentHtml
   if (Session.get(_SESSION.isSuperadmin)) {
-    studentHtml = students.map(item => `<li>${item.user?item.user.name||'':''}-${item.class?item.class.name||'':''}-${item.school?item.school.name||'':''}</li>`)
+    studentHtml = students.map(item => `<li>${item.user?item.user.name||'':''} - ${item.class?item.class.name||'':''} - ${item.school?item.school.name||'':''}</li>`)
   } else {
     studentHtml = students.filter(item => item.schoolID = Session.get(_SESSION.schoolID))
-      .map(item => `<li studentID="${item._id}">${item.user?item.user.name||'':''}-${item.class?item.school.name||'':''} <li>`)
+      .map(item => `<li studentID="${item._id}">${item.user?item.user.name||'':''} - ${item.class?item.class.name||'':''} - ${item.school?item.school.name||'':''} </li>`)
   }
   let data = {
     _id: result._id,
@@ -397,11 +399,18 @@ function addStudentClick(e) {
   let schoolName = $('#school-select option:selected').text()
   let className = $('#class-select option:selected').text()
   let studentID = $('#student-select').val()
-  let studentName = $('#student-select option:selected').text()
+  let studentName = $('#student-select option:selected').text().split(" - ")[0];
+  console.log(schoolName)
+  if (schoolName == ""){
+    localSchool = Session.get('students')[0].user.school.name;
+    console.log(localSchool);
+    schoolName = localSchool;
+  }
   if (!schoolName || !className || !studentID) {
     handleError(null, 'Vui lòng chọn học sinh')
     return false
   }
+
   $('#student-info').append(`<li studentID="${studentID}">${studentName} - ${className} - ${schoolName}
                                 <button type="button" class="delete-tudent-btn btn btn-outline-hover-danger btn-sm btn-icon btn-circle">
                                   <i class="flaticon2-delete"></i>

@@ -174,27 +174,28 @@ async function clickSubmitButton() {
                     if (importImage.error)
                         handleError(result, "Không tải được ảnh lên server!")
                     else data.image = imageId
+                    if (!data._id) {
+                        await MeteorCall(_METHODS.driver.Create, data, accessToken)
+                        console.log("đã thêm mới");
+                        handleSuccess("Thêm", `tài xế ${data.name}`).then(() => {
+                            $('#editDriverModal').modal("hide")
+                        })
+        
+                    } else {
+                        await MeteorCall(_METHODS.driver.Update, data, accessToken)
+                        handleSuccess("Cập nhật", `tài xế ${data.name}`).then(() => {
+                            $('#editDriverModal').modal("hide")
+                        })
+                        console.log("đã update");
+                    }
+                    reloadTable(1, getLimitDocPerPage())
+                    clearForm()
                 }
-            }
-
-            if (!data._id) {
-                await MeteorCall(_METHODS.driver.Create, data, accessToken)
-                console.log("đã thêm mới");
-                handleSuccess("Thêm")
-                reloadTable(1, getLimitDocPerPage())
-                $('#editDriverModal').modal("hide")
-
-
             } else {
-                await MeteorCall(_METHODS.driver.Update, data, accessToken)
-                handleSuccess("Cập nhật")
-                reloadTable(1, getLimitDocPerPage())
-                $('#editDriverModal').modal("hide")
-
-                console.log("đã update");
+                handleError(null, "Ảnh đại diện không được để trống!")
             }
+
             
-            clearForm()
         }
     } catch (error) {
         handleError(error)

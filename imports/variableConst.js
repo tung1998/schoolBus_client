@@ -143,6 +143,7 @@ const _METHODS = {
         GetAll: 'Parent.getAll',
         GetById: 'Parent.getByID',
         GetByPage: 'Parent.getByPage',
+        GetByClass: 'Parent.getByClass',
         Create: 'Parent.create',
         Update: 'Parent.update',
         Delete: 'Parent.delete',
