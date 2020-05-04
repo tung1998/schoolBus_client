@@ -28,15 +28,25 @@ Template.tripManager.events({
 })
 
 function renderRouteSelect() {
-    $("#start-time").datetimepicker({});
-    $("#select_date").datepicker({});
-    $("#select_date").val(moment(Date.now()).format("MM/DD/YYYY"))
+    $("#start-time").datetimepicker({
+        language: 'vi',
+        autoclose: true
+    });
+    $("#select_date").datepicker({
+        language: 'vi',
+        autoclose: true
+    });
+    $("#select_date").val(moment(Date.now()).format("DD/MM/YYYY"))
 
     MeteorCall(_METHODS.route.GetAll, null, accessToken).then(result => {
         let options = result.data.map(route => {
             return `<option value="${route._id}">${route.name}</option>`
         })
-        $("#routeSelect").html(options.join(" "));
+        $("#routeSelect").html('<option value""></option>').append(options.join(" "));
+        $("#routeSelect").select2({
+            width: "100%",
+            placeholder: "Chọn cung đường"
+        })
     }).catch(handleError)
 }
 
@@ -85,7 +95,7 @@ function ClickUpdateTimeButton() {
 }
 
 function getDayFilter() {
-    let date = moment($("#select_date").val(), "MM/DD/YYYY").lang("vn").valueOf();
+    let date = moment($("#select_date").val(), "DD/MM/YYYY").valueOf();
     let startTime = date
     let endTime = startTime + 86400000;
     let range = {
@@ -147,7 +157,7 @@ function htmlRow(data) {
                             <div class="row">
                                 <i class="flaticon2-calendar-1"></i>&nbsp;
                                 <label for="time-start" class="form-control-label">Thời gian khởi hành:</label>&nbsp;
-                                <a href="#" id="time-start">${moment(data.startTime).format("DD MMM YY, h:mm")}</a>
+                                <a href="#" id="time-start">${moment(data.startTime).format("DD MMMM YYYY, h:mm")}</a>
                             </div>
                             <div class="row">
                                 <div class="col-12" style="padding-left: 0px;">

@@ -26,7 +26,9 @@ if (Meteor.isServer) {
         'user.getCurrentInfor': getCurrentUserInfor,
         'user.isSuperadmin': isSuperadmin,
         'user.blockUser': blockUser,
-        'user.unblockUser': unblockUser
+        'user.unblockUser': unblockUser,
+        'user.resetPassword': resetPassword,
+        'user.updateUserPassword': updateUserPassword,
     });
 }
 
@@ -113,6 +115,22 @@ function blockUser(data, accessToken = '') {
 function unblockUser(data, accessToken = '') {
     let url = `${AUTH_USER}/${data._id}/unblock`
     return httpDefault(METHOD.put, url, {
+        token: accessToken
+    })
+}
+
+function resetPassword(data, accessToken = '') {
+    let url = `${AUTH_USER}/passwords`
+    return httpDefault(METHOD.put, url, {
+        body: data,
+        token: accessToken
+    })
+}
+
+function updateUserPassword(data, accessToken = '') {
+    let url = `${AUTH_USER}/${data._id}/password`
+    return httpDefault(METHOD.put, url, {
+        body: data,
         token: accessToken
     })
 }

@@ -49,6 +49,7 @@ Template.studentManager.onRendered(() => {
             getSelectData()
     })
     initSelect2()
+    initDatePikcer()
     dropzone = initDropzone("#kt_dropzone_1")
     addPaging($('#studentTable'));
     reloadTable(1, getLimitDocPerPage())
@@ -231,6 +232,7 @@ async function SubmitForm(event) {
                 IDStudent: $('input[name="IDstudent"]').val(),
                 address: $('input[name="address"]').val(),
                 name: $('input[name="name"]').val(),
+                dateOfBirth: moment($('#date-of-birth').val(), "DD/MM/YYYY").valueOf(),
                 email: $('input[name="email"]').val(),
                 phone: $('input[name="phone"]').val(),
                 carStopID: $('#student-carStopID').val(),
@@ -239,6 +241,7 @@ async function SubmitForm(event) {
             if (Session.get(_SESSION.isSuperadmin)) {
                 data.schoolID = $('#school-input').val()
             }
+            console.log(data);
 
             let imagePreview = $('#kt_dropzone_1').find('div.dz-image-preview')
             if (imagePreview.length) {
@@ -441,4 +444,11 @@ function refreshFilter() {
     $('#student-class-filter').val('')
 
     reloadTable(1, getLimitDocPerPage(), null)
+}
+
+function initDatePikcer() {
+    $('#date-of-birth').datepicker({
+        language: 'vi',
+        autoclose: true,
+    })
 }

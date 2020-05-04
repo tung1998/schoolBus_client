@@ -113,8 +113,9 @@ function renderModelOption(options = null, carModelID = null) {
             options
         }, accessToken)
         .then(result => {
-            if (options && options.length) carModelData = result.data.filter(item => item.schoolID == options[0].value)
-            let optionSelects = carModelData.map(result => {
+
+            if (options && options.length) result.data = result.data.filter(item => item.schoolID == options[0].value)
+            let optionSelects = result.data.map(result => {
                 return `<option value="${result._id}">${result.brand}-${result.model}</option>`;
             });
             $("#model-select").html('<option></option>').append(optionSelects.join(" "));

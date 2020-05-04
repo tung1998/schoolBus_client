@@ -16,7 +16,8 @@ import {
     getBase64,
     makeID,
     initDropzone,
-    handlePaging
+    handlePaging,
+    convertTime
 
 } from '../../../../functions'
 
@@ -40,6 +41,7 @@ Template.driverManager.onRendered(() => {
     addPaging($('#driverTable'));
     reloadTable(1, getLimitDocPerPage())
     addRequiredInputLabel()
+    initDatePicker()
     dropzone = initDropzone("#kt_dropzone_1")
     this.dropzone = dropzone
 
@@ -220,14 +222,15 @@ function getInputData() {
         username: $('#driver-phone').val(),
         password: '12345678',
         name: $('#driver-name').val(),
+        dateOfBirth: convertTime($('#date-of-birth').val()),
         phone: $('#driver-phone').val(),
         email: $('#driver-email').val(),
         address: $('#driver-address').val(),
         IDNumber: $('#driver-IDNumber').val(),
-        IDIssueDate: $('#driver-IDIssueDate').val(),
+        IDIssueDate: convertTime($('#driver-IDIssueDate').val()),
         IDIssueBy: $('#driver-IDIssueBy').val(),
         DLNumber: $('#driver-DLNumber').val(),
-        DLIssueDate: $('#driver-DLIssueDate').val(),
+        DLIssueDate: convertTime($('#driver-DLIssueDate').val()),
         status: 0
     }
     if (Session.get(_SESSION.isSuperadmin)) {
@@ -329,10 +332,10 @@ function createRow(result) {
         email: result.user.email,
         address: result.address,
         IDNumber: result.IDNumber,
-        IDIssueDate: result.IDIssueDate,
+        IDIssueDate: convertTime(result.IDIssueDate, true),
         IDIssueBy: result.IDIssueBy,
         DLNumber: result.DLNumber,
-        DLIssueDate: result.DLIssueDate,
+        DLIssueDate: convertTime(result.DLIssueDate, true),
     }
 
     if (Session.get(_SESSION.isSuperadmin)) {
@@ -406,4 +409,14 @@ function refreshFilter() {
     $('#dl-filter').val('')
 
     reloadTable(1, getLimitDocPerPage(), null)
+}
+
+function initDatePicker() {
+    let data = ["date-of-birth", "driver-IDIssueDate", "driver-DLIssueDate"]
+    data.map((key) => {
+        $(`#${key}`).datepicker({
+            language: "vi",
+            autoclose: true,
+        })
+    })
 }
