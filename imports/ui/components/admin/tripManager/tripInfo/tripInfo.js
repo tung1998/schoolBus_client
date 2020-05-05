@@ -5,8 +5,6 @@ import {
 } from 'meteor/kadira:flow-router';
 
 import {
-    drawPath,
-    addPoly,
     swapPcs
 } from '../../studentListManager/studentListInfo/studentListInfo.js'
 
@@ -27,10 +25,11 @@ import {
     renderStudentInfoModal
 } from './instascan'
 
-let accessToken
-let carStopList = []
-let stopCoor = []
-let markers_id = []
+let accessToken, 
+    carStopList = [],
+    stopCoor = [],
+    markers_id = [],
+    polyID;
 
 Template.tripDetail.onCreated(async () => {
     accessToken = Cookies.get('accessToken')
@@ -59,6 +58,7 @@ Template.tripDetail.onRendered(() => {
         tripMap.invalidateSize();
     }, 0) //invalidate Size of map
     window.markerGroup = L.layerGroup().addTo(tripMap); //create markerGroup
+    drawPath(stopCoor);
 })
 
 Template.tripDetail.helpers({
@@ -89,6 +89,10 @@ Template.tripDetail.events({
         let lngval = tarMark._latlng.lng;
         tarMark.openPopup();
         window.routeMiniMap.setView([latval, lngval], 14);
+    },
+    'click .polyToggle': (event) => {
+        event.preventDefault();
+        removeLayerByID(polyID);
     }
 })
 
@@ -133,6 +137,15 @@ function clickOpenScannerModal() {
 }
 
 async function reloadData() {
+    $(".anchorHeight").css({
+        "height": 400
+    })
+    $(".kt-content").css({
+        "padding-bottom": 0
+    })
+    $(".kt-footer--fixed").css({
+        "padding-bottom": 0
+    })
     let tripData
     let routeName = FlowRouter.getRouteName()
     try {
@@ -201,4 +214,44 @@ function renderTimeLine() {
     }, accessToken).then(result => {
         console.log(result)
     })
+}
+
+function removeLayerByID(id) {
+    let found = false
+    markerGroup.eachLayer(function (layer) {
+        if (layer._leaflet_id === id) {
+            markerGroup.removeLayer(layer);
+            found = true;
+        }
+    });
+    if (found == false) {
+        addPoly(stopCoor)
+    }
+}
+
+function addPoly(arr) {
+    poly = L.polyline(arr, {
+        color: 'blue',
+        weight: 4,
+        opacity: 0.5,
+        smoothFactor: 1
+    }).addTo(markerGroup);
+    polyID = markerGroup.getLayerId(poly);
+}
+
+function drawPath(arr) {
+    MeteorCall(_METHODS.wemap.getDrivePath, arr, accessToken).then(result => {
+        let pol = []
+        let a = result.routes[0].legs
+        for (let i = 0; i < a.length; i++) {
+            for (let j = 0; j < a[i].steps.length; j++) {
+                for (let k = 0; k < a[i].steps[j].intersections.length; k++) {
+                    pol.push(swapPcs(a[i].steps[j].intersections[k].location))
+                }
+            }
+        }
+        pol.push(arr[0])
+        stopCoor = pol;
+        //addPoly(pol)
+    }).catch(handleError);
 }

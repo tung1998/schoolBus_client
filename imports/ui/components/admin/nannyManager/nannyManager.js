@@ -37,7 +37,7 @@ Template.nannyManager.onRendered(() => {
     addPaging($('#nannyTable'))
     reloadTable();
     dropzone = initDropzone("#kt_dropzone_1")
-    this.dropzone = dropzone 
+    this.dropzone = dropzone
     this.checkIsSuperAdmin = Tracker.autorun(() => {
         if (Session.get(_SESSION.isSuperadmin))
             initSchoolSelect2()
@@ -56,7 +56,7 @@ Template.editNannyModal.helpers({
 
 Template.nannyManager.onDestroyed(() => {
     dropzone = null
-    if(this.checkIsSuperAdmin) this.checkIsSuperAdmin = null
+    if (this.checkIsSuperAdmin) this.checkIsSuperAdmin = null
 });
 
 Template.nannyManager.helpers({
@@ -195,6 +195,7 @@ async function SubmitForm(event) {
                 data.schoolID = $('#school-input').val()
             }
             let imagePreview = $('#kt_dropzone_1').find('div.dz-image-preview')
+            console.log(imagePreview)
             if (imagePreview.length) {
                 if (imagePreview.hasClass('dz-success')) {
                     let imageId = makeID("user")
@@ -203,32 +204,34 @@ async function SubmitForm(event) {
                         imageId,
                         BASE64: [BASE64]
                     }, accessToken)
+
                     if (importImage.error)
                         handleError(result, "Không tải được ảnh lên server!")
                     else data.image = imageId
+                    let modify = $("#editNannyModal").attr("nannyID");
+                    if (modify == "") {
+                        await MeteorCall(_METHODS.Nanny.Create, data, accessToken)
+                            .then(result => {
+                                handleSuccess("Thêm", "bảo mẫu").then(() => {
+                                    $("#editNannyModal").modal("hide");
+                                })
+                                reloadTable(1, getLimitDocPerPage())
+                            })
+                            .catch(handleError);
+                    } else {
+                        data._id = modify;
+                        await MeteorCall(_METHODS.Nanny.Update, data, accessToken)
+                            .then(result => {
+                                handleSuccess("Thêm", "bảo mẫu").then(() => {
+                                    $("#editNannyModal").modal("hide");
+                                })
+                                reloadTable(currentPage, getLimitDocPerPage())
+                            })
+                            .catch(handleError);
+                    }
                 }
-            }
-
-            let modify = $("#editNannyModal").attr("nannyID");
-            if (modify == "") {
-                await MeteorCall(_METHODS.Nanny.Create, data, accessToken)
-                    .then(result => {
-                        handleSuccess("Thêm", "bảo mẫu").then(() => {
-                            $("#editNannyModal").modal("hide");
-                        })
-                        reloadTable(1, getLimitDocPerPage())
-                    })
-                    .catch(handleError);
             } else {
-                data._id = modify;
-                await MeteorCall(_METHODS.Nanny.Update, data, accessToken)
-                    .then(result => {
-                        handleSuccess("Thêm", "bảo mẫu").then(() => {
-                            $("#editNannyModal").modal("hide");
-                        })
-                        reloadTable(currentPage, getLimitDocPerPage())
-                    })
-                    .catch(handleError);
+                handleError(null, "Ảnh đại diện không được để trống!");
             }
         }
     } catch (error) {
@@ -313,7 +316,7 @@ function createTable(table, result, limitDocPerPage) {
 }
 
 function createRow(result) {
-    console.log(result);
+    //console.log(result);
     let data = {
         _id: result._id,
         name: result.user.name,
@@ -335,7 +338,7 @@ function createRow(result) {
     return `
         <tr id="${data._id}" class="table-row">
             <th class="text-center">${result.index + 1}</th>
-            ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>`: ''}
+            ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>` : ''}
             <td>${data.name}</td>
             <td>${data.phone}</td>
             <td>${data.email}</td>

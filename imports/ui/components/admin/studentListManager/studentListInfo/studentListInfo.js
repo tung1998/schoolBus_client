@@ -72,7 +72,7 @@ Template.studentListInfo.onRendered(() => {
 
 Template.studentListInfo.onDestroyed(() => {
     studentIDs = null
-    document.getElementById("kt_sortable_portlets").innerHTML = '';
+    //document.getElementById("carStopContainer").innerHTML = '';
     markerGroup.eachLayer((layer) => {
         markerGroup.removeLayer(layer)
     });
@@ -148,7 +148,7 @@ Template.carStopList_studentListInfo.onDestroyed(() => {
     carStopList = null
     stopCoor = null
     markers_id = null
-    document.getElementById("carStopContainer").innerHTML = '';
+    //document.getElementById("carStopContainer").innerHTML = '';
     markerGroup.eachLayer((layer) => {
         markerGroup.removeLayer(layer)
     });
@@ -266,7 +266,7 @@ function clickStudentCheckBox(e) {
 
 function setMarker(arr, des, address) {
     let mark = L.marker(arr).bindTooltip(des, {
-        permanent: false
+        permanent: true
     }).addTo(carStopmap);
     markers_id.push(markerGroup.getLayerId(mark))
     let popup = `
@@ -325,6 +325,7 @@ function drawPath(arr) {
             }
         }
         pol.push(arr[0])
+        stopPointCoors = pol;
         //addPoly(pol)
     }).catch(handleError);
 }

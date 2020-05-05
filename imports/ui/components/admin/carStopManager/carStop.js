@@ -35,6 +35,7 @@ Template.carStop.helpers({
 
 Template.minimap.onRendered(function () {
     setMapHeight()
+    document.getElementById("confirm-button").disabled = true;
     L.Icon.Default.imagePath = '/packages/bevanhunt_leaflet/images/';
     let minimap = L.map('minimap', {
         drawControl: true,
@@ -113,27 +114,26 @@ Template.carStop.events({
             address: event.target.address.value,
             location: getLatLng(event.target.location.value)
         }
-
+        //let authorize = false;
+        console.log(typeof carStopInfo.name)
         if (Session.get(_SESSION.isSuperadmin)) carStopInfo.schoolID = $('#school-select').val()
-
-
-
-        //document.getElementById("confirm-button").disabled = false;
-        MeteorCall(_METHODS.carStop.Create, carStopInfo, accessToken)
-            .then(result => {
-                handleSuccess("Thêm điểm dừng")
-                console.log(result)
-                //let htmlTable = result.data.map(htmlRow);
-                //$("#table-body").html(htmlTable.join(" "));
-            })
-            .catch(handleError);
-        event.target.stopType.value = " ";
-        event.target.stopName.value = " ";
-        event.target.address.value = " ";
-        event.target.location.value = " ";
-        $('#school-select').val('').trigger('change')
-
-
+        if ((carStopInfo.stopType == "") || (carStopInfo.name == "") || (carStopInfo.schoolID == "")) {
+            handleError();
+        } else {
+            MeteorCall(_METHODS.carStop.Create, carStopInfo, accessToken)
+                .then(result => {
+                    handleSuccess("Thêm điểm dừng")
+                    console.log(result)
+                    //let htmlTable = result.data.map(htmlRow);
+                    //$("#table-body").html(htmlTable.join(" "));
+                })
+                .catch(handleError);
+            event.target.stopType.value = " ";
+            event.target.stopName.value = " ";
+            event.target.address.value = " ";
+            event.target.location.value = " ";
+            $('#school-select').val('').trigger('change')
+        }
     }
 })
 

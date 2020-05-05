@@ -21,7 +21,7 @@ import {
 let accessToken;
 let userID;
 let dropzone
-
+let errorType;
 Template.profile.onCreated(() => {
     accessToken = Cookies.get("accessToken");
 });
@@ -84,9 +84,16 @@ function dzPreviewClick() {
 }
 
 function checkNewPass(string1, string2) {
-    if (string1 == string2) {
-        return true
-    } else return false
+    //errorType = 0: trung mat khau || errorType = 1: mat khau qua ngan
+    if ((string1 != string2)){
+        errorType = 0;
+        return false;
+    }
+    if (string1.length <= 8){
+        errorType = 1;
+        return false;
+    }
+    return true;
 }
 
 function appendNewPass(event) {
@@ -103,7 +110,7 @@ function appendNewPass(event) {
         if (newPass == ""){
             handleError(null, "Vui lòng điền đủ thông tin");
         } else {
-            if (checkNewPass(oldPass, newPass)) {
+            if (oldPass == newPass) {
                 handleError(null, "Mật khẩu cũ và mới không được giống nhau!")
             } else {
                 if (checkNewPass(newPass, confirmation)) {
@@ -112,13 +119,19 @@ function appendNewPass(event) {
                         }, accessToken)
                         .then(result => {
                             console.log(result)
-                            handleSuccess("", "Đổi mật khẩu")
-                            Cookies.remove('accessToken');
+                            handleSuccess("", "Đã đổi mật khẩu")
+                            Cookies.remove('accessToken')
+                            BlazeLayout.render("login");
                             FlowRouter.go('/login')
                         })
                         .catch(handleError);
                 } else {
-                    handleError(null, "Xác nhận mật khẩu sai!")
+                    if (errorType == 0){
+                        handleError(null, "Xác nhận mật khẩu sai!")
+                    } else if (errorType == 1){
+                        handleError(null, "Hãy nhập mật khẩu dài hơn 8 ký tự!")
+                    }
+                    
                 }
             }
         }  
