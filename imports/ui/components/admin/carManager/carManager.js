@@ -34,8 +34,7 @@ Template.carManager.onRendered(() => {
     this.checkIsSuperAdmin = Tracker.autorun(() => {
         if (Session.get(_SESSION.isSuperadmin)) {
             initSchoolSelect2()
-        }
-        else {
+        } else {
             renderModelOption()
         }
     })
@@ -114,8 +113,9 @@ function renderModelOption(options = null, carModelID = null) {
             options
         }, accessToken)
         .then(result => {
-            if (options && options.length) carModelData = result.data.filter(item => item.schoolID == options[0].value)
-            let optionSelects =carModelData.map(result => {
+
+            if (options && options.length) result.data = result.data.filter(item => item.schoolID == options[0].value)
+            let optionSelects = result.data.map(result => {
                 return `<option value="${result._id}">${result.brand}-${result.model}</option>`;
             });
             $("#model-select").html('<option></option>').append(optionSelects.join(" "));
@@ -124,7 +124,7 @@ function renderModelOption(options = null, carModelID = null) {
                 width: "100%"
             })
 
-            if(carModelID) $('#model-select').val(carModelID).trigger('change')
+            if (carModelID) $('#model-select').val(carModelID).trigger('change')
         })
         .catch(handleError);
 }
@@ -186,7 +186,6 @@ function SubmitForm(event) {
         let data = {
             carModelID: $("#model-select").val(),
             status: $('input[name="status-input"]').val(),
-            modelName: $(".model-result").html(),
             numberPlate: $('input[name="licensePlate-input"]').val()
         };
 
@@ -198,22 +197,23 @@ function SubmitForm(event) {
         if (modify == "") {
             MeteorCall(_METHODS.car.Create, data, accessToken)
                 .then(result => {
-                    handleSuccess("Thêm").then(() => {
-                        $("#editStudentModal").modal("hide");
-                        reloadTable(1, getLimitDocPerPage())
-                        clearForm()
-                    })
+                    handleSuccess("Thêm")
+                    $("#editCarManagerModal").modal("hide");
+                    reloadTable(1, getLimitDocPerPage())
+                    clearForm()
+
                 })
                 .catch(handleError);
         } else {
             data._id = modify;
+            console.log(data);
             MeteorCall(_METHODS.car.Update, data, accessToken)
                 .then(result => {
-                    handleSuccess("Cập nhật").then(() => {
-                        $("#editStudentModal").modal("hide");
-                        reloadTable(1, getLimitDocPerPage())
-                        clearForm()
-                    })
+                    handleSuccess("Cập nhật")
+                    $("#editCarManagerModal").modal("hide")
+                    reloadTable(1, getLimitDocPerPage())
+                    clearForm()
+
                 })
                 .catch(handleError);
         }
@@ -290,6 +290,7 @@ function createTable(table, result, limitDocPerPage) {
 function createRow(result) {
     console.log(result);
     let data = {
+        _id: result._id,
         carModelID: result.carModelID,
         modelName: result.carModel.model,
         brandName: result.carModel.brand,
@@ -308,7 +309,7 @@ function createRow(result) {
             <td>${data.status}</td>
             <td class="text-center">
             <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
-            <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
+            <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify({_id: data._id})}\'>Xóa</button>
             </td>
         </tr>
         `

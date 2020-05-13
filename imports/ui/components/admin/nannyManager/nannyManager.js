@@ -11,7 +11,8 @@ import {
     addPaging,
     makeID,
     initDropzone,
-    handlePaging
+    handlePaging,
+    convertTime,
 } from "../../../../functions";
 
 import {
@@ -36,6 +37,7 @@ Template.nannyManager.onRendered(() => {
     addRequiredInputLabel()
     addPaging($('#nannyTable'))
     reloadTable();
+    initDatepicker()
     dropzone = initDropzone("#kt_dropzone_1")
     this.dropzone = dropzone
     this.checkIsSuperAdmin = Tracker.autorun(() => {
@@ -111,11 +113,13 @@ Template.nannyFilter.events({
         }
     },
     'change #school-filter': (e) => {
-        let options = [{
-            text: "schoolID",
-            value: $('#school-filter').val()
-        }]
-        reloadTable(1, getLimitDocPerPage(), options)
+        if ($('#school-filter').val()) {
+            let options = [{
+                text: "schoolID",
+                value: $('#school-filter').val()
+            }]
+            reloadTable(1, getLimitDocPerPage(), options)
+        }
     }
 })
 
@@ -187,7 +191,7 @@ async function SubmitForm(event) {
                 password: "12345678",
                 address: $("#address-input").val(),
                 IDNumber: $("#identityCard-input").val(),
-                IDIssueDate: $("#identityCardDate-input").val(),
+                IDIssueDate: convertTimte($("#identityCardDate-input").val()),
                 IDIssueBy: $("#identityCardBy-input").val(),
                 status: $("#status-input").val(),
             }
@@ -325,7 +329,7 @@ function createRow(result) {
         username: result.user.username,
         address: result.address,
         IDNumber: result.IDNumber,
-        IDIssueDate: result.IDIssueDate,
+        IDIssueDate: convertTime(result.IDIssueDate, true),
         IDIssueBy: result.IDIssueBy,
         status: result.status,
         image: result.image
@@ -393,4 +397,14 @@ function refreshFilter() {
     $('#cccd-filter').val('')
 
     reloadTable(1, getLimitDocPerPage(), null)
+}
+
+function initDatepicker() {
+    let data = ["date-of-birth", "nanny-IDIssueDate"]
+    data.map((key) => {
+        $(`#${key}`).datepicker({
+            language: "vi",
+            autoclose: true,
+        })
+    })
 }

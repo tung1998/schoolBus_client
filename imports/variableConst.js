@@ -238,7 +238,9 @@ const _METHODS = {
         UpdatePassword: 'user.updatePassword',
         IsSuperadmin: 'user.isSuperadmin',
         BlockUser: 'user.blockUser',
-        UnblockUser: 'user.unblockUser'
+        UnblockUser: 'user.unblockUser',
+        ResetPassword: 'user.resetPassword',
+        UpdateUserPassword: 'user.updateUserPassword'
     },
     sms: {
         GetAll: 'sms.getSMS',

@@ -16,7 +16,8 @@ import {
     getBase64,
     makeID,
     initDropzone,
-    handlePaging
+    handlePaging,
+    convertTime
 
 } from '../../../../functions'
 
@@ -40,6 +41,7 @@ Template.driverManager.onRendered(() => {
     addPaging($('#driverTable'));
     reloadTable(1, getLimitDocPerPage())
     addRequiredInputLabel()
+    initDatePicker()
     dropzone = initDropzone("#kt_dropzone_1")
     this.dropzone = dropzone
 
@@ -52,7 +54,7 @@ Template.driverManager.onRendered(() => {
 
 Template.driverManager.onDestroyed(() => {
     dropzone = null
-    if(this.checkIsSuperAdmin) this.checkIsSuperAdmin = null
+    if (this.checkIsSuperAdmin) this.checkIsSuperAdmin = null
     Session.delete('schools')
 });
 
@@ -69,7 +71,7 @@ Template.driverManager.events({
         clearForm()
         $('.avatabox').addClass('kt-hidden')
     },
-    'click #edit-button': clickEditButton,
+    'click .edit-button': clickEditButton,
     'click .submit-button': clickSubmitButton,
     'click .delete-button': clickDelButton,
     "click .kt-datatable__pager-link": (e) => {
@@ -221,14 +223,15 @@ function getInputData() {
         username: $('#driver-phone').val(),
         password: '12345678',
         name: $('#driver-name').val(),
+        dateOfBirth: convertTime($('#date-of-birth').val()),
         phone: $('#driver-phone').val(),
         email: $('#driver-email').val(),
         address: $('#driver-address').val(),
         IDNumber: $('#driver-IDNumber').val(),
-        IDIssueDate: $('#driver-IDIssueDate').val(),
+        IDIssueDate: convertTime($('#driver-IDIssueDate').val()),
         IDIssueBy: $('#driver-IDIssueBy').val(),
         DLNumber: $('#driver-DLNumber').val(),
-        DLIssueDate: $('#driver-DLIssueDate').val(),
+        DLIssueDate: convertTime($('#driver-DLIssueDate').val()),
         status: 0
     }
     if (Session.get(_SESSION.isSuperadmin)) {
@@ -330,13 +333,13 @@ function createRow(result) {
         email: result.user.email,
         address: result.address,
         IDNumber: result.IDNumber,
-        IDIssueDate: result.IDIssueDate,
+        IDIssueDate: convertTime(result.IDIssueDate, true),
         IDIssueBy: result.IDIssueBy,
         DLNumber: result.DLNumber,
-        DLIssueDate: result.DLIssueDate,
+        DLIssueDate: convertTime(result.DLIssueDate, true),
     }
 
-    if(Session.get(_SESSION.isSuperadmin)) {
+    if (Session.get(_SESSION.isSuperadmin)) {
         data.schoolID = result.schoolID
         data.schoolName = result.school.name
     }
@@ -352,8 +355,8 @@ function createRow(result) {
                 <td>${data.DLIssueDate}</td>
                 ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>` : ''}
                 <td class="text-center">
-                    <button type="button" class="btn btn-outline-brand dz-remove" data-dz-remove
-                        data-toggle="modal" id="edit-button" data-target="#editdriverModal" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
+                    <button type="button" class="btn btn-outline-brand edit-button"
+                        data-toggle="modal" data-target="#editDriverModal" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
                     <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
                 </td>
             </tr>
@@ -370,7 +373,7 @@ function initSchoolSelect2() {
         $('#school-filter').select2({
             placeholder: "Chọn trường",
             width: "100%"
-          })
+        })
     }).catch(handleError)
 }
 
@@ -407,4 +410,14 @@ function refreshFilter() {
     $('#dl-filter').val('')
 
     reloadTable(1, getLimitDocPerPage(), null)
+}
+
+function initDatePicker() {
+    let data = ["date-of-birth", "driver-IDIssueDate", "driver-DLIssueDate"]
+    data.map((key) => {
+        $(`#${key}`).datepicker({
+            language: "vi",
+            autoclose: true,
+        })
+    })
 }

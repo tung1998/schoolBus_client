@@ -57,7 +57,7 @@
                           <th>Số điện thoại</th>
                           <th>Email</th>
                           {{#if isSuperadmin}}
-                            <th>Trường</th>
+                          <th>Trường</th>
                           {{/if}}
                           <th>Lớp</th>
                           <th>Điểm đón, trả</th>
@@ -105,10 +105,21 @@
                 </div>
               </div>
               <div class="form-group row">
+                <label for="example-datetime-local-input" class="col-2 col-form-label required-input-label">Ngày
+                  sinh</label>
+                <div class="col-10">
+                  <input class="form-control" type="text" name="date-of-birth" id="date-of-birth"
+                    placeholder="Ngày sinh" autocomplete="off">
+                  <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-th"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
                 <label for="example-datetime-local-input" class="col-2 col-form-label required-input-label">Mã học
                   sinh</label>
                 <div class="col-10">
-                  <input class="form-control" type="number" name="IDstudent" placeholder="Mã học sinh"
+                  <input class="form-control" type="text" name="IDstudent" placeholder="Mã học sinh"
                     id="student-id-input">
                 </div>
               </div>
@@ -148,6 +159,7 @@
                 <label class="col-2 col-form-label required-input-label">Lớp</label>
                 <div class="col-10">
                   <select id="class-select" class="form-control">
+                    <option value=""></option>
                     {{#each class}}
                     <option value="{{_id}}">{{name}}</option>
                     {{/each}}
@@ -159,6 +171,7 @@
                   trả</label>
                 <div class="col-10">
                   <select id="student-carStopID" class="form-control">
+                    <option value=""></option>
                     {{#each carStop}}
                     <option value="{{_id}}">{{name}}</option>
                     {{/each}}
