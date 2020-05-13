@@ -10,7 +10,7 @@ import {
 } from '../../../../variableConst'
 
 Template.aside.onRendered(() => {
-    this.trackerModules = Tracker.autorun(() => {
+   this.trackerModules = Tracker.autorun(() => {
         let modules = Session.get(_SESSION.modules)
         renderAside(modules)
         KTLayout.initAside()
