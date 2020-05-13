@@ -28,6 +28,12 @@ Template.childrenInfo.events({
     'click .next-tripBtn': getNextTripData
 });
 
+Template.childrenNextripModal.helpers({
+    nextTripData(){
+        return Session.get('nextTripData')
+    }
+});
+
 function htmlChilrent(childrenInfo) {
     console.log(childrenInfo)
     return `<div class="kt-portlet kt-portlet--height-fluid">
@@ -83,6 +89,13 @@ function getNextTripData(e) {
     MeteorCall(_METHODS.trip.GetNext, {
         studentID
     }, accessToken).then(result => {
+        if(result){
+            result.startTime = moment(result.startTime).locale('vi').format('LLLL')
+            Session.set('nextTripData',result)
+            $("#childrenNextripModal").modal('show')
+        }else{
+            handleError(null, 'Không có chuyến đi sắp tới')
+        }
         console.log(result)
     }).catch(handleError)
 }

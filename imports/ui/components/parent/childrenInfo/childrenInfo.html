@@ -21,4 +21,53 @@
             content
         </div>
     </div>
+    {{> childrenNextripModal}}
 </template>
+
+
+<template name="childrenNextripModal">
+    <div class="modal fade" id="childrenNextripModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Chuyến đi sắp tới</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body row">
+                    <div class="col-12">
+                        {{nextTripData.startTime}}
+                    </div>
+                    <div class="col-6">
+                        <div class="text-center">Tài xế</div>
+                        <div class="kt-avatar kt-avatar--outline kt-avatar--circle-">
+                            <div class="kt-avatar__holder" style="background-image: url(&quot;http://113.190.128.251:3000/images/{{nextTripData.driver.user.image}}/0&quot;);">
+                            </div>
+                        </div>
+                        <div class="name">
+                            {{nextTripData.driver.user.name}}
+                            {{nextTripData.driver.user.phone}}
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-center">Bảo mẫu</div>
+                        <div class="kt-avatar kt-avatar--outline kt-avatar--circle-">
+                            <div class="kt-avatar__holder" style="background-image: url(&quot;http://113.190.128.251:3000/images/{{nextTripData.nanny.user.image}}/0&quot;);">
+                            </div>
+                        </div>
+                        <div class="name">
+                            {{nextTripData.nanny.user.name}}
+                            {{nextTripData.nanny.user.phone}}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-danger" id="absentRequest">Xin nghỉ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
