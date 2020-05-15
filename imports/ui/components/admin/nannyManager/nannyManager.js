@@ -191,7 +191,7 @@ async function SubmitForm(event) {
                 password: "12345678",
                 address: $("#address-input").val(),
                 IDNumber: $("#identityCard-input").val(),
-                IDIssueDate: convertTimte($("#identityCardDate-input").val()),
+                IDIssueDate: convertTime($("#identityCardDate-input").val()),
                 IDIssueBy: $("#identityCardBy-input").val(),
                 status: $("#status-input").val(),
             }

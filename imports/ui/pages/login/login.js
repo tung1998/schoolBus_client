@@ -12,10 +12,15 @@ import {
 } from '../../../variableConst';
 
 Template.login.events({
-    'click #kt_login_signin_submit': loginButtonClick
+    'click #kt_login_signin_submit': login,
+    'keypress #password': (e) => {
+        if (e.which === 13 || e.keyCode == 13) {
+           login()
+        }
+    },
 });
 
-function loginButtonClick() {
+function login() {
     let data = {
         username: $('#username').val(),
         password: $('#password').val()
