@@ -5,7 +5,7 @@ import {
     makeID
 } from '../../../../../functions'
 
-import { _METHODS } from '../../../../../variableConst'
+import { _METHODS, _URL_images } from '../../../../../variableConst'
 
 export {
     renderStudentInfoModal
@@ -164,7 +164,7 @@ function renderStudentInfoModal(studentID) {
     }
 
     if(studenInfoData.student.user.image){
-        studenInfoData.image = `http://192.168.100.69:3000/images/${studenInfoData.student.user.image}/0`
+        studenInfoData.image = `${_URL_images}/${studenInfoData.student.user.image}/0`
     }else{
         studenInfoData.image = `/assets/media/users/user5.jpg`
     }
