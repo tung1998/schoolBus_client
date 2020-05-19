@@ -45,9 +45,11 @@ function initScanner() {
         mirror: false,
         captureImage: true,
     });
-    console.log(Scanner)
+    // console.log(Scanner)
 
-    Instascan.Camera.getCameras().then(renderListCamera).catch(handleError);
+    Instascan.Camera.getCameras().then(renderListCamera).catch(error=>{
+        handleError(error, 'Không tìm thấy camera')
+    });
     Scanner.addListener('scan', scanSuccess);
 }
 

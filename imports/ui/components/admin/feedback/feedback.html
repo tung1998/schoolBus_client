@@ -55,8 +55,6 @@
                                                 <th>Tiêu đề</th>
                                                 <th>Thời gian nhận</th>
                                                 <th>Tình trạng</th>
-                                                <th>Phản hồi bởi</th>
-                                                <th>Thời gian phản hồi</th>
                                                 <th></th>
                                             </tr>
                                         </thead>
@@ -76,7 +74,37 @@
         </div>
         <!-- end:: Content -->
     </div>
+    {{> replyFeedBackModal}}
 </template>
+
+<template name="replyFeedBackModal">
+    <div class="modal fade" id="replyFeedBackModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+      style="display: none;" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Thêm mới</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            </button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group row">
+                <label for="studentList-name" class="col-2 col-form-label required-input-label">Nội dung</label>
+                <div class="col-10">
+                  <textarea type="text" class="form-control" id="content" placeholder="Nội dung phản hồi"></textarea>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Đóng</button>
+            <button type="button" class="btn btn-outline-primary" id="replyFeedBackModalSubmit">Xác nhận</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
 
 <template name="feedbackRow">
     <tr feedbackID="{{_id}}" class="table-row" title="{{content}}">
@@ -93,10 +121,8 @@
                 class="kt-badge kt-badge--{{feedbackStatus.classname}} kt-badge--inline kt-badge--pill kt-badge--rounded">{{feedbackStatus.text}}
             </span>
         </td>
-        <td></td>
-        <td></td>
         <td>
-            <button type="button" class="btn btn-outline-brand modify-button" feedbackID="{{_id}}">Phản hồi</button>
+            {{{htmlButton}}}
         </td>
     </tr>
 </template>

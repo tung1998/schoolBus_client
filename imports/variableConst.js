@@ -105,6 +105,7 @@ const _METHODS = {
         Create: 'feedback.create',
         Update: 'feedback.update',
         Delete: 'feedback.delete',
+        Response: 'feedback.response',
     },
     image: {
         GetAll: 'image.getAll',
@@ -332,12 +333,12 @@ const _FEEDBACK = {
         },
         readed: {
             text: "Đã tiếp nhận",
-            classname: 'success',
+            classname: 'warning',
             number: 1
         },
         response: {
             text: "Được phản hồi",
-            classname: 'info',
+            classname: 'success',
             number: 2
         },
     },
