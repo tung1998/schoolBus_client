@@ -41,21 +41,24 @@ Template.parentManager.onCreated(() => {
 Template.parentManager.onRendered(() => {
   addPaging($('#parentTable'))
   initSelect2()
-  if (Session.get(_SESSION.isSuperadmin)) {
-    initSchoolSelect2()
-  } else
-    getClassData()
+  this.checkIsSuperAdmin = Tracker.autorun(() => {
+    if (Session.get(_SESSION.isSuperadmin)) {
+      initSchoolSelect2()
+    } else
+      getClassData()
+  })
   addRequiredInputLabel()
   reloadTable()
   dropzone = initDropzone("#kt_dropzone_1")
   this.dropzone = dropzone
-  Session.delete('schools')
-  Session.delete('class')
-  Session.delete('students')
 })
 
 Template.parentManager.onDestroyed(() => {
   dropzone = null
+  if(this.checkIsSuperAdmin) this.checkIsSuperAdmin = null
+  Session.delete('schools')
+  Session.delete('class')
+  Session.delete('students')
 });
 
 Template.parentManager.events({
@@ -105,15 +108,15 @@ Template.parentFilter.onRendered(() => {
   $('#school-filter').select2({
     width: "100%",
     placeholder: "Chọn"
-})
+  })
 })
 
 Template.parentFilter.helpers({
   isSuperadmin() {
-      return Session.get(_SESSION.isSuperadmin)
+    return Session.get(_SESSION.isSuperadmin)
   },
   schools() {
-      return Session.get('schools')
+    return Session.get('schools')
   },
 });
 
@@ -121,16 +124,16 @@ Template.parentFilter.events({
   'click #filter-button': parentFilter,
   'click #refresh-button': refreshFilter,
   'keypress .filter-input': (e) => {
-      if (e.which === 13 || e.keyCode == 13) {
-          parentFilter()
-      }
+    if (e.which === 13 || e.keyCode == 13) {
+      parentFilter()
+    }
   },
   'change #school-filter': (e) => {
-      let options = [{
-          text: "adminType",
-          value: $('#school-filter').val()
-      }]
-      reloadTable(1, getLimitDocPerPage(), options)
+    let options = [{
+      text: "adminType",
+      value: $('#school-filter').val()
+    }]
+    reloadTable(1, getLimitDocPerPage(), options)
   }
 })
 
@@ -422,17 +425,17 @@ function deleteStudentClick(e) {
 
 function parentFilter() {
   let options = [{
-      text: "schoolID",
-      value: $('#school-filter').val()
+    text: "schoolID",
+    value: $('#school-filter').val()
   }, {
-      text: "user/name",
-      value: $('#name-filter').val()
+    text: "user/name",
+    value: $('#name-filter').val()
   }, {
-      text: "user/phone",
-      value: $('#phone-filter').val()
+    text: "user/phone",
+    value: $('#phone-filter').val()
   }, {
-      text: "user/email",
-      value: $('#email-filter').val()
+    text: "user/email",
+    value: $('#email-filter').val()
   }]
   console.log(options);
   reloadTable(1, getLimitDocPerPage(), options)

@@ -7,8 +7,8 @@ export {
     _TRIP,
     _FEEDBACK
 }
-// const _URL_images = 'http://192.168.100.69:3000/images'
-const _URL_images = 'http://113.190.128.251:3000/images'
+const _URL_images = 'http://192.168.0.111:3000/images'
+// const _URL_images = 'http://113.190.128.251:3000/images'
 
 const _METHODS = {
     student: {
@@ -238,7 +238,9 @@ const _METHODS = {
         UpdatePassword: 'user.updatePassword',
         IsSuperadmin: 'user.isSuperadmin',
         BlockUser: 'user.blockUser',
-        UnblockUser: 'user.unblockUser'
+        UnblockUser: 'user.unblockUser',
+        ResetPassword: 'user.resetPassword',
+        UpdateUserPassword: 'user.updateUserPassword'
     },
     sms: {
         GetAll: 'sms.getSMS',

@@ -21,7 +21,8 @@ export {
     initDropzone,
     removeDuplicated,
     getJsonDefault,
-    getLimitDocPerPage
+    getLimitDocPerPage,
+    convertTime
 }
 
 function MeteorCall(method = "", data = null, accessToken = "") {
@@ -222,8 +223,8 @@ function handlePaging(table, count, page, limitDocPerPage) {
     if (count === 0) {
         emptyWrapper.removeClass('d-none');
     } else if (count > limitDocPerPage) {
-        let startDocIndex = (page-1) * limitDocPerPage + 1
-        let endDocIndex = page * limitDocPerPage 
+        let startDocIndex = (page - 1) * limitDocPerPage + 1
+        let endDocIndex = page * limitDocPerPage
         paggingDetail.removeClass('d-none');
         tablePaging(tablePagingEl, count, page, limitDocPerPage)
         tablePagingEl.removeClass('d-none');
@@ -273,4 +274,11 @@ function getJsonDefault(json, field, value) {
 
 function getLimitDocPerPage() {
     return parseInt($("#limit-doc").val());
+}
+
+function convertTime(time, type = false) {
+    if (type == true) {
+        return moment(time).format('LL')
+    }
+    return moment(time, "DD/MM/YYYY").valueOf()
 }

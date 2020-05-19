@@ -187,7 +187,7 @@ function htmlRow(key, index) {
                 </td>
                 <td>${key.route}</td>
                 <td>${key.permission}</td>
-                <td>${key.createdTime}</td>
+                <td>${moment(key.createdTime).format('L')}</td>
                 <td>
                     <button type="button" class="btn btn-outline-brand"
                         data-toggle="modal" id="edit-module" data-target="#editModuleModal" data-json=\'${JSON.stringify(key)}\'>Sửa</button>

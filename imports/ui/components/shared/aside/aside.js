@@ -10,7 +10,7 @@ import {
 } from '../../../../variableConst'
 
 Template.aside.onRendered(() => {
-    this.trackerModules = Tracker.autorun(() => {
+   this.trackerModules = Tracker.autorun(() => {
         let modules = Session.get(_SESSION.modules)
         renderAside(modules)
         KTLayout.initAside()
@@ -29,7 +29,7 @@ function renderAside(data) {
                 let el = $("#kt_aside_menu").find(`[url="${item.parent}"]`)
                 let childrenHtml = `<li class="kt-menu__item" aria-haspopup="true">
                                 <a href="${item.route}" class="kt-menu__link ">
-                                    <i class="kt-menu__link-icon fa ${item.icon}"></i>
+                                    <i class="kt-menu__link-icon ${item.icon}"></i>
                                     <span class="kt-menu__link-text">${item.name}</span>
                                 </a>
                             </li>`
@@ -53,7 +53,7 @@ function renderAside(data) {
             } else {
                 $("#kt_aside_menu").find('ul.kt-menu__nav').append(`<li class="kt-menu__item" url="${item.route}" aria-haspopup="true">
                                                     <a href="${item.route}" class="kt-menu__link ">
-                                                        <i class="kt-menu__link-icon fa ${item.icon}"></i>
+                                                        <i class="kt-menu__link-icon ${item.icon}"></i>
                                                         <span class="kt-menu__link-text">${item.name}</span>
                                                     </a>
                                                 </li>`)

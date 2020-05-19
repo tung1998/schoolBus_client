@@ -56,6 +56,10 @@ Template.userManager.events({
     'click .unblock-user': clickUnBlockUser,
     'click .edit-user': clickEditUser,
     'click .delete-user': clickDeleteUser,
+    'click .change-password': (e) => {
+        let data = $(currentTarget).data('json')
+        $('#user-id').val(data._id)
+    },
     'click #user-checkbox-all': (e) => {
         let checkAll = $('#user-checkbox-all').prop('checked')
         if (checkAll) {
@@ -76,11 +80,13 @@ Template.userManager.events({
         $(".kt-datatable__pager-link").removeClass("kt-datatable__pager-link--active");
         $(e.currentTarget).addClass("kt-datatable__pager-link--active")
         currentPage = parseInt($(e.currentTarget).data('page'));
+        $('#user-checkbox-all').prop('checked', false);
     },
     'change #limit-doc': (e) => {
         reloadTable(1, getLimitDocPerPage());
     },
     'click .dz-preview': dzPreviewClick,
+    'click #reset-password': resetPassword
 })
 
 
@@ -134,7 +140,8 @@ function submitChangePassword(event) {
     let confirmation = $('#confirm-password').val();
 
     if (checkNewPass(newPass, confirmation)) {
-        MeteorCall(_METHODS.user.UpdatePassword, {
+        MeteorCall(_METHODS.user.UpdateUserPassword, {
+                _id: $('#user-id').val(),
                 password: newPass
             }, accessToken)
             .then(result => {
@@ -330,7 +337,7 @@ function createRow(result) {
              <td class="text-center">
                 <div class="from-group">
                     <label class="kt-checkbox kt-checkbox--brand">
-                    <input type="checkbox" class="user-checkbox">
+                    <input type="checkbox" class="user-checkbox" value="${data._id}">
                     <span></span>
                     </label>
                 </div>
@@ -343,7 +350,7 @@ function createRow(result) {
                     <i class="flaticon-more-1"></i>
                     </button>
                     <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="#" data-json=\'${JSON.stringify({_id: data._id})}\' data-toggle="modal"
+                    <a class="dropdown-item change-password" href="#" data-json=\'${JSON.stringify({_id: data._id})}\' data-toggle="modal"
                     data-target="#editPasswordModal"><i class="la la-key"></i> Đổi mật khẩu</a>
                     <a class="dropdown-item edit-user" href="#" data-json=\'${JSON.stringify(data)}\'><i
                         class="la la-pencil-square"></i> Sửa thông tin</a>
@@ -442,4 +449,33 @@ function refreshFilter() {
 
 
     reloadTable(1, getLimitDocPerPage(), null)
+}
+
+function getCheckboxData() {
+    let dataCheckbox = []
+    let userItem = {
+        password: "12345678"
+    }
+    $('.user-checkbox:checked').each(function () {
+        userItem._id = $(this).val()
+        dataCheckbox.push(JSON.stringify(userItem))
+    })
+    return dataCheckbox
+}
+
+function resetPassword() {
+    let data = getCheckboxData().map(key => {
+        return JSON.parse(key)
+    })
+    if (userData.length) {
+        handleConfirm("Reset mật khẩu người dùng được chọn?").then((result) => {
+            if (result.value) {
+                MeteorCall(_METHODS.user.ResetPassword, data, accessToken).then((result) => {
+                    console.log(result);
+                }).catch(handleError)
+            }
+        })
+    } else {
+        handleError('', 'Chưa chọn người dùng!!!')
+    }
 }
