@@ -220,7 +220,7 @@ FlowRouter.route('/carFuelManager', {
     },
 });
 
-FlowRouter.route('/feedback', {
+FlowRouter.route('/feedbackManager', {
     name: 'feedback',
     action() {
         BlazeLayout.render('App_body', {
