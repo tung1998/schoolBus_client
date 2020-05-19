@@ -32,7 +32,8 @@ Template.parentFeedback.onDestroyed(() => {
 })
 
 Template.parentFeedback.events({
-    'click #sendFeedback': sendFeedbackClick
+    'click #sendFeedback': sendFeedbackClick,
+    'click .show-content': showReplyFeedBackClick
 })
 
 Template.parentFeedback.helpers({
@@ -47,6 +48,9 @@ Template.feedbackHtml.helpers({
     },
     feedbackStatus() {
         return  feedbackType = getJsonDefault(_FEEDBACK.status, 'number', this.status)
+    },
+    response() {
+        return  this.status==_FEEDBACK.status.response.number
     },
 })
 
@@ -79,4 +83,13 @@ function sendFeedbackClick(e) {
 function resetInput() {
     $('#title').val('')
     $('#content').val('')
+}
+
+function showReplyFeedBackClick(e) {
+    let responseUser = e.currentTarget.getAttribute('responseUser')
+    let responseContent = e.currentTarget.getAttribute('responseContent')
+    Swal.fire({
+        title: `Người xác nhận: ${responseUser}`,
+        text: `Nội dung: ${responseContent}`,
+    })
 }

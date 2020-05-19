@@ -141,10 +141,7 @@
             <!--begin::Widget -->
             <div class="kt-widget kt-widget--user-profile-2">
                 <div class="kt-widget__head">
-                    <div class="kt-widget__media">
-                        <img class="kt-widget__img kt-hidden-" src="${_URL_images}/${childrenInfo.user.image}/0"
-                            alt="image">
-                    </div>
+                    
                     <div class="kt-widget__info">
                         <h4 href="#" class="kt-widget__username text-white kt-badge kt-badge--inline kt-badge--{{feedbackType.classname}}">
                             {{feedbackType.text}}
@@ -167,6 +164,11 @@
                         </div>
                     </div>
                 </div>
+                {{#if response}}
+                <div class="kt-widget__footer">
+                    <button type="button" class="btn btn-label-warning btn-lg btn-upper show-content" responseUser="{{responseUser.name}}" responseContent="{{responseContent}}">Xem chi tiết phản hồi</button>
+                </div>
+                {{/if}}
             </div>
             <!--end::Widget -->
         </div>
