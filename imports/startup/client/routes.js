@@ -22,7 +22,7 @@ import {
 } from './../../variableConst'
 // Set up all routes in the app
 
-FlowRouter.triggers.enter([function(context, redirect) {
+/*FlowRouter.triggers.enter([function(context, redirect) {
     let accessToken = Cookies.get('accessToken');
     BlazeLayout.render("login")
     if (!accessToken) FlowRouter.go('/login');
@@ -45,7 +45,7 @@ FlowRouter.triggers.enter([function(context, redirect) {
     }
 }], {
     except: ["App.login"]
-});
+});*/
 
 FlowRouter.route('/', {
     name: 'App.home',

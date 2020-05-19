@@ -81,7 +81,7 @@ Template.tripDetail.events({
         window.tripMap.setView([latval, lngval], 25);
     },
     'click .nav-link[href="#timeline"]': renderTimeLine,
-    'mousemove .addressTab': (event) => {
+    /*'mousemove .addressTab': (event) => {
         event.preventDefault();
         let indx = parseInt($(event.currentTarget).attr("id"));
         let tarMark = routeMiniMap._layers[markers_id[indx]];
@@ -89,7 +89,7 @@ Template.tripDetail.events({
         let lngval = tarMark._latlng.lng;
         tarMark.openPopup();
         window.routeMiniMap.setView([latval, lngval], 14);
-    },
+    },*/
     'click .polyToggle': (event) => {
         event.preventDefault();
         removeLayerByID(polyID);
