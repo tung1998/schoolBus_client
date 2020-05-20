@@ -18,15 +18,66 @@
             </div>
         </div>
         <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid" id="childrenList">
-            content
+            {{#each students}}
+                {{> childrenHtml}}
+            {{/each}}
         </div>
     </div>
     {{> childrenNextripModal}}
 </template>
 
 
+<template name="childrenHtml">
+    <div class="kt-portlet kt-portlet--height-fluid">
+        <div class="kt-portlet__head kt-portlet__head--noborder"></div>
+        <div class="kt-portlet__body">
+            <!--begin::Widget -->
+            <div class="kt-widget kt-widget--user-profile-2">
+                <div class="kt-widget__head">
+                    <div class="kt-widget__media">
+                        <img class="kt-widget__img kt-hidden-" src="http://192.168.2.222:3000/images/{{user.image}}/0" alt="image">
+                    </div>
+                    <div class="kt-widget__info">
+                        <a href="#" class="kt-widget__username">
+                            {{user.name}}
+                        </a>
+                        <span class="kt-widget__desc">
+                            {{class.name}}
+                        </span>
+                    </div>
+                </div>
+                <div class="kt-widget__body">
+                    <div class="kt-widget__section">
+                        {{class.school.name}}
+                    </div>                                        
+
+                    <div class="kt-widget__item">
+                        <div class="kt-widget__contact">
+                            <span class="kt-widget__label">Email:</span>
+                            <a href="#" class="kt-widget__data">{{user.email}}</a>
+                        </div>
+                        <div class="kt-widget__contact">
+                            <span class="kt-widget__label">Số điện thoại:</span>
+                            <a href="#" class="kt-widget__data">{{user.phone}}</a>
+                        </div>
+                        <div class="kt-widget__contact">
+                            <span class="kt-widget__label">Điểm đón:</span>
+                            <span class="kt-widget__data">{{carStop.name}}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="kt-widget__footer">
+                    <button type="button" class="btn btn-label-warning btn-lg btn-upper next-tripBtn" studentID="{{_id}}">Chuyến đi sắp tới</button>
+                </div>
+            </div>         
+            <!--end::Widget -->
+        </div>
+    </div>
+</template>
+
 <template name="childrenNextripModal">
-    <div class="modal fade" id="childrenNextripModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    <div class="modal fade" id="childrenNextripModal" tripID="{{nextTripData._id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         style="display: none;" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -42,7 +93,7 @@
                     <div class="col-6">
                         <div class="text-center">Tài xế</div>
                         <div class="kt-avatar kt-avatar--outline kt-avatar--circle-">
-                            <div class="kt-avatar__holder" style="background-image: url(&quot;http://113.190.128.251:3000/images/{{nextTripData.driver.user.image}}/0&quot;);">
+                            <div class="kt-avatar__holder" style="background-image: url(&quot;http://192.168.2.222:3000/images/{{nextTripData.driver.user.image}}/0&quot;);">
                             </div>
                         </div>
                         <div class="name">
@@ -53,7 +104,7 @@
                     <div class="col-6">
                         <div class="text-center">Bảo mẫu</div>
                         <div class="kt-avatar kt-avatar--outline kt-avatar--circle-">
-                            <div class="kt-avatar__holder" style="background-image: url(&quot;http://113.190.128.251:3000/images/{{nextTripData.nanny.user.image}}/0&quot;);">
+                            <div class="kt-avatar__holder" style="background-image: url(&quot;http://192.168.2.222:3000/images/{{nextTripData.nanny.user.image}}/0&quot;);">
                             </div>
                         </div>
                         <div class="name">

@@ -44,10 +44,10 @@ Template.parentFeedback.helpers({
 
 Template.feedbackHtml.helpers({
     feedbackType() {
-        return  feedbackType = getJsonDefault(_FEEDBACK.type, 'number', this.type)
+        return  getJsonDefault(_FEEDBACK.type, 'number', this.type)
     },
     feedbackStatus() {
-        return  feedbackType = getJsonDefault(_FEEDBACK.status, 'number', this.status)
+        return  getJsonDefault(_FEEDBACK.status, 'number', this.status)
     },
     response() {
         return  this.status==_FEEDBACK.status.response.number

@@ -4,7 +4,7 @@ const parentRoutes = FlowRouter.group({
 });
 
 parentRoutes.route('/childrenInfo', {
-    name: 'car.manager',
+    name: 'parent.childrenInfo',
     action() {
         BlazeLayout.setRoot('body');
         BlazeLayout.render('App_body', {
@@ -15,7 +15,7 @@ parentRoutes.route('/childrenInfo', {
 });
 
 parentRoutes.route('/feedback', {
-    name: 'car.manager',
+    name: 'parent.feedback',
     action() {
         BlazeLayout.setRoot('body');
         BlazeLayout.render('App_body', {
@@ -26,7 +26,7 @@ parentRoutes.route('/feedback', {
 });
 
 parentRoutes.route('/request', {
-    name: 'car.manager',
+    name: 'parent.request',
     action() {
         BlazeLayout.setRoot('body');
         BlazeLayout.render('App_body', {
@@ -37,7 +37,7 @@ parentRoutes.route('/request', {
 });
 
 parentRoutes.route('/chat', {
-    name: 'parents.chat',
+    name: 'parent.chat',
     action() {
         BlazeLayout.setRoot('body');
         BlazeLayout.render('App_body', {

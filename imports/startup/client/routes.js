@@ -37,6 +37,8 @@ FlowRouter.triggers.enter([function(context, redirect) {
                 Session.set(_SESSION.name, result.user.name)
                 Session.set(_SESSION.avata, `${_URL_images}/${result.user.image}/0`)
                 Session.set(_SESSION.schoolID, result.schoolID)
+                if(result.students)
+                    Session.set(_SESSION.students, result.students)
         }).catch(e => {
             console.log(e)
             Cookies.remove('accessToken');
@@ -70,6 +72,8 @@ FlowRouter.route('/login', {
                 Session.set(_SESSION.name, result.user.name)
                 Session.set(_SESSION.avata, `${_URL_images}/${result.user.image}/0`)
                 Session.set(_SESSION.schoolID, result.schoolID)
+                if(result.students)
+                    Session.set(_SESSION.students, result.students)
                 FlowRouter.go('/profile')
             }).catch(e => {
                 console.log(e)

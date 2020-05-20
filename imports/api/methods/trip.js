@@ -99,6 +99,7 @@ function imageTrip(data, accessToken = '') {
 function getNextTrip(data, accessToken = '') {
     let url = `${AUTH_TRIP}/next`
     return httpDefault(METHOD.get, url, {
+        body: data,
         token: accessToken
     })
 }
