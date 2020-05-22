@@ -25,7 +25,7 @@ import {
     renderStudentInfoModal
 } from './instascan'
 
-let accessToken, 
+let accessToken,
     carStopList = [],
     stopCoor = [],
     markers_id = [],
@@ -164,7 +164,7 @@ async function reloadData() {
             driverPhone: tripData.driver.user.phone,
             nannyName: tripData.nanny.user.name,
             nannyPhone: tripData.nanny.user.phone,
-            carNunberPlate: tripData.car?tripData.car.numberPlate:'',
+            carNunberPlate: tripData.car ? tripData.car.numberPlate : '',
             startTime: tripData.startTime,
         }
         carStopList = tripData.route.studentList.carStops;
@@ -203,8 +203,8 @@ async function reloadData() {
         }))
     } catch (error) {
         handleError(error, 'Không có dữ liệu')
-        $('tripData').addClass('kt-hidden')
-        $('noData').removeClass('kt-hidden')
+        $('#tripData').addClass('kt-hidden')
+        $('#noData').removeClass('kt-hidden')
     }
 }
 
@@ -240,18 +240,19 @@ function addPoly(arr) {
 }
 
 function drawPath(arr) {
-    MeteorCall(_METHODS.wemap.getDrivePath, arr, accessToken).then(result => {
-        let pol = []
-        let a = result.routes[0].legs
-        for (let i = 0; i < a.length; i++) {
-            for (let j = 0; j < a[i].steps.length; j++) {
-                for (let k = 0; k < a[i].steps[j].intersections.length; k++) {
-                    pol.push(swapPcs(a[i].steps[j].intersections[k].location))
+    if (arr&&arr.length)
+        MeteorCall(_METHODS.wemap.getDrivePath, arr, accessToken).then(result => {
+            let pol = []
+            let a = result.routes[0].legs
+            for (let i = 0; i < a.length; i++) {
+                for (let j = 0; j < a[i].steps.length; j++) {
+                    for (let k = 0; k < a[i].steps[j].intersections.length; k++) {
+                        pol.push(swapPcs(a[i].steps[j].intersections[k].location))
+                    }
                 }
             }
-        }
-        pol.push(arr[0])
-        stopCoor = pol;
-        //addPoly(pol)
-    }).catch(handleError);
+            pol.push(arr[0])
+            stopCoor = pol;
+            //addPoly(pol)
+        }).catch(handleError);
 }

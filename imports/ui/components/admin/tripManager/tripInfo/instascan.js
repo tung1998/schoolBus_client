@@ -45,9 +45,10 @@ function initScanner() {
         mirror: false,
         captureImage: true,
     });
-    console.log(Scanner)
 
-    Instascan.Camera.getCameras().then(renderListCamera).catch(handleError);
+    Instascan.Camera.getCameras().then(renderListCamera).catch(error => {
+        handleError(error, 'Không tìm thấy camera')
+    });
     Scanner.addListener('scan', scanSuccess);
 }
 
@@ -81,7 +82,7 @@ function renderListCamera(cameras) {
         $("#instascannerModal").on('show.bs.modal', function () {
             Scanner.start(cameras[0]);
         })
-        
+
         $("#instascannerModal").on('hide.bs.modal', function () {
             Scanner.stop();
         })
@@ -99,12 +100,12 @@ function changeCamera(event) {
     })
 }
 
-function clickTakePhoto(e){
+function clickTakePhoto(e) {
     $("#studentInfoModal").modal("hide")
     let tripID = $(e.currentTarget).attr("tripID");
     let studentID = $(e.currentTarget).attr("studentID")
     MeteorCamera.getPicture((err, data) => {
-        if(err){
+        if (err) {
             console.log(err)
         } else {
             $(".photo-preview").css({
@@ -126,15 +127,15 @@ function clickTakePhoto(e){
                 image: dt.imageId
             }
             MeteorCall(_METHODS.trip.Image, imageDetail, accessToken)
-            .then(result => {
-                console.log(imageDetail)
-                console.log("added")
-            })
-            .catch(handleError)
+                .then(result => {
+                    console.log(imageDetail)
+                    console.log("added")
+                })
+                .catch(handleError)
         }
     });
-    
-    
+
+
 }
 
 function renderStudentInfoModal(studentID) {
@@ -163,12 +164,12 @@ function renderStudentInfoModal(studentID) {
             studenInfoData.buttonHtml = ``
     }
 
-    if(studenInfoData.student.user.image){
+    if (studenInfoData.student.user.image) {
         studenInfoData.image = `http://192.168.100.69:3000/images/${studenInfoData.student.user.image}/0`
-    }else{
+    } else {
         studenInfoData.image = `/assets/media/users/user5.jpg`
     }
-    Session.set('studenInfoData',studenInfoData)
+    Session.set('studenInfoData', studenInfoData)
 }
 
 function checkStudentInfo(studentID) {
