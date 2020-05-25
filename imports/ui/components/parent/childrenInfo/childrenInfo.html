@@ -42,16 +42,16 @@
                             {{user.name}}
                         </a>
                         <span class="kt-widget__desc">
-                            {{class.name}}
+                            {{class.name}}-{{class.school.name}}
                         </span>
                     </div>
                 </div>
                 <div class="kt-widget__body">
-                    <div class="kt-widget__section">
-                        {{class.school.name}}
-                    </div>                                        
-
                     <div class="kt-widget__item">
+                        <div class="kt-widget__contact">
+                            <span class="kt-widget__label">Giáo viên:</span>
+                            <a href="#" class="kt-widget__data">{{class.teacher.user.name}}</a>
+                        </div>
                         <div class="kt-widget__contact">
                             <span class="kt-widget__label">Email:</span>
                             <a href="#" class="kt-widget__data">{{user.email}}</a>
@@ -67,8 +67,9 @@
                     </div>
                 </div>
                 
-                <div class="kt-widget__footer">
-                    <button type="button" class="btn btn-label-warning btn-lg btn-upper next-tripBtn" studentID="{{_id}}">Chuyến đi sắp tới</button>
+                <div class="kt-widget__footer row">
+                    <button type="button" class="col btn btn-label-primary btn-upper chat-btn" teacherID="{{class.teacher.user._id}}">Nhắn tin cho giáo viên</button>
+                    <button type="button" class="col btn btn-label-warning btn-upper next-tripBtn" studentID="{{_id}}">Chuyến đi sắp tới</button>
                 </div>
             </div>         
             <!--end::Widget -->

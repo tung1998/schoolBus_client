@@ -6,6 +6,7 @@ import {
     MeteorCall,
     handleError,
     handleSuccess,
+    removeDuplicated,
 } from "../../../../functions";
 
 import {
@@ -38,14 +39,18 @@ Template.chatTeacher.onRendered(() => {
         userID = Session.get(_SESSION.userID)
         username = Session.get(_SESSION.name)
         userImage = Session.get(_SESSION.avata)
-        renderListTeacher()
+        students = Session.get(_SESSION.students)
+        createTeachersRow(students);
+        if (FlowRouter.getQueryParam('teacherID')) {
+            $(`a[partnerid=${FlowRouter.getQueryParam('teacherID')}]`).trigger('click')
+        }
     })
+
+    
 
     this.renderListTeachers = Tracker.autorun(() => {
         let messages = COLLECTION_Messages.find({ isDeleted: false, sendBy: { $ne: userID } }).fetch();
-        console.log(listRoomID)
         listRoomID.map(value => {
-            console.log(value)
             let lastestMsg = [];
             let countUnread = 0;
             messages.map(msg => {
@@ -56,10 +61,7 @@ Template.chatTeacher.onRendered(() => {
                         countUnread++;
                     }
                 }
-
             })
-            console.log(lastestMsg);
-
             $(`#${value}`).children(".kt-widget__info").children(".kt-widget__desc").html(lastestMsg[lastestMsg.length - 1])
             if (countUnread != 0 && countUnread < 11) {
                 $(`#${value}`).children(".kt-widget__action").html(`<span class="kt-badge kt-badge--success kt-font-bold unreadMessage" >${countUnread}</span>`)
@@ -141,10 +143,18 @@ function ClickUserName(e) {
     $(".kt-chat__status").show();
     Session.set(_SESSION.roomID, $(e.currentTarget).attr("roomID"));
     console.log(Session.get(_SESSION.roomID))
-    partnerImage = $(e.currentTarget).attr("partnerImage");
+    partnerImageUrl = $(e.currentTarget).attr("partnerImage");
     partnerName = $(e.currentTarget).attr("partnerName");
     partnerID = $(e.currentTarget).attr("partnerID");
+    if (!partnerImageUrl) {
+        img = `<img src="/assets/media/users/default.jpg" alt="image">`
+    } else {
+        img = `<img src="${partnerImageUrl}" alt="image">`
+    }
+    $('.avata-center').html(img)
 }
+
+
 
 function SubmitForm(e) {
     e.preventDefault();
@@ -162,53 +172,33 @@ function SubmitForm(e) {
         status: 0
     }, (result, err) => {
         if (err) throw err;
-        else {}
+        else { }
     })
     updateStatus(Session.get(_SESSION.roomID), partnerID);
     $(`#${Session.get(_SESSION.roomID)}`).children(".kt-widget__action").html(``)
 }
 
-function renderListTeacher() {
-    console.log(userID)
-    MeteorCall(_METHODS.token.GetUserInfo, null, accessToken)
-        .then(result => {
-            console.log(result);
-            createTeachersRow(result);
-        }).catch(handleError)
+
+function createTeachersRow(students = []) {
+    let teachers = students.map(item=>item.class.teacher)
+    teachers = removeDuplicated(teachers, '_id')
+    
+    let teachersRow = teachers.map(teacherRow);
+    $(".listParents").html(teachersRow.join(" "));
 }
 
-function createTeachersRow(result) {
-    let listTeacher = []
-    let teachersRow = []
-
-    result.students.map(std => {
-        let check = true
-        listTeacher.map(tc => {
-            if (tc._id == std.class.teacher.user._id) {
-                check = false;
-            }
-        })
-        if (check) {
-            teachersRow.push(std);
-            listTeacher.push(std.class.teacher.user);
-        }
-    })
-    let row = teachersRow.map(teacherRow);
-    $(".listParents").html(row.join(" "));
-}
-
-function teacherRow(data) {
-    let roomID = userID + data.class.teacher.user._id;
+function teacherRow(teacher) {
+    let roomID = userID + teacher.user._id;
     listRoomID.push(roomID);
     let img
     let partnerImg
     let unreaIcon
-    if (data.class.teacher.user.image == null) {
+    if (teacher.user.image == null) {
         img = `<img src="/assets/media/users/default.jpg" alt="image">`
         partnerImg = "/assets/media/users/default.jpg"
     } else {
-        img = `<img src="${_URL_images}/${data.class.teacher.user.image}/0" alt="image">`
-        partnerImg = `${_URL_images}/${data.class.teacher.user.image}/0`
+        img = `<img src="${_URL_images}/${teacher.user.image}/0" alt="image">`
+        partnerImg = `${_URL_images}/${teacher.user.image}/0`
     }
     let messageInfo = getLastestAndCountUnSeenMessage(roomID);
     if (messageInfo[0] == 0) {
@@ -222,7 +212,7 @@ function teacherRow(data) {
                 </span>
                 <div class="kt-widget__info">
                     <div class="kt-widget__section">
-                        <a href="#" class="kt-widget__username" partnerID=${data.class.teacher.user._id} partnerImage=${partnerImg} partnerName="${data.class.teacher.user.name}" roomID="${roomID}">${data.class.teacher.user.name}</a>
+                        <a href="#" class="kt-widget__username" partnerID=${teacher.user._id} partnerImage=${partnerImg} partnerName="${teacher.user.name}" roomID="${roomID}">${teacher.user.name}</a>
                         <span class="kt-badge kt-badge--success kt-badge--dot"></span>
                     </div>
 
@@ -240,7 +230,6 @@ function teacherRow(data) {
 function getLastestAndCountUnSeenMessage(roomID) {
     let messages = COLLECTION_Messages.find({ roomID: roomID, sendBy: { $ne: userID }, isDeleted: false }, { sort: { createdTime: -1 } }).fetch();
     let result = [];
-    console.log(messages);
     result.push(getUnSeenMessages(messages));
     if (messages[0]) {
         result.push(messages[0].text);
@@ -268,6 +257,6 @@ function updateStatus(roomID, sendBy) {
     console.log("status")
     Meteor.call('message.update', roomID, sendBy, (result, err) => {
         if (err) throw err;
-        else {}
+        else { }
     })
 }

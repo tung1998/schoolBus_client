@@ -77,8 +77,8 @@ function showStudentInfo(e) {
     console.log(studentID)
     MeteorCall(_METHODS.student.GetById, { _id: studentID }, accessToken).then(studenInfoData => {
         console.log(studenInfoData)
-        if(studenInfoData.student.user.image){
-            studenInfoData.image = `${_URL_images}/${studenInfoData.student.user.image}/0`
+        if(studenInfoData.user&&studenInfoData.user.image){
+            studenInfoData.image = `${_URL_images}/${studenInfoData.user.image}/0`
         }else{
             studenInfoData.image = `/assets/media/users/user5.jpg`
         }

@@ -53,7 +53,6 @@ Template.profile.onRendered(() => {
         if (result.image != null) {
             urlImage = `${_URL_images}/${result.image}/0`
         }
-        console.log(`maeno-${urlImage}`);
         $('.kt-avatar__holder').css("background-image", `url(${urlImage})`)
 
     }).catch(handleError);
