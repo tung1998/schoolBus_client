@@ -57,8 +57,6 @@ Template.chatParent.onRendered(() => {
                     }
                 }
             })
-            console.log(lastestMsg);
-
             $(`#${value}`).children(".kt-widget__info").children(".kt-widget__desc").html(lastestMsg[lastestMsg.length - 1])
             if (countUnread != 0 && countUnread < 11) {
                 $(`#${value}`).children(".kt-widget__action").html(`<span class="kt-badge kt-badge--success kt-font-bold unreadMessage" >${countUnread}</span>`)
@@ -139,18 +137,21 @@ function ClickUserName(e) {
     e.preventDefault();
     $(".kt-chat__status").show();
     Session.set(_SESSION.roomID, $(e.currentTarget).attr("roomID"));
-    console.log(Session.get(_SESSION.roomID))
-    partnerImage = $(e.currentTarget).attr("partnerImage");
+    partnerImageUrl = $(e.currentTarget).attr("partnerImage");
     partnerName = $(e.currentTarget).attr("partnerName");
     partnerID = $(e.currentTarget).attr("partnerID");
+    if (!partnerImageUrl) {
+        img = `<img src="/assets/media/users/default.jpg" alt="image">`
+    } else {
+        img = `<img src="${partnerImageUrl}" alt="image">`
+    }
+    $('.avata-center').html(img)
 }
 
 function SubmitForm(e) {
     e.preventDefault();
     let message = $("#inbox_message").val();
     $("#inbox_message").val("");
-    console.log(message)
-    console.log(userID, Session.get(_SESSION.roomID))
     Meteor.call('message.create', {
         text: message,
         createdTime: Date.now(),
@@ -170,12 +171,9 @@ function SubmitForm(e) {
 function renderListParents() {
     MeteorCall(_METHODS.class.GetAll, null, accessToken)
         .then(result => {
-            console.log(result);
             result.data.map(value => {
-                console.log(value._id)
                 MeteorCall(_METHODS.Parent.GetByClass, { _id: value._id }, accessToken)
                     .then(parent => {
-                        console.log(parent)
                         createParentsRow(parent)
                     })
                     .catch(handleError);
@@ -270,7 +268,6 @@ function getUnSeenMessages(messages) {
 }
 
 function updateStatus(roomID, sendBy) {
-    console.log("status")
     Meteor.call('message.update', roomID, sendBy, (result, err) => {
         if (err) throw err;
         else {}
