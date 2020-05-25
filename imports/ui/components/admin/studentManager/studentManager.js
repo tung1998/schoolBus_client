@@ -450,5 +450,5 @@ function initDatePikcer() {
     $('#date-of-birth').datepicker({
         language: 'vi',
         autoclose: true,
-    })
+    }).datepicker('update', '')
 }

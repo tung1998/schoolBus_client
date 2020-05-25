@@ -278,7 +278,7 @@ function getLimitDocPerPage() {
 
 function convertTime(time, type = false) {
     if (type == true) {
-        return moment(time).format('LL')
+        return moment(time).format('L')
     }
     return moment(time, "DD/MM/YYYY").valueOf()
 }

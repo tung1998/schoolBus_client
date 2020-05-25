@@ -13,12 +13,15 @@ import {
     MeteorCall,
     handleError,
     handleConfirm,
-    handleSuccess
+    handleSuccess,
+    convertTime,
+    getJsonDefault
 } from '../../../../../functions';
 
 import {
     _METHODS,
-    _TRIP_STUDENT
+    _TRIP_STUDENT,
+    _TRIP
 } from '../../../../../variableConst';
 
 import {
@@ -35,6 +38,7 @@ Template.tripDetail.onCreated(async () => {
     accessToken = Cookies.get('accessToken')
     Session.set('studentTripData', [])
     Session.set('studenInfoData', {})
+    Session.set('tripStatus', '')
 })
 
 Template.tripDetail.onRendered(() => {
@@ -64,6 +68,9 @@ Template.tripDetail.onRendered(() => {
 Template.tripDetail.helpers({
     studentTripData() {
         return Session.get('studentTripData')
+    },
+    tripStatus() {
+        return tripStatus = getJsonDefault(_TRIP.status, 'number', Session.get('tripStatus'))
     }
 })
 
@@ -103,6 +110,7 @@ Template.tripDetail.onDestroyed(() => {
     Session.delete('studentTripData')
     Session.delete('studenInfoData')
     Session.delete('tripID')
+    Session.delete('tripStatus')
 })
 
 Template.studentInfoModal.helpers({
@@ -189,18 +197,23 @@ async function reloadData() {
             });
         })
         drawPath(stopCoor)
+
+        //data driver
         $('#driver-name').html(dataTrip.driverName)
-        $('.phone:eq(0)').html(`Số điện thoại: ${dataTrip.driverPhone}`)
+        $('.phone:eq(0)').html(dataTrip.driverPhone)
         $('#nanny-name').html(dataTrip.nannyName)
-        $('.phone:eq(1)').html(`Số điện thoại: ${dataTrip.nannyPhone}`)
+        $('.phone:eq(1)').html(dataTrip.nannyPhone)
         $('#car-numberPlate').html(dataTrip.carNunberPlate)
-        $('#start-time').html(dataTrip.startTime)
+        $('#start-time').html(convertTime(dataTrip.startTime, true))
 
         //data học sinh
         Session.set('studentTripData', tripData.students.map((item, index) => {
             item.index = index + 1
             return item
         }))
+
+        //lấy trạng thái của chuyến đi
+        Session.set('tripStatus', tripData.status)
     } catch (error) {
         handleError(error, 'Không có dữ liệu')
         $('tripData').addClass('kt-hidden')

@@ -191,9 +191,10 @@ async function SubmitForm(event) {
                 password: "12345678",
                 address: $("#address-input").val(),
                 IDNumber: $("#identityCard-input").val(),
-                IDIssueDate: convertTimte($("#identityCardDate-input").val()),
+                IDIssueDate: convertTime($("#identityCardDate-input").val()),
                 IDIssueBy: $("#identityCardBy-input").val(),
                 status: $("#status-input").val(),
+                dateOfBirth: convertTime($("#date-of-birth").val())
             }
             if (Session.get(_SESSION.isSuperadmin)) {
                 data.schoolID = $('#school-input').val()
@@ -252,9 +253,10 @@ function checkInput() {
     let identityCardDate = $("#identityCardDate-input").val();
     let identityCardBy = $("#identityCardBy-input").val();
     let status = $("#status-input").val();
+    let dateOfBirth = $('#date-of-birth').val();
     $("#image-input").val();
 
-    if (!identityCard || !name || !address || !phone || !identityCardDate || !identityCardBy || !status) {
+    if (!identityCard || !name || !address || !phone || !identityCardDate || !identityCardBy || !status || !dateOfBirth) {
         Swal.fire({
             icon: "error",
             text: "Chưa đủ thông tin!",
@@ -285,6 +287,8 @@ function clearForm() {
     $("#email-input").val("");
     $("#address-input").val("");
     $("#identityCard-input").val("");
+    $("#identityCardDate-input").datepicker("setDates", "");
+    $("#date-of-birth").datepicker("setDates", "");
     $("#identityCardDate-input").val("");
     $("#identityCardBy-input").val("");
     $("#status-input").val("");
@@ -332,7 +336,8 @@ function createRow(result) {
         IDIssueDate: convertTime(result.IDIssueDate, true),
         IDIssueBy: result.IDIssueBy,
         status: result.status,
-        image: result.image
+        image: result.image,
+        dateOfBirth: convertTime(result.user.dateOfBirth, true)
     }
 
     if (Session.get(_SESSION.isSuperadmin)) {
@@ -344,6 +349,7 @@ function createRow(result) {
             <th class="text-center">${result.index + 1}</th>
             ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>` : ''}
             <td>${data.name}</td>
+            <td>${data.dateOfBirth}</td>
             <td>${data.phone}</td>
             <td>${data.email}</td>
             <td>${data.address}</td>
@@ -400,11 +406,12 @@ function refreshFilter() {
 }
 
 function initDatepicker() {
-    let data = ["date-of-birth", "nanny-IDIssueDate"]
+    let data = ["date-of-birth", "identityCardDate-input"]
     data.map((key) => {
         $(`#${key}`).datepicker({
             language: "vi",
             autoclose: true,
+            disableTouchKeyboard: true,
         })
     })
 }
