@@ -142,7 +142,6 @@ function ClickUserName(e) {
     e.preventDefault();
     $(".kt-chat__status").show();
     Session.set(_SESSION.roomID, $(e.currentTarget).attr("roomID"));
-    console.log(Session.get(_SESSION.roomID))
     partnerImageUrl = $(e.currentTarget).attr("partnerImage");
     partnerName = $(e.currentTarget).attr("partnerName");
     partnerID = $(e.currentTarget).attr("partnerID");

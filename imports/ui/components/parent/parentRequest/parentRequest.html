@@ -51,7 +51,8 @@
                                                 <div class="form-group row">
                                                     <label class="col-3 col-form-label">Xin nghỉ cho</label>
                                                     <div class="col-9">
-                                                        <select class="form-control" type="text" id="student" placeholder="">
+                                                        <select class="form-control" type="text" id="student"
+                                                            placeholder="">
                                                             {{#each students}}
                                                             <option value="{{_id}}">{{user.name}}</option>
                                                             {{/each}}
@@ -87,6 +88,10 @@
                                                     <div class="col-9">
                                                         <select class="form-control" type="text" id="trip"
                                                             placeholder="Chọn chuyến đi">
+                                                            {{#each nextTrip}}
+                                                            <option value="{{_id}}">{{route.name}}-{{startTime}}
+                                                            </option>
+                                                            {{/each}}
                                                         </select>
                                                     </div>
                                                 </div>
@@ -139,7 +144,7 @@
                         </div>
                         <div class="tab-pane" id="kt_user_edit_tab_3" role="tabpanel">
                             {{#each requests}}
-                                {{> requestHtml}}
+                            {{> requestHtml}}
                             {{/each}}
                         </div>
                     </div>
@@ -156,9 +161,10 @@
             <!--begin::Widget -->
             <div class="kt-widget kt-widget--user-profile-2">
                 <div class="kt-widget__head">
-                    
+
                     <div class="kt-widget__info">
-                        <h4 href="#" class="kt-widget__username text-white kt-badge kt-badge--inline kt-badge--{{requestType.classname}}">
+                        <h4 href="#"
+                            class="kt-widget__username text-white kt-badge kt-badge--inline kt-badge--{{requestType.classname}}">
                             {{requestType.text}}
                         </h4>
                         <span class="kt-widget__desc">
