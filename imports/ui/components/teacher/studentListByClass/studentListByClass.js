@@ -31,6 +31,7 @@ Template.studentListByClass.onRendered(() => {
 Template.studentListByClass.onDestroyed(() => {
     Session.delete('classData')
     Session.delete('studentList')
+    Session.delete('studenInfoData')
 });
 
 Template.studentListByClass.helpers({
@@ -45,9 +46,12 @@ Template.studentListByClass.helpers({
 Template.studentListByClass.events({
     'click .info-button': showStudentInfo
 });
+Template.studentInfoModal2.events({
+    'click #chatToParent': chatToParent
+});
 
 Template.studentInfoModal2.helpers({
-    studenInfoData(){
+    studenInfoData() {
         return Session.get('studenInfoData')
     }
 });
@@ -74,14 +78,32 @@ function reloadData() {
 
 function showStudentInfo(e) {
     let studentID = e.currentTarget.getAttribute('studentID')
-    console.log(studentID)
-    MeteorCall(_METHODS.student.GetById, { _id: studentID }, accessToken).then(studenInfoData => {
-        console.log(studenInfoData)
-        if(studenInfoData.user&&studenInfoData.user.image){
-            studenInfoData.image = `${_URL_images}/${studenInfoData.user.image}/0`
-        }else{
-            studenInfoData.image = `/assets/media/users/user5.jpg`
-        }
-        $("#studentInfoModal").modal("show")
-    }).catch(handleError)
+    let studenInfoData = Session.get('studentList').filter(item => item._id == studentID)[0]
+    console.log(studenInfoData)
+    if (studenInfoData.user && studenInfoData.user.image) {
+        studenInfoData.image = `${_URL_images}/${studenInfoData.user.image}/0`
+    } else {
+        studenInfoData.image = `/assets/media/users/user5.jpg`
+    }
+    Session.set('studenInfoData', studenInfoData)
+    $("#studentInfoModal").modal("show")
+}
+
+function showStudentInfo(e) {
+    let studentID = e.currentTarget.getAttribute('studentID')
+    let studenInfoData = Session.get('studentList').filter(item => item._id == studentID)[0]
+    console.log(studenInfoData)
+    if (studenInfoData.user && studenInfoData.user.image) {
+        studenInfoData.image = `${_URL_images}/${studenInfoData.user.image}/0`
+    } else {
+        studenInfoData.image = `/assets/media/users/user5.jpg`
+    }
+    Session.set('studenInfoData', studenInfoData)
+    $("#studentInfoModal").modal("show")
+}
+
+function chatToParent(e){
+    let studenInfoData = Session.get('studenInfoData')
+    let parentList = studenInfoData.parents
+    console.log(parentList)
 }
