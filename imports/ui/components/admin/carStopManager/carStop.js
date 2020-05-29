@@ -13,6 +13,7 @@ import {
 
 } from "../../../../variableConst";
 let accessToken;
+let carStopID
 //let position = [0, 0];
 Template.carStop.onCreated(() => {
     accessToken = Cookies.get("accessToken");
@@ -22,6 +23,19 @@ Template.carStop.onCreated(() => {
 Template.carStop.onRendered(() => {
     if (Session.get(_SESSION.isSuperadmin))
         initSchoolSelect2()
+
+    carStopID = FlowRouter.getQueryParam('carStopID')
+    if (carStopID) {
+        MeteorCall(_METHODS.carStop.GetById, {
+            _id: carStopID
+        }, accessToken).then(result => {
+            console.log(result)
+            $('#location').val(result.location.join(' '))
+            $('#stopName').val(result.name)
+            $('#address').val(result.address)
+            $('#school-select').val(result.schoolID)
+        })
+    }
 });
 
 Template.carStop.helpers({
@@ -75,30 +89,23 @@ Template.minimap.onRendered(function () {
         let position = marker.getLatLng();
         lat = Number(position['lat']);
         lng = Number(position['lng']);
-        let adr = getAddress(lat, lng);
-        console.log(adr)
 
         MeteorCall(_METHODS.wemap.getAddress, {
             lat: lat,
             lng: lng
         }, accessToken).then(result => {
-            let props = result.features[0].properties;
-            let cor = result.features[0].geometry.coordinates;
-            let addressElement = {
-                name: props.name,
-                housenumber: props.housenumber,
-                street: props.street,
-                city: props.city,
-                district: props.district,
-                state: props.state
-            }
+            let props = result.features[0] ? result.features[0].properties : {};
+            let cor = result.features[0] ? result.features[0].geometry.coordinates : {};
+            let addressElement = [
+                props.name || null,
+                props.housenumber || null,
+                props.street || null,
+                props.city || null,
+                props.district || null,
+                props.state || null
+            ]
+            address = addressElement.filter(item => item).join(', ')
 
-            address = addressElement.name + ', ' +
-                addressElement.housenumber + ', ' +
-                addressElement.street + ', ' +
-                addressElement.city + ', ' +
-                addressElement.district + ', ' +
-                addressElement.state + ', ';
             $('.position').val(cor[1] + ' ' + cor[0]);
             $('.address').val(address)
         }).catch(handleError)
@@ -109,30 +116,38 @@ Template.carStop.events({
     'submit form': (event) => {
         event.preventDefault();
         let carStopInfo = {
-            stopType: event.target.stopType.value,
+            // stopType: event.target.stopType.value,
             name: event.target.stopName.value,
             address: event.target.address.value,
-            location: getLatLng(event.target.location.value)
+            location: event.target.location.value.split(' ').map(Number)
         }
         //let authorize = false;
         console.log(typeof carStopInfo.name)
         if (Session.get(_SESSION.isSuperadmin)) carStopInfo.schoolID = $('#school-select').val()
-        if ((carStopInfo.stopType == "") || (carStopInfo.name == "") || (carStopInfo.schoolID == "")) {
-            handleError();
+        if (carStopInfo.location || carStopInfo.name || carStopInfo.schoolID) {
+            if (carStopID) {
+                carStopInfo._id = carStopID
+                MeteorCall(_METHODS.carStop.Update, carStopInfo, accessToken)
+                    .then(result => {
+                        handleSuccess("Đã sửa điểm dừng")
+                        FlowRouter.go('/carStopList')
+                    })
+                    .catch(handleError);
+            }
+            else {
+                MeteorCall(_METHODS.carStop.Create, carStopInfo, accessToken)
+                    .then(result => {
+                        handleSuccess("Đã thêm điểm dừng")
+                    })
+                    .catch(handleError);
+                // event.target.stopType.value = " ";
+                event.target.stopName.value = " ";
+                event.target.address.value = " ";
+                event.target.location.value = " ";
+                $('#school-select').val('').trigger('change')
+            }
         } else {
-            MeteorCall(_METHODS.carStop.Create, carStopInfo, accessToken)
-                .then(result => {
-                    handleSuccess("Thêm điểm dừng")
-                    console.log(result)
-                    //let htmlTable = result.data.map(htmlRow);
-                    //$("#table-body").html(htmlTable.join(" "));
-                })
-                .catch(handleError);
-            event.target.stopType.value = " ";
-            event.target.stopName.value = " ";
-            event.target.address.value = " ";
-            event.target.location.value = " ";
-            $('#school-select').val('').trigger('change')
+            handleError();
         }
     }
 })
@@ -146,12 +161,16 @@ Template.carStop.helpers({
     },
 });
 
+Template.carStop.onDestroyed(function () {
+    carStopID = null
+});
+
 function setMapHeight() {
-    let windowHeight = $(window).height();
-    let mapHeight = $("#minimap").height();
-    let sHeaderHeight = $(".kt-subheader").height();
-    let footerHeight = $("#kt_footer").height();
-    let topBarHeight = $("#kt_header").height();
+    // let windowHeight = $(window).height();
+    // let mapHeight = $("#minimap").height();
+    // let sHeaderHeight = $(".kt-subheader").height();
+    // let footerHeight = $("#kt_footer").height();
+    // let topBarHeight = $("#kt_header").height();
     if ($(window).width() < 1024) {
         topBarHeight = $("#kt_header_mobile").height();
         $("#minimap").css({
@@ -164,43 +183,6 @@ function setMapHeight() {
             //"height": windowHeight - topBarHeight - sHeaderHeight - footerHeight
             "height": $(".anchorHeight").height()
         })
-    }
-}
-
-function getLatLng(string) {
-    let LatLng = string.split(" ");
-    LatLng[0] = parseFloat(LatLng[0]);
-    LatLng[1] = parseFloat(LatLng[1]);
-    return LatLng;
-}
-
-async function getAddress(lat, lng) {
-    try {
-        let result = await MeteorCall(_METHODS.wemap.getAddress, {
-            lat: lat,
-            lng: lng
-        }, accessToken);
-        console.log(result)
-        let props = result.features[0].properties;
-        let addressElement = {
-            name: props.name,
-            housenumber: props.housenumber,
-            street: props.street,
-            city: props.city,
-            district: props.district,
-            state: props.state
-        }
-
-        let address = addressElement.name + ', ' +
-            addressElement.housenumber + ', ' +
-            addressElement.street + ', ' +
-            addressElement.city + ', ' +
-            addressElement.district + ', ' +
-            addressElement.state + ', ';
-        //console.log(address)
-        return address
-    } catch (err) {
-        handleError(err)
     }
 }
 

@@ -26,7 +26,8 @@ if (Meteor.isServer) {
         'trip.getByTime': getTripByTime,
         'trip.getNext': getNextTrip,
         'trip.getLogByTripID': getTripLogByTripID,
-        'trip.modifyTripStatus': modifyTripStatus
+        'trip.modifyTripStatus': modifyTripStatus,
+        'trip.getAllNext': getAllNextTrip,
     });
 }
 
@@ -99,6 +100,14 @@ function imageTrip(data, accessToken = '') {
 
 function getNextTrip(data, accessToken = '') {
     let url = `${AUTH_TRIP}/next`
+    return httpDefault(METHOD.get, url, {
+        body: data,
+        token: accessToken
+    })
+}
+
+function getAllNextTrip(data, accessToken = '') {
+    let url = `${AUTH_TRIP}/allNext`
     return httpDefault(METHOD.get, url, {
         body: data,
         token: accessToken

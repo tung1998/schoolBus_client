@@ -59,5 +59,6 @@ import '../../ui/components/nanny/tripListStudent/tripListStudent.js';
 // teacher template
 import '../../ui/components/teacher/listClass/listClass.js';
 import '../../ui/components/teacher/studentListByClass/studentListByClass.js';
+import '../../ui/components/teacher/studentInfo/studentInfo.js';
 import '../../ui/components/teacher/absentRequestManager/absentRequestManager.js';
 import '../../ui/components/teacher/chat/chat.js';

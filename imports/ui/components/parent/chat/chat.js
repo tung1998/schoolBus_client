@@ -43,7 +43,7 @@ Template.chatTeacher.onRendered(() => {
         createTeachersRow(students);
         if (FlowRouter.getQueryParam('teacherID')) {
             $(`a[partnerid=${FlowRouter.getQueryParam('teacherID')}]`).trigger('click')
-        }
+        }else $(`a[partnerid]`).first().trigger('click')
     })
 
     
@@ -142,7 +142,6 @@ function ClickUserName(e) {
     e.preventDefault();
     $(".kt-chat__status").show();
     Session.set(_SESSION.roomID, $(e.currentTarget).attr("roomID"));
-    console.log(Session.get(_SESSION.roomID))
     partnerImageUrl = $(e.currentTarget).attr("partnerImage");
     partnerName = $(e.currentTarget).attr("partnerName");
     partnerID = $(e.currentTarget).attr("partnerID");

@@ -220,6 +220,7 @@ const _METHODS = {
         Attendace: 'trip.attendance',
         Image: 'trip.image',
         GetNext: 'trip.getNext',
+        GetAllNext: 'trip.getAllNext',
         GetTripLogByTripID: 'trip.getLogByTripID',
         ModifyTripStatus: 'trip.modifyTripStatus'
     },

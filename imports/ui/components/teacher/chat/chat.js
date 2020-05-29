@@ -22,7 +22,7 @@ let accessToken;
 let userID;
 let username;
 let userImage;
-let partnerImage;
+let partnerImageUrl;
 let partnerName;
 let partnerID;
 let listRoomID = [];
@@ -39,6 +39,9 @@ Template.chatParent.onRendered(() => {
         username = Session.get(_SESSION.name)
         userImage = Session.get(_SESSION.avata)
         renderListParents()
+        if (FlowRouter.getQueryParam('parentID')) {
+            $(`a[partnerid=${FlowRouter.getQueryParam('parentID')}]`).trigger('click')
+        } else $(`a[partnerid]`).first().trigger('click')
     })
 
     this.renderListParentss = Tracker.autorun(() => {
@@ -122,7 +125,7 @@ function renderLeftMessage(message) {
     return `<div class="kt-chat__message">
                 <div class="kt-chat__user">
                     <span class="kt-media kt-media--circle kt-media--sm"> 
-                        <img src=${partnerImage} alt="image">   
+                        <img src=${partnerImageUrl} alt="image">   
                     </span>
                     <a href="#" class="kt-chat__username">${partnerName}</a>
                     <span class="kt-chat__datetime">${moment(message.updatedTime).startOf('second').fromNow()}</span>
@@ -162,7 +165,7 @@ function SubmitForm(e) {
         status: 0
     }, (result, err) => {
         if (err) throw err;
-        else {}
+        else { }
     })
     updateStatus(Session.get(_SESSION.roomID), partnerID);
     $(`#${Session.get(_SESSION.roomID)}`).children(".kt-widget__action").html(``)
@@ -174,7 +177,8 @@ function renderListParents() {
             result.data.map(value => {
                 MeteorCall(_METHODS.Parent.GetByClass, { _id: value._id }, accessToken)
                     .then(parent => {
-                        createParentsRow(parent)
+                        if (parent.length)
+                            createParentsRow(parent)
                     })
                     .catch(handleError);
             })
@@ -198,6 +202,9 @@ function createParentsRow(result) {
     })
     let row = parentsRow.map(parentRow)
     $(".listParents").html(row.join(" "));
+    if (FlowRouter.getQueryParam('parentID')) {
+        $(`a[partnerid=${FlowRouter.getQueryParam('parentID')}]`).trigger('click')
+    } else $(`a[partnerid]`).first().trigger('click')
 }
 
 function parentRow(data) {
@@ -270,6 +277,6 @@ function getUnSeenMessages(messages) {
 function updateStatus(roomID, sendBy) {
     Meteor.call('message.update', roomID, sendBy, (result, err) => {
         if (err) throw err;
-        else {}
+        else { }
     })
 }

@@ -23,7 +23,6 @@ import {
 
 let accessToken;
 let currentPage = 1;
-let stopLocation = [];
 
 Template.carStopList.onCreated(() => {
     accessToken = Cookies.get("accessToken");
@@ -41,81 +40,7 @@ Template.carStopList.onRendered(() => {
 });
 
 Template.carStopList.onDestroyed(() => {
-    if(this.checkIsSuperAdmin) this.checkIsSuperAdmin = null
-})
-
-Template.micromap.onRendered(() => {
-    setMapHeight()
-    L.Icon.Default.imagePath = '/packages/bevanhunt_leaflet/images/';
-    window.micromap = L.map('micromap', {
-        drawControl: true
-    }).setView([21.0388, 105.7886], 19);
-    L.tileLayer('https://apis.wemap.asia/raster-tiles/styles/osm-bright/{z}/{x}/{y}@2x.png?key=vpstPRxkBBTLaZkOaCfAHlqXtCR', {
-        maxZoom: 18,
-        id: 'mapbox.streets'
-    }).addTo(micromap);
-
-    window.marker = L.marker([21.03709858, 105.78349972]).addTo(micromap);
-    
-    setInterval(() => {
-        micromap.invalidateSize();
-    }, 0)
-    //Dragend event of map for update marker position
-    
-
-    micromap.on('drag', function () {
-        marker.setLatLng(micromap.getCenter());
-        document.getElementById("confirm-button").disabled = true;
-    });
-
-    micromap.on('zoomend', function () {
-        let coor = $("#location").val().split(",")
-        coor[0] = parseFloat(coor[0]);
-        coor[1] = parseFloat(coor[1]);
-        if ((coor[0]) && (coor[1])) {
-            marker.setLatLng([coor[0], coor[1]]);
-            micromap.panTo(new L.LatLng(coor[0], coor[1]));
-        } else {
-            micromap.panTo(new L.LatLng(21.03709858, 105.78349972));
-            marker.setLatLng([21.03709858, 105.78349972]);
-        }
-
-    })
-    //Dragend event of map for update marker position
-    micromap.on('dragend', function (e) {
-        document.getElementById("confirm-button").disabled = false;
-        let cnt = micromap.getCenter();
-        let position = marker.getLatLng();
-        lat = Number(position['lat']);
-        lng = Number(position['lng']);
-        //let adr = getAddress(lat, lng);
-        //console.log(adr)
-
-        MeteorCall(_METHODS.wemap.getAddress, {
-            lat: lat,
-            lng: lng
-        }, accessToken).then(result => {
-            let props = result.features[0].properties;
-            let cor = result.features[0].geometry.coordinates;
-            let addressElement = {
-                name: props.name,
-                housenumber: props.housenumber,
-                street: props.street,
-                city: props.city,
-                district: props.district,
-                state: props.state
-            }
-
-            address = addressElement.name + ', ' +
-                addressElement.housenumber + ', ' +
-                addressElement.street + ', ' +
-                addressElement.city + ', ' +
-                addressElement.district + ', ' +
-                addressElement.state + ', ';
-            $('.position').val(cor[1] + ',' + cor[0]);
-            $('.address').val(address);
-        }).catch(handleError)
-    });
+    if (this.checkIsSuperAdmin) this.checkIsSuperAdmin = null
 })
 
 Template.carStopList.helpers({
@@ -125,7 +50,6 @@ Template.carStopList.helpers({
 })
 
 Template.carStopList.events({
-    "submit form": SubmitForm,
     "click .modify-button": ClickModifyButton,
     "click .delete-button": ClickDeleteButton,
     "click .kt-datatable__pager-link": (e) => {
@@ -138,16 +62,6 @@ Template.carStopList.events({
         reloadTable(1, getLimitDocPerPage());
     },
 });
-
-
-Template.editCarStopModal.helpers({
-    isSuperadmin() {
-        return Session.get(_SESSION.isSuperadmin)
-    },
-    schools() {
-        return Session.get('schools')
-    }
-})
 
 Template.carStopListFilter.events({
     'click #filter-button': carStopListFilter,
@@ -177,14 +91,9 @@ Template.carStopListFilter.helpers({
 
 
 function ClickModifyButton(event) {
-
     let carStopData = $(event.currentTarget).data("json");
-    
-    $("#editCarStopModal").attr("carStopID", carStopData._id);
-    $(".modal-title").html("Chỉnh Sửa");
-    $(".confirm-button").html("Sửa");
-    getLocation(carStopData._id);
-    
+    console.log(carStopData)
+    FlowRouter.go(`/carstop?carStopID=${carStopData._id}`)
 }
 
 function ClickDeleteButton(event) {
@@ -204,36 +113,6 @@ function ClickDeleteButton(event) {
 
         }
     })
-}
-
-function SubmitForm(event) {
-    event.preventDefault();
-    let carStopUpdate = {
-        _id: $("#editCarStopModal").attr("carStopID"),
-        stopType: event.target.stopType.value,
-        name: event.target.stopName.value,
-        address: event.target.address.value,
-        location: getLatLng(event.target.location.value)
-    }
-    console.log(carStopUpdate)
-    //let modify = $("#editCarStopModal").attr("carStopID");
-    event.target.stopType.value = " ";
-    event.target.stopName.value = " ";
-    event.target.address.value = " ";
-    event.target.location.value = " ";
-
-    if (Session.get(_SESSION.isSuperadmin)) {
-        carStopUpdate.schoolID = $('#school-input').val()
-    }
-    MeteorCall(_METHODS.carStop.Update, carStopUpdate, accessToken)
-        .then(result => {
-            handleSuccess("Thêm").then(() => {
-                $("#editCarStopModal").modal("hide");
-                reloadTable(currentPage, getLimitDocPerPage())
-                clearForm()
-            })
-        })
-        .catch(handleError);
 }
 
 function getLimitDocPerPage() {
@@ -267,11 +146,12 @@ function createRow(result) {
         stopType: result.stopType,
         name: result.name,
         address: result.address,
+        location: result.location
     }
 
-    if(Session.get(_SESSION.isSuperadmin)) {
+    if (Session.get(_SESSION.isSuperadmin)) {
         data.schoolID = result.schoolID,
-        data.schoolName = result.school.name
+            data.schoolName = result.school.name
     }
 
     return ` <tr id = ${data._id}>
@@ -282,22 +162,14 @@ function createRow(result) {
                 ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>` : ''}
                 <td>
                     <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(
-                        data
-                    )}\'>Sửa</button>
+        data
+    )}\'>Sửa</button>
                     <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(
-                        data
-                    )}\'>Xóa</button>
+        data
+    )}\'>Xóa</button>
                 </td>
             </tr>`;
 }
-
-function getLatLng(string) {
-    let LatLng = string.split(" ");
-    LatLng[0] = parseFloat(LatLng[0]);
-    LatLng[1] = parseFloat(LatLng[1]);
-    return LatLng;
-}
-
 
 function carStopListFilter() {
     let options = [{
@@ -325,24 +197,6 @@ function refreshFilter() {
     reloadTable(1, getLimitDocPerPage(), null)
 }
 
-function setMapHeight() {
-    setInterval(() => {
-        //console.log(1), 1000
-    })
-    if ($(window).width() < 1024) {
-        $("#micromap").css({
-            //"height": windowHeight - topBarHeight - sHeaderHeight - footerHeight
-            "height": $(".anchorHeight").height()
-        })
-    } else {
-
-        $("#micromap").css({
-            //"height": windowHeight - topBarHeight - sHeaderHeight - footerHeight
-            "height": 474.5
-        })
-    }
-}
-
 function initSchoolSelect2() {
     MeteorCall(_METHODS.school.GetAll, null, accessToken).then(result => {
         Session.set('schools', result.data)
@@ -355,17 +209,4 @@ function initSchoolSelect2() {
             placeholder: "Chọn trường"
         })
     }).catch(handleError)
-}
-
-function getLocation(id){
-    MeteorCall(_METHODS.carStop.GetById, {_id: id}, accessToken).then(result => {
-        console.log(result.location)
-        $("#location").val(result.location);
-        $("#stopName").val(result.name);
-        $("#stopType").val(result.stopType);
-        $("#address").val(result.address);
-        $("#editCarStopModal").modal("show");
-        micromap.setView(result.location, 20);
-        marker.setLatLng(result.location);
-    })
 }
