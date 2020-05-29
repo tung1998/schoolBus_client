@@ -310,18 +310,22 @@ const _TRIP = {
     status: {
         ready: {
             text: "Đã sẵn sàng",
+            classname: 'primary',
             number: 0
         },
         moving: {
             text: "Đang di chuyển",
+            classname: 'success',
             number: 1
         },
         finish: {
             text: "Đã kết thúc",
+            classname: 'warning',
             number: 2
         },
         accident: {
             text: "Gặp sự cố",
+            classname: 'danger',
             number: 3
         }
     }

@@ -35,7 +35,7 @@
             <div class="kt-widget kt-widget--user-profile-2">
                 <div class="kt-widget__head">
                     <div class="kt-widget__media">
-                        <img class="kt-widget__img kt-hidden-" src="http://192.168.2.222:3000/images/{{user.image}}/0" alt="image">
+                        <img class="kt-widget__img kt-hidden-" src="{{_URL_images}}/{{user.image}}/0" alt="image">
                     </div>
                     <div class="kt-widget__info">
                         <a href="#" class="kt-widget__username">
@@ -94,7 +94,7 @@
                     <div class="col-6">
                         <div class="text-center">Tài xế</div>
                         <div class="kt-avatar kt-avatar--outline kt-avatar--circle-">
-                            <div class="kt-avatar__holder" style="background-image: url(&quot;http://192.168.2.222:3000/images/{{nextTripData.driver.user.image}}/0&quot;);">
+                            <div class="kt-avatar__holder" style="background-image: url(&quot;{{_URL_images}}/{{nextTripData.driver.user.image}}/0&quot;);">
                             </div>
                         </div>
                         <div class="name">
@@ -105,7 +105,7 @@
                     <div class="col-6">
                         <div class="text-center">Bảo mẫu</div>
                         <div class="kt-avatar kt-avatar--outline kt-avatar--circle-">
-                            <div class="kt-avatar__holder" style="background-image: url(&quot;http://192.168.2.222:3000/images/{{nextTripData.nanny.user.image}}/0&quot;);">
+                            <div class="kt-avatar__holder" style="background-image: url(&quot;{{_URL_images}}/{{nextTripData.nanny.user.image}}/0&quot;);">
                             </div>
                         </div>
                         <div class="name">

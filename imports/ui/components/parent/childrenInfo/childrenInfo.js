@@ -37,6 +37,15 @@ Template.childrenInfo.helpers({
 Template.childrenNextripModal.helpers({
     nextTripData() {
         return Session.get('nextTripData')
+    },
+    _URL_images() {
+        return _URL_images
+    }
+});
+
+Template.childrenHtml.helpers({
+    _URL_images() {
+        return _URL_images
     }
 });
 

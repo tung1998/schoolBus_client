@@ -134,9 +134,9 @@ Template.tripDetail.events({
 })
 
 Template.tripDetail.onDestroyed(() => {
-    carStopList = null
-    stopCoor = null
-    markers_id = null
+    carStopList = []
+    stopCoor = []
+    markers_id = []
     Session.delete('studentTripData')
     Session.delete('studenInfoData')
     Session.delete('tripID')
