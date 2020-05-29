@@ -43,7 +43,7 @@ Template.chatTeacher.onRendered(() => {
         createTeachersRow(students);
         if (FlowRouter.getQueryParam('teacherID')) {
             $(`a[partnerid=${FlowRouter.getQueryParam('teacherID')}]`).trigger('click')
-        }
+        }else $(`a[partnerid]`).first().trigger('click')
     })
 
     
