@@ -56,6 +56,14 @@
                 <div class="kt-portlet__body">
                     <div class="tab-content">
                         <div class="tab-pane active" id="tripInfo" role="tabpanel">
+                            <div class="row">
+                                <div class="col-6 kt-align-left" id="trip-status">
+
+                                </div>
+                                <div class="col-6 kt-align-right" id="report-status">
+                                </div>
+                            </div>
+                            <hr>
                             <div class="kt-widget">
                                 <div class="kt-widget__body kt-widget-t-2">
                                     <div class="row">
@@ -65,52 +73,62 @@
                                                 <div class="kt-widget1__item">
                                                     <div class="kt-widget1__info">
                                                         <h3 class="kt-widget1__title">Tên lái xe: </h3>
-                                                        <span class="kt-widget1__desc phone">Số điện thoại:</span>
+                                                        <span class="kt-widget1__desc ">Số điện thoại:</span>
                                                     </div>
-                                                    <div class="kt-widget1__info">
-                                                        <h3 class="kt-widget1__title" id="driver-name">Nguyễn Mạnh
-                                                            Tiến</h3>
-                                                    </div>
-                                                </div>
-                                                <div class="kt-widget1__item">
-                                                    <div class="kt-widget1__info">
-                                                        <h3 class="kt-widget1__title">Tên bảo mẫu: </h3>
-                                                        <span class="kt-widget1__desc phone">Số điện thoại:</span>
-                                                    </div>
-                                                    <div class="kt-widget1__info">
-                                                        <h3 class="kt-widget1__title" id="nanny-name">Nguyễn Mạnh
-                                                            Tiến</h3>
+                                                    <div class="kt-widget1__info kt-align-right">
+                                                        <h3 class="kt-widget1__title kt-font-primary" id="driver-name">
+                                                        </h3>
+                                                        <span class="kt-widget1__desc phone"></span>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!--end:: Widgets/Stats2-1 -->
                                         </div>
                                         <div class="col-md-6 col-lg-6 col-xl-6">
-                                            <!--begin:: Widgets/Stats2-1 -->
+                                            <div class="kt-widget1">
+                                                <div class="kt-widget1__item">
+                                                    <div class="kt-widget1__info">
+                                                        <h3 class="kt-widget1__title">Tên bảo mẫu: </h3>
+                                                        <span class="kt-widget1__desc">Số điện thoại:</span>
+                                                    </div>
+                                                    <div class="kt-widget1__info kt-align-right">
+                                                        <h3 class="kt-widget1__title kt-font-primary" id="nanny-name">
+                                                        </h3>
+                                                        <span class="kt-widget1__desc phone"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-6 col-xl-6">
                                             <div class="kt-widget1">
                                                 <div class="kt-widget1__item">
                                                     <div class="kt-widget1__info">
                                                         <h3 class="kt-widget1__title">Biến sổ xe: </h3>
                                                     </div>
-                                                    <div class="kt-widget1__info">
-                                                        <h3 class="kt-widget1__title" id="car-numberPlate">123123123
-                                                        </h3>
+                                                    <div class="kt-widget1__info kt-align-right">
+                                                        <h3 class="kt-widget1__title kt-font-danger"
+                                                            id="car-numberPlate"></h3>
                                                     </div>
                                                 </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-lg-6 col-xl-6">
+                                            <div class="kt-widget1">
                                                 <div class="kt-widget1__item">
                                                     <div class="kt-widget1__info">
                                                         <h3 class="kt-widget1__title">Thời gian đi: </h3>
                                                     </div>
-                                                    <div class="kt-widget1__info">
-                                                        <h3 class="kt-widget1__title" id="start-time">12:20:20</h3>
+                                                    <div class="kt-widget1__info kt-align-right">
+                                                        <h3 class="kt-widget1__title kt-font-success" id="start-time">
+                                                        </h3>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!--end:: Widgets/Stats2-1 -->
                                         </div>
+
                                     </div>
                                 </div>
                             </div>
+                            <hr>
                         </div>
                         <div class="tab-pane" id="studentList" role="tabpanel">
                             <!--begin::Section-->
@@ -141,12 +159,12 @@
                         <div class="tab-pane" id="routeMap" role="tabpanel">
                             <div class="col-12">
                                 <button data-toggle="collapse" data-target=".collapse"
-                                class="floatingContent polyToggle btn btn-primary btn-sm"><i class="fas fa-road"
-                                    style="right: 20px !important"></i>Hiện/Ẩn đường đi
+                                    class="floatingContent polyToggle btn btn-primary btn-sm"><i class="fas fa-road"
+                                        style="right: 20px !important"></i>Hiện/Ẩn đường đi
                                 </button>
                                 {{>tripMap}}
                             </div>
-                            
+
                         </div>
                         <div class="tab-pane" id="timeline" role="tabpanel">
                             123
@@ -166,6 +184,7 @@
     </div>
     {{> instascannerModal}}
     {{> studentInfoModal}}
+    {{> reportModal}}
 </template>
 
 <template name="instascannerModal">
@@ -325,4 +344,62 @@
         <td>{{student.user.name}}</td>
         <td>{{student.user.phone}}</td>
     </tr>
+</template>
+
+<template name="reportModal">
+    <div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        style="display: none;" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="kt-form">
+                        <div class="kt-portlet__body">
+
+                            <div class="form-group row">
+                                <label class="col-3 col-form-label required-input-label">Nội dụng sự cố</label>
+                                <div class="col-9">
+                                    <div class="kt-radio-list">
+                                        <label class="kt-radio">
+                                            <input type="radio" name="report" value="1"> Tắc đường
+                                            <span></span>
+                                        </label>
+                                        <label class="kt-radio">
+                                            <input type="radio" name="report" value="2"> Report1
+                                            <span></span>
+                                        </label>
+                                        <label class="kt-radio">
+                                            <input type="radio" name="report" value="3"> Report1
+                                            <span></span>
+                                        </label>
+                                        <label class="kt-radio">
+                                            <input type="radio" name="report" value="4"> Report1
+                                            <span></span>
+                                        </label>
+                                        <label class="kt-radio">
+                                            <input type="radio" name="report" value="5"> Lý do khác
+                                            <span></span>
+                                        </label>
+                                        <textarea class="form-control" id="report-content" disabled="disabled"
+                                            placeholder="Nhập lý do..." rows="3"
+                                            style="overflow: hidden; overflow-wrap: break-word; resize: none; height: 72px;"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary cancel-button"
+                                data-dismiss="modal">Hủy</button>
+                            <button type="button" class="btn btn-primary" id="report-button">Báo cáo</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </template>

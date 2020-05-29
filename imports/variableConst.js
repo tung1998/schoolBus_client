@@ -222,6 +222,7 @@ const _METHODS = {
         GetNext: 'trip.getNext',
         GetAllNext: 'trip.getAllNext',
         GetTripLogByTripID: 'trip.getLogByTripID',
+        ModifyTripStatus: 'trip.modifyTripStatus'
     },
     tripLocation: {
         GetAll: 'tripLocation.getAll',

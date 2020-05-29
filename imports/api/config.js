@@ -8,9 +8,8 @@ export {
 
 const AUTH_PATH = 'http://192.168.0.111:2999';
 const BASE = 'http://192.168.0.111:3000';
+// const AUTH_PATH = 'http://192.168.0.111:3000';
 
-// const AUTH_PATH = 'http://localhost:4000';
-// const BASE = 'http://192.168.0.111:3000';
 
 // mail hainv@fimo
 export const FCM_ = {

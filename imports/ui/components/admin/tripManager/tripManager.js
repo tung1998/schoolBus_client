@@ -39,7 +39,7 @@ function initTimePicker() {
     $("#select_date").datepicker({
         language: 'vi',
         autoclose: true,
-        dateFormat: 'DD/MM/YYYY'
+        dateFormat: 'DD/MM/YYYY',
     });
     $("#select_date").val(moment(Date.now()).format("DD/MM/YYYY"))
 }
@@ -183,7 +183,7 @@ function htmlRow(data) {
                             <div class="row">
                                 <i class="flaticon2-calendar-1"></i>&nbsp;
                                 <label for="time-start" class="form-control-label">Thời gian khởi hành:</label>&nbsp;
-                                <a href="#" id="time-start">${moment(data.startTime).format("DD MMMM YYYY, h:mm")}</a>
+                                <a href="#" id="time-start">${moment(data.startTime).format("DD/MM/YYYY, HH:MM")}</a>
                             </div>
                             <div class="row">
                                 <div class="col-12" style="padding-left: 0px;">
