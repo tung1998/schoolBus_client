@@ -48,6 +48,9 @@ Template.tripHtml.helpers({
     },
     tripStatus() {
         return getJsonDefault(_TRIP.status, 'number', this.status)
+    },
+    isModifiable(){
+        return this.status ==_TRIP.status.ready.number
     }
 })
 

@@ -133,7 +133,6 @@
                 <div class="kt-widget__head">
                     <a href="#" class="kt-widget__username">
                         Tài xế: {{driver.user.name}}
-                        <i class="flaticon2-correct"></i>
                     </a>
 
                     <div class="kt-widget__action">
@@ -159,9 +158,11 @@
                             <label for="phonenumber" class="form-control-label">Liên hệ:</label>&nbsp;
                             <a href="#" id="phonenumber">{{driver.user.phone}}</a>
                             <div class="fa-pull-right">
+                                {{#if isModifiable}}
                                 <button type="button" class="btn btn-danger btn-sm modify-button"
                                     data-json="">Sửa</button>
                                 <span></span>
+                                {{/if}}
                                 <a href="tripManager/{{_id}}"><button type="button"
                                         class="btn btn-success btn-sm">Xem thông tin</button></a>
                             </div>
