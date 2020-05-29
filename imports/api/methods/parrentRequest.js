@@ -20,7 +20,8 @@ if (Meteor.isServer) {
 }
 
 function getParrentRequests(data, accessToken = '') {
-    let url = `${BASE_ParentRequest}?extra=${data.extra}`;
+    let url = `${BASE_ParentRequest}?`;
+    if (data&&data.extra) url += `extra=${data.extra}`
     return httpDefault(METHOD.get, url, { token: accessToken });
 }
 

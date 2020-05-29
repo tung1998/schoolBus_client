@@ -16,37 +16,37 @@ import {
 } from '../../../../../variableConst';
 
 let accessToken, tripID, studentList = [],
-carStopList = [],
-stopPointCoors = [],
-markers_id = [],
-carStopIDs = [],
-htmlStopPane = '',
-defaultStopPoint = [],
-defaultCarStop = [],
-stopPointOrder = [],
-polyID,
-studentListID,
-address = [],
-name = [],
-schoolID,
-desCoor,
-startCoor,
-destinationPointMarker = L.icon({
-    iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-}),
-startPointMarker = L.icon({
-    iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-});
+    carStopList = [],
+    stopPointCoors = [],
+    markers_id = [],
+    carStopIDs = [],
+    htmlStopPane = '',
+    defaultStopPoint = [],
+    defaultCarStop = [],
+    stopPointOrder = [],
+    polyID,
+    studentListID,
+    address = [],
+    name = [],
+    schoolID,
+    desCoor,
+    startCoor,
+    destinationPointMarker = L.icon({
+        iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    }),
+    startPointMarker = L.icon({
+        iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    });
 
 Template.routeInfo.onCreated(() => {
     accessToken = Cookies.get('accessToken');
@@ -54,7 +54,7 @@ Template.routeInfo.onCreated(() => {
 
 Template.routeInfo.onRendered(() => {
     reloadData();
-    
+
     L.Icon.Default.imagePath = '/packages/bevanhunt_leaflet/images/';
     window.routeMiniMap = L.map('routeMiniMap', {
         drawControl: true,
@@ -82,7 +82,7 @@ Template.routeInfo.events({
         tarMark.openPopup();
         window.routeMiniMap.setView([latval, lngval], 25);
     },
-    'mousemove .addressTab': (event) => {
+    /*'mousemove .addressTab': (event) => {
         event.preventDefault();
         let indx = parseInt($(event.currentTarget).attr("id"));
         let tarMark = markerGroup._layers[markers_id[indx]];
@@ -90,7 +90,7 @@ Template.routeInfo.events({
         let lngval = tarMark._latlng.lng;
         tarMark.openPopup();
         window.routeMiniMap.setView([latval, lngval], 14);
-    },
+    },*/
     'drag .addressTab': dragTab,
     'click .autoDirect': autoDirect,
     'click .confirmButton': confirmPath,
@@ -149,15 +149,19 @@ function reloadData() {
             if (index === 0) {
                 desCoor = data.location;
                 document.getElementById("des").innerHTML +=
-                    `<div class="kt-portlet kt-portlet--mobile addressTab kt-portlet--skin-solid kt-bg-danger" id="${index}">
-                        <div class="kt-portlet__head">
+                    `<div class="kt-portlet  addressTab " id="${index}">
+                        <div class="kt-portlet__head kt-portlet__head--noborder kt-portlet--skin-solid kt-bg-danger">
                             <div class="kt-portlet__head-label">
                                 <h3 class="kt-portlet__head-title title="${data.name}">
                                     ${data.name}        
                                 </h3>
                             </div>
                         </div> 
-                    </div>`
+                        <div class="kt-portlet__body" style="height: 10px; background-color: rgb(251, 201, 218); text-align: center; border-top-left-radius: 0px !important; border-top-right-radius: 0px !important; padding-top: 10px!important">
+                            <div style="display: inline-block; text-align: left"> Khởi hành </div>
+                        </div>
+                    </div>
+                    `
                 let mark = L.marker(data.location, { icon: destinationPointMarker }).bindTooltip(data.name, { permanent: false }).addTo(markerGroup);
                 markers_id.push(markerGroup.getLayerId(mark))
                 let popup = `
@@ -176,14 +180,17 @@ function reloadData() {
             } else if (index === len - 1) {
                 startCoor = data.location
                 document.getElementById("start").innerHTML +=
-                    `<div class="kt-portlet kt-portlet--mobile addressTab kt-portlet--skin-solid kt-bg-brand" id="${index}">
-                            <div class="kt-portlet__head">
+                    `<div class="kt-portlet kt-portlet--mobile kt-portlet__head--noborder addressTab kt-portlet--skin-solid kt-bg-brand" id="${index}">
+                            <div class="kt-portlet__head kt-portlet__head--noborder">
                                 <div class="kt-portlet__head-label">
                                     <h3 class="kt-portlet__head-title title="${data.name}">
                                         ${data.name}        
                                     </h3>
                                 </div>
-                            </div> 
+                            </div>
+                            <div class="kt-portlet__body" style="height: 10px; background-color: rgb(147, 159, 231); text-align: center; border-top-left-radius: 0px !important; border-top-right-radius: 0px !important; padding-top: 9px!important">
+                                <div style="display: inline-block; text-align: left"> Điểm cuối </div>
+                        </div> 
                         </div>`
                 let mark = L.marker(data.location, { icon: startPointMarker }).bindTooltip(data.name, { permanent: false }).addTo(markerGroup);
                 markers_id.push(markerGroup.getLayerId(mark))
@@ -228,7 +235,7 @@ function reloadData() {
                 });
             }
         })
-        
+
         drawPath(stopPointCoors);
         document.getElementById("kt_sortable_portlets").innerHTML += htmlStopPane;
         //setColor(0, 'destination');
@@ -283,7 +290,7 @@ function dragTab(event) {
         $('.carStopContainer').children('div').each(function () {
             if ($(this).attr('id') != undefined) {
                 if ($(this).attr('id') != targetID) {
-                    ID_order.push($(this).attr('id'));
+                    ID_order.push(parseInt($(this).attr('id')));
                 }
             } else {
                 ID_order.push(targetID);
@@ -291,18 +298,28 @@ function dragTab(event) {
             }
         })
         ID_order.push(ID_order.length);
-        if (ID_order != stopPointOrder) {
-            console.log(ID_order)
-
+        //console.log("idorder");
+        //console.log(ID_order);
+        //console.log("stopPointOrder");
+        //console.log(stopPointOrder);
+        //console.log(ID_order.length);
+        //console.log(stopPointOrder.length);
+        if (ID_order.length == stopPointOrder.length) {
+            //console.log(ID_order)
             stopPointCoors = reArrange(defaultStopPoint, [], ID_order)
             carStopIDs = reArrange(defaultCarStop, [], ID_order)
             removeLayerByID(polyID)
-            console.log(stopPointCoors, carStopIDs)
-            console.log(stopPointCoors)
-            console.log(carStopIDs)
+            //console.log(stopPointCoors, carStopIDs)
+            //console.log(stopPointCoors)
+            //console.log(carStopIDs)
             drawPath(stopPointCoors)
         } else {
-            //console.log(2)
+            let indx = parseInt($(event.currentTarget).attr("id"));
+            let tarMark = markerGroup._layers[markers_id[indx]];
+            let latval = tarMark._latlng.lat;
+            let lngval = tarMark._latlng.lng;
+            tarMark.openPopup();
+            window.routeMiniMap.setView([latval, lngval]);
         }
     }
 }
@@ -310,10 +327,11 @@ function dragTab(event) {
 function addPoly(arr) {
     let poly = L.polyline(arr, { color: 'blue', weight: 4, opacity: 0.5, smoothFactor: 1 }).addTo(markerGroup);
     polyID = markerGroup.getLayerId(poly);
-    console.log(polyID)
+    //console.log(polyID)
 }
 
 function removeLayerByID(id) {
+    console.log(markerGroup)
     markerGroup.eachLayer(function (layer) {
         if (layer._leaflet_id === id) {
             markerGroup.removeLayer(layer)
@@ -322,9 +340,9 @@ function removeLayerByID(id) {
 }
 
 function reArrange(arr1, arr2, idxArr) {
-    arr2[0]=arr1[0];
-    arr2[idxArr.length-1]=arr1[idxArr.length-1]
-    for (let i = 1; i < idxArr.length-1; i++) {
+    arr2[0] = arr1[0];
+    arr2[idxArr.length - 1] = arr1[idxArr.length - 1]
+    for (let i = 1; i < idxArr.length - 1; i++) {
         if (arr1[idxArr[i]] != undefined) {
             arr2[i] = arr1[idxArr[i]];
         }
@@ -361,7 +379,7 @@ function autoDirect(event) {
     stopPointCoors = DistanceAutoCal(desCoor, startCoor, stopPointCoors);
     carStopIDs = reArrange(carStopIDs, [], stopPointOrder);
     drawPath(stopPointCoors)
-    console.log(stopPointOrder)
+    //console.log(stopPointOrder)
     htmlStopPane = ''
     for (let i = 1; i < stopPointOrder.length - 1; i++) {
 
@@ -385,7 +403,7 @@ function autoDirect(event) {
 
 function confirmPath(event) {
     MeteorCall(_METHODS.studentList.Update, { _id: studentListID, carStopIDs: carStopIDs }, accessToken).then(result => {
-        console.log(result);
+        //console.log(result);
     }).catch(handleError)
 }
 
@@ -394,7 +412,7 @@ function DistanceAutoCal(dest, start, coorArr) {
     let distOrder = [];
     let finalCoorOrder = [dest];
     console.log(coorArr);
-    for (let i = 1; i < coorArr.length-1; i++) {
+    for (let i = 1; i < coorArr.length - 1; i++) {
         distance.push(getDistance(dest, coorArr[i]));
         //console.log(getDistance(dest,coorArr[i]))
         distOrder.push(i);

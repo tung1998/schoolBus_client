@@ -17,6 +17,7 @@ if (Meteor.isServer) {
         'feedback.getByPage': getFeedbackByPage,
         'feedback.update': updateFeedback,
         'feedback.delete': deleteFeedback,
+        'feedback.response': responseFeedback,
     });
 }
 
@@ -49,11 +50,16 @@ function createFeedback(data, accessToken = '') {
 
 
 function updateFeedback(data, accessToken = '') {
-    let url = `${BASE_FEEDBACK}/${data._id}/content`;
-    return httpDefault(METHOD.put, url, { token: accessToken });
+    let url = `${BASE_FEEDBACK}/${data._id}`;
+    return httpDefault(METHOD.put, url, { body: data, token: accessToken });
 }
 
 function deleteFeedback(data, accessToken = '') {
     let url = `${BASE_FEEDBACK}/${data._id}`;
     return httpDefault(METHOD.del, url, { token: accessToken });
+}
+
+function responseFeedback(data, accessToken = '') {
+    let url = `${BASE_FEEDBACK}/${data._id}/response`;
+    return httpDefault(METHOD.put, url, { body: data, token: accessToken });
 }

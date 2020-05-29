@@ -42,12 +42,12 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" data-toggle="tab" href="#routeMap" role="tab">
-                                    <i class="fa fa-user"></i> Cung đường
+                                    <i class="fa fa-road"></i> Cung đường
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" data-toggle="tab" href="#timeline" role="tab">
-                                    <i class="flaticon2-time"></i> Cung đường
+                                    <i class="flaticon2-time"></i> Chi tiết
                                 </a>
                             </li>
                         </ul>
@@ -57,17 +57,10 @@
                     <div class="tab-content">
                         <div class="tab-pane active" id="tripInfo" role="tabpanel">
                             <div class="row">
-                                <div class="col-6 kt-align-center">
-                                    <button type="button"
-                                        class="btn btn-success btn-elevate btn-elevate-air">Bắt đầu chuyến đi</button>
-                                    <button type="button"
-                                        class="btn btn-dark btn-elevate btn-elevate-air">Kết thúc chuyến đi</button>
+                                <div class="col-6 kt-align-left" id="trip-status">
+
                                 </div>
-                                <div class="col-6 kt-align-right">
-                                    <button type="button" class="btn btn-warning btn-elevate btn-elevate-air">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                        Báo cáo sự cố
-                                    </button>
+                                <div class="col-6 kt-align-right" id="report-status">
                                 </div>
                             </div>
                             <hr>
@@ -191,6 +184,7 @@
     </div>
     {{> instascannerModal}}
     {{> studentInfoModal}}
+    {{> reportModal}}
 </template>
 
 <template name="instascannerModal">
@@ -239,9 +233,9 @@
                 <div class="modal-body studentInfoModal-body">
                     <div class="row">
                         <div class="fa-pull-left col-md-3 col-sm-12">
-                            <img style="width: 100px; height: 100px" src={{studenInfoData.image}} alt="image">
+                            <img style="width: 100%; height: 100%" src={{studenInfoData.image}} alt="image">
                         </div>
-                        <div class="col-sm-9 col-sm-12">
+                        <div class="col-md-9 col-sm-12">
                             <div class="row">
                                 <div class="col-12">
                                     <div class="fa-pull-left">
@@ -350,4 +344,62 @@
         <td>{{student.user.name}}</td>
         <td>{{student.user.phone}}</td>
     </tr>
+</template>
+
+<template name="reportModal">
+    <div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        style="display: none;" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="kt-form">
+                        <div class="kt-portlet__body">
+
+                            <div class="form-group row">
+                                <label class="col-3 col-form-label required-input-label">Nội dụng sự cố</label>
+                                <div class="col-9">
+                                    <div class="kt-radio-list">
+                                        <label class="kt-radio">
+                                            <input type="radio" name="report" value="1"> Tắc đường
+                                            <span></span>
+                                        </label>
+                                        <label class="kt-radio">
+                                            <input type="radio" name="report" value="2"> Report1
+                                            <span></span>
+                                        </label>
+                                        <label class="kt-radio">
+                                            <input type="radio" name="report" value="3"> Report1
+                                            <span></span>
+                                        </label>
+                                        <label class="kt-radio">
+                                            <input type="radio" name="report" value="4"> Report1
+                                            <span></span>
+                                        </label>
+                                        <label class="kt-radio">
+                                            <input type="radio" name="report" value="5"> Lý do khác
+                                            <span></span>
+                                        </label>
+                                        <textarea class="form-control" id="report-content" disabled="disabled"
+                                            placeholder="Nhập lý do..." rows="3"
+                                            style="overflow: hidden; overflow-wrap: break-word; resize: none; height: 72px;"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary cancel-button"
+                                data-dismiss="modal">Hủy</button>
+                            <button type="button" class="btn btn-primary" id="report-button">Báo cáo</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </template>

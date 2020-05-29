@@ -276,8 +276,11 @@ function getLimitDocPerPage() {
     return parseInt($("#limit-doc").val());
 }
 
-function convertTime(time, type = false) {
+function convertTime(time, type = false, format = null) {
     if (type == true) {
+        if(format) {
+            return moment(time).format(format)
+        }
         return moment(time).format('L')
     }
     return moment(time, "DD/MM/YYYY").valueOf()

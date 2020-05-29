@@ -102,7 +102,7 @@ Template.carStopList_studentListInfo.onRendered(() => {
 })
 
 Template.carStopList_studentListInfo.events({
-    'mousemove .addressTab': (event) => {
+    'click .addressTab': (event) => {
         event.preventDefault();
         let indx = parseInt($(event.currentTarget).attr("id"));
         let tarMark = carStopmap._layers[markers_id[indx]];
@@ -111,10 +111,10 @@ Template.carStopList_studentListInfo.events({
         tarMark.openPopup();
         window.carStopmap.setView([latval, lngval], 14);
     },
-    'click .polyToggle': (event) => {
+    /*'click .polyToggle': (event) => {
         event.preventDefault();
         removeLayerByID(polyID);
-    }
+    }*/
     /*'click .confirmButton': confirmPath,
     'click .autoDirect': (event)=>{
         

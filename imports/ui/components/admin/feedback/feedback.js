@@ -43,7 +43,10 @@ Template.feedback.onDestroyed(() => {
 });
 
 Template.feedback.events({
-
+    'click .reply-button': replyFeedBackClick,
+    'click .confirm-button': confirmFeedBackClick,
+    'click .show-button': showReplyFeedBackClick,
+    'click #replyFeedBackModalSubmit': submitFeedBack,
 });
 
 Template.feedback.helpers({
@@ -54,15 +57,19 @@ Template.feedback.helpers({
 
 Template.feedbackRow.helpers({
     feedbackType() {
-        return feedbackType = getJsonDefault(_FEEDBACK.type, 'number', this.type)
+        return getJsonDefault(_FEEDBACK.type, 'number', this.type)
     },
     feedbackStatus() {
-        return feedbackStatus = getJsonDefault(_FEEDBACK.status, 'number', this.status)
+        return getJsonDefault(_FEEDBACK.status, 'number', this.status)
     },
     createdTime() {
         return moment(this.createdTime).format('l')
     },
+    htmlButton() {
+        return renderHtmlButton(this._id, this.status, this.responseUser ? this.responseUser.name : '', this.responseContent)
+    }
 });
+
 
 Template.feedbackFilter.onRendered(() => {
     let options = [{
@@ -70,7 +77,7 @@ Template.feedbackFilter.onRendered(() => {
         value: "Chọn loại",
         search: "Infinity"
     }, {
-        id: "status-filter", 
+        id: "status-filter",
         value: "Chọn tình trạng",
         search: "Infinity"
     }, {
@@ -164,7 +171,7 @@ function feedbackFilter() {
         value: $('#type-filter').val() ? Number($('#type-filter').val()) : ''
     }, {
         text: "status",
-        value:$('#status-filter').val() ? Number($('#status-filter').val()) : ''
+        value: $('#status-filter').val() ? Number($('#status-filter').val()) : ''
     }, {
         text: "title",
         value: $('#title-filter').val()
@@ -183,4 +190,57 @@ function refreshFilter() {
     $('#status-filter').val('').trigger('change')
     $('#school-filter').val('').trigger('change')
     reloadData(1, getLimitDocPerPage(), null)
+}
+
+function replyFeedBackClick(e) {
+    let feedbackID = e.currentTarget.getAttribute('feedbackID')
+    $('#replyFeedBackModal').attr('feedbackID', feedbackID).modal('show')
+}
+
+function submitFeedBack(e) {
+    let feedbackID = $('#replyFeedBackModal').attr('feedbackID')
+    let responseContent = $('#content').val()
+    MeteorCall(_METHODS.feedback.Response, {
+        _id: feedbackID,
+        responseContent
+    }, accessToken).then(result => {
+        handleSuccess('Đã phản hồi!')
+        reloadData()
+    }).catch(handleError)
+    $('#replyFeedBackModal').modal('hide')
+}
+
+function confirmFeedBackClick(e) {
+    let feedbackID = e.currentTarget.getAttribute('feedbackID')
+    handleConfirm('Ghi nhận ý kiến phản hồi!').then(result => {
+        if (result.value)
+            MeteorCall(_METHODS.feedback.Update, {
+                _id: feedbackID,
+                status: _FEEDBACK.status.readed.number
+            }, accessToken).then(result => {
+                reloadData()
+                handleSuccess('Đã ghi nhận')
+            }).catch(handleError)
+    })
+}
+
+function showReplyFeedBackClick(e) {
+    let feedbackID = e.currentTarget.getAttribute('feedbackID')
+    let feedbackUser = e.currentTarget.getAttribute('feedbackUser')
+    let feedbackContent = e.currentTarget.getAttribute('feedbackContent')
+    Swal.fire({
+        title: `Người xác nhận: ${feedbackUser}`,
+        text: `Nội dung: ${feedbackContent}`,
+    })
+}
+
+function renderHtmlButton(_id, status, feedBackUser, feedbackContent) {
+    console.log(status, feedBackUser, feedbackContent)
+    if (status == _FEEDBACK.status.received.number)
+        return `<button type="button" class="btn btn-outline-success confirm-button" feedbackID="${_id}">Ghi nhận</button>
+                <button type="button" class="btn btn-outline-brand reply-button" feedbackID="${_id}">Phản hồi</button>`
+    if (status == _FEEDBACK.status.readed.number)
+        return `<button type="button" class="btn btn-outline-brand reply-button" feedbackID="${_id}">Phản hồi</button>`
+    if (status == _FEEDBACK.status.response.number)
+        return `<button type="button" class="btn btn-outline-brand show-button" feedbackUser="${feedBackUser}" feedbackContent="${feedbackContent}" feedbackID="${_id}">Chi tiết</button>`
 }

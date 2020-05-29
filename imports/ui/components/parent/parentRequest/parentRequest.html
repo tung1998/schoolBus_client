@@ -51,9 +51,35 @@
                                                 <div class="form-group row">
                                                     <label class="col-3 col-form-label">Xin nghỉ cho</label>
                                                     <div class="col-9">
-                                                        <select class="form-control" type="text" id="student"
-                                                            placeholder="">
+                                                        <select class="form-control" type="text" id="student" placeholder="">
+                                                            {{#each students}}
+                                                            <option value="{{_id}}">{{user.name}}</option>
+                                                            {{/each}}
                                                         </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-3 col-form-label">Loại</label>
+                                                    <div class="col-9">
+                                                        <div class="kt-radio-list" id="chooseType">
+                                                            <label class="kt-radio">
+                                                                <input type="radio" checked="checked" name="chooseType"
+                                                                    value="1">
+                                                                Theo chuyến đi
+                                                                <span></span>
+                                                            </label>
+                                                            <label class="kt-radio">
+                                                                <input type="radio" name="chooseType" value="2"> Xin
+                                                                Theo thời gian
+                                                                <span></span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row kt-hidden">
+                                                    <label class="col-3 col-form-label">Thời gian</label>
+                                                    <div class="col-9">
+                                                        <input class="form-control" type="text" id="time">
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
@@ -112,10 +138,52 @@
                             </div>
                         </div>
                         <div class="tab-pane" id="kt_user_edit_tab_3" role="tabpanel">
+                            {{#each requests}}
+                                {{> requestHtml}}
+                            {{/each}}
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</template>
+
+<template name="requestHtml">
+    <div class="kt-portlet kt-portlet--height-fluid">
+        <div class="kt-portlet__head kt-portlet__head--noborder"></div>
+        <div class="kt-portlet__body">
+            <!--begin::Widget -->
+            <div class="kt-widget kt-widget--user-profile-2">
+                <div class="kt-widget__head">
+                    
+                    <div class="kt-widget__info">
+                        <h4 href="#" class="kt-widget__username text-white kt-badge kt-badge--inline kt-badge--{{requestType.classname}}">
+                            {{requestType.text}}
+                        </h4>
+                        <span class="kt-widget__desc">
+                            Xin cho: {{student.user.name}}
+                        </span>
+                    </div>
+                </div>
+                <div class="kt-widget__body">
+                    <div class="kt-widget__section">
+                        Thời gian: {{requestTime}}
+                    </div>
+                    <div class="kt-widget__section">
+                        Ghi chú: {{note}}
+                    </div>
+
+                    <div class="kt-widget__item">
+                        <div class="kt-widget__contact">
+                            <span class="kt-widget__label">Tình trạng:</span>
+                            <a href="#"
+                                class="kt-badge kt-badge--inline kt-badge--{{requestStatus.classname}}">{{requestStatus.text}}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--end::Widget -->
         </div>
     </div>
 </template>

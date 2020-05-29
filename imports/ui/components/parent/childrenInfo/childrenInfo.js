@@ -3,7 +3,8 @@ const Cookies = require("js-cookie");
 
 import {
     MeteorCall,
-    handleError
+    handleError,
+    handleConfirm
 } from "../../../../functions";
 
 import {
@@ -18,84 +19,63 @@ Template.childrenInfo.onCreated(() => {
 });
 
 Template.childrenInfo.onRendered(() => {
-    MeteorCall(_METHODS.token.GetUserInfo, null, accessToken).then(result => {
-        let childrenInfo = result.students
-        $('#childrenList').html(childrenInfo.map(htmlChilrent).join(''))
-    }).catch(handleError)
+
 });
 
 Template.childrenInfo.events({
-    'click .next-tripBtn': getNextTripData
+    'click .next-tripBtn': getNextTripData,
+    'click .chat-btn': chatBtnClick,
+    'click #absentRequest': absentRequestBtnClick
+});
+
+Template.childrenInfo.helpers({
+    students() {
+        return Session.get('students')
+    }
 });
 
 Template.childrenNextripModal.helpers({
-    nextTripData(){
+    nextTripData() {
         return Session.get('nextTripData')
     }
 });
 
-function htmlChilrent(childrenInfo) {
-    console.log(childrenInfo)
-    return `<div class="kt-portlet kt-portlet--height-fluid">
-                <div class="kt-portlet__head kt-portlet__head--noborder"></div>
-                <div class="kt-portlet__body">
-                    <!--begin::Widget -->
-                    <div class="kt-widget kt-widget--user-profile-2">
-                        <div class="kt-widget__head">
-                            <div class="kt-widget__media">
-                                <img class="kt-widget__img kt-hidden-" src="${_URL_images}/${childrenInfo.user.image}/0" alt="image">
-                            </div>
-                            <div class="kt-widget__info">
-                                <a href="#" class="kt-widget__username">
-                                    ${childrenInfo.user?childrenInfo.user.name||'':''}
-                                </a>
-                                <span class="kt-widget__desc">
-                                    ${childrenInfo.class?childrenInfo.class.name||'':''}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="kt-widget__body">
-                            <div class="kt-widget__section">
-                                ${childrenInfo.class&&childrenInfo.class.school?childrenInfo.class.school.name||'':''}
-                            </div>                                        
-
-                            <div class="kt-widget__item">
-                                <div class="kt-widget__contact">
-                                    <span class="kt-widget__label">Email:</span>
-                                    <a href="#" class="kt-widget__data">${childrenInfo.user?childrenInfo.user.email||'':''}</a>
-                                </div>
-                                <div class="kt-widget__contact">
-                                    <span class="kt-widget__label">Số điện thoại:</span>
-                                    <a href="#" class="kt-widget__data">${childrenInfo.user?childrenInfo.user.phone||'':''}</a>
-                                </div>
-                                <div class="kt-widget__contact">
-                                    <span class="kt-widget__label">Điểm đón:</span>
-                                    <span class="kt-widget__data">${childrenInfo.carStop?childrenInfo.carStop.name||'':''}</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="kt-widget__footer">
-                            <button type="button" class="btn btn-label-warning btn-lg btn-upper next-tripBtn" studentID="${childrenInfo._id}">Chuyến đi sắp tới</button>
-                        </div>
-                    </div>         
-                    <!--end::Widget -->
-                </div>
-            </div>`
-}
 
 function getNextTripData(e) {
     let studentID = e.currentTarget.getAttribute('studentID')
     MeteorCall(_METHODS.trip.GetNext, {
         studentID
     }, accessToken).then(result => {
-        if(result){
+        if (result) {
             result.startTime = moment(result.startTime).locale('vi').format('LLLL')
-            Session.set('nextTripData',result)
-            $("#childrenNextripModal").modal('show')
-        }else{
+            Session.set('nextTripData', result)
+            $("#childrenNextripModal").attr('studentID', studentID).modal('show')
+        } else {
             handleError(null, 'Không có chuyến đi sắp tới')
         }
-        console.log(result)
-    }).catch(handleError)
+    }).catch(error => {
+        handleError(error, 'Không có chuyến đi sắp tới')
+    })
+}
+
+function chatBtnClick(e) {
+    let teacherID = e.currentTarget.getAttribute('teacherID')
+    console.log(teacherID)
+    handleConfirm('Chuyển sang trang trao đổi với giáo viên?').then(result=>{
+        if(result.value)
+            FlowRouter.go(`/parent/chat?teacherID=${teacherID}`)
+    })
+}
+
+function absentRequestBtnClick(e) {
+    let studentID = $("#childrenNextripModal").attr('studentID')
+    let tripID = $("#childrenNextripModal").attr('tripID')
+
+    $("#childrenNextripModal").modal('hide')
+    console.log(studentID, tripID)
+    handleConfirm('Bạn muốn xin nghỉ cho con?').then(result => {
+        if (result.value) {
+            FlowRouter.go(`/parent/request?studentID=${studentID}&tripID=${tripID}`)
+        }
+    })
 }

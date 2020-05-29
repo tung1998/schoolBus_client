@@ -5,7 +5,8 @@ export {
     LIMIT_DOCUMENT_PAGE,
     _URL_images,
     _TRIP,
-    _FEEDBACK
+    _FEEDBACK,
+    _REQUEST
 }
 const _URL_images = 'http://192.168.0.111:3000/images'
 // const _URL_images = 'http://113.190.128.251:3000/images'
@@ -105,6 +106,7 @@ const _METHODS = {
         Create: 'feedback.create',
         Update: 'feedback.update',
         Delete: 'feedback.delete',
+        Response: 'feedback.response',
     },
     image: {
         GetAll: 'image.getAll',
@@ -219,6 +221,7 @@ const _METHODS = {
         Image: 'trip.image',
         GetNext: 'trip.getNext',
         GetTripLogByTripID: 'trip.getLogByTripID',
+        ModifyTripStatus: 'trip.modifyTripStatus'
     },
     tripLocation: {
         GetAll: 'tripLocation.getAll',
@@ -272,8 +275,8 @@ const _SESSION = {
     name: 'name',
     isLoading: 'isLoading',
     isLocalAdmin: 'isLocalAdmin',
+    students: 'students',
 
-    //chat
     roomID: 'roomID',
 }
 
@@ -332,12 +335,12 @@ const _FEEDBACK = {
         },
         readed: {
             text: "Đã tiếp nhận",
-            classname: 'success',
+            classname: 'warning',
             number: 1
         },
         response: {
             text: "Được phản hồi",
-            classname: 'info',
+            classname: 'success',
             number: 2
         },
     },
@@ -361,6 +364,43 @@ const _FEEDBACK = {
             text: "Đóng góp ý kiến",
             classname: 'warning',
             number: 3
+        },
+    }
+}
+
+const _REQUEST = {
+    status: {
+        received: {
+            text: "Đã gủi",
+            classname: 'primary',
+            number: 0
+        },
+        readed: {
+            text: "Đã tiếp nhận",
+            classname: 'warning',
+            number: 1
+        },
+        confirmed: {
+            text: "Đã xác nhận",
+            classname: 'success',
+            number: 2
+        },
+    },
+    type: {
+        other: {
+            text: "Khác",
+            classname: 'primary',
+            number: 0
+        },
+        otherVehicle: {
+            text: "Đưa đón bằng phương tiện khác",
+            classname: 'danger',
+            number: 1
+        },
+        busy: {
+            text: "Xin nghỉ học",
+            classname: 'info',
+            number: 2
         },
     }
 }

@@ -30,14 +30,12 @@ Template.profile.onRendered(() => {
     dropzone = initDropzone("#profile-dropzone")
     this.dropzone = dropzone;
     MeteorCall(_METHODS.user.GetCurrentInfor, null, accessToken).then(result => {
-        console.log(result);
         Session.set(_SESSION.username, result.username);
         //$(document).ready(() => {
         //type: 0 ADMIN, schoolID = null
         if ((result.userType == 0) && (Session.get(_SESSION.isSuperadmin)==false)){
             Session.set(_SESSION.isLocalAdmin, true);
             //Session.set('schools', Session.get(_SESSION.schoolID));
-            console.log(Session.get('schools'))
         }
         userID = result._id;
         let userData = {
@@ -55,7 +53,6 @@ Template.profile.onRendered(() => {
         if (result.image != null) {
             urlImage = `${_URL_images}/${result.image}/0`
         }
-        console.log(`maeno-${urlImage}`);
         $('.kt-avatar__holder').css("background-image", `url(${urlImage})`)
 
     }).catch(handleError);
