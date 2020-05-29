@@ -22,7 +22,7 @@ let accessToken;
 let userID;
 let username;
 let userImage;
-let partnerImage;
+let partnerImageUrl;
 let partnerName;
 let partnerID;
 let listRoomID = [];
@@ -125,7 +125,7 @@ function renderLeftMessage(message) {
     return `<div class="kt-chat__message">
                 <div class="kt-chat__user">
                     <span class="kt-media kt-media--circle kt-media--sm"> 
-                        <img src=${partnerImage} alt="image">   
+                        <img src=${partnerImageUrl} alt="image">   
                     </span>
                     <a href="#" class="kt-chat__username">${partnerName}</a>
                     <span class="kt-chat__datetime">${moment(message.updatedTime).startOf('second').fromNow()}</span>

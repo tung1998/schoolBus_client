@@ -1,0 +1,88 @@
+<template name="studentInfo">
+  <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+    <!-- begin:: Subheader -->
+    <div class="kt-subheader   kt-grid__item" id="kt_subheader">
+      <div class="kt-container  kt-container--fluid ">
+        <div class="kt-subheader__main">
+          <h3 class="kt-subheader__title">
+
+            Giáo viên</h3>
+
+          <span class="kt-subheader__separator kt-hidden"></span>
+          <div class="kt-subheader__breadcrumbs">
+            <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
+            <span class="kt-subheader__breadcrumbs-separator"></span>
+            <a href="" class="kt-subheader__breadcrumbs-link">
+              SchoolBus </a>
+            <span class="kt-subheader__breadcrumbs-separator"></span>
+            <a href="" class="kt-subheader__breadcrumbs-link">
+              Thông tin học sinh</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end:: Subheader -->
+
+    <!-- begin:: Content -->
+    <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+      <div class="kt-portlet">
+
+        <div class="kt-portlet kt-portlet--height-fluid">
+          <div class="kt-portlet__head kt-portlet__head--noborder"></div>
+          <div class="kt-portlet__body">
+            <!--begin::Widget -->
+            <div class="kt-widget kt-widget--user-profile-2">
+              <div class="kt-widget__head">
+                <div class="kt-widget__media">
+                  <img class="kt-widget__img kt-hidden-" src="http://192.168.2.222:3000/images/{{user.image}}/0"
+                    alt="image">
+                </div>
+                <div class="kt-widget__info">
+                  <a href="#" class="kt-widget__username">
+                    {{studentInfo.user.name}}
+                  </a>
+                  <span class="kt-widget__desc">
+                    {{studentInfo.class.name}}-{{studentInfo.class.school.name}}
+                  </span>
+                </div>
+              </div>
+              <div class="kt-widget__body">
+                <div class="kt-widget__item">
+                  <div class="kt-widget__contact">
+                    <span class="kt-widget__label">Giáo viên:</span>
+                    <a href="#" class="kt-widget__data">{{studentInfo.class.teacher.user.name}}</a>
+                  </div>
+                  <div class="kt-widget__contact">
+                    <span class="kt-widget__label">Email:</span>
+                    <a href="#" class="kt-widget__data">{{studentInfo.user.email}}</a>
+                  </div>
+                  <div class="kt-widget__contact">
+                    <span class="kt-widget__label">Số điện thoại:</span>
+                    <a href="#" class="kt-widget__data">{{studentInfo.user.phone}}</a>
+                  </div>
+                  <div class="kt-widget__contact">
+                    <span class="kt-widget__label">Điểm đón:</span>
+                    <span class="kt-widget__data">{{studentInfo.carStop.name}}</span>
+                  </div>
+                </div>
+                <div class="kt-widget__item">
+                  {{#each studentInfo.parents}}
+                  <div class="kt-widget__contact">
+                    <span class="kt-widget__label">Phụ huynh:  {{user.name}}</span>
+                    <span class="kt-widget__data">
+                      <a href="/teacher/chat?parentID={{user._id}}" class="btn btn-success btn-sm mr-3">
+                        <i class="flaticon2-chat-1"></i>Nhắn tin
+                      </a>
+                    </span>
+                  </div>
+                  {{/each}}
+                </div>
+              </div>
+            </div>
+            <!--end::Widget -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

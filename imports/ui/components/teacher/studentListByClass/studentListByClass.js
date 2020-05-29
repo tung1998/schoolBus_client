@@ -8,7 +8,6 @@ import {
 import {
     MeteorCall,
     handleError,
-    handleConfirm
 } from "../../../../functions";
 
 import {
@@ -21,7 +20,6 @@ Template.studentListByClass.onCreated(() => {
     accessToken = Cookies.get("accessToken");
     Session.set('classData', {})
     Session.set('studentList', [])
-    Session.set('studenInfoData', {})
 });
 
 Template.studentListByClass.onRendered(() => {
@@ -31,7 +29,6 @@ Template.studentListByClass.onRendered(() => {
 Template.studentListByClass.onDestroyed(() => {
     Session.delete('classData')
     Session.delete('studentList')
-    Session.delete('studenInfoData')
 });
 
 Template.studentListByClass.helpers({
@@ -40,19 +37,6 @@ Template.studentListByClass.helpers({
     },
     studentList() {
         return Session.get('studentList')
-    }
-});
-
-Template.studentListByClass.events({
-    'click .info-button': showStudentInfo
-});
-Template.studentInfoModal2.events({
-    'click #chatToParent': chatToParent
-});
-
-Template.studentInfoModal2.helpers({
-    studenInfoData() {
-        return Session.get('studenInfoData')
     }
 });
 
@@ -74,36 +58,4 @@ function reloadData() {
         console.log(result)
         Session.set('studentList', result)
     }).catch(handleError)
-}
-
-function showStudentInfo(e) {
-    let studentID = e.currentTarget.getAttribute('studentID')
-    let studenInfoData = Session.get('studentList').filter(item => item._id == studentID)[0]
-    console.log(studenInfoData)
-    if (studenInfoData.user && studenInfoData.user.image) {
-        studenInfoData.image = `${_URL_images}/${studenInfoData.user.image}/0`
-    } else {
-        studenInfoData.image = `/assets/media/users/user5.jpg`
-    }
-    Session.set('studenInfoData', studenInfoData)
-    $("#studentInfoModal").modal("show")
-}
-
-function showStudentInfo(e) {
-    let studentID = e.currentTarget.getAttribute('studentID')
-    let studenInfoData = Session.get('studentList').filter(item => item._id == studentID)[0]
-    console.log(studenInfoData)
-    if (studenInfoData.user && studenInfoData.user.image) {
-        studenInfoData.image = `${_URL_images}/${studenInfoData.user.image}/0`
-    } else {
-        studenInfoData.image = `/assets/media/users/user5.jpg`
-    }
-    Session.set('studenInfoData', studenInfoData)
-    $("#studentInfoModal").modal("show")
-}
-
-function chatToParent(e){
-    let studenInfoData = Session.get('studenInfoData')
-    let parentList = studenInfoData.parents
-    console.log(parentList)
 }
