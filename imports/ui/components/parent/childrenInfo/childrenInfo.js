@@ -49,6 +49,7 @@ function getNextTripData(e) {
         if (result) {
             result.startTime = moment(result.startTime).locale('vi').format('LLLL')
             Session.set('nextTripData', result)
+            console.log(Session.get('nextTripData'));
             $("#childrenNextripModal").attr('studentID', studentID).modal('show')
         } else {
             handleError(null, 'Không có chuyến đi sắp tới')
