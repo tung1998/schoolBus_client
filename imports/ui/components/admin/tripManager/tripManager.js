@@ -90,18 +90,20 @@ function renderRouteSelect() {
 }
 
 function ClickModifyButton(event) {
-    let data = $(event.currentTarget).data("json")
-    $("#start-time").val(moment(data.startTime).format("HH:mm DD/MM/YYYY"));
+    let startTime = $(event.currentTarget).attr('startTime')
+    let routeID = $(event.currentTarget).attr('routeID')
+    let tripID = $(event.currentTarget).attr('tripID')
+    $("#start-time").val(moment(startTime).format("HH:mm DD/MM/YYYY"));
     // console.log(moment(data.startTime).format("MMMM DD YYYY, h:mm"))
-    $("#routeSelect").val(data.route._id);
+    $("#routeSelect").val(routeID).trigger('change');
 
     $('#editTripManagerModal').modal('show')
     // console.log($("#routeSelect").val())
-    $('#editTripManagerModal').attr("modify", data._id)
+    $('#editTripManagerModal').attr("modify", tripID)
 }
 
 function ClickAddMoreButton(event) {
-    console.log(moment($("#start-time").val(), "HH:mm DD/MM/YYYY").valueOf());
+    // console.log(moment($("#start-time").val(), "HH:mm DD/MM/YYYY").valueOf());
     $('#editTripManagerModal').attr("modify", "")
 }
 

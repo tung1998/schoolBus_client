@@ -127,7 +127,7 @@
             padding: 11px; margin-bottom: 10px;">
         <div class="kt-widget__top">
             <div class="kt-widget__media">
-                <img src="{{_URL_images}}/{{driver.user.image}}" alt="image">
+                <img src="{{_URL_images}}/{{driver.user.image}}/0" alt="image">
             </div>
             <div class="kt-widget__content">
                 <div class="kt-widget__head">
@@ -160,7 +160,7 @@
                             <div class="fa-pull-right">
                                 {{#if isModifiable}}
                                 <button type="button" class="btn btn-danger btn-sm modify-button"
-                                    data-json="">Sửa</button>
+                                    startTime={{startTime}} routeID="{{route._id}}" tripID="{{_id}}">Sửa</button>
                                 <span></span>
                                 {{/if}}
                                 <a href="tripManager/{{_id}}"><button type="button"

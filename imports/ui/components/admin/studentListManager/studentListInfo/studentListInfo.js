@@ -65,8 +65,6 @@ Template.studentListInfo.onRendered(() => {
         }
         setSortableData(htmlSortable)
         let idx = parseInt(stopPointOrder[stopPointOrder.length - 1])
-        setColor(0, "destination", studentStopPoint[stopPointOrder[0]].address);
-        setColor(idx, "start", studentStopPoint[idx].address)
     })
 });
 
@@ -111,37 +109,6 @@ Template.carStopList_studentListInfo.events({
         tarMark.openPopup();
         window.carStopmap.setView([latval, lngval], 14);
     },
-    /*'click .polyToggle': (event) => {
-        event.preventDefault();
-        removeLayerByID(polyID);
-    }*/
-    /*'click .confirmButton': confirmPath,
-    'click .autoDirect': (event)=>{
-        
-        removeLayerByID(polyID)
-        stopPointCoors = DistanceAutoCal([21.040276, 105.782988], stopPointCoors);
-        carStopIDs = reArrange(carStopIDs, [], stopPointOrder);
-        //console.log(carStopIDs)
-        drawPath(stopPointCoors)
-        htmlSortable = ''
-        for (let i = 0; i <=stopPointOrder.length - 1; i++) {
-            
-            htmlSortable +=
-                `<div class="kt-portlet kt-portlet--mobile kt-portlet--sortable" id="${stopPointOrder[i]}">
-                    <div class="kt-portlet__head ui-sortable-handle">
-                        <div class="kt-portlet__head-label">
-                            <h3 class="kt-portlet__head-title title="${studentStopPoint[stopPointOrder[i]].address}">
-                                ${studentStopPoint[stopPointOrder[i]].name}        
-                            </h3>
-                        </div>
-                    </div>
-                    
-                </div>`
-                //<div class="kt-portlet__body">${studentStopPoint[stopPointOrder[i]].address}</div>
-        }
-        setSortableData(htmlSortable)
-    },
-    'drag .kt-portlet--sortable': dragTab*/
 })
 
 Template.carStopList_studentListInfo.onDestroyed(() => {
@@ -328,17 +295,6 @@ function drawPath(arr) {
         stopPointCoors = pol;
         //addPoly(pol)
     }).catch(handleError);
-}
-
-
-function setColor(id, pos, name) {
-    if (pos == 'destination') {
-        let element = document.getElementById(`${id}`);
-        element.classList.add(`kt-portlet--skin-solid`, `kt-bg-danger`);
-    } else if (pos == 'start') {
-        let element = document.getElementById(`${id}`);
-        element.classList.add(`kt-portlet--skin-solid`, `kt-bg-brand`);
-    }
 }
 
 function swapPcs(arr) {
