@@ -8,7 +8,8 @@ import {
     MeteorCall,
     handleError,
     handleConfirm,
-    handleSuccess
+    handleSuccess,
+    popupDefault
 } from '../../../../../functions';
 
 import {
@@ -234,16 +235,7 @@ function setMarker(arr, des, address) {
         permanent: true
     }).addTo(carStopmap);
     markers_id.push(markerGroup.getLayerId(mark))
-    let popup = `
-                <div class="font-14">
-                    <dl class="row mr-0 mb-0">
-                        <dt class="col-sm-3">Tên điểm dừng: </dt>
-                        <dt class="col-sm-9">${des}</dt>
-                        <dt class="col-sm-3">Địa chỉ: </dt>
-                        <dt class="col-sm-9">${address}</dt>
-                    </dl>
-                </div>
-            `
+    let popup = popupDefault(des, address)
     mark.bindPopup(popup, {
         minWidth: 301
     });

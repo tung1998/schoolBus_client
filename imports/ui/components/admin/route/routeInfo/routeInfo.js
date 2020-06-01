@@ -6,55 +6,104 @@ import {
 import {
     MeteorCall,
     handleError,
-    handleConfirm,
+    popupDefault,
+    removeLayerByID,
+    removeAllLayer,
     handleSuccess
 } from '../../../../../functions';
 
 import {
     _METHODS,
-    _SESSION
+    _SESSION,
+    _MARKER_CONFIG
 } from '../../../../../variableConst';
 
 let accessToken, tripID, studentList = [],
     carStopList = [],
-    stopPointCoors = [],
-    markers_id = [],
+    markersList = [],
     carStopIDs = [],
-    htmlStopPane = '',
-    defaultStopPoint = [],
-    defaultCarStop = [],
-    stopPointOrder = [],
     polyID,
     studentListID,
-    address = [],
-    name = [],
-    schoolID,
-    desCoor,
-    startCoor,
-    destinationPointMarker = L.icon({
-        iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41]
-    }),
-    startPointMarker = L.icon({
-        iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41]
-    });
+    startCarStop,
+    endCarStop,
+    startCarStopMarker = L.icon(_MARKER_CONFIG.blue),
+    endCarStopMarker = L.icon(_MARKER_CONFIG.red),
+    normalCarStopMarker = L.icon(_MARKER_CONFIG.gray);
 
 Template.routeInfo.onCreated(() => {
     accessToken = Cookies.get('accessToken');
+    Session.set('routeInfo', {});
 });
 
 Template.routeInfo.onRendered(() => {
+    $(".anchorHeight").css({
+        "height": 400
+    })
+    $(".kt-content").css({
+        "padding-bottom": 0
+    })
+    $(".kt-footer--fixed").css({
+        "padding-bottom": 0
+    })
     reloadData();
+    initMap();
 
+});
+
+Template.routeInfo.helpers({
+    routeInfo() {
+        return Session.get('routeInfo')
+    },
+    carStopList() {
+        return Session.get('carStopList')
+    }
+})
+
+Template.routeStudentRow.helpers({
+    index() {
+        return ++this.index
+    }
+})
+
+Template.routeInfo.events({
+    'click .addressTab': clickCarStop,
+    'drag .addressTab': dragTab,
+    'click .confirmButton': confirmPath,
+})
+
+Template.routeInfo.onDestroyed(() => {
+    carStopList = []
+    stopCoor = []
+    markersList = []
+    Session.delete('studentTripData')
+    Session.delete('studenInfoData')
+    Session.delete('tripID')
+    removeAllLayer(markerGroup)
+})
+
+function reloadData() {
+    let routeID = FlowRouter.getParam('id')
+    MeteorCall(_METHODS.route.GetById, {
+        _id: routeID
+    }, accessToken).then(result => {
+        console.log(result);
+        startCarStop = result.startCarStop
+        endCarStop = result.endCarStop
+        Session.set('routeInfo', result)
+        carStopList = result.studentList ? result.studentList.carStops || [] : [];
+        carStopIDs = result.studentList ? result.studentList.carStopIDs || [] : [];
+        carStopList.forEach(item => {
+            bindMarker(item)
+        })
+        // add start, end marker
+        bindMarker(result.startCarStop, startCarStopMarker)
+        bindMarker(result.endCarStop, endCarStopMarker)
+
+        reloadMap()
+    }).catch(handleError)
+}
+
+function initMap() {
     L.Icon.Default.imagePath = '/packages/bevanhunt_leaflet/images/';
     window.routeMiniMap = L.map('routeMiniMap', {
         drawControl: true,
@@ -69,301 +118,44 @@ Template.routeInfo.onRendered(() => {
     }).addTo(routeMiniMap);
     setInterval(() => { routeMiniMap.invalidateSize(); }, 0) //invalidate Size of map
     window.markerGroup = L.layerGroup().addTo(routeMiniMap); //create markerGroup
-});
-
-Template.routeInfo.events({
-    // 'click #addRouteButton': clickAddRouteButton,
-    'click .addressTab': (event) => {
-        event.preventDefault();
-        let indx = parseInt($(event.currentTarget).attr("id"));
-        let tarMark = markerGroup._layers[markers_id[indx]];
-        let latval = tarMark._latlng.lat;
-        let lngval = tarMark._latlng.lng;
-        tarMark.openPopup();
-        window.routeMiniMap.setView([latval, lngval], 25);
-    },
-    /*'mousemove .addressTab': (event) => {
-        event.preventDefault();
-        let indx = parseInt($(event.currentTarget).attr("id"));
-        let tarMark = markerGroup._layers[markers_id[indx]];
-        let latval = tarMark._latlng.lat;
-        let lngval = tarMark._latlng.lng;
-        tarMark.openPopup();
-        window.routeMiniMap.setView([latval, lngval], 14);
-    },*/
-    'drag .addressTab': dragTab,
-    'click .autoDirect': autoDirect,
-    'click .confirmButton': confirmPath,
-})
-
-Template.routeInfo.onDestroyed(() => {
-    carStopList = null
-    stopCoor = null
-    markers_id = null
-    Session.delete('studentTripData')
-    Session.delete('studenInfoData')
-    Session.delete('tripID')
-    document.getElementById("kt_sortable_portlets").innerHTML = '';
-    markerGroup.eachLayer((layer) => {
-        markerGroup.removeLayer(layer)
-    });
-
-})
-
-function reloadData() {
-    $(".anchorHeight").css({
-        "height": 400
-    })
-    $(".kt-content").css({
-        "padding-bottom": 0
-    })
-    $(".kt-footer--fixed").css({
-        "padding-bottom": 0
-    })
-    let routeID = FlowRouter.getParam('id')
-    MeteorCall(_METHODS.route.GetById, {
-        _id: routeID
-    }, accessToken).then(result => {
-        //get info route
-        console.log(result);
-        let dataTrip = {
-            driverName: result.driver.user.name,
-            driverPhone: result.driver.user.phone,
-            nannyName: result.nanny.user.name,
-            nannyPhone: result.nanny.user.phone,
-            carNunberPlate: result.car.numberPlate,
-            startTime: result.startTime,
-        }
-        studentListID = result.studentListID;
-        carStopList = result.studentList.carStops;
-        let len = carStopList.length;
-        carStopList.map((data, index) => {
-            address.push(data.address);
-            name.push(data.name);
-            stopPointCoors.push(data.location);
-            defaultStopPoint.push(data.location);
-            carStopIDs.push(data._id);
-            defaultCarStop.push(data._id);
-            stopPointOrder.push(index);
-            let mark;
-            if (index === 0) {
-                desCoor = data.location;
-                document.getElementById("des").innerHTML +=
-                    `<div class="kt-portlet  addressTab " id="${index}">
-                        <div class="kt-portlet__head kt-portlet__head--noborder kt-portlet--skin-solid kt-bg-danger">
-                            <div class="kt-portlet__head-label">
-                                <h3 class="kt-portlet__head-title title="${data.name}">
-                                    ${data.name}        
-                                </h3>
-                            </div>
-                        </div> 
-                        <div class="kt-portlet__body" style="height: 10px; background-color: rgb(251, 201, 218); text-align: center; border-top-left-radius: 0px !important; border-top-right-radius: 0px !important; padding-top: 10px!important">
-                            <div style="display: inline-block; text-align: left"> Khởi hành </div>
-                        </div>
-                    </div>
-                    `
-                let mark = L.marker(data.location, { icon: destinationPointMarker }).bindTooltip(data.name, { permanent: false }).addTo(markerGroup);
-                markers_id.push(markerGroup.getLayerId(mark))
-                let popup = `
-                <div class="font-14">
-                    <dl class="row mr-0 mb-0">
-                        <dt class="col-sm-3">Tên điểm dừng: </dt>
-                        <dt class="col-sm-9">${data.name}</dt>
-                        <dt class="col-sm-3">Địa chỉ: </dt>
-                        <dt class="col-sm-9">${data.address}</dt>
-                    </dl>
-                </div>
-            `
-                mark.bindPopup(popup, {
-                    minWidth: 301
-                });
-            } else if (index === len - 1) {
-                startCoor = data.location
-                document.getElementById("start").innerHTML +=
-                    `<div class="kt-portlet kt-portlet--mobile kt-portlet__head--noborder addressTab kt-portlet--skin-solid kt-bg-brand" id="${index}">
-                            <div class="kt-portlet__head kt-portlet__head--noborder">
-                                <div class="kt-portlet__head-label">
-                                    <h3 class="kt-portlet__head-title title="${data.name}">
-                                        ${data.name}        
-                                    </h3>
-                                </div>
-                            </div>
-                            <div class="kt-portlet__body" style="height: 10px; background-color: rgb(147, 159, 231); text-align: center; border-top-left-radius: 0px !important; border-top-right-radius: 0px !important; padding-top: 9px!important">
-                                <div style="display: inline-block; text-align: left"> Điểm cuối </div>
-                        </div> 
-                        </div>`
-                let mark = L.marker(data.location, { icon: startPointMarker }).bindTooltip(data.name, { permanent: false }).addTo(markerGroup);
-                markers_id.push(markerGroup.getLayerId(mark))
-                let popup = `
-                <div class="font-14">
-                    <dl class="row mr-0 mb-0">
-                        <dt class="col-sm-3">Tên điểm dừng: </dt>
-                        <dt class="col-sm-9">${data.name}</dt>
-                        <dt class="col-sm-3">Địa chỉ: </dt>
-                        <dt class="col-sm-9">${data.address}</dt>
-                    </dl>
-                </div>
-            `
-                mark.bindPopup(popup, {
-                    minWidth: 301
-                });
-            } else {
-                htmlStopPane +=
-                    `<div class="kt-portlet kt-portlet--mobile addressTab kt-portlet--sortable" id="${index}">
-                        <div class="kt-portlet__head ui-sortable-handle">
-                            <div class="kt-portlet__head-label">
-                                <h3 class="kt-portlet__head-title title="${data.name}">
-                                    ${data.name}        
-                                </h3>
-                            </div>
-                        </div>
-                    </div>`
-                let mark = L.marker(data.location).bindTooltip(data.name, { permanent: false }).addTo(markerGroup);
-                markers_id.push(markerGroup.getLayerId(mark))
-                let popup = `
-                <div class="font-14">
-                    <dl class="row mr-0 mb-0">
-                        <dt class="col-sm-3">Tên điểm dừng: </dt>
-                        <dt class="col-sm-9">${data.name}</dt>
-                        <dt class="col-sm-3">Địa chỉ: </dt>
-                        <dt class="col-sm-9">${data.address}</dt>
-                    </dl>
-                </div>
-                `
-                mark.bindPopup(popup, {
-                    minWidth: 301
-                });
-            }
-        })
-
-        drawPath(stopPointCoors);
-        document.getElementById("kt_sortable_portlets").innerHTML += htmlStopPane;
-        //setColor(0, 'destination');
-        //setColor(stopPointOrder[stopPointOrder.length], 'start');
-
-        $('#driver-name').html(dataTrip.driverName)
-        $('.phone:eq(0)').html(`Số điện thoại: ${dataTrip.driverPhone}`)
-        $('#nanny-name').html(dataTrip.nannyName)
-        $('.phone:eq(1)').html(`Số điện thoại: ${dataTrip.nannyPhone}`)
-        $('#car-numberPlate').html(dataTrip.carNunberPlate)
-        $('#start-time').html(dataTrip.startTime)
-
-        //data học sinh
-        let dataStudent = result.studentList.students
-        let table = $('#table-studentList')
-        let htmlTable = dataStudent.map(htmlRow)
-        table.find("tbody").html(htmlTable.join(""))
-
-    }).catch(handleError)
-}
-
-function htmlRow(key, index) {
-    //console.log(key)
-    let studentInfo = {
-        _id: key.studentID,
-        IDStudent: key.IDStudent,
-        name: key.user.name,
-        phone: key.user.phone,
-        class: key.class.name,
-        teacher: key.class.teacher.user.name,
-        school: key.class.school.name,
-        schoolAddress: key.class.school.address,
-    }
-
-    return `<tr id="${studentInfo._id}">
-                <th scope="row">${index + 1}</th>
-                <td>${studentInfo.IDStudent}</td>
-                <td>${studentInfo.name}</td>
-                <td>${studentInfo.phone}</td>
-                <td>${studentInfo.class}</td>
-                <td>${studentInfo.teacher}</td>
-                <td>${studentInfo.school}</td>
-                <td>${studentInfo.schoolAddress}</td>
-        </tr>`
 }
 
 function dragTab(event) {
-    let targetID = event.target.getAttribute('id'),
-        ID_order = [0],
-        modPos;
     if (event.drag.type === 'dragend') {
-        $('.carStopContainer').children('div').each(function () {
-            if ($(this).attr('id') != undefined) {
-                if ($(this).attr('id') != targetID) {
-                    ID_order.push(parseInt($(this).attr('id')));
-                }
+        setTimeout(() => {
+            let newCarStopIDList = $('#kt_sortable_portlets div[carStopID]:not(.ui-sortable-helper)').map((index, item) => {
+                return item.getAttribute('carStopID')
+            }).toArray()
+            console.log(newCarStopIDList)
+            console.log(carStopIDs)
+            if (JSON.stringify(newCarStopIDList) == JSON.stringify(carStopIDs)) {
+                clickCarStop(event)
             } else {
-                ID_order.push(targetID);
-                modPos = ID_order.length - 1; //điểm di chuyển
+                carStopIDs = newCarStopIDList
+                newCarStopList = carStopIDs.map(carStopID => {
+                    return carStopList.filter(item => item._id == carStopID)[0]
+                })
+                carStopList = newCarStopList
+                reloadMap()
             }
-        })
-        ID_order.push(ID_order.length);
-        //console.log("idorder");
-        //console.log(ID_order);
-        //console.log("stopPointOrder");
-        //console.log(stopPointOrder);
-        //console.log(ID_order.length);
-        //console.log(stopPointOrder.length);
-        if (ID_order.length == stopPointOrder.length) {
-            //console.log(ID_order)
-            stopPointCoors = reArrange(defaultStopPoint, [], ID_order)
-            carStopIDs = reArrange(defaultCarStop, [], ID_order)
-            removeLayerByID(polyID)
-            //console.log(stopPointCoors, carStopIDs)
-            //console.log(stopPointCoors)
-            //console.log(carStopIDs)
-            drawPath(stopPointCoors)
-        } else {
-            let indx = parseInt($(event.currentTarget).attr("id"));
-            let tarMark = markerGroup._layers[markers_id[indx]];
-            let latval = tarMark._latlng.lat;
-            let lngval = tarMark._latlng.lng;
-            tarMark.openPopup();
-            window.routeMiniMap.setView([latval, lngval]);
-        }
+        }, 500)
     }
+}
+
+function clickCarStop(event) {
+    event.preventDefault();
+    let indx = parseInt($(event.currentTarget).attr("index"));
+    let tarMark = markerGroup._layers[markersList[indx]];
+    let latval = tarMark._latlng.lat;
+    let lngval = tarMark._latlng.lng;
+    tarMark.openPopup();
+    window.routeMiniMap.setView([latval, lngval], 25);
 }
 
 function addPoly(arr) {
+    removeLayerByID(markerGroup, polyID)
     let poly = L.polyline(arr, { color: 'blue', weight: 4, opacity: 0.5, smoothFactor: 1 }).addTo(markerGroup);
     polyID = markerGroup.getLayerId(poly);
-    //console.log(polyID)
-}
-
-function removeLayerByID(id) {
-    console.log(markerGroup)
-    markerGroup.eachLayer(function (layer) {
-        if (layer._leaflet_id === id) {
-            markerGroup.removeLayer(layer)
-        }
-    });
-}
-
-function reArrange(arr1, arr2, idxArr) {
-    arr2[0] = arr1[0];
-    arr2[idxArr.length - 1] = arr1[idxArr.length - 1]
-    for (let i = 1; i < idxArr.length - 1; i++) {
-        if (arr1[idxArr[i]] != undefined) {
-            arr2[i] = arr1[idxArr[i]];
-        }
-    }
-    return arr2;
-}
-
-function drawPath(arr) {
-    MeteorCall(_METHODS.wemap.getDrivePath, arr, accessToken).then(result => {
-        let pol = []
-        let a = result.routes[0].legs
-        for (let i = 0; i < a.length; i++) {
-            for (let j = 0; j < a[i].steps.length; j++) {
-                for (let k = 0; k < a[i].steps[j].intersections.length; k++) {
-                    pol.push(swapPcs(a[i].steps[j].intersections[k].location))
-                }
-            }
-        }
-        pol.push(arr[0])
-        addPoly(pol)
-    }).catch(handleError);
 }
 
 function swapPcs(arr) {
@@ -373,90 +165,40 @@ function swapPcs(arr) {
     return arr;
 }
 
-function autoDirect(event) {
-    event.preventDefault();
-    removeLayerByID(polyID)
-    stopPointCoors = DistanceAutoCal(desCoor, startCoor, stopPointCoors);
-    carStopIDs = reArrange(carStopIDs, [], stopPointOrder);
-    drawPath(stopPointCoors)
-    //console.log(stopPointOrder)
-    htmlStopPane = ''
-    for (let i = 1; i < stopPointOrder.length - 1; i++) {
-
-        htmlStopPane +=
-            `<div class="kt-portlet kt-portlet--mobile addressTab kt-portlet--sortable" id="${stopPointOrder[i]}">
-            <div class="kt-portlet__head ui-sortable-handle">
-                <div class="kt-portlet__head-label">
-                    <h3 class="kt-portlet__head-title title="${address[stopPointOrder[i]]}">
-                        ${name[stopPointOrder[i]]}        
-                    </h3>
-                </div>
-            </div>
-            
-        </div>`
-        //<div class="kt-portlet__body">${studentStopPoint[stopPointOrder[i]].address}</div>
-    }
-    document.getElementById("kt_sortable_portlets").innerHTML = htmlStopPane;
-    //setColor(0, 'destination');
-    //setColor(stopPointOrder[stopPointOrder.length], 'start');
-}
 
 function confirmPath(event) {
+    let studentListID = Session.get('routeInfo').studentList._id
     MeteorCall(_METHODS.studentList.Update, { _id: studentListID, carStopIDs: carStopIDs }, accessToken).then(result => {
         //console.log(result);
+        handleSuccess('Cập nhật thành công')
     }).catch(handleError)
 }
 
-function DistanceAutoCal(dest, start, coorArr) {
-    let distance = [];
-    let distOrder = [];
-    let finalCoorOrder = [dest];
-    console.log(coorArr);
-    for (let i = 1; i < coorArr.length - 1; i++) {
-        distance.push(getDistance(dest, coorArr[i]));
-        //console.log(getDistance(dest,coorArr[i]))
-        distOrder.push(i);
-    }
-    //distOrder.push(coorArr.length - 1);
-    distOrder.sort(function (a, b) { return distance[a] < distance[b] ? -1 : distance[a] > distance[b] ? 1 : 0; });
-    distOrder.unshift(0);
-    distOrder.push(coorArr.length - 1);
-    //console.log(distOrder);
-    stopPointOrder = distOrder;
-    for (let i = 1; i < distOrder.length; i++) {
-        finalCoorOrder.push(coorArr[distOrder[i]]);
-    }
-    //console.log(finalCoorOrder);
-    return finalCoorOrder;
-} //dest: [[lat,lng]] //coorArr: tập hợp các carStop
-
-function getDistance(origin, destination) {
-    // return distance in meters
-    let lon1 = toRadian(origin[1]),
-        lat1 = toRadian(origin[0]),
-        lon2 = toRadian(destination[1]),
-        lat2 = toRadian(destination[0]);
-
-    let deltaLat = lat2 - lat1;
-    let deltaLon = lon2 - lon1;
-
-    let a = Math.pow(Math.sin(deltaLat / 2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(deltaLon / 2), 2);
-    let c = 2 * Math.asin(Math.sqrt(a));
-    let EARTH_RADIUS = 6371;
-    return c * EARTH_RADIUS * 1000;
+function bindMarker(carStop, icon = normalCarStopMarker) {
+    let marker = L.marker(carStop.location, { icon }).bindTooltip(carStop.name, { permanent: false }).addTo(markerGroup);
+    markersList.push(markerGroup.getLayerId(marker))
+    let popup = popupDefault(carStop.name, carStop.address)
+    marker.bindPopup(popup, {
+        minWidth: 301
+    });
 }
 
-function toRadian(degree) {
-    return degree * Math.PI / 180;
+function reloadMap() {
+    let carStopListAll = [startCarStop, startCarStop].concat(carStopList).concat([endCarStop])
+    console.log(carStopListAll)
+    let coorArr = carStopListAll.map(item => item.location)
+    console.log(carStopListAll)
+    MeteorCall(_METHODS.wemap.getDrivePath, coorArr, accessToken).then(result => {
+        let pol = []
+        let a = result.routes[0].legs
+        for (let i = 0; i < a.length; i++) {
+            for (let j = 0; j < a[i].steps.length; j++) {
+                for (let k = 0; k < a[i].steps[j].intersections.length; k++) {
+                    pol.push(swapPcs(a[i].steps[j].intersections[k].location))
+                }
+            }
+        }
+        pol.push(coorArr[0])
+        addPoly(pol)
+    }).catch(handleError);
 }
-
-/*function setColor(id, pos){
-    if (pos == 'destination'){
-        let element = document.getElementById(`${id}`);
-        element.classList.add(`kt-portlet--skin-solid`, `kt-bg-danger`);
-    } else if (pos == 'start'){
-        let element = document.getElementById(`${id}`);
-        element.classList.add(`kt-portlet--skin-solid`, `kt-portlet--`, `kt-bg-brand`);
-    }
-    console.log(element)
-}*/

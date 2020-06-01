@@ -22,7 +22,10 @@ export {
     removeDuplicated,
     getJsonDefault,
     getLimitDocPerPage,
-    convertTime
+    convertTime,
+    popupDefault,
+    removeAllLayer,
+    removeLayerByID
 }
 
 function MeteorCall(method = "", data = null, accessToken = "") {
@@ -177,7 +180,7 @@ function tablePaging(tablePagingEl, count, page = 1, limit = LIMIT_DOCUMENT_PAGE
         </a>
     </li>
     <li>
-        <a title="Trang trước" class="kt-datatable__pager-link kt-datatable__pager-link--prev ${previous}" data-page=${page-1}>
+        <a title="Trang trước" class="kt-datatable__pager-link kt-datatable__pager-link--prev ${previous}" data-page=${page - 1}>
             <i class="flaticon2-back"></i>
         </a>
     </li>
@@ -193,7 +196,7 @@ function tablePaging(tablePagingEl, count, page = 1, limit = LIMIT_DOCUMENT_PAGE
     })
     html += `
     <li>
-        <a title="Trang sau" class="kt-datatable__pager-link kt-datatable__pager-link--next ${next}" data-page=${page+1}>
+        <a title="Trang sau" class="kt-datatable__pager-link kt-datatable__pager-link--next ${next}" data-page=${page + 1}>
             <i class="flaticon2-next"></i>
         </a>
     </li>
@@ -229,7 +232,7 @@ function handlePaging(table, count, page, limitDocPerPage) {
         tablePaging(tablePagingEl, count, page, limitDocPerPage)
         tablePagingEl.removeClass('d-none');
         table.parent().removeClass('d-none');
-        documentPage.html(`${startDocIndex}-${endDocIndex<count?endDocIndex:count}`)
+        documentPage.html(`${startDocIndex}-${endDocIndex < count ? endDocIndex : count}`)
     } else {
         documentPage.html(`1-${count}`)
         table.parent().removeClass('d-none');
@@ -278,10 +281,36 @@ function getLimitDocPerPage() {
 
 function convertTime(time, type = false, format = null) {
     if (type == true) {
-        if(format) {
+        if (format) {
             return moment(time).format(format)
         }
         return moment(time).format('L')
     }
     return moment(time, "DD/MM/YYYY").valueOf()
+}
+
+function popupDefault(name, address) {
+    return `<div class="font-14">
+                <dl class="row mr-0 mb-0">
+                    <dt class="col-sm-3">Tên điểm dừng: </dt>
+                    <dt class="col-sm-9">${name}</dt>
+                    <dt class="col-sm-3">Địa chỉ: </dt>
+                    <dt class="col-sm-9">${address}</dt>
+                </dl>
+            </div>`
+}
+
+
+function removeLayerByID(groupLayer, id) {
+    groupLayer.eachLayer(function (layer) {
+        if (layer._leaflet_id === id) {
+            groupLayer.removeLayer(layer)
+        }
+    });
+}
+
+function removeAllLayer(groupLayer) {
+    groupLayer.eachLayer((layer) => {
+        groupLayer.removeLayer(layer)
+    });
 }
