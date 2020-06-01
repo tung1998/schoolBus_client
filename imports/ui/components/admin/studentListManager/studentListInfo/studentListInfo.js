@@ -25,13 +25,11 @@ let stopPointOrder = [];
 let defaultStopPoint;
 //array that contains order of stopPoints from 0 to studentSTopPoints.length
 //sorted by distance from anchor point to each individual stopPoints
-let polyID;
 //array that contains ID of polyline-layers in markerGroup
-let polyCoor = [];
 let defaultCarStop = [];
+let intervalDateSize;
 let carStopIDs = [];
 let markers_id = [];
-let poly;
 Template.studentListInfo.onCreated(() => {
     accessToken = Cookies.get('accessToken');
 
@@ -46,7 +44,6 @@ Template.studentListInfo.onRendered(() => {
         }) //set fixxed height of sortable tabs
         //sort stopPointsCoor by distance to anchor point
         defaultStopPoint = stopPointCoors;
-        drawPath(defaultStopPoint)
         //}
         //append HTML sortable tabs to tab-pane
         for (let i = 0; i <= stopPointOrder.length - 1; i++) {
@@ -64,7 +61,6 @@ Template.studentListInfo.onRendered(() => {
             //<div class="kt-portlet__body">${studentStopPoint[stopPointOrder[i]].address}</div>
         }
         setSortableData(htmlSortable)
-        let idx = parseInt(stopPointOrder[stopPointOrder.length - 1])
     })
 });
 
@@ -93,7 +89,7 @@ Template.carStopList_studentListInfo.onRendered(() => {
             'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         id: 'mapbox.streets'
     }).addTo(carStopmap);
-    setInterval(() => {
+    intervalDateSize = setInterval(() => {
         carStopmap.invalidateSize();
     }, 0) //invalidate Size of map
     window.markerGroup = L.layerGroup().addTo(carStopmap); //create markerGroup
@@ -112,14 +108,16 @@ Template.carStopList_studentListInfo.events({
 })
 
 Template.carStopList_studentListInfo.onDestroyed(() => {
-    carStopList = null
-    stopCoor = null
-    markers_id = null
+    clearInterval(intervalDateSize)
+    carStopList = []
+    stopCoor = []
+    markers_id = []
     //document.getElementById("carStopContainer").innerHTML = '';
     markerGroup.eachLayer((layer) => {
         markerGroup.removeLayer(layer)
     });
-
+    window.markerGroup = null
+    window.carStopmap = null
 })
 
 function initClassSelect2() {
@@ -254,58 +252,4 @@ function setMarker(arr, des, address) {
 function setSortableData(str) {
     document.getElementById("carStopContainer").innerHTML = " ";
     document.getElementById("carStopContainer").innerHTML += str;
-}
-
-function addPoly(arr) {
-    poly = L.polyline(arr, {
-        color: 'blue',
-        weight: 4,
-        opacity: 0.5,
-        smoothFactor: 1
-    }).addTo(markerGroup);
-    polyID = markerGroup.getLayerId(poly);
-}
-
-
-function removeLayerByID(id) {
-    let found = false
-    markerGroup.eachLayer(function (layer) {
-        if (layer._leaflet_id === id) {
-            markerGroup.removeLayer(layer);
-            found = true;
-        }
-    });
-    if (found == false) {
-        addPoly(stopPointCoors)
-    }
-}
-
-function drawPath(arr) {
-    MeteorCall(_METHODS.wemap.getDrivePath, arr, accessToken).then(result => {
-        let pol = []
-        let a = result.routes[0].legs
-        for (let i = 0; i < a.length; i++) {
-            for (let j = 0; j < a[i].steps.length; j++) {
-                for (let k = 0; k < a[i].steps[j].intersections.length; k++) {
-                    pol.push(swapPcs(a[i].steps[j].intersections[k].location))
-                }
-            }
-        }
-        pol.push(arr[0])
-        stopPointCoors = pol;
-        //addPoly(pol)
-    }).catch(handleError);
-}
-
-function swapPcs(arr) {
-    let c = arr[1];
-    arr[1] = arr[0];
-    arr[0] = c;
-    return arr;
-}
-
-export {
-    drawPath,
-    addPoly,
-    swapPcs,
 }
