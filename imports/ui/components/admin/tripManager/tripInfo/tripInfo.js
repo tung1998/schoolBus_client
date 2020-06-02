@@ -12,18 +12,21 @@ import {
     handleSuccess,
     getJsonDefault,
     convertTime,
-    popupDefault
+    popupDefault,
+    removeLayerByID,
+    removeAllLayer
 } from '../../../../../functions';
 
 import {
     _METHODS,
     _TRIP_STUDENT,
     _TRIP,
-    _MARKER_CONFIG
+    _MARKER_CONFIG,
+    _TRIP_LOG
 } from '../../../../../variableConst';
 
 import {
-    renderStudentInfoModal
+    updateStudentInfoModalData
 } from './instascan'
 
 let accessToken,
@@ -43,6 +46,7 @@ Template.tripDetail.onCreated(async () => {
     Session.set('studenInfoData', {})
     Session.set('tripData', {})
     Session.set('tripStatus', '')
+    Session.set('tripLog',[])
 })
 
 Template.tripDetail.onRendered(() => {
@@ -90,6 +94,9 @@ Template.tripDetail.helpers({
     tripData(){
         return Session.get('tripData')
     },
+    tripLog(){
+        return Session.get('tripLog')
+    },
     startTime(){
         let tripData = Session.get('tripData')
         return convertTime(tripData.startTime, true, 'DD/MM/YYYY, HH:MM')
@@ -128,12 +135,38 @@ Template.tripDetail.onDestroyed(() => {
     Session.delete('tripID')
     Session.delete('tripStatus')
     Session.delete('tripData')
+    Session.delete('tripLog')
+    removeAllLayer(markerGroup)
     if (this.checkTripStatus) this.checkTripStatus = null
 })
 
 Template.studentInfoModal.helpers({
     studenInfoData() {
         return Session.get('studenInfoData')
+    }
+})
+
+Template.tripLogElement.helpers({
+    actionTime() {
+        return moment(this.time).format('HH:MM') 
+    },
+    action() {
+        let tripLogJson = getJsonDefault(_TRIP_LOG.type, 'number', this.type)
+        tripLogJson.html = ''
+        if(this.action.includes('Update trip student status')){
+            let tripStudent = getJsonDefault(_TRIP_STUDENT.status, 'number', this.data.status)
+            tripLogJson.html = `<p>Học sinh: 
+                                    <strong>${this.data.student.user.name}</strong> 
+                                    <span class="text-${tripStudent.classname}">${tripStudent.text}</span>
+                                </p>`
+        }
+        if(this.action.includes('Update trip status')){
+            let tripStatus = getJsonDefault(_TRIP.status, 'number', this.data.status)
+            tripLogJson.html = `<p>Thay đổi trạng thái chuyến đi: 
+                                    <span class="text-${tripStatus.classname}">${tripStatus.text}</span>
+                                </p>`
+        }
+        return tripLogJson
     }
 })
 
@@ -157,7 +190,7 @@ function initMap(){
 }
 
 function clickStudentRow(e) {
-    renderStudentInfoModal($(e.currentTarget).attr("id"))
+    updateStudentInfoModalData($(e.currentTarget).attr("id"))
 }
 
 function clickStatusButton(e) {
@@ -172,8 +205,9 @@ function clickStatusButton(e) {
         studentID
     }, accessToken).then(async result => {
         handleSuccess('Đã cập nhật')
-        reloadData()
-        renderStudentInfoModal(studentID)
+        return reloadData()
+    }).then(result=>{
+        updateStudentInfoModalData(studentID)
     }).catch(handleError)
 }
 
@@ -230,28 +264,10 @@ async function reloadData() {
     }
 }
 
-function renderTimeLine() {
-    MeteorCall(_METHODS.trip.GetTripLogByTripID, {
-        tripID: Session.get('tripID')
-    }, accessToken).then(result => {
-        console.log(result)
-    })
-}
 
-function removeLayerByID(id) {
-    let found = false
-    markerGroup.eachLayer(function (layer) {
-        if (layer._leaflet_id === id) {
-            markerGroup.removeLayer(layer);
-            found = true;
-        }
-    });
-    if (found == false) {
-        addPoly(stopCoor)
-    }
-}
 
 function addPoly(arr) {
+    removeLayerByID(markerGroup, polyID)
     poly = L.polyline(arr, {
         color: 'blue',
         weight: 4,
@@ -346,4 +362,15 @@ function swapPcs(arr) {
     arr[1] = arr[0];
     arr[0] = c;
     return arr;
+}
+
+
+
+function renderTimeLine() {
+    MeteorCall(_METHODS.trip.GetTripLogByTripID, {
+        tripID: Session.get('tripID')
+    }, accessToken).then(result => {
+        Session.set('tripLog', result.data)
+        console.log(result)
+    })
 }

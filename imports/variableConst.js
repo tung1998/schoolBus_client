@@ -7,7 +7,8 @@ export {
     _TRIP,
     _FEEDBACK,
     _REQUEST,
-    _MARKER_CONFIG
+    _MARKER_CONFIG,
+    _TRIP_LOG
 }
 const _URL_images = 'http://192.168.0.111:3000/images'
 // const _URL_images = 'http://113.190.128.251:3000/images'
@@ -286,23 +287,28 @@ const _TRIP_STUDENT = {
     status: {
         undefined: {
             text: "Chưa xác nhận",
-            number: 0
+            number: 0,
+            classname:'secondary'
         },
         pickUp: {
-            text: "Trên xe",
-            number: 1
+            text: "Lên xe",
+            number: 1,
+            classname:'primary'
         },
         getOff: {
             text: "Xuống xe",
-            number: 2
+            number: 2,
+            classname:'success'
         },
         request: {
             text: "Xin Nghỉ",
-            number: 3
+            number: 3,
+            classname:'warning'
         },
         absent: {
             text: "Vắng mặt",
-            number: 4
+            number: 4,
+            classname:'danger'
         }
     }
 }
@@ -437,5 +443,46 @@ const _MARKER_CONFIG = {
         iconAnchor: [12, 41],
         popupAnchor: [1, -34],
         shadowSize: [41, 41]
+    }
+}
+
+const _TRIP_LOG = {
+    status: {
+        ready: {
+            text: "Đã sẵn sàng",
+            classname: 'primary',
+            number: 0
+        },
+        moving: {
+            text: "Đang di chuyển",
+            classname: 'success',
+            number: 1
+        },
+        finish: {
+            text: "Đã kết thúc",
+            classname: 'warning',
+            number: 2
+        },
+        accident: {
+            text: "Gặp sự cố",
+            classname: 'danger',
+            number: 3
+        }
+    }, type: {
+        create: {
+            text: "Khởi tạo",
+            classname: 'primary',
+            number: 0
+        },
+        update: {
+            text: "Cập nhật",
+            classname: 'warning',
+            number: 1
+        },
+        delete: {
+            text: "Xóa",
+            classname: 'danger',
+            number: 2
+        }
     }
 }

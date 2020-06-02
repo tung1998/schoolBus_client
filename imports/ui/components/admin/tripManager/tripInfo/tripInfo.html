@@ -79,7 +79,8 @@
                                                         <h3 class="kt-widget1__title kt-font-primary" id="driver-name">
                                                             {{tripData.driver.user.name}}
                                                         </h3>
-                                                        <span class="kt-widget1__desc phone">{{tripData.driver.user.phone}}</span>
+                                                        <span
+                                                            class="kt-widget1__desc phone">{{tripData.driver.user.phone}}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -95,7 +96,8 @@
                                                         <h3 class="kt-widget1__title kt-font-primary" id="nanny-name">
                                                             {{tripData.nanny.user.name}}
                                                         </h3>
-                                                        <span class="kt-widget1__desc phone">{{tripData.nanny.user.phone}}</span>
+                                                        <span
+                                                            class="kt-widget1__desc phone">{{tripData.nanny.user.phone}}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -170,7 +172,14 @@
 
                         </div>
                         <div class="tab-pane" id="timeline" role="tabpanel">
-                            123
+                            <div class="kt-timeline-v2">
+                                <div class="kt-timeline-v2__items  kt-padding-top-25 kt-padding-bottom-30">
+                                    {{#each tripLog}}
+                                    {{> tripLogElement}}
+                                    {{/each}}
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -403,6 +412,24 @@
                 </div>
 
             </div>
+        </div>
+    </div>
+</template>
+
+<template name="tripLogElement">
+    <div class="kt-timeline-v2__item">
+        <span class="kt-timeline-v2__item-time">{{actionTime}}</span>
+        <div class="kt-timeline-v2__item-cricle">
+            <i class="fa fa-genderless kt-font-{{action.classname}}"></i>
+        </div>
+        <div class="kt-timeline-v2__item-text  kt-padding-top-5">
+            <div class="row">
+                <div class="col-6">
+                    <h5>{{action.text}}</h5>
+                </div>
+                <div class="text-right col-6">cập nhật bỏi: <strong>{{user.name}}</strong></div>
+            </div>
+            {{{action.html}}}
         </div>
     </div>
 </template>
