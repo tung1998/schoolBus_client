@@ -311,7 +311,7 @@ function clickDeleteRouteButton(e) {
 function clickRouteRow(e) {
     let routeID = e.currentTarget.getAttribute("id")
     FlowRouter.go(`/routeManager/${routeID}`)
-    // window.location.reload(false)
+    window.location.reload(false)
 }
 
 function getLimitDocPerPage() {

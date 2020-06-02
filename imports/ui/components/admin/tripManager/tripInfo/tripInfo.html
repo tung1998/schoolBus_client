@@ -77,8 +77,9 @@
                                                     </div>
                                                     <div class="kt-widget1__info kt-align-right">
                                                         <h3 class="kt-widget1__title kt-font-primary" id="driver-name">
+                                                            {{tripData.driver.user.name}}
                                                         </h3>
-                                                        <span class="kt-widget1__desc phone"></span>
+                                                        <span class="kt-widget1__desc phone">{{tripData.driver.user.phone}}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -92,8 +93,9 @@
                                                     </div>
                                                     <div class="kt-widget1__info kt-align-right">
                                                         <h3 class="kt-widget1__title kt-font-primary" id="nanny-name">
+                                                            {{tripData.nanny.user.name}}
                                                         </h3>
-                                                        <span class="kt-widget1__desc phone"></span>
+                                                        <span class="kt-widget1__desc phone">{{tripData.nanny.user.phone}}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -106,7 +108,7 @@
                                                     </div>
                                                     <div class="kt-widget1__info kt-align-right">
                                                         <h3 class="kt-widget1__title kt-font-danger"
-                                                            id="car-numberPlate"></h3>
+                                                            id="car-numberPlate">{{tripData.car.numberPlate}}</h3>
                                                     </div>
                                                 </div>
                                             </div>
@@ -119,6 +121,7 @@
                                                     </div>
                                                     <div class="kt-widget1__info kt-align-right">
                                                         <h3 class="kt-widget1__title kt-font-success" id="start-time">
+                                                            {{startTime}}
                                                         </h3>
                                                     </div>
                                                 </div>

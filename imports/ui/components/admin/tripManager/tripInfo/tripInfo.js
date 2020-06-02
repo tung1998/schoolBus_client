@@ -4,10 +4,6 @@ import {
     FlowRouter
 } from 'meteor/kadira:flow-router';
 
-import {
-    swapPcs
-} from '../../studentListManager/studentListInfo/studentListInfo.js'
-
 const Cookies = require('js-cookie');
 import {
     MeteorCall,
@@ -15,13 +11,15 @@ import {
     handleConfirm,
     handleSuccess,
     getJsonDefault,
-    convertTime
+    convertTime,
+    popupDefault
 } from '../../../../../functions';
 
 import {
     _METHODS,
     _TRIP_STUDENT,
-    _TRIP
+    _TRIP,
+    _MARKER_CONFIG
 } from '../../../../../variableConst';
 
 import {
@@ -31,13 +29,19 @@ import {
 let accessToken,
     carStopList = [],
     stopCoor = [],
-    markers_id = [],
-    polyID;
+    markersList = [],
+    polyID,
+    startCarStop,
+    endCarStop,
+    startCarStopMarker = L.icon(_MARKER_CONFIG.blue),
+    endCarStopMarker = L.icon(_MARKER_CONFIG.red),
+    normalCarStopMarker = L.icon(_MARKER_CONFIG.gray);
 
 Template.tripDetail.onCreated(async () => {
     accessToken = Cookies.get('accessToken')
     Session.set('studentTripData', [])
     Session.set('studenInfoData', {})
+    Session.set('tripData', {})
     Session.set('tripStatus', '')
 })
 
@@ -46,23 +50,7 @@ Template.tripDetail.onRendered(() => {
     $(".anchorHeight").css({
         "height": 400
     })
-    L.Icon.Default.imagePath = '/packages/bevanhunt_leaflet/images/';
-    window.tripMap = L.map('tripMap', {
-        drawControl: true,
-        zoomControl: false
-    }).setView([21.0388, 105.7886], 14);
-    L.tileLayer('https://apis.wemap.asia/raster-tiles/styles/osm-bright/{z}/{x}/{y}@2x.png?key=vpstPRxkBBTLaZkOaCfAHlqXtCR', {
-        maxZoom: 18,
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-            '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-            'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        id: 'mapbox.streets'
-    }).addTo(tripMap);
-    setInterval(() => {
-        tripMap.invalidateSize();
-    }, 0) //invalidate Size of map
-    window.markerGroup = L.layerGroup().addTo(tripMap); //create markerGroup
-    drawPath(stopCoor);
+    initMap()
 
     this.checkTripStatus = Tracker.autorun(() => {
         if (Session.get('tripStatus') === 0) {
@@ -99,6 +87,13 @@ Template.tripDetail.helpers({
     studentTripData() {
         return Session.get('studentTripData')
     },
+    tripData(){
+        return Session.get('tripData')
+    },
+    startTime(){
+        let tripData = Session.get('tripData')
+        return convertTime(tripData.startTime, true, 'DD/MM/YYYY, HH:MM')
+    }
 })
 
 Template.tripDetail.events({
@@ -108,22 +103,13 @@ Template.tripDetail.events({
     'click .addressTab': (event) => {
         event.preventDefault();
         let indx = parseInt($(event.currentTarget).attr("id"));
-        let tarMark = tripMap._layers[markers_id[indx]];
+        let tarMark = tripMap._layers[markersList[indx]];
         let latval = tarMark._latlng.lat;
         let lngval = tarMark._latlng.lng;
         tarMark.openPopup();
         window.tripMap.setView([latval, lngval], 25);
     },
     'click .nav-link[href="#timeline"]': renderTimeLine,
-    /*'mousemove .addressTab': (event) => {
-        event.preventDefault();
-        let indx = parseInt($(event.currentTarget).attr("id"));
-        let tarMark = routeMiniMap._layers[markers_id[indx]];
-        let latval = tarMark._latlng.lat;
-        let lngval = tarMark._latlng.lng;
-        tarMark.openPopup();
-        window.routeMiniMap.setView([latval, lngval], 14);
-    },*/
     'click .polyToggle': (event) => {
         event.preventDefault();
         removeLayerByID(polyID);
@@ -136,11 +122,12 @@ Template.tripDetail.events({
 Template.tripDetail.onDestroyed(() => {
     carStopList = []
     stopCoor = []
-    markers_id = []
+    markersList = []
     Session.delete('studentTripData')
     Session.delete('studenInfoData')
     Session.delete('tripID')
     Session.delete('tripStatus')
+    Session.delete('tripData')
     if (this.checkTripStatus) this.checkTripStatus = null
 })
 
@@ -149,6 +136,25 @@ Template.studentInfoModal.helpers({
         return Session.get('studenInfoData')
     }
 })
+
+function initMap(){
+    L.Icon.Default.imagePath = '/packages/bevanhunt_leaflet/images/';
+    window.tripMap = L.map('tripMap', {
+        drawControl: true,
+        zoomControl: false
+    }).setView([21.0388, 105.7886], 14);
+    L.tileLayer('https://apis.wemap.asia/raster-tiles/styles/osm-bright/{z}/{x}/{y}@2x.png?key=vpstPRxkBBTLaZkOaCfAHlqXtCR', {
+        maxZoom: 18,
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+            '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+            'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        id: 'mapbox.streets'
+    }).addTo(tripMap);
+    setInterval(() => {
+        tripMap.invalidateSize();
+    }, 0) //invalidate Size of map
+    window.markerGroup = L.layerGroup().addTo(tripMap); //create markerGroup
+}
 
 function clickStudentRow(e) {
     renderStudentInfoModal($(e.currentTarget).attr("id"))
@@ -197,44 +203,17 @@ async function reloadData() {
 
         //get info trip
         console.log(tripData)
-        Session.set('tripID', tripData._id)
-        let dataTrip = {
-            driverName: tripData.driver.user.name,
-            driverPhone: tripData.driver.user.phone,
-            nannyName: tripData.nanny.user.name,
-            nannyPhone: tripData.nanny.user.phone,
-            carNunberPlate: tripData.car ? tripData.car.numberPlate : '',
-            startTime: tripData.startTime,
-        }
-        carStopList = tripData.route.studentList.carStops;
-        carStopList.forEach((data, index) => {
-            stopCoor.push(data.location);
-            let mark = L.marker(data.location).bindTooltip(data.name, {
-                permanent: false
-            }).addTo(tripMap);
-            markers_id.push(markerGroup.getLayerId(mark))
-            let popup = `
-                <div class="font-14">
-                    <dl class="row mr-0 mb-0">
-                        <dt class="col-sm-3">Tên điểm dừng: </dt>
-                        <dt class="col-sm-9">${data.name}</dt>
-                        <dt class="col-sm-3">Địa chỉ: </dt>
-                        <dt class="col-sm-9">${data.address}</dt>
-                    </dl>
-                </div>
-            `
-            mark.bindPopup(popup, {
-                minWidth: 301
-            });
-        })
-        drawPath(stopCoor)
-        $('#driver-name').html(dataTrip.driverName)
-        $('.phone:eq(0)').html(dataTrip.driverPhone)
-        $('#nanny-name').html(dataTrip.nannyName)
-        $('.phone:eq(1)').html(dataTrip.nannyPhone)
-        $('#car-numberPlate').html(dataTrip.carNunberPlate)
-        $('#start-time').html(convertTime(dataTrip.startTime, true, 'DD/MM/YYYY, HH:MM'))
 
+        Session.set('tripData', tripData)
+        Session.set('tripID', tripData._id)
+        startCarStop = tripData.route.startCarStop
+        endCarStop = tripData.route.endCarStop
+        carStopList = tripData.route.studentList.carStops;
+        carStopList.forEach(item => {
+            bindMarker(item)
+        })
+        bindMarker(tripData.route.startCarStop, startCarStopMarker)
+        bindMarker(tripData.route.endCarStop, endCarStopMarker)
         //data học sinh
         Session.set('studentTripData', tripData.students.map((item, index) => {
             item.index = index + 1
@@ -242,6 +221,8 @@ async function reloadData() {
         }))
         //get status trip
         Session.set('tripStatus', tripData.status)
+
+        reloadMap()
     } catch (error) {
         handleError(error, 'Không có dữ liệu')
         $('#tripData').addClass('kt-hidden')
@@ -278,25 +259,6 @@ function addPoly(arr) {
         smoothFactor: 1
     }).addTo(markerGroup);
     polyID = markerGroup.getLayerId(poly);
-}
-
-function drawPath(arr) {
-    if (arr && arr.length)
-        MeteorCall(_METHODS.wemap.getDrivePath, arr, accessToken).then(result => {
-            console.log(result);
-            let pol = []
-            let a = result.routes[0].legs
-            for (let i = 0; i < a.length; i++) {
-                for (let j = 0; j < a[i].steps.length; j++) {
-                    for (let k = 0; k < a[i].steps[j].intersections.length; k++) {
-                        pol.push(swapPcs(a[i].steps[j].intersections[k].location))
-                    }
-                }
-            }
-            pol.push(arr[0])
-            stopCoor = pol;
-            //addPoly(pol)
-        }).catch(handleError);
 }
 
 function modifyTripStatus(e) {
@@ -349,4 +311,39 @@ function chooseReport(e) {
     } else {
         $('#report-content').attr("disabled", 'disabled')
     }
+}
+
+
+function bindMarker(carStop, icon = normalCarStopMarker) {
+    let marker = L.marker(carStop.location, { icon }).bindTooltip(carStop.name, { permanent: false }).addTo(markerGroup);
+    markersList.push(markerGroup.getLayerId(marker))
+    let popup = popupDefault(carStop.name, carStop.address)
+    marker.bindPopup(popup, {
+        minWidth: 301
+    });
+}
+
+function reloadMap() {
+    let carStopListAll = [startCarStop, startCarStop].concat(carStopList).concat([endCarStop, endCarStop])
+    let coorArr = carStopListAll.map(item => item.location).reverse()
+    MeteorCall(_METHODS.wemap.getDrivePath, coorArr, accessToken).then(result => {
+        let pol = []
+        let a = result.routes[0].legs
+        for (let i = 0; i < a.length; i++) {
+            for (let j = 0; j < a[i].steps.length; j++) {
+                for (let k = 0; k < a[i].steps[j].intersections.length; k++) {
+                    pol.push(swapPcs(a[i].steps[j].intersections[k].location))
+                }
+            }
+        }
+        pol.push(coorArr[0])
+        addPoly(pol)
+    }).catch(handleError);
+}
+
+function swapPcs(arr) {
+    let c = arr[1];
+    arr[1] = arr[0];
+    arr[0] = c;
+    return arr;
 }
