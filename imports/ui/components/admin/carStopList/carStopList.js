@@ -143,7 +143,6 @@ function createTable(table, result, limitDocPerPage) {
 function createRow(result) {
     let data = {
         _id: result._id,
-        stopType: result.stopType,
         name: result.name,
         address: result.address,
         location: result.location
@@ -156,7 +155,6 @@ function createRow(result) {
 
     return ` <tr id = ${data._id}>
                 <th scope="row">${result.index + 1}</th>
-                <td>${data.stopType}</td>
                 <td>${data.name}</td>
                 <td>${data.address}</td>
                 ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>` : ''}
@@ -173,9 +171,6 @@ function createRow(result) {
 
 function carStopListFilter() {
     let options = [{
-        text: "stopType",
-        value: $('#carStop-type-filter').val()
-    }, {
         text: "name",
         value: $('#carStop-name-filter').val()
     }, {
@@ -190,7 +185,6 @@ function carStopListFilter() {
 }
 
 function refreshFilter() {
-    $('#carStop-type-filter').val('')
     $('#carStop-name-filter').val('')
     $('#carStop-address-filter').val('')
     $('#school-filter').val('')

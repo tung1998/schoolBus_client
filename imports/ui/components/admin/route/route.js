@@ -30,6 +30,8 @@ Template.route.onCreated(() => {
     Session.set('drivers', [])
     Session.set('nannys', [])
     Session.set('studentList', [])
+    Session.set('carStopList', [])
+    Session.set('routeList', [])
 });
 
 Template.route.onRendered(() => {
@@ -49,6 +51,19 @@ Template.route.onRendered(() => {
 Template.route.helpers({
     isSuperadmin() {
         return Session.get(_SESSION.isSuperadmin)
+    },
+    routeList() {
+        return Session.get('routeList')
+    },
+
+})
+
+Template.routeRow.helpers({
+    isSuperadmin() {
+        return Session.get(_SESSION.isSuperadmin)
+    },
+    index() {
+        return 1
     }
 })
 
@@ -72,14 +87,14 @@ Template.route.events({
         reloadTable(1, getLimitDocPerPage());
     },
     'change #school-input': (e) => {
-        if($('#school-input')) {
+        if ($('#school-input')) {
             let option = [{
                 text: "schoolID",
                 value: $('#school-input').val()
             }]
-    
+
             getSelectData(option)
-        }  
+        }
     }
 })
 
@@ -101,6 +116,9 @@ Template.routeModal.helpers({
     },
     studentList() {
         return Session.get('studentList')
+    },
+    carStopList() {
+        return Session.get('carStopList')
     },
 })
 
@@ -145,7 +163,7 @@ Template.routeFilter.events({
 })
 
 
-function getSelectData(options = null, carID = null, driverID = null, nannyID = null, studentListID = null) {
+function getSelectData(options = null, carID = null, driverID = null, nannyID = null, studentListID = null, startCarStopID = null, endCarStopID = null) {
     MeteorCall(_METHODS.car.GetAll, {
         options
     }, accessToken).then(result => {
@@ -189,6 +207,18 @@ function getSelectData(options = null, carID = null, driverID = null, nannyID = 
         if (studentListID) $("#studentListSelect").val(studentListID).trigger('change')
     }).catch(handleError)
 
+    MeteorCall(_METHODS.carStop.GetAll, {
+        options
+    }, accessToken).then(result => {
+        console.log(result)
+        if (result.data) {
+            if (options && options.length) result.data = result.data.filter(item => item.schoolID == options[0].value)
+            Session.set('carStopList', result.data)
+        }
+        if (startCarStopID) $("#startCarStop").val(startCarStopID).trigger('change')
+        if (endCarStopID) $("#endCarStop").val(endCarStopID).trigger('change')
+    }).catch(handleError)
+
 }
 
 function clickAddRouteButton() {
@@ -199,17 +229,19 @@ function clickAddRouteButton() {
 }
 
 function clickEditListModalSubmit() {
-    if(checkForm()) {
+    if (checkForm()) {
         let data = {
             name: $('#route-name').val(),
             carID: $('#carSelect').val(),
             driverID: $('#driverSelect').val(),
             nannyID: $('#nannySelect').val(),
             studentListID: $('#studentListSelect').val(),
+            startCarStopID: $('#startCarStop').val(),
+            endCarStopID: $('#endCarStop').val(),
         }
-    
+
         if (Session.get(_SESSION.isSuperadmin)) data.schoolID = $('#school-input').val()
-    
+
         let routeID = $('#routeModal').attr('routeID')
         if (routeID) {
             data._id = routeID
@@ -217,7 +249,7 @@ function clickEditListModalSubmit() {
                 reloadTable(currentPage, getLimitDocPerPage())
                 handleSuccess('Cập nhật')
                 $('#routeModal').modal('hide')
-    
+
             })
         } else {
             MeteorCall(_METHODS.route.Create, data, accessToken).then(result => {
@@ -231,38 +263,46 @@ function clickEditListModalSubmit() {
 
 function clickEditRouteButton(e) {
     e.preventDefault();
-    let data = $(e.currentTarget).data('json')
-    console.log(data);
-    $('#route-name').val(data.name)
+    let currentTarget = $(e.currentTarget)
+    let routeID = currentTarget.attr('routeID')
+    let routeName = currentTarget.attr('routeName')
+    let schoolID = currentTarget.attr('schoolID')
+    let carID = currentTarget.attr('carID')
+    let driverID = currentTarget.attr('driverID')
+    let nannyID = currentTarget.attr('nannyID')
+    let studentListID = currentTarget.attr('studentListID')
+    let startCarStopID = currentTarget.attr('startCarStopID')
+    let endCarStopID = currentTarget.attr('endCarStopID')
+    $('#route-name').val(routeName)
     if (Session.get(_SESSION.isSuperadmin)) {
-        $('#school-input').val(data.schoolID).trigger('change')
+        $('#school-input').val(schoolID).trigger('change')
         getSelectData([{
             text: 'schoolID',
-            value: data.schoolID
-        }], data.carID, data.driverID, data.nannyID, data.studentListID)
+            value: schoolID
+        }], carID, driverID, nannyID, studentListID, startCarStopID, endCarStopID)
     } else {
-        $('#carSelect').val(data.carID).trigger('change')
-        $('#driverSelect').val(data.carID).trigger('change')
-        $('#nannySelect').val(data.carID).trigger('change')
-        $('#studentListSelect').val(data.carID).trigger('change')
+        $('#carSelect').val(carID).trigger('change')
+        $('#driverSelect').val(carID).trigger('change')
+        $('#nannySelect').val(carID).trigger('change')
+        $('#studentListSelect').val(carID).trigger('change')
     }
 
     $('#routeModalSubmit').html('Cập nhật')
-    $('#routeModal').attr('routeID', data._id).modal('show')
+    $('#routeModal').attr('routeID', routeID).modal('show')
     return false
 }
 
 function clickDeleteRouteButton(e) {
     e.preventDefault();
-    let routeID = $(e.currentTarget).data('json')._id
+    let routeID =$(e.currentTarget).attr('routeID')
     handleConfirm('Bạn muốn xóa danh sách?').then(result => {
-        if (result.dismiss) return
-        MeteorCall(_METHODS.route.Delete, {
-            _id: routeID
-        }, accessToken).then(result => {
-            reloadTable(currentPage, getLimitDocPerPage())
-            handleSuccess('Xóa', "Danh sách")
-        }).catch(handleError)
+        if (result.value)
+            MeteorCall(_METHODS.route.Delete, {
+                _id: routeID
+            }, accessToken).then(result => {
+                reloadTable(currentPage, getLimitDocPerPage())
+                handleSuccess('Xóa', "Danh sách")
+            }).catch(handleError)
     })
     return false
 }
@@ -287,55 +327,10 @@ function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options = 
     }, accessToken).then(result => {
         console.log(result)
         handlePaging(table, result.count, page, limitDocPerPage)
-        createTable(table, result, limitDocPerPage)
+        Session.set('routeList', result.data)
     })
 
 }
-
-
-function createTable(table, result, limitDocPerPage) {
-    let htmlRow = result.data.map((key, index) => {
-        key.index = index + (result.page - 1) * limitDocPerPage;
-        return createRow(key);
-    });
-    table.html(htmlRow.join(''))
-}
-
-
-function createRow(result) {
-    console.log(result);
-    let data = {
-        _id: result._id,
-        name: result.name,
-        carID: result.carID,
-        carName: result.car ? result.car.numberPlate : '',
-        driverID: result.driverID,
-        driverName: result.driver ? result.driver.user.name : '',
-        nannyID: result.nannyID,
-        nannyName: result.nanny ? result.nanny.user.name : '',
-        studentListID: result.studentListID,
-        studentList: result.studentList ? result.studentList.name || '' : '',
-    }
-    if (Session.get(_SESSION.isSuperadmin)) {
-        data.schoolID = result.schoolID
-        data.schoolName = result.school.name
-    }
-    return ` <tr id="${data._id}">
-                <th class="text-center">${result.index + 1}</th>
-                ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>` : ''}
-                <td>${data.name}</td>
-                <td>${data.carName}</td>
-                <td>${data.driverName}</td>
-                <td>${data.nannyName}</td>
-                <td>${data.studentList}</td>
-                <td class="text-center">
-                <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
-                <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
-                </td>
-            </tr>
-            `
-}
-
 
 function routeFilter() {
     let options = [{
@@ -418,7 +413,7 @@ function checkForm() {
     let nannyID = $('#nannySelect').val()
     let studentListID = $('#studentListSelect').val()
 
-    if (!name || !carID || !driverID || !nannyID ||! studentListID) {
+    if (!name || !carID || !driverID || !nannyID || !studentListID) {
         Swal.fire({
             icon: "error",
             text: "Chưa đủ thông tin!",

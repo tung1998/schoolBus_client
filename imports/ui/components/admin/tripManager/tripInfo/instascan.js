@@ -8,7 +8,7 @@ import {
 import { _METHODS } from '../../../../../variableConst'
 
 export {
-    renderStudentInfoModal
+    updateStudentInfoModalData
 }
 
 let Scanner
@@ -57,7 +57,7 @@ function scanSuccess(content) {
         let studenInfo = checkStudentInfo(content);
         if (studenInfo) {
             console.log(studenInfo);
-            renderStudentInfoModal(content);
+            updateStudentInfoModalData(content);
         } else {
             Swal.fire({
                 icon: "error",
@@ -138,8 +138,7 @@ function clickTakePhoto(e) {
 
 }
 
-function renderStudentInfoModal(studentID) {
-    $("#studentInfoModal").modal("show")
+function updateStudentInfoModalData(studentID) {
     $('#instascannerModal').modal('hide')
     let studenInfoData = checkStudentInfo(studentID)
     console.log(studenInfoData)
@@ -170,6 +169,7 @@ function renderStudentInfoModal(studentID) {
         studenInfoData.image = `/assets/media/users/user5.jpg`
     }
     Session.set('studenInfoData', studenInfoData)
+    $("#studentInfoModal").modal("show")
 }
 
 function checkStudentInfo(studentID) {

@@ -47,7 +47,7 @@
                                         <table class="table table-bordered table-hover" id="routeTable">
                                             <thead class="thead-light">
                                                 <tr class="text-center">
-                                                    <th width="4%">#</th>
+                                                    <th>#</th>
                                                     {{#if isSuperadmin}}
                                                     <th>Trường</th>
                                                     {{/if}}
@@ -56,10 +56,15 @@
                                                     <th>Tài xế</th>
                                                     <th>Bảo mẫu</th>
                                                     <th>Nhóm học sinh</th>
+                                                    <th>Điểm bắt đầu</th>
+                                                    <th>Điểm kết thúc</th>
                                                     <th width="13%">Hành động</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="routeData">
+                                                {{#each routeList}}
+                                                {{> routeRow}}
+                                                {{/each}}
                                             </tbody>
                                         </table>
                                     </div>
@@ -153,6 +158,28 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="form-group row">
+                            <label class="col-3 required-input-label">Điểm bắt đầu</label>
+                            <div class="col-9">
+                                <select class="custom-select form-control" id="startCarStop">
+                                    <option value=""></option>
+                                    {{#each carStopList}}
+                                    <option value="{{_id}}">{{name}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-3 required-input-label">Điểm kết thúc</label>
+                            <div class="col-9">
+                                <select class="custom-select form-control" id="endCarStop">
+                                    <option value=""></option>
+                                    {{#each carStopList}}
+                                    <option value="{{_id}}">{{name}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -163,6 +190,30 @@
         </div>
     </div>
 </template>
+
+<template name="routeRow">
+    <tr id="{{_id}}">
+        <th class="text-center">{{index}}</th>
+        {{#if isSuperadmin}}
+        <td>{{school.name}}</td>
+        {{/if}}
+        <td>{{name}}</td>
+        <td>{{car.numberPlate}}</td>
+        <td>{{driver.user.name}}</td>
+        <td>{{nanny.user.name}}</td>
+        <td>{{studentList.name}}</td>
+        <td>{{startCarStop.name}}</td>
+        <td>{{endCarStop.name}}</td>
+        <td class="text-center">
+            <button type="button" class="btn btn-outline-brand modify-button" routeID="{{_id}}"
+            routeName="{{name}}" schoolID="{{school._id}}" carID="{{car._id}}" driverID="{{driver._id}}"
+            nannyID="{{nanny._id}}" studentListID="{{studentList._id}}" startCarStopID="{{startCarStopID}}" endCarStopID="{{endCarStopID}}"
+            >Sửa</button>
+            <button type="button" class="btn btn-outline-danger delete-button" routeID="{{_id}}">Xóa</button>
+        </td>
+    </tr>
+</template>
+
 
 <template name="routeFilter">
     {{#if isSuperadmin}}

@@ -34,6 +34,9 @@ Template.studentInfo.helpers({
     studentInfo() {
         return Session.get('studentInfo')
     },
+    _URL_images() {
+        return _URL_images
+    },
 });
 
 

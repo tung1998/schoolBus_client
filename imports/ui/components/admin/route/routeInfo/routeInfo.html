@@ -49,127 +49,166 @@
                     </div>
                 </div>
                 <div class="kt-portlet__body">
-                    <form action="" method="">
-                        <div class="tab-content">
-                            <div class="tab-pane active" id="tripInfo" role="tabpanel">
-                                <div class="kt-widget">
-                                    <div class="kt-widget__body kt-widget-t-2">
-                                        <div class="row">
-                                            <div class="col-md-6 col-lg-6 col-xl-6">
-                                                <!--begin:: Widgets/Stats2-1 -->
-                                                <div class="kt-widget1">
-                                                    <div class="kt-widget1__item">
-                                                        <div class="kt-widget1__info">
-                                                            <h3 class="kt-widget1__title">Tên lái xe: </h3>
-                                                            <span class="kt-widget1__desc phone">Số điện thoại:</span>
-                                                        </div>
-                                                        <div class="kt-widget1__info">
-                                                            <h3 class="kt-widget1__title" id="driver-name">Nguyễn Mạnh
-                                                                Tiến</h3>
-                                                        </div>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tripInfo" role="tabpanel">
+                            <div class="kt-widget">
+                                <div class="kt-widget__body kt-widget-t-2">
+                                    <div class="row">
+                                        <div class="col-md-6 col-lg-6 col-xl-6">
+                                            <!--begin:: Widgets/Stats2-1 -->
+                                            <div class="kt-widget1">
+                                                <div class="kt-widget1__item">
+                                                    <div class="kt-widget1__info">
+                                                        <h3 class="kt-widget1__title">Tên lái xe: </h3>
+                                                        <span class="kt-widget1__desc phone">Số điện thoại:</span>
                                                     </div>
-                                                    <div class="kt-widget1__item">
-                                                        <div class="kt-widget1__info">
-                                                            <h3 class="kt-widget1__title">Tên bảo mẫu: </h3>
-                                                            <span class="kt-widget1__desc phone">Số điện thoại:</span>
-                                                        </div>
-                                                        <div class="kt-widget1__info">
-                                                            <h3 class="kt-widget1__title" id="nanny-name">Nguyễn Mạnh
-                                                                Tiến</h3>
-                                                        </div>
+                                                    <div class="kt-widget1__info">
+                                                        <h3 class="kt-widget1__title" id="driver-name">
+                                                            {{routeInfo.driver.user.name}}</h3>
+                                                        <span
+                                                            class="kt-widget1__desc phone">{{routeInfo.driver.user.phone}}</span>
                                                     </div>
                                                 </div>
-                                                <!--end:: Widgets/Stats2-1 -->
-                                            </div>
-                                            <div class="col-md-6 col-lg-6 col-xl-6">
-                                                <!--begin:: Widgets/Stats2-1 -->
-                                                <div class="kt-widget1">
-                                                    <div class="kt-widget1__item">
-                                                        <div class="kt-widget1__info">
-                                                            <h3 class="kt-widget1__title">Biến sổ xe: </h3>
-                                                        </div>
-                                                        <div class="kt-widget1__info">
-                                                            <h3 class="kt-widget1__title" id="car-numberPlate">123123123
-                                                            </h3>
-                                                        </div>
+                                                <div class="kt-widget1__item">
+                                                    <div class="kt-widget1__info">
+                                                        <h3 class="kt-widget1__title">Tên bảo mẫu: </h3>
+                                                        <span class="kt-widget1__desc phone">Số điện thoại:</span>
                                                     </div>
-                                                    <div class="kt-widget1__item">
+                                                    <div class="kt-widget1__info">
+                                                        <h3 class="kt-widget1__title" id="nanny-name">
+                                                            {{routeInfo.nanny.user.name}}</h3>
+                                                        <span
+                                                            class="kt-widget1__desc phone">{{routeInfo.nanny.user.phone}}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--end:: Widgets/Stats2-1 -->
+                                        </div>
+                                        <div class="col-md-6 col-lg-6 col-xl-6">
+                                            <!--begin:: Widgets/Stats2-1 -->
+                                            <div class="kt-widget1">
+                                                <div class="kt-widget1__item">
+                                                    <div class="kt-widget1__info">
+                                                        <h3 class="kt-widget1__title">Biến sổ xe: </h3>
+                                                    </div>
+                                                    <div class="kt-widget1__info">
+                                                        <h3 class="kt-widget1__title" id="car-numberPlate">
+                                                            {{routeInfo.car.numberPlate}}
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                                <!-- <div class="kt-widget1__item">
                                                         <div class="kt-widget1__info">
                                                             <h3 class="kt-widget1__title">Thời gian đi: </h3>
                                                         </div>
                                                         <div class="kt-widget1__info">
-                                                            <h3 class="kt-widget1__title" id="start-time">12:20:20</h3>
+                                                            <h3 class="kt-widget1__title" id="start-time"></h3>
+                                                        </div>
+                                                    </div> -->
+                                            </div>
+                                            <!--end:: Widgets/Stats2-1 -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="studentList" role="tabpanel">
+                            <!--begin::Section-->
+                            <div class="kt-section">
+                                <div class="kt-section__content">
+                                    <table class="table table-bordered table-hover" id="table-studentList">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Mã HS</th>
+                                                <th>Tên HS</th>
+                                                <th>Số điện thoại</th>
+                                                <th>Lớp</th>
+                                                <th>Giáo viên</th>
+                                                <th>Trường</th>
+                                                <th>Địa chỉ trường</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {{#each routeInfo.studentList.students}}
+                                            {{> routeStudentRow data=this index=@index}}
+                                            {{/each}}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!--end::Section-->
+                        </div>
+                        <div class="tab-pane" id="routeMapMonitor" role="tabpanel">
+                            <!--begin::Section-->
+                            <div class="kt-section">
+                                <div class="kt-section__content">
+                                    <div class="row">
+                                        <div class="col-4 anchorHeight" id="addPane" style="overflow: auto;">
+                                            <div id="startCarStop">
+                                                <div class="kt-portlet addressTab">
+                                                    <div
+                                                        class="kt-portlet__head kt-portlet__head--noborder kt-portlet--skin-solid kt-bg-brand">
+                                                        <div class="kt-portlet__head-label">
+                                                            <h3 class="kt-portlet__head-title">
+                                                                {{routeInfo.startCarStop.name}}
+                                                            </h3>
+                                                        </div>
+                                                    </div>
+                                                    <div class="kt-portlet__body"
+                                                        style="height: 10px; background-color: rgb(147, 159, 231); text-align: center; border-top-left-radius: 0px !important; border-top-right-radius: 0px !important; padding-top: 10px!important">
+                                                        <div style="display: inline-block; text-align: left"> Khởi
+                                                            hành </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="ui-sortable carStopContainer" id="kt_sortable_portlets">
+                                                {{#each routeInfo.studentList.carStops}}
+                                                <div class="kt-portlet kt-portlet--mobile addressTab kt-portlet--sortable"
+                                                    carStopID="{{_id}}" index="{{@index}}">
+                                                    <div class="kt-portlet__head ui-sortable-handle">
+                                                        <div class="kt-portlet__head-label">
+                                                            <h3 class="kt-portlet__head-title">
+                                                                {{name}}
+                                                            </h3>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <!--end:: Widgets/Stats2-1 -->
+                                                {{/each}}
                                             </div>
+                                            <div id="endCarStop">
+                                                <div class="kt-portlet kt-portlet--mobile kt-portlet__head--noborder addressTab kt-portlet--skin-solid kt-bg-danger"
+                                                    id="${index}">
+                                                    <div class="kt-portlet__head kt-portlet__head--noborder">
+                                                        <div class="kt-portlet__head-label">
+                                                            <h3 class="kt-portlet__head-title">
+                                                                {{routeInfo.endCarStop.name}}
+                                                            </h3>
+                                                        </div>
+                                                    </div>
+                                                    <div class="kt-portlet__body"
+                                                        style="height: 10px; background-color: rgb(251, 201, 218); text-align: center; border-top-left-radius: 0px !important; border-top-right-radius: 0px !important; padding-top: 9px!important">
+                                                        <div style="display: inline-block; text-align: left"> Điểm
+                                                            cuối </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-8">
+                                            <button data-toggle="collapse" data-target=".collapse"
+                                                class="floatingContent confirmButton btn btn-primary btn-sm"><i
+                                                    class="fas fa-check" style="right: 20px !important"></i>Xác nhận
+                                                lộ trình
+                                            </button>
+                                            {{>routeMap}}
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane" id="studentList" role="tabpanel">
-                                <!--begin::Section-->
-                                <div class="kt-section">
-                                    <div class="kt-section__content">
-                                        <table class="table table-bordered table-hover" id="table-studentList">
-                                            <thead class="thead-light">
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>Mã HS</th>
-                                                    <th>Tên HS</th>
-                                                    <th>Số điện thoại</th>
-                                                    <th>Lớp</th>
-                                                    <th>Giáo viên</th>
-                                                    <th>Trường</th>
-                                                    <th>Địa chỉ trường</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-
-                                            </tbody>
-
-                                        </table>
-                                    </div>
-                                </div>
-                                <!--end::Section-->
-                            </div>
-                            <div class="tab-pane" id="routeMapMonitor" role="tabpanel">
-                                <!--begin::Section-->
-                                <div class="kt-section">
-                                    <div class="kt-section__content">
-                                        <div class="row">
-                                            <div class="col-4 anchorHeight" id="addPane" style="overflow: auto;">
-                                                <div id="des">
-                                                </div>
-                                                <div class="ui-sortable carStopContainer" id="kt_sortable_portlets">
-                                                </div>
-                                                <div id="start">
-                                                </div>
-                                                
-                                            
-                                            </div>
-
-                                            <div class="col-8">
-                                                <button data-toggle="collapse" data-target=".collapse"
-                                                    class="floatingContent confirmButton btn btn-primary btn-sm"><i
-                                                        class="fas fa-check" style="right: 20px !important"></i>Xác nhận
-                                                    lộ trình
-                                                </button>
-                                                <button data-toggle="collapse" data-target=".collapse"
-                                                    class="floatingContentB autoDirect btn btn-primary btn-sm"><i
-                                                        class="fas fa-compass" style="right: 100px !important"></i>Tự
-                                                    động định tuyến
-                                                </button>
-                                                {{>routeMap}}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!--end::Section-->
-                            </div>
+                            <!--end::Section-->
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -179,4 +218,17 @@
 </template>
 <template name="routeMap">
     <div id="routeMiniMap" style="padding: 0px; z-index: 0; height: 450px !important;"></div>
+</template>
+
+<template name="routeStudentRow">
+    <tr id="${studentInfo._id}">
+        <th scope="row">{{index}}</th>
+        <td>{{data.IDStudent}}</td>
+        <td>{{data.user.name}}</td>
+        <td>{{data.user.phone}}</td>
+        <td>{{data.class.name}}</td>
+        <td>{{data.class.teacher.user.name}}</td>
+        <td>{{data.school.name}}</td>
+        <td>{{data.school.address}}</td>
+    </tr>
 </template>
