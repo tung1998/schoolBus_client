@@ -180,8 +180,8 @@ function bindMarker(carStop, icon = normalCarStopMarker) {
 }
 
 function reloadMap() {
-    let carStopListAll = [startCarStop, startCarStop].concat(carStopList).concat([endCarStop])
-    let coorArr = carStopListAll.map(item => item.location)
+    let carStopListAll = [startCarStop, startCarStop].concat(carStopList).concat([endCarStop, endCarStop])
+    let coorArr = carStopListAll.map(item => item.location).reverse()
     MeteorCall(_METHODS.wemap.getDrivePath, coorArr, accessToken).then(result => {
         let pol = []
         let a = result.routes[0].legs
