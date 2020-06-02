@@ -86,7 +86,6 @@ function reloadData() {
     MeteorCall(_METHODS.route.GetById, {
         _id: routeID
     }, accessToken).then(result => {
-        console.log(result);
         startCarStop = result.startCarStop
         endCarStop = result.endCarStop
         Session.set('routeInfo', result)
@@ -126,8 +125,6 @@ function dragTab(event) {
             let newCarStopIDList = $('#kt_sortable_portlets div[carStopID]:not(.ui-sortable-helper)').map((index, item) => {
                 return item.getAttribute('carStopID')
             }).toArray()
-            console.log(newCarStopIDList)
-            console.log(carStopIDs)
             if (JSON.stringify(newCarStopIDList) == JSON.stringify(carStopIDs)) {
                 clickCarStop(event)
             } else {
@@ -169,7 +166,6 @@ function swapPcs(arr) {
 function confirmPath(event) {
     let studentListID = Session.get('routeInfo').studentList._id
     MeteorCall(_METHODS.studentList.Update, { _id: studentListID, carStopIDs: carStopIDs }, accessToken).then(result => {
-        //console.log(result);
         handleSuccess('Cập nhật thành công')
     }).catch(handleError)
 }
@@ -185,9 +181,7 @@ function bindMarker(carStop, icon = normalCarStopMarker) {
 
 function reloadMap() {
     let carStopListAll = [startCarStop, startCarStop].concat(carStopList).concat([endCarStop])
-    console.log(carStopListAll)
     let coorArr = carStopListAll.map(item => item.location)
-    console.log(carStopListAll)
     MeteorCall(_METHODS.wemap.getDrivePath, coorArr, accessToken).then(result => {
         let pol = []
         let a = result.routes[0].legs
