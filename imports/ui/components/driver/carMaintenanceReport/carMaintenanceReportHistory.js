@@ -1,147 +1,137 @@
-import './carMaintenanceReport.html';
+import './carMaintenanceReportHistory.html';
 
 const Cookies = require("js-cookie");
+import {
+    Session
+} from "meteor/session";
 
 import {
     MeteorCall,
     handleError,
+    handleSuccess,
+    handleConfirm,
+    addRequiredInputLabel,
     addPaging,
-    tablePaging,
+    handlePaging,
+    getLimitDocPerPage
 } from "../../../../functions";
 
 import {
     _METHODS,
-    LIMIT_DOCUMENT_PAGE
+    LIMIT_DOCUMENT_PAGE,
+    _SESSION,
 } from "../../../../variableConst";
 
 let accessToken;
 let currentPage = 1;
-let historyType;
 
 Template.carMaintenanceReportHistory.onCreated(() => {
-
+    accessToken = Cookies.get('accessToken')
 })
 
 Template.carMaintenanceReportHistory.onRendered(() => {
-    addPaging()
-    tablePaging()
-    $(".history_type").click()
+    // addPaging()
+    // tablePaging()
+    Session.set('cars', [])
+    Session.set('species', true)
 })
-
-Template.carMaintenanceReport.events({
-    'click .history_type': ClickHistoryType,
-})
-
-function ClickHistoryType(e) {
-    e.preventDefault();
-    let target = $(e.currentTarget);
-    let target_id = target.attr("id");
-    console.log(target_id);
-    if (target_id == "fuel_history") {
-        historyType = "fuel";
-    } else {
-        historyType = "maintenance";
-    }
-    reloadTable(1, getLimitDocPerPage())
-}
-
-function getLimitDocPerPage() {
-    return 15;
-}
-
-function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
-    let table = $('#table-body');
-    let emptyWrapper = $('#empty-data');
-    table.html('');
-
-    let method;
-    if (historyType == "maintenance") {
-        $(".carMaintenanceReportHistory_title").html("Lịch sử bảo dưỡng")
-        $("#description").html("Nội dung")
-        method = _METHODS.carMaintenance.GetByPage;
-    } else if (historyType == "fuel") {
-        $(".carMaintenanceReportHistory_title").html("Lịch sử đổ xăng")
-        $("#description").html("Thể tích")
-        method = _METHODS.carFuel.GetByPage;
-    }
-
-    MeteorCall(method, {
-        page: page,
-        limit: limitDocPerPage
-    }, accessToken).then(result => {
-        tablePaging(".tablePaging", result.count, page, limitDocPerPage)
-        $("#paging-detail").html(`Hiển thị ${limitDocPerPage} bản ghi`)
-        if (result.count === 0) {
-            $('.tablePaging').addClass('d-none');
-            table.parent().addClass('d-none');
-            emptyWrapper.removeClass('d-none');
-        } else if (result.count > limitDocPerPage) {
-            $('.tablePaging').removeClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
-            // update số bản ghi
-        } else {
-            $('.tablePaging').addClass('d-none');
-            table.parent().removeClass('d-none');
-            emptyWrapper.addClass('d-none');
+Template.addFuelReportModal.onRendered(() => {
+    $('#car1-input').select2({
+        width: '100%',
+        placeholder: "Chọn xe",
+        language: {
+            noResults: function () {
+                return "Không có dữ liệu";
+            },
+    
         }
-        createTable(table, result, limitDocPerPage)
     })
+})
+Template.addMaintenanceReportModal.onRendered(() => {
+    $('#car2-input').select2({
+        width: '100%',
+        placeholder: "Chọn xe",
+        language: {
+            noResults: function () {
+                return "Không có dữ liệu";
+            }
+        }
+        
+    })
+    $('#type-input').select2({
+        width: '100%',
+        placeholder: "Thể tích",
+        minimumResultsForSearch: Infinity,
+    })
+})
 
+
+Template.carMaintenanceReportHistory.helpers({
+    
+})
+
+Template.carMaintenanceReportHistory.onDestroyed(() => {
+    Session.delete('cars')
+    Session.delete('species')
+})
+
+Template.carMaintenanceReportHistory.events({
+    // "click .kt-datatable__pager-link": (e) => {
+    //     reloadTable(parseInt($(e.currentTarget).data('page')), getLimitDocPerPage());
+    //     $(".kt-datatable__pager-link").removeClass("kt-datatable__pager-link--active");
+    //     $(e.currentTarget).addClass("kt-datatable__pager-link--active")
+    //     currentPage = parseInt($(e.currentTarget).data('page'));
+    // },
+    // "change #limit-doc": (e) => {
+    //     reloadTable(1, getLimitDocPerPage());
+    // },
+    
+    
+    
+})
+
+
+function getCars(options = null, carID = null) {
+    MeteorCall(_METHODS.trip.GetAll, {
+        options
+    }, accessToken).then(result => {
+        console.log(result);
+        Session.set('cars', result.data)
+        if (carID) $("#student-carStopID").val(carStopID).trigger('change')
+    }).catch(handleError)
 }
 
-function renderTable(data, page = 1) {
+function reloadData(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options = null) {
     let table = $('#table-body');
-    let emptyWrapper = $('#empty-data');
-    table.html('');
-    tablePaging('.tablePaging', data.count, page);
-    if (carStops.count === 0) {
-        $('.tablePaging').addClass('d-none');
-        table.parent().addClass('d-none');
-        emptyWrapper.removeClass('d-none');
-    } else {
-        $('.tablePaging').addClass('d-none');
-        table.parent().removeClass('d-none');
-        emptyWrapper.addClass('d-none');
-    }
-
-    createTable(table, data);
+    MeteorCall(_METHODS.feedback.GetByPage, {
+        page: page,
+        limit: limitDocPerPage,
+        options
+    }, accessToken).then(result => {
+        console.log(result)
+        handlePaging(table, result.count, page, limitDocPerPage)
+        Session.set('trips', result.data.map((key, index) => {
+            key.index = index + (result.page - 1) * limitDocPerPage + 1;
+            return key;
+        }))
+    })
 }
 
-function createTable(table, result, limitDocPerPage) {
-    console.log(result)
-    result.data.forEach((key, index) => {
-        key.index = index + (result.page - 1) * limitDocPerPage;
-        const row = createRow(key);
-        table.append(row);
-    });
-}
+// function createTable(table, result, limitDocPerPage) {
+//     console.log(result)
+//     result.data.forEach((key, index) => {
+//         key.index = index + (result.page - 1) * limitDocPerPage;
+//         const row = createRow(key);
+//         table.append(row);
+//     });
+// }
 
-function createRow(data) {
-    const data_row = dataRow(data);
-    // _id is tripID
-    return `
-        <tr id="${data._id}">
-          ${data_row}
-        </tr>
-        `
-}
-
-function dataRow(result) {
-    if (historyType == "maintenance") {
-        return `
-                        <th scope="row">${result.index}</th>
-                        <td>${moment(result.createdTime).format('L')}</td>
-                        <td>${result.price}</td>
-                        <td>${result.description}</td>
-                    `
-    } else if (historyType == "fuel") {
-        return `
-                        <th scope="row">${result.index}</th>
-                        <td>${moment(result.createdTime).format('L')}</td>
-                        <td>${result.price}</td>
-                        <td>${result.volume}</td>
-                    `
-    }
-
-}
+// function createRow(data) {
+//     const data_row = dataRow(data);
+//     // _id is tripID
+//     return `
+//         <tr id="${data._id}">
+//           ${data_row}
+//         </tr>
+//         `
+// }

@@ -19,7 +19,7 @@ driverRoutes.route('/carMaintenanceReport', {
         BlazeLayout.setRoot("body"),
             BlazeLayout.render('App_body', {
                 main: 'App_home',
-                content: 'carMaintenanceReport',
+                content: 'carMaintenanceReportHistory',
             });
     },
 });

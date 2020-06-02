@@ -1,0 +1,251 @@
+<template name="carMaintenanceReportHistory">
+    <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+        <!-- begin:: Subheader -->
+        <div class="kt-subheader   kt-grid__item" id="kt_subheader">
+            <div class="kt-container  kt-container--fluid ">
+                <div class="kt-subheader__main">
+                    <h3 class="kt-subheader__title">
+
+                        Quản lý chi phí </h3>
+
+                    <span class="kt-subheader__separator kt-hidden"></span>
+                    <div class="kt-subheader__breadcrumbs">
+                        <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
+                        <span class="kt-subheader__breadcrumbs-separator"></span>
+                        <a href="" class="kt-subheader__breadcrumbs-link">
+                            SchoolBus </a>
+                        <span class="kt-subheader__breadcrumbs-separator"></span>
+                        <a href="" class="kt-subheader__breadcrumbs-link">
+                            Quản lý chi phí</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end:: Subheader -->
+
+        <!-- begin:: Content -->
+        <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+            <div class="kt-portlet kt-portlet--tabs">
+                <div class="kt-portlet__head">
+                    <div class="kt-portlet__head-toolbar">
+                        <ul class="nav nav-tabs nav-tabs-space-xl nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-brand"
+                            role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#fuelList" role="tab">
+                                    <i class="fa fa-funnel-dollar"></i> Chi phí xăng dầu
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#maintenaceList" role="tab">
+                                    <i class="fa fa-prescription-bottle
+                                    "></i> Chi phí bảo trì
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="kt-portlet__body">
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="fuelList" role="tabpanel">
+                            {{>fuelManager}}
+                        </div>
+                        <div class="tab-pane" id="maintenaceList" role="tabpanel">
+                            {{>maintenanceManager}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="kt-portlet kt-hidden" id="noData">
+                <div class="kt-portlet__head">
+                    <div class="kt-portlet__head-toolbar">
+                        Không có dữ liệu
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end:: Content -->
+    </div>
+    {{>addFuelReportModal}}
+    {{>addMaintenanceReportModal}}
+</template>
+
+<template name="fuelManager">
+    <!--begin::Section-->
+    <div class="kt-section">
+        <div class="kt-section__content">
+            <button type="button" class="btn btn-primary btn-sm mb-4" id="add-fuel-report" data-toggle="modal"
+                data-target="#addFuelReportModal"> <i class="fa fa-plus"></i> Thêm mới</button>
+            <div class="kt-datatable kt-datatable--default kt-datatable--brand">
+                <p id="empty-data" class="text-muted font-14 d-none">
+                    Không có dữ liệu
+                </p>
+                <table class="table table-head-bg-brand table-hover" id="fuelTable">
+                    <thead class="thead-inverse">
+                        <tr class="text-center">
+                            <th width="5%">#</th>
+                            <th>Xe</th>
+                            <th>Số lượng (lít)</th>
+                            <th>Thành tiền</th>
+                            <th>Ghi chú</th>
+                            <th width="13%">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--end::Section-->
+</template>
+
+<template name="maintenanceManager">
+    <!--begin::Section-->
+    <div class="kt-section">
+        <div class="kt-section__content">
+            <button type="button" class="btn btn-primary btn-sm mb-4" id="add-maintenance-report" data-toggle="modal"
+                data-target="#addMaintenanceReportModal"> <i class="fa fa-plus"></i> Thêm mới</button>
+            <div class="kt-datatable kt-datatable--default kt-datatable--brand">
+                <p id="empty-data" class="text-muted font-14 d-none">
+                    Không có dữ liệu
+                </p>
+                <table class="table table-head-bg-brand table-hover" id="maintenaceTable">
+                    <thead class="thead-inverse">
+                        <tr class="text-center">
+                            <th width="5%">#</th>
+                            <th>Xe</th>
+                            <th>Loại</th>
+                            <th>Thành tiền</th>
+                            <th>Ghi chú</th>
+                            <th width="13%">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--end::Section-->
+</template>
+
+<template name="addFuelReportModal">
+    <div class="modal fade" id="addFuelReportModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title add-more" id="exampleModalLabel">Thêm mới</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="kt-form kt-form--label-right form-input">
+                        <div class="kt-portlet__body">
+                            <div class="form-group row">
+                                <label for="" class="col-2 col-form-label required-input-label">Xe</label>
+                                <div class="col-10">
+                                    <select class="form-control" name="car" id="car1-input">
+                                        <option value=""></option>
+                                        {{#each cars}}
+                                        <option value="{{_id}}">{{numberPlate}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="" class="col-2 col-form-label required-input-label">Thể tích</label>
+                                <div class="col-10">
+                                    <input class="form-control" type="text" id="volume-input" name=""
+                                        placeholder="Thể tích">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="" class="col-2 col-form-label required-input-label">Thành tiền</label>
+                                <div class="col-10">
+                                    <input class="form-control" type="text" id="price-input" name=""
+                                        placeholder="Thành tiền">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="" class="col-2 col-form-label">Ghi chú</label>
+                                <div class="col-10">
+                                    <input class="form-control" type="text" id="note-input" name=""
+                                        placeholder="Ghi chú">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-primary confirm-button">Xác nhận</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="addMaintenanceReportModal">
+    <div class="modal fade" id="addMaintenanceReportModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title add-more" id="exampleModalLabel">Thêm mới</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="kt-form kt-form--label-right form-input">
+                        <div class="kt-portlet__body">
+                            <div class="form-group row">
+                                <label for="" class="col-2 col-form-label required-input-label">Xe</label>
+                                <div class="col-10">
+                                    <select class="form-control" name="car" id="car2-input">
+                                        <option value=""></option>
+                                        {{#each cars}}
+                                        <option value="{{_id}}">{{numberPlate}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="" class="col-2 col-form-label required-input-label">Loại</label>
+                                <div class="col-10">
+                                    <select class="form-control" name="type" id="type-input">
+                                        <option value=""></option>
+                                        <option value="1">Rửa xe</option>
+                                        <option value="2">Sửa chữa</option>
+                                        <option value="3">Chi phí khác</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="" class="col-2 col-form-label required-input-label">Thành tiền</label>
+                                <div class="col-10">
+                                    <input class="form-control" type="text" id="price-input" name=""
+                                        placeholder="Thành tiền">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="" class="col-2 col-form-label">Ghi chú</label>
+                                <div class="col-10">
+                                    <input class="form-control" type="text" id="note-input" name=""
+                                        placeholder="Ghi chú">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-primary confirm-button">Xác nhận</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

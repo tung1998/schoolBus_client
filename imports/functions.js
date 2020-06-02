@@ -163,6 +163,7 @@ function addPaging(table) {
     `)
     $('#limit-doc').select2({
         width: "100%",
+        height: "30px",
         minimumResultsForSearch: Infinity,
     })
 }
