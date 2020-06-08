@@ -8,7 +8,7 @@ App.info({
     version: '1.0.0'
 });
 
-App.addResourceFile('google-services.json', 'google-services.json', 'android');
+// App.addResourceFile('google-services.json', 'google-services.json', 'android');
 
 App.accessRule('https://maps.googleapis.com/*');
 App.accessRule('*');
