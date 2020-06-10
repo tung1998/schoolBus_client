@@ -30,13 +30,14 @@ Template.carMaintenanceReportHistory.onCreated(() => {
 })
 
 Template.carMaintenanceReportHistory.onRendered(() => {
-    // addPaging()
-    // tablePaging()
+    addPaging($('fuelTable'))
+    addPaging($('maintenaceTable'))
+    reloadTable()
     Session.set('cars', [])
     Session.set('species', true)
 })
 Template.addFuelReportModal.onRendered(() => {
-    $('#car1-input').select2({
+    $('#fuel-car-input').select2({
         width: '100%',
         placeholder: "Chọn xe",
         language: {
@@ -48,7 +49,7 @@ Template.addFuelReportModal.onRendered(() => {
     })
 })
 Template.addMaintenanceReportModal.onRendered(() => {
-    $('#car2-input').select2({
+    $('#maintenance-car-input').select2({
         width: '100%',
         placeholder: "Chọn xe",
         language: {
@@ -58,7 +59,7 @@ Template.addMaintenanceReportModal.onRendered(() => {
         }
         
     })
-    $('#type-input').select2({
+    $('#maintenance-type-input').select2({
         width: '100%',
         placeholder: "Thể tích",
         minimumResultsForSearch: Infinity,
@@ -76,20 +77,29 @@ Template.carMaintenanceReportHistory.onDestroyed(() => {
 })
 
 Template.carMaintenanceReportHistory.events({
-    // "click .kt-datatable__pager-link": (e) => {
-    //     reloadTable(parseInt($(e.currentTarget).data('page')), getLimitDocPerPage());
-    //     $(".kt-datatable__pager-link").removeClass("kt-datatable__pager-link--active");
-    //     $(e.currentTarget).addClass("kt-datatable__pager-link--active")
-    //     currentPage = parseInt($(e.currentTarget).data('page'));
-    // },
-    // "change #limit-doc": (e) => {
-    //     reloadTable(1, getLimitDocPerPage());
-    // },
-    
-    
-    
+    "click .kt-datatable__pager-link": (e) => {
+        reloadTable(parseInt($(e.currentTarget).data('page')), getLimitDocPerPage());
+        $(".kt-datatable__pager-link").removeClass("kt-datatable__pager-link--active");
+        $(e.currentTarget).addClass("kt-datatable__pager-link--active")
+        currentPage = parseInt($(e.currentTarget).data('page'));
+    },
+    "change #limit-doc": (e) => {
+        reloadTable(1, getLimitDocPerPage());
+    },
+     
 })
 
+Template.fuelManager.helpers({
+    dataFuels(){
+        return Session.get('dataFuel')
+    }
+})
+
+Template.maintenanceManager.helpers({
+    dataMaintenance() {
+        return Session.get('dataMaintenance')
+    }
+})
 
 function getCars(options = null, carID = null) {
     MeteorCall(_METHODS.trip.GetAll, {
@@ -101,37 +111,31 @@ function getCars(options = null, carID = null) {
     }).catch(handleError)
 }
 
-function reloadData(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options = null) {
+function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options = null) {
     let table = $('#table-body');
-    MeteorCall(_METHODS.feedback.GetByPage, {
+    MeteorCall(_METHODS.carFuel.GetByPage, {
         page: page,
         limit: limitDocPerPage,
         options
     }, accessToken).then(result => {
         console.log(result)
         handlePaging(table, result.count, page, limitDocPerPage)
-        Session.set('trips', result.data.map((key, index) => {
+        Session.set('dataFuel', result.data.map((key, index) => {
+            key.index = index + (result.page - 1) * limitDocPerPage + 1;
+            return key;
+        }))
+    })
+    MeteorCall(_METHODS.carMaintenance.GetByPage, {
+        page: page,
+        limit: limitDocPerPage,
+        options
+    }, accessToken).then(result => {
+        console.log(result)
+        handlePaging(table, result.count, page, limitDocPerPage)
+        Session.set('dataMaintenance', result.data.map((key, index) => {
             key.index = index + (result.page - 1) * limitDocPerPage + 1;
             return key;
         }))
     })
 }
 
-// function createTable(table, result, limitDocPerPage) {
-//     console.log(result)
-//     result.data.forEach((key, index) => {
-//         key.index = index + (result.page - 1) * limitDocPerPage;
-//         const row = createRow(key);
-//         table.append(row);
-//     });
-// }
-
-// function createRow(data) {
-//     const data_row = dataRow(data);
-//     // _id is tripID
-//     return `
-//         <tr id="${data._id}">
-//           ${data_row}
-//         </tr>
-//         `
-// }

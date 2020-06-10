@@ -1,0 +1,357 @@
+<template name="dashboard">
+  <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+    <!-- begin:: Subheader -->
+    <div class="kt-subheader   kt-grid__item" id="kt_subheader">
+      <div class="kt-container  kt-container--fluid ">
+        <div class="kt-subheader__main">
+          <h3 class="kt-subheader__title">
+            Trang chủ
+          </h3>
+
+          <span class="kt-subheader__separator kt-hidden"></span>
+          <div class="kt-subheader__breadcrumbs">
+            <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
+            <span class="kt-subheader__breadcrumbs-separator"></span>
+            <a href="" class="kt-subheader__breadcrumbs-link"> SchoolBus </a>
+            <span class="kt-subheader__breadcrumbs-separator"></span>
+            <a href="" class="kt-subheader__breadcrumbs-link">
+              Thống kê</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end:: Subheader -->
+
+    <!-- begin:: Content -->
+    <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+      <div class="row">
+        <div class="col">
+          <div class="kt-portlet">
+            <div class="kt-portlet__head">
+              <div class="kt-portlet__head-label">
+                <h3 class="kt-portlet__head-title">
+                  Thống kê
+                </h3>
+              </div>
+            </div>
+            <div class="kt-portlet__body">
+              <div class="kt-section">
+                <div class="kt-section__content">
+                  <div class="row">
+                    <div class="col-lg-12 col-xl-12 col-md-12 order-lg-1 order-xl-1 order-md-1">
+                      <div class="kt-widget17">
+                        <div class="kt-widget17__stats custom_stats">
+                          <div class="kt-widget17__stats custom_stats">
+                            <div class="kt-portlet__head kt-portlet__space-x">
+                              <div class="kt-portlet__head-label">
+                                <h5 class="kt-portlet__head-title">
+                                  Trường học
+                                </h5>
+                              </div>
+                              <!-- <div class="kt-portlet__head-toolbar">
+                                <h6 class="kt-portlet__head-title" style="
+                                width: 100%;
+                                margin-right: 1rem">
+                                  Trường học:
+                                </h6>
+                                <select id="school-dashboard">
+                                  <option value=""></option>
+                                  <option value="1">Trường Học A</option>
+                                  <option value="2">Trường Học B</option>
+                                  <option value="3">rường Học C</option>
+                                </select>
+                              </div> -->
+                            </div>
+                            <div class="kt-widget17__items">
+                              <div class="kt-widget17__item">
+                                <span class="kt-widget17__icon" style="color: rgb(77, 212, 50)">
+                                  <i class="fa fa-school"></i>
+                                </span>
+                                <div class="information">
+                                  <span class="kt-widget17__subtitle">
+                                    Trường học
+                                  </span>
+                                  <span class="kt-widget17__desc">
+                                    2
+                                  </span>
+                                </div>
+                              </div>
+                              <div class="kt-widget17__item">
+                                <span class="kt-widget17__icon" style="color: rgb(0, 202, 158)">
+                                  <i class="fas fa-grip-horizontal"></i>
+                                </span>
+                                <div class="information">
+                                  <span class="kt-widget17__subtitle">
+                                    Lớp
+                                  </span>
+                                  <span class="kt-widget17__desc">
+                                    2
+                                  </span>
+                                </div>
+                              </div>
+                              <div class="kt-widget17__item">
+                                <span class="kt-widget17__icon" style="color: rgb(75, 24, 216)">
+                                  <i class="fa fas fa-car"></i>
+                                </span>
+                                <div class="information">
+                                  <span class="kt-widget17__subtitle">
+                                    Số lượng xe
+                                  </span>
+                                  <span class="kt-widget17__desc">
+                                    2
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="kt-portlet__head kt-portlet__space-x">
+                            <div class="kt-portlet__head-label">
+                              <h5 class="kt-portlet__head-title">
+                                Tài khoản: 40
+                              </h5>
+                            </div>
+                            <div class="kt-portlet__head-toolbar">
+                              <h6 class="kt-portlet__head-title" style="
+                              width: 100%;
+                              margin: 0 1rem 0 0">
+                                Trường học:
+                              </h6>
+                              <select id="school-dashboard">
+                                <option value=""></option>
+                                <option value="1">Trường Học A</option>
+                                <option value="2">Trường Học B</option>
+                                <option value="3">Trường Học C</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="kt-widget17__items">
+                            <div class="kt-widget17__item">
+                              <span class="kt-widget17__icon" style="color: rgb(77, 212, 50)">
+                                <i class="fa fa-street-view"></i>
+                              </span>
+                              <div class="information">
+                                <span class="kt-widget17__subtitle">
+                                  Tài xế
+                                </span>
+                                <span class="kt-widget17__desc">
+                                  2
+                                </span>
+                              </div>
+                            </div>
+                            <div class="kt-widget17__item">
+                              <span class="kt-widget17__icon" style="color: rgb(0, 202, 158)">
+                                <i class="fa fa-street-view"></i>
+                              </span>
+                              <div class="information">
+                                <span class="kt-widget17__subtitle">
+                                  Bảo mẫu
+                                </span>
+                                <span class="kt-widget17__desc">
+                                  2
+                                </span>
+                              </div>
+                            </div>
+                            <div class="kt-widget17__item">
+                              <span class="kt-widget17__icon" style="color: rgb(75, 24, 216)">
+                                <i class="fa fa-street-view"></i>
+                              </span>
+                              <div class="information">
+                                <span class="kt-widget17__subtitle">
+                                  Giáo viên
+                                </span>
+                                <span class="kt-widget17__desc">
+                                  2
+                                </span>
+                              </div>
+                            </div>
+                            <div class="kt-widget17__item">
+                              <span class="kt-widget17__icon" style="color: rgb(170, 20, 90)">
+                                <i class="fa fa-street-view"></i>
+                              </span>
+                              <div class="information">
+                                <span class="kt-widget17__subtitle">
+                                  Phụ huynh
+                                </span>
+                                <span class="kt-widget17__desc">
+                                  4
+                                </span>
+                              </div>
+                            </div>
+                            <div class="kt-widget17__item">
+                              <span class="kt-widget17__icon" style="color: rgb(131, 68, 98)">
+                                <i class="fa fa-street-view"></i>
+                              </span>
+                              <div class="information">
+                                <span class="kt-widget17__subtitle">
+                                  Học sinh
+                                </span>
+                                <span class="kt-widget17__desc">
+                                  30
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="kt-portlet__head kt-portlet__space-x">
+                            <div class="kt-portlet__head-label">
+                              <h5 class="kt-portlet__head-title">
+                                Chuyến đi
+                              </h5>
+                            </div>
+                            <!-- <div class="kt-portlet__head-toolbar">
+                              <h6 class="kt-portlet__head-title" style="
+                              width: 100%;
+                              margin-right: 1rem">
+                                Trường học:
+                              </h6>
+                              <select id="school-dashboard">
+                                <option value=""></option>
+                                <option value="1">Trường Học A</option>
+                                <option value="2">Trường Học B</option>
+                                <option value="3">rường Học C</option>
+                              </select>
+                            </div> -->
+                          </div>
+                          <div class="kt-widget17__items">
+                            <div class="kt-widget17__item">
+                              <span class="kt-widget17__icon" style="color: rgb(77, 212, 50)">
+                                <i class="fa fas fa-map-marker-alt"></i>
+                              </span>
+                              <div class="information">
+                                <span class="kt-widget17__subtitle">
+                                  Điểm dừng
+                                </span>
+                                <span class="kt-widget17__desc">
+                                  10
+                                </span>
+                              </div>
+                            </div>
+                            <div class="kt-widget17__item">
+                              <span class="kt-widget17__icon" style="color: rgb(0, 202, 158)">
+                                <i class="fas fa-road"></i>
+                              </span>
+                              <div class="information">
+                                <span class="kt-widget17__subtitle">
+                                  Cung đường
+                                </span>
+                                <span class="kt-widget17__desc">
+                                  2
+                                </span>
+                              </div>
+                            </div>
+                            <div class="kt-widget17__item">
+                              <span class="kt-widget17__icon" style="color: rgb(75, 24, 216)">
+                                <i class="fa fas fa-car-side"></i>
+                              </span>
+                              <div class="information">
+                                <span class="kt-widget17__subtitle">
+                                  Số Chuyến
+                                </span>
+                                <span class="kt-widget17__desc">
+                                  2
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-6 order-lg-2 order-xl-2 order-md-2">
+                      <div class="kt-widget14">
+                        <div class="kt-widget14__header">
+                          <h3 class="kt-widget14__title">
+                            Biểu đồ tài khoản
+                          </h3>
+                          <span class="kt-widget14__desc">
+
+                          </span>
+                        </div>
+                        <div class="kt-widget14__content">
+                          <div class="kt-widget14__chart">
+                            <div class="kt-widget14__stat">40</div>
+                            <canvas id="userChart" style="height: 140px; width: 140px; z-index: 0"></canvas>
+                          </div>
+                          <div class="kt-widget14__legends">
+                            <div class="kt-widget14__legend">
+                              <span class="kt-widget14__bullet" style="background-color: rgb(77, 212, 50);"></span>
+                              <span class="kt-widget14__stats">Tài xế</span>
+                            </div>
+                            <div class="kt-widget14__legend">
+                              <span class="kt-widget14__bullet" style="background-color: rgb(0, 202, 158);"></span>
+                              <span class="kt-widget14__stats">Bảo mẫu</span>
+                            </div>
+                            <div class="kt-widget14__legend">
+                              <span class="kt-widget14__bullet" style="background-color: rgb(75, 24, 216);"></span>
+                              <span class="kt-widget14__stats">Giáo viên</span>
+                            </div>
+                            <div class="kt-widget14__legend">
+                              <span class="kt-widget14__bullet" style="background-color: rgb(170, 20, 90);"></span>
+                              <span class="kt-widget14__stats">Phụ huynh</span>
+                            </div>
+                            <div class="kt-widget14__legend">
+                              <span class="kt-widget14__bullet" style="background-color: rgb(131, 68, 98);"></span>
+                              <span class="kt-widget14__stats">Học sinh</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-6 order-lg-2 order-xl-2 order-md-2">
+                      <div class="kt-widget14">
+                        <div class="kt-widget14__header">
+                          <h3 class="kt-widget14__title">
+                            Biểu đồ Trường học
+                          </h3>
+                          <span class="kt-widget14__desc">
+
+                          </span>
+                        </div>
+                        <div class="kt-widget14__content">
+                          <div class="kt-widget14__chart">
+                            <div class="kt-widget14__stat">6</div>
+                            <canvas id="schoolChart" style="height: 140px; width: 140px; z-index: 0"></canvas>
+                          </div>
+                          <div class="kt-widget14__legends">
+                            <div class="kt-widget14__legend">
+                              <span class="kt-widget14__bullet" style="background-color: rgb(77, 212, 50);"></span>
+                              <span class="kt-widget14__stats">Trường học</span>
+                            </div>
+                            <div class="kt-widget14__legend">
+                              <span class="kt-widget14__bullet" style="background-color: rgb(0, 202, 158);"></span>
+                              <span class="kt-widget14__stats">Lớp học</span>
+                            </div>
+                            <div class="kt-widget14__legend">
+                              <span class="kt-widget14__bullet" style="background-color: rgb(75, 24, 216);"></span>
+                              <span class="kt-widget14__stats">Số lượng xe</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="fetchData">
+  <div class="kt-widget17__item">
+    <span class="kt-widget17__icon" style="color: rgb(175, 41, 41)">
+      <i class="fa fa-street-view"></i>
+    </span>
+    <div class="information">
+      <span class="kt-widget17__subtitle">
+        Lái xe
+      </span>
+      <span class="kt-widget17__desc">
+        15
+      </span>
+    </div>
+  </div>
+</template>

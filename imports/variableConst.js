@@ -216,6 +216,7 @@ const _METHODS = {
         GetAll: 'trip.getAll',
         GetById: 'trip.getByID',
         GetByTime: 'trip.getByTime',
+        GetByPage: 'trip.getByPage',
         Create: 'trip.create',
         Update: 'trip.update',
         Delete: 'trip.delete',
