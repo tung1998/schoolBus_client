@@ -24,6 +24,7 @@ if (Meteor.isServer) {
         'trip.attendance': attendanceTrip,
         'trip.image': imageTrip,
         'trip.getByTime': getTripByTime,
+        'trip.getByPage': getTripByPage,
         'trip.getNext': getNextTrip,
         'trip.getLogByTripID': getTripLogByTripID,
         'trip.modifyTripStatus': modifyTripStatus,
@@ -40,6 +41,17 @@ function getAllTrip(data, accessToken = '') {
 
 function getTripByID(data, accessToken = '') {
     let url = `${AUTH_TRIP}/${data._id}`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
+}
+
+function getTripByPage(data, accessToken = '') {
+    let url = `${AUTH_TRIP}/${data.page}?limit=${data.limit}`
+    if (data.options && data.options.length)
+        data.options.forEach(item => {
+            if (item.value) url += `&${encodeURIComponent(item.text)}=${encodeURIComponent(item.value)}`
+        })
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });

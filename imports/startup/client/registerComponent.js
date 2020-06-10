@@ -37,6 +37,8 @@ import '../../ui/components/admin/tripManager/tripManager.js';
 import '../../ui/components/admin/tripManager/tripInfo/tripInfo';
 import '../../ui/components/admin/monitoring/monitoring.js';
 import '../../ui/components/admin/userManager/userManager.js';
+import '../../ui/components/admin/tripManager/tripSummary/tripSummary.js';
+import '../../ui/components/admin/dashboard/dashboard.js'
 
 // import '../../ui/components/admin/admin/admin.js';
 // driver template
