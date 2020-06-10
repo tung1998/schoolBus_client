@@ -232,7 +232,7 @@ async function reloadData() {
             tripData = await MeteorCall(_METHODS.trip.GetById, {
                 _id: FlowRouter.getParam('tripID')
             }, accessToken)
-        else if (routeName == 'driver.upCommingTripInfo')
+        else if (routeName == 'driver.upCommingTripInfo'||routeName == 'nanny.upCommingTripInfo')
             tripData = await MeteorCall(_METHODS.trip.GetNext, null, accessToken)
 
         //get info trip
