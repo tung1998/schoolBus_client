@@ -115,7 +115,8 @@ function createTable(table, result, limitDocPerPage) {
 }
 
 function createRow(result) {
-    console.log(result.endTime)
+    console.log(getJsonDefault(_TRIP.status, 'number', result.status))
+    let statusData = getJsonDefault(_TRIP.status, 'number', result.status)
     let data = {
        _id: result._id,
        car: result.car.numberPlate,
@@ -123,7 +124,7 @@ function createRow(result) {
        driverName: result.driver.user.name,
        nannyName: result.nanny.user.name,
        studentList: result.route.studentList.name,
-       status: getJsonDefault(_TRIP.status, 'number', result.status).text,
+       status: statusData.text,
        startTime: convertTime(result.startTime, true, "DD/MM/YYYY, HH:MM"),
        endTime: result.endTime ? convertTime(result.endTime, true, "DD/MM/YYYY, HH:MM"): 'Chưa kết thúc'
     }
@@ -140,7 +141,9 @@ function createRow(result) {
                 <td>${data.driverName}</td>
                 <td>${data.nannyName}</td>
                 <td>${data.studentList}</td>
-                <td>${data.status}</td>
+                <td>
+                    <span class="kt-badge kt-badge--${statusData.classname} kt-badge--inline kt-badge--pill kt-badge--rounded">${data.status}</span>
+                </td>
                 <td>${data.startTime}</td>
                 <td>${data.endTime}</td>
                 

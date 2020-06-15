@@ -328,12 +328,12 @@ const _TRIP = {
         },
         finish: {
             text: "Đã kết thúc",
-            classname: 'warning',
+            classname: 'dark',
             number: 2
         },
         accident: {
             text: "Gặp sự cố",
-            classname: 'danger',
+            classname: 'warning',
             number: 3
         }
     }
