@@ -58,9 +58,10 @@
                         <div class="tab-pane active" id="tripInfo" role="tabpanel">
                             <div class="row">
                                 <div class="col-6 kt-align-left" id="trip-status">
-
+                                    {{{tripStatusBtn}}}
                                 </div>
                                 <div class="col-6 kt-align-right" id="report-status">
+                                    {{{reportBtn}}}
                                 </div>
                             </div>
                             <hr>
@@ -167,7 +168,7 @@
                                     class="floatingContent polyToggle btn btn-primary btn-sm"><i class="fas fa-road"
                                         style="right: 20px !important"></i>Hiện/Ẩn đường đi
                                 </button>
-                                {{>tripMap}}
+                                <div id="tripMap" style="padding: 0px; z-index: 0; height: 450px !important;"></div>
                             </div>
 
                         </div>
@@ -345,16 +346,12 @@
     </div>
 </template>
 
-<template name="tripMap">
-    <div id="tripMap" style="padding: 0px; z-index: 0; height: 450px !important;"></div>
-</template>
-
 <template name="studentTripRow">
     <tr id="{{studentID}}" class="studentRow">
         <th scope="row">{{index}}</th>
         <td>{{student.IDStudent}}</td>
         <td>{{student.user.name}}</td>
-        <td>{{student.user.phone}}</td>
+        <td><span class="kt-badge kt-badge--{{status.classname}} kt-badge--inline ">{{status.text}}</span></td>
     </tr>
 </template>
 
@@ -364,7 +361,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel"></h5>
+                    <h5 class="modal-title" id="exampleModalLabel"> Báo cáo sự cố</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
@@ -381,19 +378,11 @@
                                             <span></span>
                                         </label>
                                         <label class="kt-radio">
-                                            <input type="radio" name="report" value="2"> Report1
+                                            <input type="radio" name="report" value="2"> Xe gặp sự cố
                                             <span></span>
                                         </label>
                                         <label class="kt-radio">
-                                            <input type="radio" name="report" value="3"> Report1
-                                            <span></span>
-                                        </label>
-                                        <label class="kt-radio">
-                                            <input type="radio" name="report" value="4"> Report1
-                                            <span></span>
-                                        </label>
-                                        <label class="kt-radio">
-                                            <input type="radio" name="report" value="5"> Lý do khác
+                                            <input type="radio" name="report" value="0"> Lý do khác
                                             <span></span>
                                         </label>
                                         <textarea class="form-control" id="report-content" disabled="disabled"

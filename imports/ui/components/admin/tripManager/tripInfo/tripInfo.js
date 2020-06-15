@@ -46,7 +46,7 @@ Template.tripDetail.onCreated(async () => {
     Session.set('studenInfoData', {})
     Session.set('tripData', {})
     Session.set('tripStatus', '')
-    Session.set('tripLog',[])
+    Session.set('tripLog', [])
 })
 
 Template.tripDetail.onRendered(() => {
@@ -56,50 +56,72 @@ Template.tripDetail.onRendered(() => {
     })
     initMap()
 
-    this.checkTripStatus = Tracker.autorun(() => {
-        if (Session.get('tripStatus') === 0) {
-            $('#trip-status').html(`
-                    <button type="button" class="btn btn-success btn-sm" id="status-trip" data-json=\'${JSON.stringify({status: Session.get('tripStatus')})}\'><i class="fas fa-play"></i> Bắt đầu</button>
-                `)
-        } else if (Session.get('tripStatus') === 1) {
-            $('#trip-status').html(`
-                    <button type="button" class="btn btn-dark btn-sm" id="status-trip" data-json=\'${JSON.stringify({status: Session.get('tripStatus')})}\'><i class="fas fa-stop"></i>Kết thúc</button>
-                `)
-            $('#report-status').html(`
-                <button type="button" class="btn btn-warning btn-sm" data-toggle="modal"
-                    data-target="#reportModal">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    Báo cáo sự cố
-                </button>
-            `)
-            
-        }
-        else if(Session.get('tripStatus') === 3) {
-            $('#report-status').html(`
-            <button type="button" class="btn btn-success btn-sm" id="status-trip" data-json=\'${JSON.stringify({status: Session.get('tripStatus')})}\'><i class="fas fa-play"></i> Tiếp tục</button>
-            `)
-            
-        }
-        else if (Session.get('tripStatus') === 2){
-            $('#trip-status').html('<span class="kt-badge kt-badge--success kt-badge--inline kt-badge--pill kt-badge--rounded">Chuyến đi đã kết thúc</span>')
-            $('#report-status').html('')
-        }
-    })
+    // this.checkTripStatus = Tracker.autorun(() => {
+    //     if (Session.get('tripStatus') === 0) {
+    //         $('#trip-status').html(`
+    //                 <button type="button" class="btn btn-success btn-sm" id="status-trip" data-json=\'${JSON.stringify({status: Session.get('tripStatus')})}\'><i class="fas fa-play"></i> Bắt đầu</button>
+    //             `)
+    //     } else if (Session.get('tripStatus') === 1) {
+    //         $('#trip-status').html(`
+    //                 <button type="button" class="btn btn-dark btn-sm" id="status-trip" data-json=\'${JSON.stringify({status: Session.get('tripStatus')})}\'><i class="fas fa-stop"></i>Kết thúc</button>
+    //             `)
+    //         $('#report-status').html(`
+    //             <button type="button" class="btn btn-warning btn-sm" data-toggle="modal"
+    //                 data-target="#reportModal">
+    //                 <i class="fas fa-exclamation-triangle"></i>
+    //                 Báo cáo sự cố
+    //             </button>
+    //         `)
+
+    //     }
+    //     else if(Session.get('tripStatus') === 3) {
+    //         $('#report-status').html(`
+    //         <button type="button" class="btn btn-success btn-sm" id="status-trip" data-json=\'${JSON.stringify({status: Session.get('tripStatus')})}\'><i class="fas fa-play"></i> Tiếp tục</button>
+    //         `)
+
+    //     }
+    //     else if (Session.get('tripStatus') === 2){
+    //         $('#trip-status').html('<span class="kt-badge kt-badge--success kt-badge--inline kt-badge--pill kt-badge--rounded">Chuyến đi đã kết thúc</span>')
+    //         $('#report-status').html('')
+    //     }
+    // })
 })
 
 Template.tripDetail.helpers({
     studentTripData() {
         return Session.get('studentTripData')
     },
-    tripData(){
+    tripData() {
         return Session.get('tripData')
     },
-    tripLog(){
+    tripLog() {
         return Session.get('tripLog')
     },
-    startTime(){
+    startTime() {
         let tripData = Session.get('tripData')
         return convertTime(tripData.startTime, true, 'DD/MM/YYYY, HH:MM')
+    },
+    tripStatusBtn() {
+        if (Session.get('tripStatus') === 0) {
+            return `<button type="button" class="btn btn-success btn-sm" id="status-trip" data-json=\'${JSON.stringify({ status: Session.get('tripStatus') })}\'>
+                        <i class="fas fa-play"></i> Bắt đầu
+                    </button>`
+        } else if (Session.get('tripStatus') === 1) {
+            return ` <button type="button" class="btn btn-dark btn-sm" id="status-trip" data-json=\'${JSON.stringify({status: Session.get('tripStatus')})}\'>
+                        <i class="fas fa-stop"></i>Kết thúc
+                    </button>`
+        } else if(1){
+            return ` <button type="button" class="btn btn-dark btn-sm" id="status-trip" data-json=\'${JSON.stringify({status: Session.get('tripStatus')})}\'>
+                        <i class="fas fa-stop"></i>Kết thúc
+                    </button>`
+        }
+    },
+    reportBtn() {
+        return `<button type="button" class="btn btn-warning btn-sm" data-toggle="modal"
+                    data-target="#reportModal">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Báo cáo sự cố
+                </button>`
     }
 })
 
@@ -148,19 +170,19 @@ Template.studentInfoModal.helpers({
 
 Template.tripLogElement.helpers({
     actionTime() {
-        return moment(this.time).format('HH:MM') 
+        return moment(this.time).format('HH:MM')
     },
     action() {
         let tripLogJson = getJsonDefault(_TRIP_LOG.type, 'number', this.type)
         tripLogJson.html = ''
-        if(this.action.includes('Update trip student status')){
+        if (this.action.includes('Update trip student status')) {
             let tripStudent = getJsonDefault(_TRIP_STUDENT.status, 'number', this.data.status)
             tripLogJson.html = `<p>Học sinh: 
                                     <strong>${this.data.student.user.name}</strong> 
                                     <span class="text-${tripStudent.classname}">${tripStudent.text}</span>
                                 </p>`
         }
-        if(this.action.includes('Update trip status')){
+        if (this.action.includes('Update trip status')) {
             let tripStatus = getJsonDefault(_TRIP.status, 'number', this.data.status)
             tripLogJson.html = `<p>Thay đổi trạng thái chuyến đi: 
                                     <span class="text-${tripStatus.classname}">${tripStatus.text}</span>
@@ -170,7 +192,14 @@ Template.tripLogElement.helpers({
     }
 })
 
-function initMap(){
+Template.studentTripRow.helpers({
+    status() {
+        console.log(this)
+        return getJsonDefault(_TRIP_STUDENT.status, 'number', this.status)
+    },
+})
+
+function initMap() {
     L.Icon.Default.imagePath = '/packages/bevanhunt_leaflet/images/';
     window.tripMap = L.map('tripMap', {
         drawControl: true,
@@ -206,7 +235,7 @@ function clickStatusButton(e) {
     }, accessToken).then(async result => {
         handleSuccess('Đã cập nhật')
         return reloadData()
-    }).then(result=>{
+    }).then(result => {
         updateStudentInfoModalData(studentID)
     }).catch(handleError)
 }
@@ -232,7 +261,7 @@ async function reloadData() {
             tripData = await MeteorCall(_METHODS.trip.GetById, {
                 _id: FlowRouter.getParam('tripID')
             }, accessToken)
-        else if (routeName == 'driver.upCommingTripInfo'||routeName == 'nanny.upCommingTripInfo')
+        else if (routeName == 'driver.upCommingTripInfo' || routeName == 'nanny.upCommingTripInfo')
             tripData = await MeteorCall(_METHODS.trip.GetNext, null, accessToken)
 
         //get info trip
@@ -280,14 +309,14 @@ function addPoly(arr) {
 function modifyTripStatus(e) {
     let data = $(e.currentTarget).data('json')
     let value = ''
-    switch(data.status) {
+    switch (data.status) {
         case 0:
             value = 1
             break;
         case 1:
             value = 2
             break;
-        case 3: 
+        case 3:
             value = 1
             break;
         default:

@@ -5,7 +5,7 @@ import {
     makeID
 } from '../../../../../functions'
 
-import { _METHODS } from '../../../../../variableConst'
+import { _METHODS, _URL_images, _TRIP_STUDENT } from '../../../../../variableConst'
 
 export {
     updateStudentInfoModalData
@@ -147,11 +147,11 @@ function updateStudentInfoModalData(studentID) {
 
     switch (studenInfoData.status) {
         case 0:
-            studenInfoData.buttonHtml = `<button type="button" class="btn btn-success status-btn" tripID="${studenInfoData.tripID}"  studentID="${studenInfoData.studentID}" status="1" >Điểm danh</button>
-                            <button type="button" class="btn btn-danger status-btn" tripID="${studenInfoData.tripID}" studentID="${studenInfoData.studentID}" status="3">Vắng mặt</button>`
+            studenInfoData.buttonHtml = `<button type="button" class="btn btn-success status-btn" tripID="${studenInfoData.tripID}"  studentID="${studenInfoData.studentID}" status="${_TRIP_STUDENT.status.pickUp.number}" >Điểm danh</button>
+                            <button type="button" class="btn btn-danger status-btn" tripID="${studenInfoData.tripID}" studentID="${studenInfoData.studentID}" status="${_TRIP_STUDENT.status.absent.number}">Vắng mặt</button>`
             break
         case 1:
-            studenInfoData.buttonHtml = `<button type="button" class="btn btn-success status-btn" tripID="${studenInfoData.tripID}" studentID="${studenInfoData.studentID}" status="2">Xuống xe</button>`
+            studenInfoData.buttonHtml = `<button type="button" class="btn btn-success status-btn" tripID="${studenInfoData.tripID}" studentID="${studenInfoData.studentID}" status="${_TRIP_STUDENT.status.getOff.number}">Xuống xe</button>`
             break
         case 2:
             studenInfoData.buttonHtml = `<span class="kt-badge kt-badge--success kt-badge--inline ">Đã xuống xe</span>`
@@ -164,7 +164,7 @@ function updateStudentInfoModalData(studentID) {
     }
 
     if (studenInfoData.student.user.image) {
-        studenInfoData.image = `http://192.168.100.69:3000/images/${studenInfoData.student.user.image}/0`
+        studenInfoData.image = `${_URL_images}/${studenInfoData.student.user.image}/0`
     } else {
         studenInfoData.image = `/assets/media/users/user5.jpg`
     }

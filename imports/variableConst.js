@@ -289,12 +289,12 @@ const _TRIP_STUDENT = {
         undefined: {
             text: "Chưa xác nhận",
             number: 0,
-            classname:'secondary'
+            classname:'primary'
         },
         pickUp: {
             text: "Lên xe",
             number: 1,
-            classname:'primary'
+            classname:'info'
         },
         getOff: {
             text: "Xuống xe",
