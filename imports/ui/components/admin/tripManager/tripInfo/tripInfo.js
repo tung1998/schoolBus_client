@@ -192,7 +192,7 @@ Template.studentTripRow.helpers({
     status() {
         return getJsonDefault(_TRIP_STUDENT.status, 'number', this.value.status)
     },
-    index(){
+    index() {
         return ++this.index
     }
 })
@@ -304,7 +304,25 @@ function addPoly(arr) {
 async function updateTripStatus(e) {
     let target = e.currentTarget
     let status = Number(target.getAttribute('status'))
-    let checkConfirm = await handleConfirm("Xác nhận")
+    let tripData = Session.get('tripData')
+    let checkConfirm
+    if (status === _TRIP.status.finish.number && tripData.type == _TRIP.type.toSchool.number) {
+        let studentIncar = tripData.students.filter(item => item.status === _TRIP_STUDENT.status.pickUp.number)
+        if (studentIncar.length) {
+            handleError('Chưa xác nhận đủ học sinh', `Có ${studentIncar.length} học sinh chưa xuống xe?`)
+            return
+        } else {
+            let studentGetOff = tripData.students.filter(item => item.status === _TRIP_STUDENT.status.getOff.number)
+            let studentIncar = tripData.students.filter(item => item.status === _TRIP_STUDENT.status.pickUp.number)
+            let studentRequest = tripData.students.filter(item => item.status === _TRIP_STUDENT.status.request.number)
+            let studentAbsent = tripData.students.filter(item => item.status === _TRIP_STUDENT.status.absent.number)
+            checkConfirm = await handleConfirm(`<div><strong class="">Học sinh xuống xe: ${studentGetOff.length}</strong></div>
+                                            <div><strong class="">Học sinh trên xe: ${studentIncar.length}</strong></div>
+                                            <div><strong class="">Học sinh xin nghỉ: ${studentRequest.length}</strong></div>
+                                            <div><strong class="">Học sinh vắng mặt: ${studentAbsent.length}</strong></div>`)
+        }
+    } else
+        checkConfirm = await handleConfirm("Xác nhận")
     if (checkConfirm.value)
         MeteorCall(_METHODS.trip.UpdateTripStatus, {
             tripID: Session.get('tripID'),
@@ -320,11 +338,11 @@ async function updateTripCarstopStatus(e) {
     let carStopID = target.getAttribute('carStopID')
     let status = Number(target.getAttribute('status'))
     let checkConfirm
-    if (status === _TRIP_CARSTOP.status.leaved.number) {
+    if (tripData.type == _TRIP.type.toSchool.number && status === _TRIP_CARSTOP.status.leaved.number) {
         let studentsInCarStopID = tripData.students.filter(item => item.student.carStopID == carStopID)
         let studentNotConfirm = studentsInCarStopID.filter(item => item.status === _TRIP_STUDENT.status.undefined.number)
         if (studentNotConfirm.length) {
-            handleError('Chưa xác nhận đủ học sinh', `Có ${studentNotConfirm.length} học sinh chưa xác nhận?`)
+            handleError('Chưa xác nhận đủ học sinh', `Có ${studentNotConfirm.length} học sinh chưa lên xe?`)
             return
         }
         else {
@@ -335,9 +353,39 @@ async function updateTripCarstopStatus(e) {
                                                 <div><strong class="">Học sinh xin nghỉ: ${studentRequest.length}</strong></div>
                                                 <div><strong class="">Học sinh vắng mặt: ${studentAbsent.length}</strong></div>`)
         }
-    } else {
+    } else if (tripData.type == _TRIP.type.toHome.number) {
+        studentNotConfirm = tripData.students.filter(item => item.status === _TRIP_STUDENT.status.undefined.number)
+        if (studentNotConfirm.length) {
+            handleError('Chưa xác nhận đủ học sinh', `Có ${studentNotConfirm.length} học sinh chưa lên xe?`)
+            return
+        }
+
+        else {
+            if (status === _TRIP_CARSTOP.status.leaved.number) {
+                let studentsInCarStopID = tripData.students.filter(item => item.student.carStopID == carStopID)
+                let studentIncar = studentsInCarStopID.filter(item => item.status === _TRIP_STUDENT.status.pickUp.number)
+                if (studentIncar.length) {
+                    handleError('Chưa xác nhận đủ học sinh', `Có ${studentIncar.length} học sinh tại điểm dừng còn trên xe?`)
+                    return
+                }
+                else {
+                    let studentGetOff = studentsInCarStopID.filter(item => item.status === _TRIP_STUDENT.status.getOff.number)
+                    checkConfirm = await handleConfirm(`<div><strong class="">Đã trả ${studentGetOff.length} học sinh tại điểm dừng</strong></div>`)
+                }
+            } else {
+                let studentGetOff = tripData.students.filter(item => item.status === _TRIP_STUDENT.status.getOff.number)
+                let studentIncar = tripData.students.filter(item => item.status === _TRIP_STUDENT.status.pickUp.number)
+                let studentRequest = tripData.students.filter(item => item.status === _TRIP_STUDENT.status.request.number)
+                let studentAbsent = tripData.students.filter(item => item.status === _TRIP_STUDENT.status.absent.number)
+
+                checkConfirm = await handleConfirm(`<div><strong class="">Học sinh xuống xe: ${studentGetOff.length}</strong></div>
+                                                <div><strong class="">Học sinh trên xe: ${studentIncar.length}</strong></div>
+                                                <div><strong class="">Học sinh xin nghỉ: ${studentRequest.length}</strong></div>
+                                                <div><strong class="">Học sinh vắng mặt: ${studentAbsent.length}</strong></div>`)
+            }
+        }
+    } else
         checkConfirm = await handleConfirm(`Xác nhận!`)
-    }
 
     if (checkConfirm.value)
         MeteorCall(_METHODS.trip.UpdateCarStop, {
@@ -435,21 +483,22 @@ function checkCarstop() {
     return false
 }
 
-function carstopStudentFilterChange(e){
+function carstopStudentFilterChange(e) {
     let value = $('#carstopStudentFilter').prop('checked')
     let tripData = Session.get('tripData')
-    let currentCarStop = tripData.carStops.filter(item=>item.status===_TRIP_CARSTOP.status.arrived.number)[0]
-    if(currentCarStop){
-        if(value){
-            let studentFilter = tripData.students.filter(item=>item.student.carStopID==currentCarStop.carStopID)
+    let currentCarStop = tripData.carStops.filter(item => item.status === _TRIP_CARSTOP.status.arrived.number)[0]
+    if (currentCarStop) {
+        if (value) {
+            let studentFilter = tripData.students.filter(item => item.student.carStopID == currentCarStop.carStopID)
             Session.set('studentTripData', studentFilter)
-        }else{
+        } else {
             Session.set('studentTripData', tripData.students)
         }
-    }else{
-        handleError(null,"Xe chưa đến điểm dừng")
+    } else {
+        if (e)
+            handleError(null, "Xe chưa đến điểm dừng")
         $('#carstopStudentFilter').prop('checked', false)
         Session.set('studentTripData', tripData.students)
     }
-    
+
 }

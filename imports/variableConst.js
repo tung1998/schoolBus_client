@@ -291,27 +291,27 @@ const _TRIP_STUDENT = {
         undefined: {
             text: "Chưa xác nhận",
             number: 0,
-            classname:'primary'
+            classname: 'primary'
         },
         pickUp: {
             text: "Lên xe",
             number: 1,
-            classname:'info'
+            classname: 'info'
         },
         getOff: {
             text: "Xuống xe",
             number: 2,
-            classname:'success'
+            classname: 'success'
         },
         request: {
             text: "Xin Nghỉ",
             number: 3,
-            classname:'warning'
+            classname: 'warning'
         },
         absent: {
             text: "Vắng mặt",
             number: 4,
-            classname:'danger'
+            classname: 'danger'
         }
     }
 }
@@ -337,6 +337,18 @@ const _TRIP = {
             text: "Gặp sự cố",
             classname: 'warning',
             number: 3
+        }
+    },
+    type: {
+        toSchool: {
+            text: "Lượt đi",
+            classname: 'primary',
+            number: 0
+        },
+        toHome: {
+            text: "Lượt về",
+            classname: 'success',
+            number: 1
         }
     }
 }
