@@ -142,6 +142,10 @@
                                 <div class="kt-section__content">
                                     <button class="btn btn-outline-brand mb-4" id="openScannerModal">Quét học
                                         sinh</button>
+                                        <label class="checkbox checkbox-primary">
+                                            <input type="checkbox" name="carstopStudentFilter" id="carstopStudentFilter"> 
+                                            <span> Học sinh của điểm dừng hiện tại</span>
+                                        </label>
                                     <table class="table table-bordered table-hover" id="table-studentList">
                                         <thead class="thead-light">
                                             <tr>
@@ -152,8 +156,8 @@
                                             </tr>
                                         </thead>
                                         <tbody id="table-body">
-                                            {{#each studentTripData}}
-                                            {{> studentTripRow}}
+                                            {{#each studentData in studentTripData}}
+                                            {{> studentTripRow index=@index value=studentData}}
                                             {{/each}}
                                         </tbody>
 
@@ -347,10 +351,10 @@
 </template>
 
 <template name="studentTripRow">
-    <tr id="{{studentID}}" class="studentRow">
+    <tr id="{{value.studentID}}" class="studentRow">
         <th scope="row">{{index}}</th>
-        <td>{{student.IDStudent}}</td>
-        <td>{{student.user.name}}</td>
+        <td>{{value.student.IDStudent}}</td>
+        <td>{{value.student.user.name}}</td>
         <td><span class="kt-badge kt-badge--{{status.classname}} kt-badge--inline ">{{status.text}}</span></td>
     </tr>
 </template>
@@ -374,7 +378,7 @@
                                 <div class="col-9">
                                     <div class="kt-radio-list">
                                         <label class="kt-radio">
-                                            <input type="radio" name="report" value="1"> Tắc đường
+                                            <input type="radio" name="report" value="1" checked> Tắc đường
                                             <span></span>
                                         </label>
                                         <label class="kt-radio">

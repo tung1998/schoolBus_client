@@ -8,7 +8,8 @@ export {
     _FEEDBACK,
     _REQUEST,
     _MARKER_CONFIG,
-    _TRIP_LOG
+    _TRIP_LOG,
+    _TRIP_CARSTOP
 }
 const _URL_images = 'http://192.168.0.111:3000/images'
 // const _URL_images = 'http://113.190.128.251:3000/images'
@@ -225,7 +226,8 @@ const _METHODS = {
         GetNext: 'trip.getNext',
         GetAllNext: 'trip.getAllNext',
         GetTripLogByTripID: 'trip.getLogByTripID',
-        ModifyTripStatus: 'trip.modifyTripStatus'
+        UpdateTripStatus: 'trip.updateTripStatus',
+        UpdateCarStop: 'trip.updateCarStop'
     },
     tripLocation: {
         GetAll: 'tripLocation.getAll',
@@ -485,5 +487,24 @@ const _TRIP_LOG = {
             classname: 'danger',
             number: 2
         }
+    }
+}
+const _TRIP_CARSTOP = {
+    status: {
+        arrived: {
+            text: "Đanng ở điểm dừng",
+            classname: 'primary',
+            number: 1
+        },
+        leaved: {
+            text: "Đã rời điểm dừng",
+            classname: 'success',
+            number: 2
+        },
+        notArrived: {
+            text: "Chưa đến điểm dừng",
+            classname: 'warning',
+            number: 0
+        },
     }
 }

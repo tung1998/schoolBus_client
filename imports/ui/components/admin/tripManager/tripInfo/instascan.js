@@ -47,6 +47,8 @@ function initScanner() {
     });
 
     Instascan.Camera.getCameras().then(renderListCamera).catch(error => {
+        $('#openScannerModal').addClass('kt-hidden')
+        $('#takePhoto').addClass('kt-hidden')
         handleError(error, 'Không tìm thấy camera')
     });
     Scanner.addListener('scan', scanSuccess);
@@ -87,6 +89,8 @@ function renderListCamera(cameras) {
             Scanner.stop();
         })
     } else {
+        $('#openScannerModal').addClass('kt-hidden')
+        $('#takePhoto').addClass('kt-hidden')
         handleError(cameras, 'Không tìm thấy camera')
     }
 }
