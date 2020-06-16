@@ -181,7 +181,13 @@ Template.tripLogElement.helpers({
             let tripStatus = getJsonDefault(_TRIP_CARSTOP.status, 'number', this.data.status)
 
             tripLogJson.html = `<p> 
-                                    <span class="text-${tripStatus.classname}">${tripStatus.text}</span>:
+                                    <span class="text-${tripStatus.classname}">${tripStatus.text}</span>:  ${this.data.carStop.name}
+                                </p>`
+        }else if (this.action.includes('Update trip')&&this.data.status===_TRIP.status.accident.number) {
+            let tripStatus = getJsonDefault(_TRIP_CARSTOP.status, 'number', this.data.status)
+
+            tripLogJson.html = `<p> 
+                                    <span class="text-${tripStatus.classname}">Xe gặp sự cố  <strong>${this.data.note}</strong></span>:
                                 </p>`
         }
         return tripLogJson
