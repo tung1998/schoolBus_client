@@ -5,7 +5,7 @@ import {
     makeID
 } from '../../../../../functions'
 
-import { _METHODS, _URL_images, _TRIP_STUDENT } from '../../../../../variableConst'
+import { _METHODS, _URL_images, _TRIP_STUDENT, _TRIP, _TRIP_CARSTOP } from '../../../../../variableConst'
 
 export {
     updateStudentInfoModalData
@@ -145,23 +145,41 @@ function clickTakePhoto(e) {
 function updateStudentInfoModalData(studentID) {
     $('#instascannerModal').modal('hide')
     let studenInfoData = checkStudentInfo(studentID)
+    let tripData = Session.get('tripData')
+    let currentCarStop = tripData.carStops.filter(item => item.status === _TRIP_CARSTOP.status.arrived.number)[0]
+    console.log(tripData)
     console.log(studenInfoData)
-
+    console.log(currentCarStop)
     studenInfoData.tripID = Session.get('tripID')
-
+    let check1 = tripData.type==_TRIP.type.toSchool.number
+    let check2 = currentCarStop&&studenInfoData.student.carStopID==currentCarStop.carStopID
+    let check3 = tripData.carStops.every(item=>item.status==_TRIP_CARSTOP.status.leaved.number)
+    let check4 = tripData.status==_TRIP.status.moving.number
+    console.log(111, check1)
+    console.log(check2)
+    console.log(check3)
+    console.log(check4)
     switch (studenInfoData.status) {
         case 0:
-            studenInfoData.buttonHtml = `<button type="button" class="btn btn-success status-btn" tripID="${studenInfoData.tripID}"  studentID="${studenInfoData.studentID}" status="${_TRIP_STUDENT.status.pickUp.number}" >Điểm danh</button>
-                            <button type="button" class="btn btn-danger status-btn" tripID="${studenInfoData.tripID}" studentID="${studenInfoData.studentID}" status="${_TRIP_STUDENT.status.absent.number}">Vắng mặt</button>`
+            studenInfoData.buttonHtml = `${check4?`${(check1&&check2)||(!check1)?`<button type="button" class="btn btn-success status-btn" tripID="${studenInfoData.tripID}"  studentID="${studenInfoData.studentID}" status="${_TRIP_STUDENT.status.pickUp.number}" >Điểm danh</button>
+            <button type="button" class="btn btn-danger status-btn" tripID="${studenInfoData.tripID}" studentID="${studenInfoData.studentID}" status="${_TRIP_STUDENT.status.absent.number}">Vắng mặt</button>`:`<span class="kt-badge kt-badge--primary kt-badge--inline ">chưa tới điểm dừng</span>`}`:`<span class="kt-badge kt-badge--primary kt-badge--inline ">Chuyến đi chưa bắt đầu</span>`}
+                                        <button type="button" class="btn btn-primary studentnote-btn" tripID="${studenInfoData.tripID}" studentID="${studenInfoData.studentID}">Thêm ghi chú</button>`
             break
         case 1:
-            studenInfoData.buttonHtml = `<button type="button" class="btn btn-success status-btn" tripID="${studenInfoData.tripID}" studentID="${studenInfoData.studentID}" status="${_TRIP_STUDENT.status.getOff.number}">Xuống xe</button>`
+            studenInfoData.buttonHtml = `${check4?`${(check1&&check3)||(!check1&&check2)?`<button type="button" class="btn btn-success status-btn" tripID="${studenInfoData.tripID}" studentID="${studenInfoData.studentID}" status="${_TRIP_STUDENT.status.getOff.number}">Xuống xe</button>`:`<span class="kt-badge kt-badge--primary kt-badge--inline ">chưa tới điểm dừng</span>`}`:`<span class="kt-badge kt-badge--primary kt-badge--inline ">Chuyến đi chưa bắt đầu</span>`}
+                                        <button type="button" class="btn btn-primary studentnote-btn" tripID="${studenInfoData.tripID}" studentID="${studenInfoData.studentID}">Thêm ghi chú</button>`
             break
         case 2:
-            studenInfoData.buttonHtml = `<span class="kt-badge kt-badge--success kt-badge--inline ">Đã xuống xe</span>`
+            studenInfoData.buttonHtml = `<span class="kt-badge kt-badge--success kt-badge--inline ">Đã xuống xe</span>
+            <button type="button" class="btn btn-primary studentnote-btn" tripID="${studenInfoData.tripID}" studentID="${studenInfoData.studentID}">Thêm ghi chú</button>`
             break
         case 3:
-            studenInfoData.buttonHtml = `<span class="kt-badge kt-badge--danger kt-badge--inline">Vắng mặt</span>`
+            studenInfoData.buttonHtml = `<span class="kt-badge kt-badge--warning kt-badge--inline">xin nghỉ</span>
+            <button type="button" class="btn btn-primary studentnote-btn" tripID="${studenInfoData.tripID}" studentID="${studenInfoData.studentID}">Thêm ghi chú</button>`
+            break
+        case 4:
+            studenInfoData.buttonHtml = `<span class="kt-badge kt-badge--danger kt-badge--inline">Vắng mặt</span>
+            <button type="button" class="btn btn-primary studentnote-btn" tripID="${studenInfoData.tripID}" studentID="${studenInfoData.studentID}">Thêm ghi chú</button>`
             break
         default:
             studenInfoData.buttonHtml = ``

@@ -231,7 +231,6 @@ function clickStatusButton(e) {
     let tripID = target.getAttribute('tripID')
     let studentID = target.getAttribute('studentID')
     let status = Number(target.getAttribute('status'))
-    console.log("reload data")
     MeteorCall(_METHODS.trip.Attendace, {
         tripID,
         status,
