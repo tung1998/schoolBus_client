@@ -66,7 +66,7 @@ Template.studentListInfo.onRendered(() => {
 });
 
 Template.studentListInfo.onDestroyed(() => {
-    studentIDs = null
+    studentIDs = []
     //document.getElementById("carStopContainer").innerHTML = '';
     markerGroup.eachLayer((layer) => {
         markerGroup.removeLayer(layer)
@@ -126,9 +126,9 @@ function initClassSelect2() {
         //console.log(result)
         if (result.data) {
             let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.name}</option>`)
-            $('#classSelect').html(htmlClassOption.join('')).select2({
+            $('#classSelect').html('<option value = ""><option>').append(htmlClassOption.join('')).select2({
                 width: '100%',
-                placeholder: "Select class"
+                placeholder: "Chọn lớp"
             }).on('select2:select', classChangeEvent).trigger('select2:select');
         }
     }).catch(handleError)
@@ -136,21 +136,23 @@ function initClassSelect2() {
 
 function classChangeEvent(e) {
     let classID = e.currentTarget.value
-    MeteorCall(_METHODS.student.GetByClass, {
-        classID
-    }, accessToken).then(result => {
-        console.log(result);
-        if (result.length == 0) {
-            console.log(1);
-        } else {
-            renderStudentTable($('#modalStudentTable'), result, true)
-        }
+    if (classID) {
+        MeteorCall(_METHODS.student.GetByClass, {
+            classID
+        }, accessToken).then(result => {
+            console.log(result);
+            if (result.length) {
+                renderStudentTable($('#modalStudentTable'), result, true)
+            }
 
-    }).catch(handleError)
+        }).catch(handleError)
+    }
 }
 
 function renderStudentTable(jqEl, data, type) {
-    let htmlTable = data.map((item, index) => htmlRow(item, index, type))
+    let htmlTable = data.map((item, index) => {
+        return htmlRow(item, index, type)
+    })
     jqEl.html(htmlTable.join(''))
 }
 
@@ -188,6 +190,9 @@ function reloadTable() {
 }
 
 function htmlRow(data, index, type = false) {
+    if (studentIDs == null) {
+        studentIDs = []
+    }
     return ` <tr studentID="${data._id}">
                 <th scope="row">${index + 1}</th>
                 <td>${data.IDStudent}</td>

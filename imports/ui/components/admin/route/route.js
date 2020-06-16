@@ -163,7 +163,7 @@ Template.routeFilter.events({
 })
 
 
-function getSelectData(options = null, carID = null, driverID = null, nannyID = null, studentListID = null, startCarStopID = null, endCarStopID = null) {
+function getSelectData(options = null, carID = null, driverID = null, nannyID = null, studentListID = null, type = null, startCarStopID = null, endCarStopID = null) {
     MeteorCall(_METHODS.car.GetAll, {
         options
     }, accessToken).then(result => {
@@ -215,6 +215,7 @@ function getSelectData(options = null, carID = null, driverID = null, nannyID = 
             if (options && options.length) result.data = result.data.filter(item => item.schoolID == options[0].value)
             Session.set('carStopList', result.data)
         }
+        if (type) $("#routeTypeSelect").val(type).trigger('change')
         if (startCarStopID) $("#startCarStop").val(startCarStopID).trigger('change')
         if (endCarStopID) $("#endCarStop").val(endCarStopID).trigger('change')
     }).catch(handleError)
@@ -236,6 +237,7 @@ function clickEditListModalSubmit() {
             driverID: $('#driverSelect').val(),
             nannyID: $('#nannySelect').val(),
             studentListID: $('#studentListSelect').val(),
+            type: Number($('#routeTypeSelect').val()),
             startCarStopID: $('#startCarStop').val(),
             endCarStopID: $('#endCarStop').val(),
         }
@@ -271,6 +273,7 @@ function clickEditRouteButton(e) {
     let driverID = currentTarget.attr('driverID')
     let nannyID = currentTarget.attr('nannyID')
     let studentListID = currentTarget.attr('studentListID')
+    let type = currentTarget.attr('routeType')
     let startCarStopID = currentTarget.attr('startCarStopID')
     let endCarStopID = currentTarget.attr('endCarStopID')
     $('#route-name').val(routeName)
@@ -279,7 +282,7 @@ function clickEditRouteButton(e) {
         getSelectData([{
             text: 'schoolID',
             value: schoolID
-        }], carID, driverID, nannyID, studentListID, startCarStopID, endCarStopID)
+        }], carID, driverID, nannyID, studentListID, type, startCarStopID, endCarStopID)
     } else {
         $('#carSelect').val(carID).trigger('change')
         $('#driverSelect').val(carID).trigger('change')
@@ -294,7 +297,7 @@ function clickEditRouteButton(e) {
 
 function clickDeleteRouteButton(e) {
     e.preventDefault();
-    let routeID =$(e.currentTarget).attr('routeID')
+    let routeID = $(e.currentTarget).attr('routeID')
     handleConfirm('Bạn muốn xóa danh sách?').then(result => {
         if (result.value)
             MeteorCall(_METHODS.route.Delete, {

@@ -22,7 +22,8 @@ import {
     _TRIP_STUDENT,
     _TRIP,
     _MARKER_CONFIG,
-    _TRIP_LOG
+    _TRIP_LOG,
+    _TRIP_CARSTOP
 } from '../../../../../variableConst';
 
 import {
@@ -46,7 +47,7 @@ Template.tripDetail.onCreated(async () => {
     Session.set('studenInfoData', {})
     Session.set('tripData', {})
     Session.set('tripStatus', '')
-    Session.set('tripLog',[])
+    Session.set('tripLog', [])
 })
 
 Template.tripDetail.onRendered(() => {
@@ -55,51 +56,60 @@ Template.tripDetail.onRendered(() => {
         "height": 400
     })
     initMap()
-
-    this.checkTripStatus = Tracker.autorun(() => {
-        if (Session.get('tripStatus') === 0) {
-            $('#trip-status').html(`
-                    <button type="button" class="btn btn-success btn-sm" id="status-trip" data-json=\'${JSON.stringify({status: Session.get('tripStatus')})}\'><i class="fas fa-play"></i> Bắt đầu</button>
-                `)
-        } else if (Session.get('tripStatus') === 1) {
-            $('#trip-status').html(`
-                    <button type="button" class="btn btn-dark btn-sm" id="status-trip" data-json=\'${JSON.stringify({status: Session.get('tripStatus')})}\'><i class="fas fa-stop"></i>Kết thúc</button>
-                `)
-            $('#report-status').html(`
-                <button type="button" class="btn btn-warning btn-sm" data-toggle="modal"
-                    data-target="#reportModal">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    Báo cáo sự cố
-                </button>
-            `)
-            
-        }
-        else if(Session.get('tripStatus') === 3) {
-            $('#report-status').html(`
-            <button type="button" class="btn btn-success btn-sm" id="status-trip" data-json=\'${JSON.stringify({status: Session.get('tripStatus')})}\'><i class="fas fa-play"></i> Tiếp tục</button>
-            `)
-            
-        }
-        else if (Session.get('tripStatus') === 2){
-            $('#trip-status').html('<span class="kt-badge kt-badge--success kt-badge--inline kt-badge--pill kt-badge--rounded">Chuyến đi đã kết thúc</span>')
-            $('#report-status').html('')
-        }
-    })
 })
 
 Template.tripDetail.helpers({
     studentTripData() {
         return Session.get('studentTripData')
     },
-    tripData(){
+    tripData() {
         return Session.get('tripData')
     },
-    tripLog(){
+    tripLog() {
         return Session.get('tripLog')
     },
-    startTime(){
+    startTime() {
         let tripData = Session.get('tripData')
         return convertTime(tripData.startTime, true, 'DD/MM/YYYY, HH:MM')
+    },
+    tripStatusBtn() {
+        let tripStatus = Session.get('tripStatus')
+        if (tripStatus === _TRIP.status.accident.number)
+            return `<span class="kt-badge kt-badge--${_TRIP.status.accident.classname} kt-badge--inline kt-badge--pill kt-badge--rounded">Chuyến đi gặp sự cố</span>`
+        else if (tripStatus === _TRIP.status.ready.number)
+            return `<button type="button" class="btn btn-success btn-sm status-trip-btn" status="${_TRIP.status.moving.number}">
+                        <i class="fas fa-play"></i> Bắt đầu
+                    </button>`
+        else if (tripStatus === _TRIP.status.moving.number) {
+            let carStop = checkCarstop()
+            if (carStop && carStop.status === _TRIP_CARSTOP.status.arrived.number) {
+                return `<button type="button" class="btn btn-primary btn-sm status-trip-carStop-btn" carStopID="${carStop.carStopID}" status="${_TRIP_CARSTOP.status.leaved.number}">
+                            <i class="fas fa-play"></i>Rời điểm dừng
+                        </button>`
+            } else if (carStop && carStop.status === _TRIP_CARSTOP.status.notArrived.number) {
+                return `<button type="button" class="btn btn-primary btn-sm status-trip-carStop-btn" carStopID="${carStop.carStopID}" status="${_TRIP_CARSTOP.status.arrived.number}">
+                            <i class="fas fa-play"></i>Đến điểm dừng tiếp theo
+                        </button>`
+            }
+            return ` <button type="button" class="btn btn-dark btn-sm status-trip-btn" status="${_TRIP.status.finish.number}">
+                        <i class="fas fa-stop"></i>Kết thúc
+                    </button>`
+        } else if (tripStatus === _TRIP.status.finish.number) {
+            return ` <span class="kt-badge kt-badge--success kt-badge--inline kt-badge--pill kt-badge--rounded">Chuyến đi đã kết thúc</span>`
+        }
+    },
+    reportBtn() {
+        let tripStatus = Session.get('tripStatus')
+        if (tripStatus === _TRIP.status.ready.number || tripStatus === _TRIP.status.moving.number)
+            return `<button type="button" class="btn btn-warning btn-sm" data-toggle="modal"
+                    data-target="#reportModal">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    Báo cáo sự cố
+                </button>`
+        else if (tripStatus === _TRIP.status.accident.number) {
+            return `<button type="button" class="btn btn-success btn-sm status-trip-btn" status="${_TRIP.status.moving.number}" tripID="${Session.get('tripID')}">
+                        <i class="fas fa-play"></i> Tiếp tục</button>`
+        }
     }
 })
 
@@ -121,9 +131,11 @@ Template.tripDetail.events({
         event.preventDefault();
         removeLayerByID(polyID);
     },
-    'click #status-trip': modifyTripStatus,
+    'click .status-trip-btn': updateTripStatus,
+    'click .status-trip-carStop-btn': updateTripCarstopStatus,
     'click #report-button': reportIssues,
-    'change input[type=radio][name=report]': chooseReport
+    'change input[type=radio][name=report]': chooseReport,
+    'change #carstopStudentFilter': carstopStudentFilterChange,
 })
 
 Template.tripDetail.onDestroyed(() => {
@@ -137,7 +149,6 @@ Template.tripDetail.onDestroyed(() => {
     Session.delete('tripData')
     Session.delete('tripLog')
     removeAllLayer(markerGroup)
-    if (this.checkTripStatus) this.checkTripStatus = null
 })
 
 Template.studentInfoModal.helpers({
@@ -148,29 +159,51 @@ Template.studentInfoModal.helpers({
 
 Template.tripLogElement.helpers({
     actionTime() {
-        return moment(this.time).format('HH:MM') 
+        return moment(this.time).format('HH:MM')
     },
     action() {
         let tripLogJson = getJsonDefault(_TRIP_LOG.type, 'number', this.type)
         tripLogJson.html = ''
-        if(this.action.includes('Update trip student status')){
+        if (this.action.includes('Update trip student status')) {
             let tripStudent = getJsonDefault(_TRIP_STUDENT.status, 'number', this.data.status)
             tripLogJson.html = `<p>Học sinh: 
                                     <strong>${this.data.student.user.name}</strong> 
                                     <span class="text-${tripStudent.classname}">${tripStudent.text}</span>
                                 </p>`
         }
-        if(this.action.includes('Update trip status')){
+        else if (this.action.includes('Update trip status')) {
             let tripStatus = getJsonDefault(_TRIP.status, 'number', this.data.status)
             tripLogJson.html = `<p>Thay đổi trạng thái chuyến đi: 
                                     <span class="text-${tripStatus.classname}">${tripStatus.text}</span>
+                                </p>`
+        }
+        else if (this.action.includes('Update trip carStop')) {
+            let tripStatus = getJsonDefault(_TRIP_CARSTOP.status, 'number', this.data.status)
+
+            tripLogJson.html = `<p> 
+                                    <span class="text-${tripStatus.classname}">${tripStatus.text}</span>:  ${this.data.carStop.name}
+                                </p>`
+        }else if (this.action.includes('Update trip')&&this.data.status===_TRIP.status.accident.number) {
+            let tripStatus = getJsonDefault(_TRIP_CARSTOP.status, 'number', this.data.status)
+
+            tripLogJson.html = `<p> 
+                                    <span class="text-${tripStatus.classname}">Xe gặp sự cố  <strong>${this.data.note}</strong></span>:
                                 </p>`
         }
         return tripLogJson
     }
 })
 
-function initMap(){
+Template.studentTripRow.helpers({
+    status() {
+        return getJsonDefault(_TRIP_STUDENT.status, 'number', this.value.status)
+    },
+    index() {
+        return ++this.index
+    }
+})
+
+function initMap() {
     L.Icon.Default.imagePath = '/packages/bevanhunt_leaflet/images/';
     window.tripMap = L.map('tripMap', {
         drawControl: true,
@@ -198,7 +231,6 @@ function clickStatusButton(e) {
     let tripID = target.getAttribute('tripID')
     let studentID = target.getAttribute('studentID')
     let status = Number(target.getAttribute('status'))
-    console.log("reload data")
     MeteorCall(_METHODS.trip.Attendace, {
         tripID,
         status,
@@ -206,7 +238,7 @@ function clickStatusButton(e) {
     }, accessToken).then(async result => {
         handleSuccess('Đã cập nhật')
         return reloadData()
-    }).then(result=>{
+    }).then(result => {
         updateStudentInfoModalData(studentID)
     }).catch(handleError)
 }
@@ -232,7 +264,7 @@ async function reloadData() {
             tripData = await MeteorCall(_METHODS.trip.GetById, {
                 _id: FlowRouter.getParam('tripID')
             }, accessToken)
-        else if (routeName == 'driver.upCommingTripInfo'||routeName == 'nanny.upCommingTripInfo')
+        else if (routeName == 'driver.upCommingTripInfo' || routeName == 'nanny.upCommingTripInfo')
             tripData = await MeteorCall(_METHODS.trip.GetNext, null, accessToken)
 
         //get info trip
@@ -249,10 +281,7 @@ async function reloadData() {
         bindMarker(tripData.route.startCarStop, startCarStopMarker)
         bindMarker(tripData.route.endCarStop, endCarStopMarker)
         //data học sinh
-        Session.set('studentTripData', tripData.students.map((item, index) => {
-            item.index = index + 1
-            return item
-        }))
+        carstopStudentFilterChange()
         //get status trip
         Session.set('tripStatus', tripData.status)
 
@@ -277,52 +306,127 @@ function addPoly(arr) {
     polyID = markerGroup.getLayerId(poly);
 }
 
-function modifyTripStatus(e) {
-    let data = $(e.currentTarget).data('json')
-    let value = ''
-    switch(data.status) {
-        case 0:
-            value = 1
-            break;
-        case 1:
-            value = 2
-            break;
-        case 3: 
-            value = 1
-            break;
-        default:
-            break;
-    }
-    console.log(value);
-    MeteorCall(_METHODS.trip.ModifyTripStatus, {
-        tripID: Session.get('tripID'),
-        status: value
-    }, accessToken).then(result => {
-        reloadData();
-    }).catch(handleError)
+async function updateTripStatus(e) {
+    let target = e.currentTarget
+    let status = Number(target.getAttribute('status'))
+    let tripData = Session.get('tripData')
+    let checkConfirm
+    if (status === _TRIP.status.finish.number && tripData.type == _TRIP.type.toSchool.number) {
+        let studentIncar = tripData.students.filter(item => item.status === _TRIP_STUDENT.status.pickUp.number)
+        if (studentIncar.length) {
+            handleError('Chưa xác nhận đủ học sinh', `Có ${studentIncar.length} học sinh chưa xuống xe?`)
+            return
+        } else {
+            let studentGetOff = tripData.students.filter(item => item.status === _TRIP_STUDENT.status.getOff.number)
+            let studentIncar = tripData.students.filter(item => item.status === _TRIP_STUDENT.status.pickUp.number)
+            let studentRequest = tripData.students.filter(item => item.status === _TRIP_STUDENT.status.request.number)
+            let studentAbsent = tripData.students.filter(item => item.status === _TRIP_STUDENT.status.absent.number)
+            checkConfirm = await handleConfirm(`<div><strong class="">Học sinh xuống xe: ${studentGetOff.length}</strong></div>
+                                            <div><strong class="">Học sinh trên xe: ${studentIncar.length}</strong></div>
+                                            <div><strong class="">Học sinh xin nghỉ: ${studentRequest.length}</strong></div>
+                                            <div><strong class="">Học sinh vắng mặt: ${studentAbsent.length}</strong></div>`)
+        }
+    } else
+        checkConfirm = await handleConfirm("Xác nhận")
+    if (checkConfirm.value)
+        MeteorCall(_METHODS.trip.UpdateTripStatus, {
+            tripID: Session.get('tripID'),
+            status
+        }, accessToken).then(result => {
+            reloadData();
+        }).catch(handleError)
+}
+
+async function updateTripCarstopStatus(e) {
+    let target = e.currentTarget
+    let tripData = Session.get('tripData')
+    let carStopID = target.getAttribute('carStopID')
+    let status = Number(target.getAttribute('status'))
+    let checkConfirm
+    if (tripData.type == _TRIP.type.toSchool.number && status === _TRIP_CARSTOP.status.leaved.number) {
+        let studentsInCarStopID = tripData.students.filter(item => item.student.carStopID == carStopID)
+        let studentNotConfirm = studentsInCarStopID.filter(item => item.status === _TRIP_STUDENT.status.undefined.number)
+        if (studentNotConfirm.length) {
+            handleError('Chưa xác nhận đủ học sinh', `Có ${studentNotConfirm.length} học sinh chưa lên xe?`)
+            return
+        }
+        else {
+            let studentIncar = studentsInCarStopID.filter(item => item.status === _TRIP_STUDENT.status.pickUp.number)
+            let studentRequest = studentsInCarStopID.filter(item => item.status === _TRIP_STUDENT.status.request.number)
+            let studentAbsent = studentsInCarStopID.filter(item => item.status === _TRIP_STUDENT.status.absent.number)
+            checkConfirm = await handleConfirm(`<div><strong class="">Học sinh trên xe: ${studentIncar.length}</strong></div>
+                                                <div><strong class="">Học sinh xin nghỉ: ${studentRequest.length}</strong></div>
+                                                <div><strong class="">Học sinh vắng mặt: ${studentAbsent.length}</strong></div>`)
+        }
+    } else if (tripData.type == _TRIP.type.toHome.number) {
+        studentNotConfirm = tripData.students.filter(item => item.status === _TRIP_STUDENT.status.undefined.number)
+        if (studentNotConfirm.length) {
+            handleError('Chưa xác nhận đủ học sinh', `Có ${studentNotConfirm.length} học sinh chưa lên xe?`)
+            return
+        }
+
+        else {
+            if (status === _TRIP_CARSTOP.status.leaved.number) {
+                let studentsInCarStopID = tripData.students.filter(item => item.student.carStopID == carStopID)
+                let studentIncar = studentsInCarStopID.filter(item => item.status === _TRIP_STUDENT.status.pickUp.number)
+                if (studentIncar.length) {
+                    handleError('Chưa xác nhận đủ học sinh', `Có ${studentIncar.length} học sinh tại điểm dừng còn trên xe?`)
+                    return
+                }
+                else {
+                    let studentGetOff = studentsInCarStopID.filter(item => item.status === _TRIP_STUDENT.status.getOff.number)
+                    checkConfirm = await handleConfirm(`<div><strong class="">Đã trả ${studentGetOff.length} học sinh tại điểm dừng</strong></div>`)
+                }
+            } else {
+                let studentGetOff = tripData.students.filter(item => item.status === _TRIP_STUDENT.status.getOff.number)
+                let studentIncar = tripData.students.filter(item => item.status === _TRIP_STUDENT.status.pickUp.number)
+                let studentRequest = tripData.students.filter(item => item.status === _TRIP_STUDENT.status.request.number)
+                let studentAbsent = tripData.students.filter(item => item.status === _TRIP_STUDENT.status.absent.number)
+
+                checkConfirm = await handleConfirm(`<div><strong class="">Học sinh xuống xe: ${studentGetOff.length}</strong></div>
+                                                <div><strong class="">Học sinh trên xe: ${studentIncar.length}</strong></div>
+                                                <div><strong class="">Học sinh xin nghỉ: ${studentRequest.length}</strong></div>
+                                                <div><strong class="">Học sinh vắng mặt: ${studentAbsent.length}</strong></div>`)
+            }
+        }
+    } else
+        checkConfirm = await handleConfirm(`Xác nhận!`)
+
+    if (checkConfirm.value)
+        MeteorCall(_METHODS.trip.UpdateCarStop, {
+            tripID: Session.get('tripID'),
+            carStopID,
+            status
+        }, accessToken).then(result => {
+            reloadData();
+        }).catch(handleError)
 }
 
 function reportIssues(e) {
-    let value = $('input[name=report]:checked')
-    let data = {
-        _id: Session.get('tripID'),
-        note: "",
-        status: 3
-    }
-    if (value.val() == 5) {
-        data.note = $('#report-content').val()
-    } else {
-        data.note = value.parent().text().trim()
-    }
-    MeteorCall(_METHODS.trip.Update, data, accessToken).then(result => {
-        reloadData();
-        $('#reportModal').modal('hide')
-    }).catch(handleError)
+    $('#reportModal').modal('hide')
+    handleConfirm('Xác nhận báo cáo sự cố').then(result => {
+        if (result.value) {
+            let value = $('input[name=report]:checked')
+            let data = {
+                _id: Session.get('tripID'),
+                note: "",
+                status: _TRIP.status.accident.number
+            }
+            if (value.val() == 0) {
+                data.note = $('#report-content').val()
+            } else {
+                data.note = value.parent().text().trim()
+            }
+            MeteorCall(_METHODS.trip.Update, data, accessToken).then(result => {
+                reloadData();
+            }).catch(handleError)
+        }
+    })
 }
 
 function chooseReport(e) {
     let value = e.currentTarget.value
-    if (value == 5) {
+    if (value == 0) {
         $('#report-content').removeAttr("disabled")
     } else {
         $('#report-content').attr("disabled", 'disabled')
@@ -373,4 +477,33 @@ function renderTimeLine() {
         Session.set('tripLog', result.data)
         console.log(result)
     })
+}
+
+function checkCarstop() {
+    let tripData = Session.get('tripData')
+    let arrivedCarstop = tripData.carStops.filter(item => item.status == _TRIP_CARSTOP.status.arrived.number)[0]
+    if (arrivedCarstop) return arrivedCarstop
+    let notArrivedCarStop = tripData.carStops.filter(item => item.status == _TRIP_CARSTOP.status.notArrived.number || item.status === null)[0]
+    if (notArrivedCarStop) return notArrivedCarStop
+    return false
+}
+
+function carstopStudentFilterChange(e) {
+    let value = $('#carstopStudentFilter').prop('checked')
+    let tripData = Session.get('tripData')
+    let currentCarStop = tripData.carStops.filter(item => item.status === _TRIP_CARSTOP.status.arrived.number)[0]
+    if (currentCarStop) {
+        if (value) {
+            let studentFilter = tripData.students.filter(item => item.student.carStopID == currentCarStop.carStopID)
+            Session.set('studentTripData', studentFilter)
+        } else {
+            Session.set('studentTripData', tripData.students)
+        }
+    } else {
+        if (e)
+            handleError(null, "Xe chưa đến điểm dừng")
+        $('#carstopStudentFilter').prop('checked', false)
+        Session.set('studentTripData', tripData.students)
+    }
+
 }

@@ -13,8 +13,30 @@ Template.monitoring.onCreated(() => {
     accessToken = Cookies.get("accessToken");
 });
 
-Template.monitor_map.onRendered(function() {
+Template.monitor_map.onRendered(function () {
     setMapHeight()
+    initMap()
+    this.updateGPS = setInterval(() => {
+        updateData()
+    }, 5000)
+})
+
+
+Template.monitor_map.onDestroyed(function () {
+    clearInterval(this.updateGPS)
+})
+
+Template.monitoring.events({
+    'click tr': (event) => {
+        let indx = parseInt($(event.currentTarget).attr("id"));
+        let tarMark = markerGroup._layers[markers_id[indx]]
+        let latval = tarMark._latlng.lat;
+        let lngval = tarMark._latlng.lng;
+        setViewCar(tarMark, latval, lngval)
+    },
+})
+
+function initMap() {
     L.Icon.Default.imagePath = '/packages/bevanhunt_leaflet/images/';
     window.monitormap = L.map('monitormap', {
         drawControl: true,
@@ -29,26 +51,10 @@ Template.monitor_map.onRendered(function() {
     }).addTo(monitormap);
     window.markerGroup = L.layerGroup().addTo(monitormap);
     MeteorCall(_METHODS.gps.getLast, null, accessToken).then(result => {
-            let htmlTable = result.map(htmlRow);
-            $("#table-body").html(htmlTable.join(" "));
-        })
-        .catch(handleError)
-
-})
-
-Template.monitor_map.onRendered(() => {
-    reUpdate()
-})
-
-Template.monitoring.events({
-    'click tr': (event) => {
-        let indx = parseInt($(event.currentTarget).attr("id"));
-        let tarMark = markerGroup._layers[markers_id[indx]]
-        let latval = tarMark._latlng.lat;
-        let lngval = tarMark._latlng.lng;
-        setViewCar(tarMark, latval, lngval)
-    },
-})
+        let htmlTable = result.map(htmlRow);
+        $("#table-body").html(htmlTable.join(" "));
+    }).catch(handleError)
+}
 
 function setMapHeight() {
     let windowHeight = $(window).height();
@@ -112,11 +118,11 @@ function contentInfoMarker(lat, lng, json, mark) {
 
 function htmlRow(data, index) {
     let item = {
-            _id: data._id,
-            numberPlate: data.car.numberPlate,
-            velocity: 0
-        }
-        //markers_id.push(47 + 2 * index)
+        _id: data._id,
+        numberPlate: data.car.numberPlate,
+        velocity: 0
+    }
+    //markers_id.push(47 + 2 * index)
     let lat = data.location[0],
         lng = data.location[1];
     setMarker(lat, lng, data)
@@ -134,15 +140,12 @@ function appendLatlng(data, markerID) {
     contentInfoMarker(lat, lng, data, markerGroup._layers[markerID])
 }
 
-function reUpdate() {
-    setInterval(() => {
-        MeteorCall(_METHODS.gps.getLast, null, accessToken).then(result => {
-                let htmlTable = result.map((data, index) => {
-                    appendLatlng(data, markers_id[index]);
-                })
-            })
-            .catch(handleError)
-    }, 5000)
+function updateData() {
+    MeteorCall(_METHODS.gps.getLast, null, accessToken).then(result => {
+        let htmlTable = result.map((data, index) => {
+            appendLatlng(data, markers_id[index]);
+        })
+    }).catch(handleError)
 }
 
 async function getAddress(lat, lng) {

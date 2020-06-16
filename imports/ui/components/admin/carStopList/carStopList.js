@@ -154,7 +154,7 @@ function createRow(result) {
     }
 
     return ` <tr id = ${data._id}>
-                <th scope="row">${result.index + 1}</th>
+                <th>${result.index + 1}</th>
                 <td>${data.name}</td>
                 <td>${data.address}</td>
                 ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>` : ''}
