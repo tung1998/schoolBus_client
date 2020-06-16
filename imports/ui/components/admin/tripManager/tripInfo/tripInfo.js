@@ -171,10 +171,17 @@ Template.tripLogElement.helpers({
                                     <span class="text-${tripStudent.classname}">${tripStudent.text}</span>
                                 </p>`
         }
-        if (this.action.includes('Update trip status')) {
+        else if (this.action.includes('Update trip status')) {
             let tripStatus = getJsonDefault(_TRIP.status, 'number', this.data.status)
             tripLogJson.html = `<p>Thay đổi trạng thái chuyến đi: 
                                     <span class="text-${tripStatus.classname}">${tripStatus.text}</span>
+                                </p>`
+        }
+        else if (this.action.includes('Update trip carStop')) {
+            let tripStatus = getJsonDefault(_TRIP_CARSTOP.status, 'number', this.data.status)
+
+            tripLogJson.html = `<p> 
+                                    <span class="text-${tripStatus.classname}">${tripStatus.text}</span>:
                                 </p>`
         }
         return tripLogJson
@@ -432,10 +439,17 @@ function carstopStudentFilterChange(e){
     let value = $('#carstopStudentFilter').prop('checked')
     let tripData = Session.get('tripData')
     let currentCarStop = tripData.carStops.filter(item=>item.status===_TRIP_CARSTOP.status.arrived.number)[0]
-    if(value){
-        let studentFilter = tripData.students.filter(item=>item.student.carStopID==currentCarStop.carStopID)
-        Session.set('studentTripData', studentFilter)
+    if(currentCarStop){
+        if(value){
+            let studentFilter = tripData.students.filter(item=>item.student.carStopID==currentCarStop.carStopID)
+            Session.set('studentTripData', studentFilter)
+        }else{
+            Session.set('studentTripData', tripData.students)
+        }
     }else{
+        handleError(null,"Xe chưa đến điểm dừng")
+        $('#carstopStudentFilter').prop('checked', false)
         Session.set('studentTripData', tripData.students)
     }
+    
 }
