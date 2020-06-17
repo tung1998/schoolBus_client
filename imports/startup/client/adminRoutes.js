@@ -198,7 +198,7 @@ FlowRouter.route('/tripManager', {
     },
 });
 
-FlowRouter.route('/tripManager/:tripID', {
+FlowRouter.route('/tripManager/:tripID([0-9a-fA-F]{24})', {
     name: 'tripManager.tripDetail',
     action() {
         BlazeLayout.render('App_body', {

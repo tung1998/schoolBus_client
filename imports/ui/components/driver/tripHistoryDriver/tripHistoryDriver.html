@@ -90,13 +90,8 @@
                             <label for="phonenumber" class="form-control-label">Liên hệ:</label>&nbsp;
                             <a href="#" id="phonenumber">{{driver.user.phone}}</a>
                             <div class="fa-pull-right">
-                                {{#if isModifiable}}
-                                <button type="button" class="btn btn-danger btn-sm modify-button"
-                                    startTime={{startTime}} routeID="{{route._id}}" tripID="{{_id}}">Sửa</button>
-                                <span></span>
-                                {{/if}}
-                                <!-- <a href="tripManager/{{_id}}"><button type="button" class="btn btn-success btn-sm">Xem
-                                        thông tin</button></a> -->
+                                <a href="/driver/tripInfo/{{_id}}"><button type="button" class="btn btn-success btn-sm">Xem
+                                        thông tin</button></a>
                             </div>
 
                         </div>

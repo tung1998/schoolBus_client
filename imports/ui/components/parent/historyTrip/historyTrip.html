@@ -1,4 +1,4 @@
-<template name="historyTrip">
+<template name="tripHistoryStudent">
     <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
         <!-- begin:: Subheader -->
         <div class="kt-subheader   kt-grid__item" id="kt_subheader">
@@ -16,7 +16,7 @@
                             SchoolBus </a>
                         <span class="kt-subheader__breadcrumbs-separator"></span>
                         <a href="" class="kt-subheader__breadcrumbs-link">
-                            Lịch sử hủy chuyến</a>
+                            Lịch sử chuyến đi</a>
                     </div>
                 </div>
             </div>
@@ -32,34 +32,30 @@
                             <div class="kt-portlet__head">
                                 <div class="kt-portlet__head-label">
                                     <h3 class="kt-portlet__head-title">
-                                        Tên danh sách
+                                        {{#if hasData}}
+                                        Lịch sử chuyến đi của {{studentName}}
+                                        {{else}}
+                                        
+                                        {{/if}}
                                     </h3>
                                 </div>
                             </div>
 
                             <div class="kt-portlet__body">
                                 <!--begin::Section-->
-                                <div class="kt-section">
-                                    <div class="kt-section__content">
-                                        <a href="/absentRequest"><button type="button"
-                                                class="btn btn-outline-brand mb-4" data-toggle="modal"
-                                                data-target="#editListModal">Báo hủy chuyến</button></a>
-                                        <table class="table table-bordered table-hover">
-                                            <thead class="thead-light">
-                                                <tr>
-                                                    <th>STT</th>
-                                                    <th>Ngày nghỉ</th>
-                                                    <th>Lý do</th>
-                                                    <th>Ghi chú</th>
-                                                    <th>Hành động</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                            </tbody>
-                                        </table>
+                                {{#if hasData}}
+                                123
+                                {{else}}
+                                <div class="alert alert-custom alert-secondary fade show mb-5" role="alert">
+                                    <div class="alert-icon"><i class="flaticon-warning"></i></div>
+                                    <div class="alert-text">Không có dữ liệu!</div>
+                                    <div class="alert-close">
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true"><i class="ki ki-close"></i></span>
+                                        </button>
                                     </div>
                                 </div>
-                                <!--end::Section-->
+                                {{/if}}
                             </div>
                         </div>
                     </div>

@@ -1,40 +1,31 @@
 import './historyTrip.html';
-Template.historyTrip.rendered = () => {
-    setFormHeight()
-}
+const Cookies = require("js-cookie");
+import {
+    MeteorCall,
+    handleError,
+    handleConfirm
+} from "../../../../functions";
 
-function setFormHeight() {
-    let windowHeight = $(window).height();
-    let formHeight = $("#historyTrip").height();
-    let footerHeight = $("#kt_footer").height();
-    let topBarHeight = $("#kt_header").height();
+import {
+    _METHODS,
+    _URL_images
+} from "../../../../variableConst";
 
-    if ($(window).width() < 1024) {
-        topBarHeight = $("#kt_header_mobile").height();
-        $("#historyTrip").css({
-            "height": windowHeight - topBarHeight - 2 * footerHeight + 17
-        })
-        $('#kt_content').css({
-            "padding-top": 0,
-            "padding-bottom": 0
-        })
-    } else {
-        $("#parentFeedback").css({
-            "height": windowHeight - topBarHeight - 2 * footerHeight - 17
-        })
-        $("#historyTrip").css({
-                "height": windowHeight - topBarHeight - 2 * footerHeight - 17
-            })
-            //$("#kt_wrapper").css({
-            //  "padding-top": 60
-            //  })
-        $('#kt_content').css({
-            "padding-top": 0,
-            "padding-bottom": 0
-        })
+Template.tripHistoryStudent.onCreated(() => {
+    accessToken = Cookies.get("accessToken");
+});
+
+Template.tripHistoryStudent.onRendered(() => {
+    // MeteorCall(_METHODS.trip.tripHistoryStudent)
+})
+
+
+Template.tripHistoryStudent.events({
+
+});
+
+Template.tripHistoryStudent.helpers({
+    studentInfo() {
+        return Session.get('studentInfo')
     }
-    console.log(windowHeight)
-    console.log(formHeight)
-    console.log(footerHeight)
-    console.log(topBarHeight)
-}
+});
