@@ -45,7 +45,6 @@ function reloadData() {
     MeteorCall(_METHODS.class.GetById, {
         _id: classID
     }, accessToken).then(result => {
-        console.log(result)
         Session.set('classData', result)
     }).catch(handleError)
     MeteorCall(_METHODS.student.GetByClass, {
@@ -55,7 +54,6 @@ function reloadData() {
             item.index = index + 1
             return item
         })
-        console.log(result)
         Session.set('studentList', result)
     }).catch(handleError)
 }

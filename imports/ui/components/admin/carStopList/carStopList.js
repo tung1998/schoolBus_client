@@ -92,7 +92,6 @@ Template.carStopListFilter.helpers({
 
 function ClickModifyButton(event) {
     let carStopData = $(event.currentTarget).data("json");
-    console.log(carStopData)
     FlowRouter.go(`/carstop?carStopID=${carStopData._id}`)
 }
 
@@ -180,7 +179,6 @@ function carStopListFilter() {
         text: "schoolID",
         value: $('#school-filter').val()
     }]
-    console.log(options);
     reloadTable(1, getLimitDocPerPage(), options)
 }
 

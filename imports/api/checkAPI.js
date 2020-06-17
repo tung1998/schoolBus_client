@@ -8,13 +8,10 @@ const METHOD = {
 
 function isStatusCodeError(result) {
     const arrayStatusCode = [400, 401, 402, 403, 404, 500, 501, 502];
-    // console.log(result + "++++++++++++++");
-    // console.log(result.statusCode);
     return result && arrayStatusCode.indexOf(result.statusCode) >= 0 ? true:false;
 }
 
 function msgError(result) {
-    // console.log(result)
     let msg_vn = '', msg_en = '';
     if(result.data && result.data.message){
         msg_en = result.data.message;
@@ -61,9 +58,7 @@ function httpDefault(method, url, { body, token, content, headers}) {
             break;
     }
     return new Promise((resolve, reject) => {
-        // console.log(url, options);
         HTTP.call(method, url, options, (error, result) => {
-            // console.log(error, result)
             if(!result && error){
                 resolve({error : true, message: 'Lỗi mạng', message_en: error.errno});
             }else if(isStatusCodeError(result)) {

@@ -167,7 +167,6 @@ function ClickDeleteButton(event) {
     handleConfirm().then(result => {
         if (result.value) {
             let data = $(event.currentTarget).data("json");
-            console.log(data._id)
             MeteorCall(_METHODS.carFuel.Delete, data, accessToken)
                 .then(result => {
                     reloadTable(currentPage, getLimitDocPerPage())
@@ -280,7 +279,6 @@ function createTable(table, result, limitDocPerPage) {
 }
 
 function createRow(result) {
-    console.log(result);
     let data = {
         _id: result._id,
         carID: result.carID,
@@ -331,7 +329,6 @@ function carFuelFilter() {
         text: "schoolID",
         value: $('#school-filter').val()
     }]
-    console.log(options);
     reloadTable(1, getLimitDocPerPage(), options)
 }
 

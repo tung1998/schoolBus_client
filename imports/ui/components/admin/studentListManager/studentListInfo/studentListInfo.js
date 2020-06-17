@@ -123,7 +123,6 @@ Template.carStopList_studentListInfo.onDestroyed(() => {
 
 function initClassSelect2() {
     MeteorCall(_METHODS.class.GetAll, null, accessToken).then(result => {
-        //console.log(result)
         if (result.data) {
             let htmlClassOption = result.data.map(item => `<option value="${item._id}">${item.name}</option>`)
             $('#classSelect').html('<option value = ""><option>').append(htmlClassOption.join('')).select2({
@@ -140,7 +139,6 @@ function classChangeEvent(e) {
         MeteorCall(_METHODS.student.GetByClass, {
             classID
         }, accessToken).then(result => {
-            console.log(result);
             if (result.length) {
                 renderStudentTable($('#modalStudentTable'), result, true)
             }

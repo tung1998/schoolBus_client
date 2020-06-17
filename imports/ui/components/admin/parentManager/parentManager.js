@@ -99,7 +99,6 @@ Template.editParentModal.helpers({
     return Session.get('class')
   },
   students() {
-    //console.log(Session.get('students'))
     return Session.get('students')
   },
 });
@@ -265,7 +264,6 @@ async function clickSubmitButton(event) {
   if (checkForm())
     try {
       let data = getInputData()
-      console.log(data)
       let imagePreview = $('#kt_dropzone_1').find('div.dz-image-preview')
       if (imagePreview.length) {
         if (imagePreview.hasClass('dz-success')) {
@@ -322,7 +320,6 @@ function initSelect2() {
     name: 'Chọn học sinh'
   }]
   initSelect2.map((key) => {
-    //console.log(key)
     $(`#${key.id}`).select2({
       placeholder: key.name,
       width: '100%',
@@ -400,10 +397,8 @@ function addStudentClick(e) {
   let className = $('#class-select option:selected').text()
   let studentID = $('#student-select').val()
   let studentName = $('#student-select option:selected').text().split(" - ")[0];
-  console.log(schoolName)
   if (schoolName == ""){
     localSchool = Session.get('students')[0].user.school.name;
-    console.log(localSchool);
     schoolName = localSchool;
   }
   if (!schoolName || !className || !studentID) {
@@ -437,7 +432,6 @@ function parentFilter() {
     text: "user/email",
     value: $('#email-filter').val()
   }]
-  console.log(options);
   reloadTable(1, getLimitDocPerPage(), options)
 }
 

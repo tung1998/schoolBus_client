@@ -48,7 +48,6 @@ function getAdminByPage(data, accessToken = '') {
             if (item.value != null) url += `&${encodeURIComponent(item.text)}=${encodeURIComponent(item.value)}`
         })
     }
-    console.log(url);
     return httpDefault(METHOD.get, url, {
         token: accessToken
     })

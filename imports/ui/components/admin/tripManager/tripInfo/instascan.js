@@ -2,7 +2,8 @@ import '/public/assets/module/instascan.min.js'
 
 import {
     handleError, MeteorCall,
-    makeID
+    makeID,
+    handleSuccess
 } from '../../../../../functions'
 
 import { _METHODS, _URL_images, _TRIP_STUDENT, _TRIP, _TRIP_CARSTOP } from '../../../../../variableConst'
@@ -58,7 +59,6 @@ function scanSuccess(content) {
     if (/[0-9a-fA-F]{24}/.test(content)) {
         let studenInfo = checkStudentInfo(content);
         if (studenInfo) {
-            console.log(studenInfo);
             updateStudentInfoModalData(content);
         } else {
             Swal.fire({
@@ -68,7 +68,7 @@ function scanSuccess(content) {
             })
         }
     } else {
-        console.log("qr code không đúng định dạng:", content)
+        handleError(null,"qr code không đúng định dạng:"+ content)
     }
 }
 
@@ -110,7 +110,7 @@ function clickTakePhoto(e) {
     let studentID = $(e.currentTarget).attr("studentID")
     MeteorCamera.getPicture((err, data) => {
         if (err) {
-            console.log(err)
+            handleError(err)
         } else {
             $(".photo-preview").css({
                 "width": "100% !important"
@@ -119,23 +119,16 @@ function clickTakePhoto(e) {
                 imageId: makeID("attendance"),
                 BASE64: [data]
             }
-            console.log(dt)
             MeteorCall(_METHODS.image.Import, dt, accessToken).then(result => {
-                console.log("success")
+                let imageDetail = {
+                    tripID: tripID,
+                    studentID: studentID,
+                    image: dt.imageId
+                }
+                return MeteorCall(_METHODS.trip.Image, imageDetail, accessToken)
+            }).then(result => {
+                handleSuccess('Đã xác nhận ảnh!')
             }).catch(handleError)
-
-
-            let imageDetail = {
-                tripID: tripID,
-                studentID: studentID,
-                image: dt.imageId
-            }
-            MeteorCall(_METHODS.trip.Image, imageDetail, accessToken)
-                .then(result => {
-                    console.log(imageDetail)
-                    console.log("added")
-                })
-                .catch(handleError)
         }
     });
 
@@ -147,18 +140,11 @@ function updateStudentInfoModalData(studentID) {
     let studenInfoData = checkStudentInfo(studentID)
     let tripData = Session.get('tripData')
     let currentCarStop = tripData.carStops.filter(item => item.status === _TRIP_CARSTOP.status.arrived.number)[0]
-    console.log(tripData)
-    console.log(studenInfoData)
-    console.log(currentCarStop)
     studenInfoData.tripID = Session.get('tripID')
     let check1 = tripData.type==_TRIP.type.toSchool.number
     let check2 = currentCarStop&&studenInfoData.student.carStopID==currentCarStop.carStopID
     let check3 = tripData.carStops.every(item=>item.status==_TRIP_CARSTOP.status.leaved.number)
     let check4 = tripData.status==_TRIP.status.moving.number
-    console.log(111, check1)
-    console.log(check2)
-    console.log(check3)
-    console.log(check4)
     switch (studenInfoData.status) {
         case 0:
             studenInfoData.buttonHtml = `${check4?`${(check1&&check2)||(!check1)?`<button type="button" class="btn btn-success status-btn" tripID="${studenInfoData.tripID}"  studentID="${studenInfoData.studentID}" status="${_TRIP_STUDENT.status.pickUp.number}" >Điểm danh</button>
@@ -195,6 +181,5 @@ function updateStudentInfoModalData(studentID) {
 }
 
 function checkStudentInfo(studentID) {
-    console.log(studentID)
     return Session.get('studentTripData').filter(student => student.studentID == studentID)[0]
 }

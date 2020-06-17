@@ -105,7 +105,6 @@ function getCars(options = null, carID = null) {
     MeteorCall(_METHODS.trip.GetAll, {
         options
     }, accessToken).then(result => {
-        console.log(result);
         Session.set('cars', result.data)
         if (carID) $("#student-carStopID").val(carStopID).trigger('change')
     }).catch(handleError)
@@ -118,7 +117,6 @@ function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options = 
         limit: limitDocPerPage,
         options
     }, accessToken).then(result => {
-        console.log(result)
         handlePaging(table, result.count, page, limitDocPerPage)
         Session.set('dataFuel', result.data.map((key, index) => {
             key.index = index + (result.page - 1) * limitDocPerPage + 1;
@@ -130,7 +128,6 @@ function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options = 
         limit: limitDocPerPage,
         options
     }, accessToken).then(result => {
-        console.log(result)
         handlePaging(table, result.count, page, limitDocPerPage)
         Session.set('dataMaintenance', result.data.map((key, index) => {
             key.index = index + (result.page - 1) * limitDocPerPage + 1;

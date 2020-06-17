@@ -29,7 +29,6 @@ Template.carStop.onRendered(() => {
         MeteorCall(_METHODS.carStop.GetById, {
             _id: carStopID
         }, accessToken).then(result => {
-            console.log(result)
             $('#location').val(result.location.join(' '))
             $('#stopName').val(result.name)
             $('#address').val(result.address)
@@ -122,7 +121,6 @@ Template.carStop.events({
             location: event.target.location.value.split(' ').map(Number)
         }
         //let authorize = false;
-        console.log(typeof carStopInfo.name)
         if (Session.get(_SESSION.isSuperadmin)) carStopInfo.schoolID = $('#school-select').val()
         if (carStopInfo.location || carStopInfo.name || carStopInfo.schoolID) {
             if (carStopID) {

@@ -151,7 +151,6 @@ async function reloadData() {
             _id: FlowRouter.getParam('tripID')
         }, accessToken)
         //get info trip
-        console.log(tripData)
 
         Session.set('tripData', tripData)
         Session.set('tripID', tripData._id)
@@ -232,7 +231,6 @@ function renderTimeLine() {
         tripID: Session.get('tripID')
     }, accessToken).then(result => {
         Session.set('tripLog', result.data)
-        console.log(result)
     })
 }
 
@@ -250,6 +248,5 @@ function updateStudentInfoModalData(studentID) {
 }
 
 function checkStudentInfo(studentID) {
-    console.log(studentID)
     return Session.get('studentTripData').filter(student => student.studentID == studentID)[0]
 }

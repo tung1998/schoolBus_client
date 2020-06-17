@@ -43,7 +43,6 @@ Template.profile.onRendered(() => {
             phoneNumber: result.phone,
             email: result.email,
         }
-        console.log(userData.image);
         $(".name").val(userData.name);
         $(".school_section").remove();
         $(".phone").val(userData.phoneNumber);
@@ -63,7 +62,6 @@ Template.profile.onDestroyed(() => {
 });
 
 Template.profile.rendered = () => {
-    console.log($(".kt-portlet__body").height())
     Session.set(_SESSION.mapHeight, $(".kt-portlet__body").height());
 }
 
@@ -102,7 +100,6 @@ function appendNewPass(event) {
         username: Session.get(_SESSION.username),
         password: oldPass
     }
-    //console.log(data.username)
     MeteorCall(_METHODS.token.LoginByUsername, data, null).then(result => {
         if (newPass == ""){
             handleError(null, "Vui lòng điền đủ thông tin");
@@ -115,7 +112,6 @@ function appendNewPass(event) {
                             password: newPass
                         }, accessToken)
                         .then(result => {
-                            console.log(result)
                             handleSuccess("", "Đã đổi mật khẩu")
                             Cookies.remove('accessToken')
                             BlazeLayout.render("login");
@@ -141,8 +137,6 @@ async function editAvatarProfile() {
         let data = {
             _id: userID
         }
-        console.log(data);
-
         let imagePreview = $('#profile-dropzone').find('div.dz-image-preview')
         if (imagePreview.length) {
             if (imagePreview.hasClass('dz-success')) {
@@ -170,7 +164,6 @@ async function editAvatarProfile() {
             Session.set(_SESSION.avata, `${_URL_images}/${data.image}/0`)
 
         })
-        console.log("đã update");
     } catch (error) {
         handleError(error)
     }

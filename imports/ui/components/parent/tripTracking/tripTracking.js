@@ -26,7 +26,6 @@ function setMapHeight() {
     let sHeaderHeight = $("#kt_content").height();
     let footerHeight = $("#kt_footer").height();
     let topBarHeight = $("#kt_header").height();
-    console.log(sHeaderHeight)
     if ($(window).width() < 1024) {
         topBarHeight = $("#kt_header_mobile").height();
         $("#testmap").css({

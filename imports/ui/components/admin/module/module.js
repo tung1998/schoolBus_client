@@ -108,11 +108,9 @@ function clickEditButton(event) {
 
 function clickDelButton(event) {
     handleConfirm().then(result => {
-        console.log(result);
         if (result.value) {
             let data = $(event.currentTarget).data("json");
             MeteorCall(_METHODS.modules.Delete, data, accessToken).then(result => {
-                console.log(result);
                 handleSuccess('Đã xóa')
                 reloadData()
             }).catch(handleError)

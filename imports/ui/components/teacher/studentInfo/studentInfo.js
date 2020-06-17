@@ -42,9 +42,7 @@ Template.studentInfo.helpers({
 
 function reloadData() {
     let studentID = FlowRouter.getParam('studentID')
-    console.log(studentID)
     MeteorCall(_METHODS.student.GetById, { _id: studentID }, accessToken).then(result => {
-        console.log(result)
         Session.set('studentInfo', result)
     })
 }

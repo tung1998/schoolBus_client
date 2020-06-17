@@ -76,7 +76,6 @@ Template.requestHtml.helpers({
 
 function reloadData() {
     MeteorCall(_METHODS.ParrentRequest.GetAll, null, accessToken).then(result => {
-        console.log(result)
         Session.set('requests', result.data)
     }).catch(handleError)
 

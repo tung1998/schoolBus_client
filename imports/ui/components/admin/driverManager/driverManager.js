@@ -176,7 +176,6 @@ async function clickSubmitButton() {
                     else data.image = imageId
                     if (!data._id) {
                         await MeteorCall(_METHODS.driver.Create, data, accessToken)
-                        console.log("đã thêm mới");
                         handleSuccess("Thêm", `tài xế ${data.name}`).then(() => {
                             $('#editDriverModal').modal("hide")
                         })
@@ -186,7 +185,6 @@ async function clickSubmitButton() {
                         handleSuccess("Cập nhật", `tài xế ${data.name}`).then(() => {
                             $('#editDriverModal').modal("hide")
                         })
-                        console.log("đã update");
                     }
                     reloadTable(1, getLimitDocPerPage())
                     clearForm()
@@ -397,7 +395,6 @@ function driverFilter() {
         text: "DLNumber",
         value: $('#dl-filter').val()
     }]
-    console.log(options);
     reloadTable(1, getLimitDocPerPage(), options)
 }
 

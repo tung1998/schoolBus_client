@@ -125,12 +125,10 @@ function ClickModifyButton(event) {
 
 function ClickDeleteButton(event) {
     handleConfirm().then(result => {
-        console.log(result);
         if (result.value) {
             let data = $(event.currentTarget).data("json");
             MeteorCall(_METHODS.carModel.Delete, data, accessToken)
                 .then(result => {
-                    console.log(result);
                     Swal.fire({
                         icon: "success",
                         text: "Đã xóa thành công",
@@ -161,7 +159,6 @@ function SubmitForm(event) {
         }
 
         let modify = $("#editCarModelModal").attr("carID");
-        console.log(data)
         if (modify == "") {
             MeteorCall(_METHODS.carModel.Create, data, accessToken)
                 .then(result => {
@@ -174,7 +171,6 @@ function SubmitForm(event) {
             data._id = modify;
             MeteorCall(_METHODS.carModel.Update, data, accessToken)
                 .then(result => {
-                    console.log(result);
                     handleSuccess("Cập nhật", "loại xe").then(() => {
                         $("#editStudentModal").modal("hide");
                         reloadTable(currentPage, getLimitDocPerPage())
@@ -260,7 +256,6 @@ function createTable(table, result, limitDocPerPage) {
 }
 
 function createRow(result) {
-    console.log(result);
     let data = {
         _id: result._id,
         brand: result.brand,
@@ -331,7 +326,6 @@ function carModelilter() {
         text: "schoolID",
         value: $('#school-filter').val()
     }]
-    console.log(options);
     reloadTable(1, getLimitDocPerPage(), options)
 }
 

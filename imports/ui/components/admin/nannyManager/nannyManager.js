@@ -170,7 +170,6 @@ function ClickModifyButton(event) {
 
 function ClickDeleteButton(event) {
     let data = $(event.currentTarget).data("json");
-    console.log(data._id)
     MeteorCall(_METHODS.Nanny.Delete, data, accessToken)
         .then(result => {
             reloadTable(currentPage, getLimitDocPerPage())
@@ -200,7 +199,6 @@ async function SubmitForm(event) {
                 data.schoolID = $('#school-input').val()
             }
             let imagePreview = $('#kt_dropzone_1').find('div.dz-image-preview')
-            console.log(imagePreview)
             if (imagePreview.length) {
                 if (imagePreview.hasClass('dz-success')) {
                     let imageId = makeID("user")
@@ -324,7 +322,6 @@ function createTable(table, result, limitDocPerPage) {
 }
 
 function createRow(result) {
-    //console.log(result);
     let data = {
         _id: result._id,
         name: result.user.name,
@@ -391,7 +388,6 @@ function nannyFilter() {
         text: "IDNumber",
         value: $('#cccd-filter').val()
     }]
-    console.log(options);
     reloadTable(1, getLimitDocPerPage(), options)
 }
 

@@ -55,7 +55,6 @@ Template.chatTeacher.onRendered(() => {
             let countUnread = 0;
             messages.map(msg => {
                 if (msg.roomID == value) {
-                    console.log(msg.text)
                     lastestMsg.push(msg.text);
                     if (msg.status == 0) {
                         countUnread++;
@@ -159,8 +158,6 @@ function SubmitForm(e) {
     e.preventDefault();
     let message = $("#inbox_message").val();
     $("#inbox_message").val("");
-    console.log(message)
-    console.log(userID, Session.get(_SESSION.roomID))
     Meteor.call('message.create', {
         text: message,
         createdTime: Date.now(),
@@ -253,7 +250,6 @@ function getUnSeenMessages(messages) {
 }
 
 function updateStatus(roomID, sendBy) {
-    console.log("status")
     Meteor.call('message.update', roomID, sendBy, (result, err) => {
         if (err) throw err;
         else { }

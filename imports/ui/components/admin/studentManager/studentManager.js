@@ -146,7 +146,6 @@ function ClickTableRow(event) {
     let id = $(event.currentTarget).attr("id")
     QRCode.toDataURL(id)
         .then(url => {
-            console.log(url)
             $("#QR-title").html(`QR code`)
             $("#QR-modal-body").html(`<img style="width: 60%" src=${url} alt="">`)
             $("#QRModal").modal("show");
@@ -205,11 +204,9 @@ function ClickAddMoreButton(e) {
 
 function ClickDeleteButton(event) {
     handleConfirm().then(result => {
-        console.log(result);
         if (result.value) {
             let data = $(event.currentTarget).data("json");
             MeteorCall(_METHODS.student.Delete, data, accessToken).then(result => {
-                console.log(result);
                 Swal.fire({
                     icon: "success",
                     text: "Đã xóa thành công",
@@ -241,7 +238,6 @@ async function SubmitForm(event) {
             if (Session.get(_SESSION.isSuperadmin)) {
                 data.schoolID = $('#school-input').val()
             }
-            console.log(data);
 
             let imagePreview = $('#kt_dropzone_1').find('div.dz-image-preview')
             if (imagePreview.length) {
@@ -258,7 +254,6 @@ async function SubmitForm(event) {
                 }
             }
             let modify = $("#editStudentModal").attr("studentID");
-            console.log(data);
             if (modify == "") {
                 MeteorCall(_METHODS.student.Create, data, accessToken)
                     .then(result => {
