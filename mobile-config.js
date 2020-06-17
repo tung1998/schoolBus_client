@@ -77,3 +77,4 @@ App.launchScreens({
 App.setPreference('StatusBarStyle', "styleLightContent");
 App.setPreference('SplashScreenDelay', 3000);
 App.setPreference('ShowSplashScreenSpinner', "true");
+App.setPreference("cordova.plugins.diagnostic.modules", value="LOCATION CAMERA CALENDAR EXTERNAL_STORAGE");

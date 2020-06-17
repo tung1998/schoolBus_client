@@ -164,7 +164,7 @@ function updateStudentInfoModalData(studentID) {
     }
 
     if (studenInfoData.student.user.image) {
-        studenInfoData.image = `http://192.168.100.69:3000/images/${studenInfoData.student.user.image}/0`
+        studenInfoData.image = `http://192.168.0.111:3000/images/${studenInfoData.student.user.image}/0`
     } else {
         studenInfoData.image = `/assets/media/users/user5.jpg`
     }
