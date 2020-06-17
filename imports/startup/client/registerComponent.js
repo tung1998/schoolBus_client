@@ -45,6 +45,7 @@ import '../../ui/components/admin/dashboard/dashboard.js'
 import '../../ui/components/driver/carMaintenanceReport/carMaintenanceReport.js';
 import '../../ui/components/driver/carMaintenanceReport/carMaintenanceReportHistory.js';
 import '../../ui/components/driver/tripHistoryDriver/tripHistoryDriver.js';
+import '../../ui/components/driver/tripInfo/tripInfo';
 // parent template
 import '../../ui/components/parent/childrenInfo/childrenInfo.js';
 import '../../ui/components/parent/tripTracking/tripTracking.js';

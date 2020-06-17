@@ -23,7 +23,8 @@ import {
     _TRIP,
     _MARKER_CONFIG,
     _TRIP_LOG,
-    _TRIP_CARSTOP
+    _TRIP_CARSTOP,
+    _URL_images
 } from '../../../../../variableConst';
 
 import {
@@ -199,6 +200,10 @@ Template.tripLogElement.helpers({
 
             tripLogJson.html = `<p> 
                                     <span class="text-${tripStatus.classname}">Xe gặp sự cố  <strong>${this.data.note}</strong></span>:
+                                </p>`
+        }else if (this.action.includes('Update trip student image')) {
+            tripLogJson.html = `<p> 
+                                    <span>  <strong>Chụp ảnh học sinh: <strong>${this.data.student.user.name}</strong> <img src="${_URL_images}/${this.data.image}/0"></span>:
                                 </p>`
         }
         return tripLogJson

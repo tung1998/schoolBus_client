@@ -34,3 +34,13 @@ driverRoutes.route('/tripHistory', {
         });
     },
 });
+
+driverRoutes.route('/tripInfo/:tripID([0-9a-fA-F]{24})', {
+    name: 'driver.tripInfo',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'tripDetailNoButton',
+        });
+    },
+});
