@@ -92,7 +92,19 @@
                         </tr>
                     </thead>
                     <tbody id="table-body">
-
+                        {{#each dataFuels}}
+                            <tr class="text-center">
+                                <th>{{index}}</th>
+                                <td>{{car.numberPlate}}</td>
+                                <td>{{volume}}</td>
+                                <td>{{price}}</td>
+                                <td></td>
+                                <td>
+                                    <button type="button" class="btn btn-brand btn-sm btn-elevate btn-icon"><i class="la la-pencil"></i></button>
+                                    <button type="button" class="btn btn-warning btn-sm btn-elevate btn-icon"><i class="la la-trash"></i></button>
+                                </td>
+                            </tr>
+                        {{/each}}
                     </tbody>
                 </table>
             </div>
@@ -123,7 +135,16 @@
                         </tr>
                     </thead>
                     <tbody id="table-body">
-
+                        {{#each dataMaintenance}}
+                        <tr>
+                            <td class="text-center"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        {{/each}}
                     </tbody>
                 </table>
             </div>
@@ -148,7 +169,7 @@
                             <div class="form-group row">
                                 <label for="" class="col-2 col-form-label required-input-label">Xe</label>
                                 <div class="col-10">
-                                    <select class="form-control" name="car" id="car1-input">
+                                    <select class="form-control" name="car" id="fuel-car-input">
                                         <option value=""></option>
                                         {{#each cars}}
                                         <option value="{{_id}}">{{numberPlate}}</option>
@@ -159,21 +180,21 @@
                             <div class="form-group row">
                                 <label for="" class="col-2 col-form-label required-input-label">Thể tích</label>
                                 <div class="col-10">
-                                    <input class="form-control" type="text" id="volume-input" name=""
+                                    <input class="form-control" type="text" id="fuel-volume-input" name=""
                                         placeholder="Thể tích">
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label for="" class="col-2 col-form-label required-input-label">Thành tiền</label>
                                 <div class="col-10">
-                                    <input class="form-control" type="text" id="price-input" name=""
+                                    <input class="form-control" type="text" id="fuel-price-input" name=""
                                         placeholder="Thành tiền">
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label for="" class="col-2 col-form-label">Ghi chú</label>
                                 <div class="col-10">
-                                    <input class="form-control" type="text" id="note-input" name=""
+                                    <input class="form-control" type="text" id="fuel-note-input" name=""
                                         placeholder="Ghi chú">
                                 </div>
                             </div>
@@ -205,7 +226,7 @@
                             <div class="form-group row">
                                 <label for="" class="col-2 col-form-label required-input-label">Xe</label>
                                 <div class="col-10">
-                                    <select class="form-control" name="car" id="car2-input">
+                                    <select class="form-control" name="car" id="maintenance-car-input">
                                         <option value=""></option>
                                         {{#each cars}}
                                         <option value="{{_id}}">{{numberPlate}}</option>
@@ -216,7 +237,7 @@
                             <div class="form-group row">
                                 <label for="" class="col-2 col-form-label required-input-label">Loại</label>
                                 <div class="col-10">
-                                    <select class="form-control" name="type" id="type-input">
+                                    <select class="form-control" name="type" id="maintenance-type-input">
                                         <option value=""></option>
                                         <option value="1">Rửa xe</option>
                                         <option value="2">Sửa chữa</option>
@@ -227,14 +248,14 @@
                             <div class="form-group row">
                                 <label for="" class="col-2 col-form-label required-input-label">Thành tiền</label>
                                 <div class="col-10">
-                                    <input class="form-control" type="text" id="price-input" name=""
+                                    <input class="form-control" type="text" id="maintenance-price-input" name=""
                                         placeholder="Thành tiền">
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label for="" class="col-2 col-form-label">Ghi chú</label>
                                 <div class="col-10">
-                                    <input class="form-control" type="text" id="note-input" name=""
+                                    <input class="form-control" type="text" id="maintenance-note-input" name=""
                                         placeholder="Ghi chú">
                                 </div>
                             </div>

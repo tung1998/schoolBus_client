@@ -23,6 +23,7 @@ import {
 // Set up all routes in the app
 
 FlowRouter.triggers.enter([function(context, redirect) {
+    $('.modal-backdrop').remove()
     let accessToken = Cookies.get('accessToken');
     BlazeLayout.render("login")
     if (!accessToken) FlowRouter.go('/login');

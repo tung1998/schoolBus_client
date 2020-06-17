@@ -159,6 +159,15 @@
                             </div>
                         </div>
                         <div class="form-group row">
+                            <label class="col-3 required-input-label">Loại cung đường</label>
+                            <div class="col-9">
+                                <select class="custom-select form-control" id="routeTypeSelect">
+                                    <option value="0">Lượt đi</option>
+                                    <option value="1">Lượt về</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
                             <label class="col-3 required-input-label">Điểm bắt đầu</label>
                             <div class="col-9">
                                 <select class="custom-select form-control" id="startCarStop">
@@ -207,7 +216,7 @@
         <td class="text-center">
             <button type="button" class="btn btn-outline-brand modify-button" routeID="{{_id}}"
             routeName="{{name}}" schoolID="{{school._id}}" carID="{{car._id}}" driverID="{{driver._id}}"
-            nannyID="{{nanny._id}}" studentListID="{{studentList._id}}" startCarStopID="{{startCarStopID}}" endCarStopID="{{endCarStopID}}"
+            nannyID="{{nanny._id}}" studentListID="{{studentList._id}}" routeType="{{type}}" startCarStopID="{{startCarStopID}}" endCarStopID="{{endCarStopID}}"
             >Sửa</button>
             <button type="button" class="btn btn-outline-danger delete-button" routeID="{{_id}}">Xóa</button>
         </td>
@@ -246,6 +255,13 @@
     <div class="form-group mb-2">
         <label for="" class="col-form-label">Nhóm học sinh</label>
         <input class="form-control filter-input" type="text" placeholder="Nhóm học sinh" id="studentList-filter">
+    </div>
+    <div class="form-group mb-2">
+        <label for="" class="col-form-label">Loại cung đường</label>
+        <select class="form-control filter-input" placeholder="Nhóm học sinh" id="studentType-filter">
+            <option value="0">Lượt đi</option>
+            <option value="1">Lượt về</option>
+        </select>
     </div>
     <div class="form-group mt-4">
         <button type="submit" class="btn btn-primary btn-sm" id="filter-button">Tìm kiếm</button>

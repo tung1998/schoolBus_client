@@ -8,7 +8,8 @@ export {
     _FEEDBACK,
     _REQUEST,
     _MARKER_CONFIG,
-    _TRIP_LOG
+    _TRIP_LOG,
+    _TRIP_CARSTOP
 }
 const _URL_images = 'http://192.168.0.111:3000/images'
 // const _URL_images = 'http://113.190.128.251:3000/images'
@@ -216,6 +217,7 @@ const _METHODS = {
         GetAll: 'trip.getAll',
         GetById: 'trip.getByID',
         GetByTime: 'trip.getByTime',
+        GetByPage: 'trip.getByPage',
         Create: 'trip.create',
         Update: 'trip.update',
         Delete: 'trip.delete',
@@ -224,7 +226,8 @@ const _METHODS = {
         GetNext: 'trip.getNext',
         GetAllNext: 'trip.getAllNext',
         GetTripLogByTripID: 'trip.getLogByTripID',
-        ModifyTripStatus: 'trip.modifyTripStatus'
+        UpdateTripStatus: 'trip.updateTripStatus',
+        UpdateCarStop: 'trip.updateCarStop'
     },
     tripLocation: {
         GetAll: 'tripLocation.getAll',
@@ -288,27 +291,27 @@ const _TRIP_STUDENT = {
         undefined: {
             text: "Chưa xác nhận",
             number: 0,
-            classname:'secondary'
+            classname: 'primary'
         },
         pickUp: {
             text: "Lên xe",
             number: 1,
-            classname:'primary'
+            classname: 'info'
         },
         getOff: {
             text: "Xuống xe",
             number: 2,
-            classname:'success'
+            classname: 'success'
         },
         request: {
             text: "Xin Nghỉ",
             number: 3,
-            classname:'warning'
+            classname: 'warning'
         },
         absent: {
             text: "Vắng mặt",
             number: 4,
-            classname:'danger'
+            classname: 'danger'
         }
     }
 }
@@ -327,13 +330,25 @@ const _TRIP = {
         },
         finish: {
             text: "Đã kết thúc",
-            classname: 'warning',
+            classname: 'dark',
             number: 2
         },
         accident: {
             text: "Gặp sự cố",
-            classname: 'danger',
+            classname: 'warning',
             number: 3
+        }
+    },
+    type: {
+        toSchool: {
+            text: "Lượt đi",
+            classname: 'primary',
+            number: 0
+        },
+        toHome: {
+            text: "Lượt về",
+            classname: 'success',
+            number: 1
         }
     }
 }
@@ -484,5 +499,24 @@ const _TRIP_LOG = {
             classname: 'danger',
             number: 2
         }
+    }
+}
+const _TRIP_CARSTOP = {
+    status: {
+        arrived: {
+            text: "Đanng ở điểm dừng",
+            classname: 'primary',
+            number: 1
+        },
+        leaved: {
+            text: "Đã rời điểm dừng",
+            classname: 'success',
+            number: 2
+        },
+        notArrived: {
+            text: "Chưa đến điểm dừng",
+            classname: 'warning',
+            number: 0
+        },
     }
 }

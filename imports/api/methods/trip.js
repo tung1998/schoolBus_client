@@ -24,10 +24,12 @@ if (Meteor.isServer) {
         'trip.attendance': attendanceTrip,
         'trip.image': imageTrip,
         'trip.getByTime': getTripByTime,
+        'trip.getByPage': getTripByPage,
         'trip.getNext': getNextTrip,
         'trip.getLogByTripID': getTripLogByTripID,
-        'trip.modifyTripStatus': modifyTripStatus,
+        'trip.updateTripStatus': updateTripStatus,
         'trip.getAllNext': getAllNextTrip,
+        'trip.updateCarStop': updateTripCarStop,
     });
 }
 
@@ -40,6 +42,17 @@ function getAllTrip(data, accessToken = '') {
 
 function getTripByID(data, accessToken = '') {
     let url = `${AUTH_TRIP}/${data._id}`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
+}
+
+function getTripByPage(data, accessToken = '') {
+    let url = `${AUTH_TRIP}/${data.page}?limit=${data.limit}`
+    if (data.options && data.options.length)
+        data.options.forEach(item => {
+            if (item.value) url += `&${encodeURIComponent(item.text)}=${encodeURIComponent(item.value)}`
+        })
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });
@@ -121,10 +134,16 @@ function getTripLogByTripID(data, accessToken = '') {
     })
 }
 
-function modifyTripStatus(data, accessToken = '') {
-    console.log(data)
+function updateTripStatus(data, accessToken = '') {
     let url = `${AUTH_TRIP}/${data.tripID}/status`
-    console.log(url)
+    return httpDefault(METHOD.put, url, {
+        body: data,
+        token: accessToken
+    })
+}
+
+function updateTripCarStop(data, accessToken = '') {
+    let url = `${AUTH_TRIP}/${data.tripID}/carstop/${data.carStopID}`
     return httpDefault(METHOD.put, url, {
         body: data,
         token: accessToken

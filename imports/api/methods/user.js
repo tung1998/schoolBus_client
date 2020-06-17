@@ -128,7 +128,7 @@ function resetPassword(data, accessToken = '') {
 }
 
 function updateUserPassword(data, accessToken = '') {
-    let url = `${AUTH_USER}/${data._id}/password`
+    let url = `${AUTH_USER}/${data.userID}/password`
     return httpDefault(METHOD.put, url, {
         body: data,
         token: accessToken

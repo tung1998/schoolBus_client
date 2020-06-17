@@ -103,9 +103,9 @@ var KTApp = function() {
         });
     }
 
-    var initSticky = function() {
-        var sticky = new Sticky('[data-sticky="true"]');
-    }
+    // var initSticky = function() {
+    //     var sticky = new Sticky('[data-sticky="true"]');
+    // }
 
     var initAbsoluteDropdown = function(context) {
         var dropdownMenu;
@@ -174,7 +174,7 @@ var KTApp = function() {
             initAlerts();
             initPortlets();
             initFileInput();
-            initSticky();
+            // initSticky();
             initAbsoluteDropdowns();
         },
 
@@ -202,9 +202,9 @@ var KTApp = function() {
             initPortlets();
         },
 
-        initSticky: function() {
-            initSticky();
-        },
+        // initSticky: function() {
+        //     initSticky();
+        // },
 
         initAbsoluteDropdown: function(context) {
             initAbsoluteDropdown(context);
@@ -3703,16 +3703,16 @@ var KTPortlet = function(elementId, options) {
         /**
          * Enable stickt mode
          */
-        initSticky: function() {
-            var lastScrollTop = 0;
-            var offset = the.options.sticky.offset;
+        // initSticky: function() {
+        //     var lastScrollTop = 0;
+        //     var offset = the.options.sticky.offset;
 
-            if (!the.head) {
-                return;
-            }
+        //     if (!the.head) {
+        //         return;
+        //     }
 
-	        window.addEventListener('scroll', Plugin.onScrollSticky);
-        },
+	    //     window.addEventListener('scroll', Plugin.onScrollSticky);
+        // },
 
 	    /**
 	     * Window scroll handle event for sticky portlet
@@ -4103,9 +4103,9 @@ var KTPortlet = function(elementId, options) {
      * Remove portlet
      * @returns {KTPortlet}
      */
-    the.initSticky = function() {
-        return Plugin.initSticky();
-    };
+    // the.initSticky = function() {
+    //     return Plugin.initSticky();
+    // };
 
     /**
      * Remove portlet
@@ -9856,7 +9856,7 @@ var KTLayout = function() {
 			this.initHeader();
 			this.initAside();
 			this.initAsideSecondary();
-			this.initPageStickyPortlet();
+			// this.initPageStickyPortlet();
 
 			// Non functional links notice(can be removed in production)
 			$('#kt_aside_menu, #kt_header_menu').on('click', '.kt-menu__link[href="#"]', function(e) {
@@ -9898,20 +9898,20 @@ var KTLayout = function() {
 			initAsideSecondary();
 		},
 
-		initPageStickyPortlet: function() {
-			if (!KTUtil.get('kt_page_portlet')) {
-				return;
-			}
+		// initPageStickyPortlet: function() {
+		// 	if (!KTUtil.get('kt_page_portlet')) {
+		// 		return;
+		// 	}
 
-			pageStickyPortlet = initPageStickyPortlet();
-			pageStickyPortlet.initSticky();
+		// 	pageStickyPortlet = initPageStickyPortlet();
+		// 	pageStickyPortlet.initSticky();
 
-			KTUtil.addResizeHandler(function() {
-				pageStickyPortlet.updateSticky();
-			});
+		// 	KTUtil.addResizeHandler(function() {
+		// 		pageStickyPortlet.updateSticky();
+		// 	});
 
-			initPageStickyPortlet();
-		},
+		// 	initPageStickyPortlet();
+		// },
 
 		getAsideMenu: function() {
 			return asideMenu;

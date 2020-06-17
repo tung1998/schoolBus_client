@@ -208,6 +208,18 @@ FlowRouter.route('/tripManager/:tripID', {
     },
 });
 
+FlowRouter.route('/tripSummary', {
+    name: 'user',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'tripSummary',
+            panel: 'panel',
+            panelData: 'tripSummaryFilter'
+        });
+    },
+});
+
 FlowRouter.route('/carFuelManager', {
     name: 'carFuel',
     action() {
@@ -371,3 +383,14 @@ FlowRouter.route('/userManager', {
         });
     },
 });
+
+FlowRouter.route('/dashboard', {
+    name: 'home',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'dashboard',
+        });
+    },
+});
+

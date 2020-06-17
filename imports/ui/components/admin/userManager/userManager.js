@@ -53,8 +53,8 @@ Template.userManager.events({
   "click .edit-user": clickEditUser,
   "click .delete-user": clickDeleteUser,
   "click .change-password": (e) => {
-    let data = $(currentTarget).data("json");
-    $("#user-id").val(data._id);
+    let data = $(e.currentTarget).data("json");
+    $("#user-changepass-id").val(data._id);
   },
   "click #user-checkbox-all": (e) => {
     let checkAll = $("#user-checkbox-all").prop("checked");
@@ -115,12 +115,10 @@ Template.userFilter.events({
     }
   },
   "change #school-filter": (e) => {
-    let options = [
-      {
-        text: "schoolID",
-        value: $("#school-filter").val(),
-      },
-    ];
+    let options = [{
+      text: "schoolID",
+      value: $("#school-filter").val(),
+    }, ];
     reloadTable(1, getLimitDocPerPage(), options);
   },
 });
@@ -140,14 +138,10 @@ function submitChangePassword(event) {
   let confirmation = $("#confirm-password").val();
 
   if (checkNewPass(newPass, confirmation)) {
-    MeteorCall(
-      _METHODS.user.UpdateUserPassword,
-      {
-        _id: $("#user-id").val(),
-        password: newPass,
-      },
-      accessToken
-    )
+    MeteorCall(_METHODS.user.UpdateUserPassword, {
+          userID: $("#user-changepass-id").val(),
+          password: newPass,
+        },accessToken)
       .then((result) => {
         console.log(result);
         handleSuccess("Đổi mật khẩu");
@@ -196,8 +190,7 @@ async function submitEditUser() {
             .find("img")
             .attr("src");
           let importImage = await MeteorCall(
-            _METHODS.image.Import,
-            {
+            _METHODS.image.Import, {
               imageId,
               BASE64: [BASE64],
             },
@@ -291,8 +284,7 @@ function reloadTable(
 ) {
   let table = $("#table-body");
   MeteorCall(
-    _METHODS.user.GetByPage,
-    {
+    _METHODS.user.GetByPage, {
       page: page,
       limit: limitDocPerPage,
       options,
@@ -313,35 +305,35 @@ function createTable(table, result, limitDocPerPage) {
 }
 
 function createRow(result) {
-    let data = {
-      _id: result._id,
-      name: result.name,
-      phone: result.phone,
-      email: result.email,
-      image: result.image,
-      username: result.username,
-      userType: result.userType,
-      isBlocked: result.isBlocked,
-      blockedBy: result.blockedBy ? result.blockedBy : "",
-      blockedReason: result.blockedReason ? result.blockedReason : "",
-    };
-    let userType = getUserType(data.userType);
+  let data = {
+    _id: result._id,
+    name: result.name,
+    phone: result.phone,
+    email: result.email,
+    image: result.image,
+    username: result.username,
+    userType: result.userType,
+    isBlocked: result.isBlocked,
+    blockedBy: result.blockedBy ? result.blockedBy : "",
+    blockedReason: result.blockedReason ? result.blockedReason : "",
+  };
+  let userType = getUserType(data.userType);
 
-    let blockedText;
-    if (data.isBlocked == true) {
-      blockedText = `<span class="kt-badge kt-badge--warning kt-badge--inline  kt-badge--pill kt-badge--rounded">Khóa</span>`;
-      blockedButton = `<a class="dropdown-item unblock-user" href="#" data-json=\'${JSON.stringify(
+  let blockedText;
+  if (data.isBlocked == true) {
+    blockedText = `<span class="kt-badge kt-badge--warning kt-badge--inline  kt-badge--pill kt-badge--rounded">Khóa</span>`;
+    blockedButton = `<a class="dropdown-item unblock-user" href="#" data-json=\'${JSON.stringify(
         { _id: data._id }
       )}\'><i
         class="la la-unlock-alt"></i> Mở</a>`;
-    } else {
-      blockedText = `<span class="kt-badge kt-badge--success kt-badge--inline kt-badge--pill kt-badge--rounded">Mở</span>`;
-      blockedButton = `<a class="dropdown-item block-user" href="#" data-json=\'${JSON.stringify(
+  } else {
+    blockedText = `<span class="kt-badge kt-badge--success kt-badge--inline kt-badge--pill kt-badge--rounded">Mở</span>`;
+    blockedButton = `<a class="dropdown-item block-user" href="#" data-json=\'${JSON.stringify(
         { _id: data._id }
       )}\'><i
         class="la la-unlock"></i> Khóa</a>`;
-    }
-    return `
+  }
+  return `
         <tr id="${data._id}" class="table-row">
             <td class="text-center">${result.index + 1}</td>
             <td>${data.name}</td>
@@ -451,8 +443,7 @@ function clearForm() {
 }
 
 function userFilter() {
-  let options = [
-    {
+  let options = [{
       text: "schoolID",
       value: $("#school-filter").val(),
     },
@@ -498,12 +489,13 @@ function resetPassword() {
   let data = getCheckboxData().map((key) => {
     return JSON.parse(key);
   });
+  let numberChange = data.length
   if (data.length) {
     handleConfirm("Reset mật khẩu người dùng được chọn?").then((result) => {
       if (result.value) {
         MeteorCall(_METHODS.user.ResetPassword, data, accessToken)
           .then((result) => {
-            console.log(result);
+            handleSuccess(`Đã đổi mật khẩu ${numberChange}`)
           })
           .catch(handleError);
       }
