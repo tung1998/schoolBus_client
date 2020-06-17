@@ -7,7 +7,8 @@ import {
 
 import {
     MeteorCall,
-    redirectLogin
+    redirectLogin,
+    handleError
 } from '../../functions'
 
 import {
@@ -41,7 +42,7 @@ FlowRouter.triggers.enter([function(context, redirect) {
                 if(result.students)
                     Session.set(_SESSION.students, result.students)
         }).catch(e => {
-            console.log(e)
+            handleError(e)
             Cookies.remove('accessToken');
             FlowRouter.redirect('/login');
         });
@@ -77,7 +78,7 @@ FlowRouter.route('/login', {
                     Session.set(_SESSION.students, result.students)
                 FlowRouter.go('/profile')
             }).catch(e => {
-                console.log(e)
+                handleError(e)
                 BlazeLayout.render('App_body', {
                     main: 'login'
                 });

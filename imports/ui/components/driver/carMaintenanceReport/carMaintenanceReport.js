@@ -51,11 +51,9 @@ function initSelect2() {
     MeteorCall(_METHODS.car.GetAll, null, accessToken).then(result => {
         let select = $("#carSelect")
         let optionSelects = result.data.map((key) => {
-            console.log(key._id)
             return `<option value="${key._id}">${key.numberPlate}</option>`
         })
         select.append(optionSelects.join(" "))
-        console.log("init2")
     }).catch(handleError)
 
 }
@@ -118,7 +116,6 @@ function checkInput() {
     let type = $('#selectType').val();
     let note;
     let volume;
-    console.log(type)
     if (type == 0) {
         volume = $("#volume").val();
         note = "note";
@@ -126,7 +123,6 @@ function checkInput() {
         volume = 1;
         note = $('#note').val();
     }
-    console.log(carID, cost, note, volume)
     if (!cost || !carID || !note || !volume) {
         Swal.fire({
             icon: "error",

@@ -86,8 +86,6 @@ function ClickConfirmButton() {
         let modify = $("#editSchoolModal").attr("schoolID");
         if (modify == "") {
             MeteorCall(_METHODS.school.Create, data, accessToken).then(result => {
-                console.log(result);
-                // console.log(data);
                 handleSuccess("Thêm", "trường học").then(() => {
                     $("#editSchoolModal").modal("hide");
                 })
@@ -97,7 +95,6 @@ function ClickConfirmButton() {
         } else {
             data._id = modify;
             MeteorCall(_METHODS.school.Update, data, accessToken).then(result => {
-                // console.log(result);
                 handleSuccess("Cập nhật", "trường học").then(() => {
                     $("#editSchoolModal").modal("hide");
                 })
@@ -112,9 +109,7 @@ function ClickDeleteButton(e) {
     handleConfirm().then(result => {
         if (result.value) {
             let data = $(e.currentTarget).data("json");
-            // console.log(data._id)
             MeteorCall(_METHODS.school.Delete, data, accessToken).then(result => {
-                // console.log(result);
                 Swal.fire({
                     icon: "success",
                     text: "Đã xóa thành công",
@@ -202,7 +197,6 @@ function schoolFilter() {
         text: "address",
         value: $('#address-filter').val()
     }]
-    console.log(options);
     reloadTable(1, getLimitDocPerPage(), options)
 }
 

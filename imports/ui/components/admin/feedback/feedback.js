@@ -153,7 +153,6 @@ function reloadData(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options = n
         limit: limitDocPerPage,
         options
     }, accessToken).then(result => {
-        console.log(result)
         handlePaging(table, result.count, page, limitDocPerPage)
         Session.set('feedback', result.data.map((key, index) => {
             key.index = index + (result.page - 1) * limitDocPerPage + 1;
@@ -179,7 +178,6 @@ function feedbackFilter() {
         text: "schoolID",
         value: $('#school-filter').val()
     }]
-    console.log(options);
     reloadData(1, getLimitDocPerPage(), options)
 }
 
@@ -235,7 +233,6 @@ function showReplyFeedBackClick(e) {
 }
 
 function renderHtmlButton(_id, status, feedBackUser, feedbackContent) {
-    console.log(status, feedBackUser, feedbackContent)
     if (status == _FEEDBACK.status.received.number)
         return `<button type="button" class="btn btn-outline-success confirm-button" feedbackID="${_id}">Ghi nhận</button>
                 <button type="button" class="btn btn-outline-brand reply-button" feedbackID="${_id}">Phản hồi</button>`

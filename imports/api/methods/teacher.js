@@ -53,7 +53,6 @@ function getTeacherByPage(data, accessToken = '') {
         data.options.forEach(item => {
             if (item.value) url += `&${encodeURIComponent(item.text)}=${encodeURIComponent(item.value)}`
         })
-        console.log(url);
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });

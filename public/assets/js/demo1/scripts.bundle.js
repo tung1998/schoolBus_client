@@ -2717,9 +2717,6 @@ var KTMenu = function(elementId, options) {
                 item.removeAttribute('data-timeout');
                 //Plugin.hideSubmenuDropdown(item, false);
             }
-
-            // console.log('test!');
-
             Plugin.showSubmenuDropdown(item);
         },
 
@@ -7090,7 +7087,6 @@ if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
 			log: function(text, obj) {
 				if (typeof obj === 'undefined') obj = '';
 				if (datatable.debug) {
-					console.log(text, obj);
 				}
 			},
 

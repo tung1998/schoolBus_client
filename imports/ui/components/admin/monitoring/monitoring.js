@@ -151,7 +151,6 @@ function updateData() {
 async function getAddress(lat, lng) {
     try {
         let result = await MeteorCall(_METHODS.wemap.getAddress, { lat: lat, lng: lng }, accessToken);
-        //console.log(result)
         let props = result.features[0].properties;
         let addressElement = {
             name: props.name,
@@ -168,7 +167,6 @@ async function getAddress(lat, lng) {
             addressElement.city + ', ' +
             addressElement.district + ', ' +
             addressElement.state + ', ';
-        //console.log(address)
         return address
     } catch (err) {
         handleError(err)

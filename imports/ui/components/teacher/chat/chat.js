@@ -46,14 +46,11 @@ Template.chatParent.onRendered(() => {
 
     this.renderListParentss = Tracker.autorun(() => {
         let messages = COLLECTION_Messages.find({ isDeleted: false, sendBy: { $ne: userID } }).fetch();
-        console.log(listRoomID)
         listRoomID.map(value => {
-            console.log(value)
             let lastestMsg = [];
             let countUnread = 0;
             messages.map(msg => {
                 if (msg.roomID == value) {
-                    console.log(msg.text)
                     lastestMsg.push(msg.text);
                     if (msg.status == 0) {
                         countUnread++;
@@ -250,7 +247,6 @@ function parentRow(data) {
 function getLastestAndCountUnSeenMessage(roomID) {
     let messages = COLLECTION_Messages.find({ roomID: roomID, sendBy: { $ne: userID }, isDeleted: false }, { sort: { createdTime: -1 } }).fetch();
     let result = [];
-    console.log(messages);
     result.push(getUnSeenMessages(messages));
     if (messages[0]) {
         result.push(messages[0].text);

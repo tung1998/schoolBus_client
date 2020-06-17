@@ -143,7 +143,6 @@ function submitChangePassword(event) {
           password: newPass,
         },accessToken)
       .then((result) => {
-        console.log(result);
         handleSuccess("Đổi mật khẩu");
       })
       .catch(handleError);
@@ -460,7 +459,6 @@ function userFilter() {
       value: $("#email-filter").val(),
     },
   ];
-  console.log(options);
   reloadTable(1, getLimitDocPerPage(), options);
 }
 

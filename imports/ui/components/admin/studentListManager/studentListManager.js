@@ -27,7 +27,6 @@ let currentPage = 1;
 
 Template.studentListManager.onCreated(() => {
     accessToken = Cookies.get('accessToken');
-    console.log(accessToken)
     Session.set('schools', [])
 });
 
@@ -247,7 +246,6 @@ function studentListFilter() {
         text: "name",
         value: $('#name-filter').val()
     }]
-    console.log(options);
     reloadTable(1, getLimitDocPerPage(), options)
 }
 

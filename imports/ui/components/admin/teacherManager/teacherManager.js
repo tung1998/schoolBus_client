@@ -161,7 +161,6 @@ function ClickDeleteButton(event) {
   handleConfirm().then(result => {
     if (result.value) {
       let data = $(event.currentTarget).data("json");
-      console.log(data);
       MeteorCall(_METHODS.teacher.Delete, data, accessToken)
         .then(result => {
           Swal.fire({
@@ -214,7 +213,6 @@ async function SubmitForm(event) {
         if (modify == "") {
           await MeteorCall(_METHODS.teacher.Create, data, accessToken)
             .then(result => {
-              // console.log(result);
               handleSuccess("Thêm", "Giáo viên").then(() => {
                 $("#editTeacherModal").modal("hide");
               })
@@ -225,7 +223,6 @@ async function SubmitForm(event) {
           data._id = modify;
           await MeteorCall(_METHODS.teacher.Update, data, accessToken)
             .then(result => {
-              // console.log(result);
               handleSuccess("Cập nhật", "Giáo viên").then(() => {
                 $("#editTeacherModal").modal("hide");
               })
@@ -350,7 +347,6 @@ function teacherFilter() {
     text: "user/email",
     value: $('#email-filter').val()
   }]
-  console.log(options);
   reloadTable(1, getLimitDocPerPage(), options)
 }
 

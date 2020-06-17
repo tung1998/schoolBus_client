@@ -19,7 +19,6 @@ Template.listClass.onCreated(() => {
 
 Template.listClass.onRendered(() => {
     MeteorCall(_METHODS.class.GetAll, null, accessToken).then(result => {
-        console.log(result)
         Session.set('classesInfo',result.data)
     }).catch(handleError)
 });

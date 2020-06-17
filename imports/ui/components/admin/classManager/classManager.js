@@ -342,7 +342,6 @@ function classFilter() {
     text: "teacher/user/name",
     value: $('#teacher-filter').val()
   }]
-  console.log(options);
   reloadTable(1, getLimitDocPerPage(), options)
 }
 

@@ -59,7 +59,6 @@ function reloadData(limit = 10) {
         page: 1,
         limit
     }, accessToken).then(result => {
-        console.log(result)
         Session.set('feedback', result.data)
     }).catch(handleError)
 }

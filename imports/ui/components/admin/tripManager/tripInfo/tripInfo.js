@@ -57,7 +57,7 @@ Template.tripDetail.onRendered(() => {
             handleSuccess("tren dien thoai")
           // check and request microphone access
             cordova.plugins.diagnostic.requestCameraAuthorization(function (granted) {
-                console.log("Successfully requested camera authorization: authorization was " + granted ? "GRANTED" : "DENIED")
+                handleSuccess("Successfully requested camera authorization: authorization was " + granted ? "GRANTED" : "DENIED")
             })
         }else{
             handleSuccess('tren may tinh')
@@ -284,7 +284,6 @@ async function reloadData() {
             tripData = await MeteorCall(_METHODS.trip.GetNext, null, accessToken)
 
         //get info trip
-        console.log(tripData)
 
         Session.set('tripData', tripData)
         Session.set('tripID', tripData._id)
@@ -491,7 +490,6 @@ function renderTimeLine() {
         tripID: Session.get('tripID')
     }, accessToken).then(result => {
         Session.set('tripLog', result.data)
-        console.log(result)
     })
 }
 

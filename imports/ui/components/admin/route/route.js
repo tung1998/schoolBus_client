@@ -199,7 +199,6 @@ function getSelectData(options = null, carID = null, driverID = null, nannyID = 
     MeteorCall(_METHODS.studentList.GetAll, {
         options
     }, accessToken).then(result => {
-        console.log(result)
         if (result.data) {
             if (options && options.length) result.data = result.data.filter(item => item.schoolID == options[0].value)
             Session.set('studentList', result.data)
@@ -210,7 +209,6 @@ function getSelectData(options = null, carID = null, driverID = null, nannyID = 
     MeteorCall(_METHODS.carStop.GetAll, {
         options
     }, accessToken).then(result => {
-        console.log(result)
         if (result.data) {
             if (options && options.length) result.data = result.data.filter(item => item.schoolID == options[0].value)
             Session.set('carStopList', result.data)
@@ -328,7 +326,6 @@ function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options = 
         limit: limitDocPerPage,
         options
     }, accessToken).then(result => {
-        console.log(result)
         handlePaging(table, result.count, page, limitDocPerPage)
         Session.set('routeList', result.data)
     })
@@ -355,7 +352,6 @@ function routeFilter() {
         text: "studentList/name",
         value: $('#studentList-filter').val()
     }]
-    console.log(options);
     reloadTable(1, getLimitDocPerPage(), options)
 }
 

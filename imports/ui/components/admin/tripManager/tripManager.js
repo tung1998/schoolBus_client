@@ -94,22 +94,18 @@ function ClickModifyButton(event) {
     let routeID = $(event.currentTarget).attr('routeID')
     let tripID = $(event.currentTarget).attr('tripID')
     $("#start-time").val(moment(startTime).format("HH:mm DD/MM/YYYY"));
-    // console.log(moment(data.startTime).format("MMMM DD YYYY, h:mm"))
     $("#routeSelect").val(routeID).trigger('change');
 
     $('#editTripManagerModal').modal('show')
-    // console.log($("#routeSelect").val())
     $('#editTripManagerModal').attr("modify", tripID)
 }
 
 function ClickAddMoreButton(event) {
-    // console.log(moment($("#start-time").val(), "HH:mm DD/MM/YYYY").valueOf());
     $('#editTripManagerModal').attr("modify", "")
 }
 
 function SubmitForm(event) {
     event.preventDefault();
-    // console.log(moment($("#start-time").val(), "YYYY/MM/DD HH:mm").valueOf());
     let data = {
         startTime: moment($("#start-time").val(), "HH:mm DD/MM/YYYY").valueOf(),
         routeID: $("#routeSelect").val()
@@ -167,7 +163,6 @@ function getDayFilter() {
 
 function reloadTable() {
     MeteorCall(_METHODS.trip.GetByTime, getDayFilter(), accessToken).then(result => {
-        console.log(result);
         if (result.length) {
             Session.set('tripList', result)
         } else {

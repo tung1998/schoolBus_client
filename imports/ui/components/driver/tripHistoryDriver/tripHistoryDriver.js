@@ -38,7 +38,6 @@ Template.tripHtml2.helpers({
 
 function reloadData() {
     MeteorCall(_METHODS.trip.GetAll, {}, accessToken).then(result => {
-        console.log(result)
         Session.set('tripList', result.data)
     })
 }
