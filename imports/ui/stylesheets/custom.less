@@ -3,7 +3,7 @@
 }
 
 .dropzone {
-    height   : 160px;
+    height: 160px;
     min-width: 160px;
 
     .dz-preview {
@@ -12,23 +12,23 @@
 }
 
 .avatabox {
-    height    : 160px;
+    height: 160px;
     text-align: center;
 
     img {
         border-radius: 15px;
-        border       : 2px dashed #5d78ff;
-        height       : 160px;
-        width        : 160px;
-        object-fit   : cover;
+        border: 2px dashed #5d78ff;
+        height: 160px;
+        width: 160px;
+        object-fit: cover;
     }
 }
 
 .kt-header-mobile__toolbar .kt-header__topbar-item.kt-header__topbar-item--user .kt-header__topbar-user img {
     -ms-flex-item-align: center;
-    align-self         : center;
-    max-height         : 34px;
-    border-radius      : 4px;
+    align-self: center;
+    max-height: 34px;
+    border-radius: 4px;
 }
 
 .select2-selection__rendered,
@@ -38,10 +38,10 @@
 
 .kt-widget17 .kt-widget17__stats.custom_stats {
     margin: 0 auto;
-    width : 100%;
+    width: 100%;
 
     .kt-widget17__items>.kt-widget17__item {
-        border    : 1px solid rgb(64, 79, 167);
+        border: 1px solid rgb(64, 79, 167);
         box-sizing: border-box;
 
         .kt-widget17__icon,
@@ -77,9 +77,59 @@
     }
 }
 
+.studentInfoModal-body .image-student {
+    margin: 0 auto;
+    width: 13rem;
+    height: 13rem;
+    box-sizing: border-box;
+
+    img {
+        width: 100%;
+        padding: 1.3rem;
+        border-radius: 15%;
+    }
+}
+
+#student-info__driver>.kt-widget1,
+#student-info__admin>.kt-widget1 {
+    padding: 1rem;
+
+    .kt-widget1__item {
+        padding: 0.5rem 0;
+    }
+
+    .kt-widget1__item:last-child {
+        border-bottom: 0.07rem dashed #ebedf2;
+        margin-bottom: 1.5rem;
+    }
+
+    .kt-widget1__info.kt-align-right {
+        width: 60%;
+    }
+
+    .kt-widget1__info>.kt-widget1__title,
+    .kt-widget1__desc {
+        margin-top: 0.5rem;
+    }
+
+    .kt-widget1__desc {
+        i {
+            color: rgb(51, 156, 197);
+        }
+    }
+}
+
+@media (max-width: 1024px) {
+
+    #student-info__driver>.kt-widget1,
+    #student-info__admin>.kt-widget1 {
+        padding: 0.5rem;
+    }
+}
+
 #trackingMap {
     position: absolute;
-    top     : 0;
-    bottom  : 0;
-    width   : 100%;
+    top: 0;
+    bottom: 0;
+    width: 100%;
 }

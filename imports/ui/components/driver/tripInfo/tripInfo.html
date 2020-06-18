@@ -58,7 +58,8 @@
                         <div class="tab-pane active" id="tripInfo" role="tabpanel">
                             <div class="row">
                                 <div class="col-6 kt-align-left" id="trip-status">
-                                    <span class="kt-badge kt-badge--{{tripStatus.classname}} kt-badge--inline kt-badge--pill kt-badge--rounded">{{tripStatus.text}}</span>
+                                    <span
+                                        class="kt-badge kt-badge--{{tripStatus.classname}} kt-badge--inline kt-badge--pill kt-badge--rounded">{{tripStatus.text}}</span>
                                 </div>
                             </div>
                             <hr>
@@ -196,7 +197,7 @@
 <template name="studentInfoModalNoButton">
     <div class="modal fade" id="studentInfoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         style="display: none;" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Thông tin học sinh
@@ -208,88 +209,112 @@
                 <div class="modal-body studentInfoModal-body">
                     <div class="row">
                         <div class="fa-pull-left col-md-3 col-sm-12">
-                            <img style="width: 100%; height: 100%" src={{studenInfoData.image}} alt="image">
+                            <div class="image-student">
+                                <img src={{studentInfoData.image}} alt="image">
+                            </div>
                         </div>
                         <div class="col-md-9 col-sm-12">
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="fa-pull-left">
-                                        <label for="studentID" class="form-control-label"><b>Mã học sinh: </b></label>
-                                    </div>
-                                    <div class="fa-pull-right">
-                                        <span class="studentID">{{studenInfoData.student.IDStudent}}</span>
+                            <div class="kt-widget kt-widget--user-profile-3">
+                                <div class="kt-widget__top">
+                                    <div class="kt-widget__content">
+                                        <div id="student-info__driver">
+                                            <div class="kt-widget1">
+                                                <div class="kt-widget1__item">
+                                                    <div class="kt-widget1__info kt-align-left">
+                                                        <h3 class="kt-widget1__title">Mã học sinh: </h3>
+                                                    </div>
+                                                    <div class="kt-widget1__info kt-align-right">
+                                                        <h3 class="kt-widget1__title">
+                                                            {{studentInfoData.student.IDStudent}}
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                                <div class="kt-widget1__item">
+                                                    <div class="kt-widget1__info kt-align-left">
+                                                        <h3 class="kt-widget1__title">Tên học sinh: </h3>
+                                                    </div>
+                                                    <div class="kt-widget1__info kt-align-right">
+                                                        <h3 class="kt-widget1__title">
+                                                            {{studentInfoData.student.user.name}}
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                                <div class="kt-widget1__item">
+                                                    <div class="kt-widget1__info kt-align-left">
+                                                        <h3 class="kt-widget1__desc "><i
+                                                                class="fas fa-phone-square"></i>&nbsp;Số điện thoại:
+                                                        </h3>
+                                                    </div>
+                                                    <div class="kt-widget1__info kt-align-right">
+                                                        <h3 class="kt-widget1__desc">
+                                                            {{studentInfoData.student.user.phone}}
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                                <div class="kt-widget1__item">
+                                                    <div class="kt-widget1__info kt-align-left">
+                                                        <h3 class="kt-widget1__desc "><i
+                                                                class="fas fa-grip-horizontal"></i>&nbsp;Lớp:</h3>
+                                                    </div>
+                                                    <div class="kt-widget1__info kt-align-right">
+                                                        <h3 class="kt-widget1__desc">
+                                                            {{studentInfoData.student.class.name}}
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                                <div class="kt-widget1__item">
+                                                    <div class="kt-widget1__info kt-align-left">
+                                                        <h3 class="kt-widget1__desc "><i
+                                                                class="fas fa-ribbon"></i>&nbsp;Giáo viên:</h3>
+                                                    </div>
+                                                    <div class="kt-widget1__info kt-align-right">
+                                                        <h3 class="kt-widget1__desc">
+                                                            {{studentInfoData.student.class.teacher.user.name}}
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                                <div class="kt-widget1__item">
+                                                    <div class="kt-widget1__info kt-align-left">
+                                                        <h3 class="kt-widget1__desc "><i
+                                                                class="fas fa-school"></i>&nbsp;Trường:</h3>
+                                                    </div>
+                                                    <div class="kt-widget1__info kt-align-right">
+                                                        <h3 class="kt-widget1__desc">
+                                                            {{studentInfoData.student.school.name}}
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                                <div class="kt-widget1__item">
+                                                    <div class="kt-widget1__info kt-align-left">
+                                                        <h3 class="kt-widget1__desc "><i
+                                                                class="fas fa-map-marked-alt"></i>&nbsp;Địa chỉ trường:
+                                                        </h3>
+                                                    </div>
+                                                    <div class="kt-widget1__info kt-align-right">
+                                                        <h3 class="kt-widget1__desc">
+                                                            {{studentInfoData.student.school.address}}
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                                <div class="kt-widget1__item">
+                                                    <div class="kt-widget1__info kt-align-left">
+                                                        <h3 class="kt-widget1__desc "><i
+                                                                class="fas fa-info"></i>&nbsp;Trạng
+                                                            thái:</h3>
+                                                    </div>
+                                                    <div class="kt-widget1__info kt-align-right">
+                                                        <h3 class="kt-widget1__desc">
+                                                            <span
+                                                                class="kt-badge kt-badge--{{studentInfoData.status.classname}} kt-badge--inline ">{{studentInfoData.status.text}}</span>
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="fa-pull-left">
-                                        <label for="studentName" class="form-control-label"><b>Tên học sinh:
-                                            </b></label>
-                                    </div>
-                                    <div class="fa-pull-right">
-                                        <span class="studentName">{{studenInfoData.student.user.name}}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="fa-pull-left">
-                                        <label for="phone" class="form-control-label"><b>Số điện thoại: </b></label>
-                                    </div>
-                                    <div class="fa-pull-right">
-                                        <span class="phone">{{studenInfoData.student.user.phone}}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="fa-pull-left">
-                                        <label for="className" class="form-control-label"><b>Lớp: </b></label>
-                                    </div>
-                                    <div class="fa-pull-right">
-                                        <span class="className">{{studenInfoData.student.class.name}}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="fa-pull-left">
-                                        <label for="teacherName" class="form-control-label"><b>Giáo viên: </b></label>
-                                    </div>
-                                    <div class="fa-pull-right">
-                                        <span class="teacherName">{{studenInfoData.student.class.teacher.name}}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="fa-pull-left">
-                                        <label for="teacherName" class="form-control-label"><b>Trường: </b></label>
-                                    </div>
-                                    <div class="fa-pull-right">
-                                        <span class="teacherName">{{studenInfoData.student.school.name}}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="fa-pull-left">
-                                        <label for="teacherName" class="form-control-label"><b>Địa chỉ trường:
-                                            </b></label>
-                                    </div>
-                                    <div class="fa-pull-right">
-                                        <span class="teacherName">{{studenInfoData.student.school.address}}</span>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
                     </div>
                 </div>
