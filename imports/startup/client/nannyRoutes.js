@@ -19,7 +19,7 @@ driverRoutes.route('/tripHistory', {
     action() {
         BlazeLayout.render('App_body', {
             main: 'App_home',
-            content: 'tripHistoryDriver',
+            content: 'tripList',
         });
     },
 });
