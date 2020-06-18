@@ -1,6 +1,6 @@
 import './tripList.html';
 import { MeteorCall, getJsonDefault, handleError } from '../../../../functions';
-import { _METHODS, _TRIP, _URL_images, LIMIT_DOCUMENT_PAGE } from '../../../../variableConst';
+import { _METHODS, _TRIP, _URL_images, LIMIT_DOCUMENT_PAGE, _USER } from '../../../../variableConst';
 
 Template.tripList.onCreated(() => {
     accessToken = Cookies.get('accessToken')
@@ -24,6 +24,10 @@ Template.tripList.helpers({
     },
 })
 
+Template.tripList.events({
+    'click openStudentTripModalBtn': openStudentTripModalBtnClick
+})
+
 Template.tripHtml2.helpers({
     _URL_images() {
         return _URL_images
@@ -34,24 +38,47 @@ Template.tripHtml2.helpers({
     tripStatus() {
         return getJsonDefault(_TRIP.status, 'number', this.status)
     },
+    isParent() {
+        return Session.get('userType') == _USER.type.parent.number
+    },
 })
 
-function reloadData(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
-    console.log(FlowRouter.getRouteName())
-    if (FlowRouter.getRouteName() == 'driver.tripHistory')
-        MeteorCall(_METHODS.trip.GetByPage, {
-            page: page,
-            limit: limitDocPerPage,
-            options: [{
-                text: "status",
-                value: _TRIP.status.finish.number,
-            }]
-        }, accessToken).then(result => {
-            Session.set('tripList', result.data)
-        }).catch(handleError)
-    else {
-        MeteorCall(_METHODS.trip.GetAllNext, {}, accessToken).then(result => {
-            Session.set('tripList', result)
-        }).catch(handleError)
+async function reloadData(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
+    let routeName = FlowRouter.getRouteName()
+    let tripList
+    try {
+        if (routeName == 'driver.tripHistory')
+            tripList = await MeteorCall(_METHODS.trip.GetByPage, {
+                page: page,
+                limit: limitDocPerPage,
+                options: [{
+                    text: "status",
+                    value: _TRIP.status.finish.number,
+                }]
+            }, accessToken)
+        else if (routeName == 'parent.tripHistoryStudent')
+            tripList = await MeteorCall(_METHODS.trip.GetByStudent, {
+                page: page,
+                limit: limitDocPerPage,
+                studentID: FlowRouter.getParam("studentID"),
+                options: [{
+                    text: "status",
+                    value: _TRIP.status.finish.number,
+                }]
+            }, accessToken)
+        else if (routeName == 'parent.nextTripStudent')
+            tripList = await MeteorCall(_METHODS.trip.GetAllNext, {
+                studentID: FlowRouter.getParam("studentID"),
+            }, accessToken)
+        else
+            tripList = await MeteorCall(_METHODS.trip.GetAllNext, {
+            }, accessToken)
+        Session.set('tripList', tripList)
+    } catch (e) {
+        handleError(e)
     }
+}
+
+function openStudentTripModalBtnClick(e) {
+    $('#childrenNextripModal').modal('show')
 }

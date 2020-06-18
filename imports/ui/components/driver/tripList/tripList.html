@@ -46,6 +46,7 @@
             </div>
         </div>
     </div>
+    {{> childrenNextripModal}}
 </template>
 
 <template name="tripHtml2">
@@ -85,10 +86,18 @@
                             <i class="flaticon2-phone"></i>&nbsp;
                             <label for="phonenumber" class="form-control-label">Liên hệ:</label>&nbsp;
                             <a href="#" id="phonenumber">{{driver.user.phone}}</a>
+                            {{#if isParent}}
                             <div class="fa-pull-right">
-                                <a href="/driver/tripInfo/{{_id}}"><button type="button" class="btn btn-success btn-sm">Xem
+                                <button type="button" class="btn btn-success btn-sm" tripID="{{_id}}" id="openStudentTripModalBtn">Xem
+                                    thông tin</button>
+                            </div>
+                            {{else}}
+                            <div class="fa-pull-right">
+                                <a href="/driver/tripInfo/{{_id}}"><button type="button"
+                                        class="btn btn-success btn-sm">Xem
                                         thông tin</button></a>
                             </div>
+                            {{/if}}
 
                         </div>
                     </div>

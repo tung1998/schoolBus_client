@@ -74,8 +74,10 @@
                         studentID="{{_id}}">Chuyến đi tiếp theo</button>
                 </div>
                 <div class="kt-widget__footer row">
-                    <a type="button" class="col btn btn-label-danger btn-upper"
-                        href="/parent/tripHistory/{{_id}}">Xem lịch sử chuyến đi</a>
+                    <a type="button" class="col btn btn-label-danger btn-upper" href="/parent/tripHistory/{{_id}}">Xem
+                        lịch sử chuyến đi</a>
+                    <a type="button" class="col btn btn-label-success btn-upper"
+                        href="/parent/nextTrip/{{_id}}">Chuyến đi sắp tới</a>
                 </div>
             </div>
             <!--end::Widget -->
@@ -108,15 +110,15 @@
                                     <div class="col-md-6">
                                         <div class="kt-widget__top">
                                             <div class="kt-widget__media kt-hidden-">
-                                                <img src="{{_URL_images}}/{{tripData.driver.user.image}}/0"
-                                                    alt="image">
+                                                <img src="{{_URL_images}}/{{tripData.driver.user.image}}/0" alt="image">
                                             </div>
                                             <div class="kt-widget__content" style="padding-left: 1rem;">
                                                 <div class="kt-widget1 justify-content-center">
                                                     <div class="kt-widget1__item">
                                                         <div class="kt-widget1__info kt-align-left">
                                                             <h3 class="kt-widget1__title">Lái xe: </h3>
-                                                            <span class="kt-widget1__desc "><i class="flaticon2-phone"></i> Số điện thoại:</span>
+                                                            <span class="kt-widget1__desc "><i
+                                                                    class="flaticon2-phone"></i> Số điện thoại:</span>
                                                         </div>
                                                         <div class="kt-widget1__info kt-align-right">
                                                             <h3 class="kt-widget1__title kt-font-primary">
@@ -130,19 +132,19 @@
                                             </div>
                                         </div>
                                     </div>
-                                  
+
                                     <div class="col-md-6">
                                         <div class="kt-widget__top">
                                             <div class="kt-widget__media">
-                                                <img src="{{_URL_images}}/{{tripData.nanny.user.image}}/0"
-                                                    alt="image">
+                                                <img src="{{_URL_images}}/{{tripData.nanny.user.image}}/0" alt="image">
                                             </div>
                                             <div class="kt-widget__content" style="padding-left: 1rem;">
                                                 <div class="kt-widget1 justify-content-center">
                                                     <div class="kt-widget1__item">
                                                         <div class="kt-widget1__info kt-align-left">
                                                             <h3 class="kt-widget1__title">Bảo mẫu: </h3>
-                                                            <span class="kt-widget1__desc "><i class="flaticon2-phone"></i> Số điện
+                                                            <span class="kt-widget1__desc "><i
+                                                                    class="flaticon2-phone"></i> Số điện
                                                                 thoại:</span>
                                                         </div>
                                                         <div class="kt-widget1__info kt-align-right">
@@ -163,11 +165,12 @@
                                             <div class="kt-widget1 justify-content-center">
                                                 <div class="kt-widget1__item mt-2">
                                                     <div class="kt-widget1__info kt-align-left">
-                                                        <h3 class="kt-widget1__title"><i class="flaticon2-help kt-font-danger"></i> Biển số xe: </h3>
+                                                        <h3 class="kt-widget1__title"><i
+                                                                class="flaticon2-help kt-font-danger"></i> Biển số xe:
+                                                        </h3>
                                                     </div>
                                                     <div class="kt-widget1__info kt-align-right">
-                                                        <h3 class="kt-widget1__title kt-font-success"
-                                                            id="driver-name">
+                                                        <h3 class="kt-widget1__title kt-font-success" id="driver-name">
                                                             {{tripData.car.numberPlate}}
                                                         </h3>
                                                     </div>
@@ -184,7 +187,8 @@
                                                             <h4 class="kt-widget1__title">Tình trạng chuyến đi</h4>
                                                         </div>
                                                         <div class="kt-widget1__info kt-align-right">
-                                                            <h4 class="kt-widget1__title kt-font-{{tripStatus.classname}}">
+                                                            <h4
+                                                                class="kt-widget1__title kt-font-{{tripStatus.classname}}">
                                                                 {{tripStatus.text}}
                                                             </h4>
                                                         </div>
@@ -202,7 +206,8 @@
                                                             <h4 class="kt-widget1__title">Tình trạng học sinh</h4>
                                                         </div>
                                                         <div class="kt-widget1__info kt-align-right">
-                                                            <h4 class="kt-widget1__title kt-font-{{studentStatus.classname}}">
+                                                            <h4
+                                                                class="kt-widget1__title kt-font-{{studentStatus.classname}}">
                                                                 {{studentStatus.text}}
                                                             </h4>
                                                         </div>
@@ -214,13 +219,14 @@
                                     <div class="col">
                                         <div class="tab-pane" id="timeline" role="tabpanel">
                                             <div class="kt-timeline-v2">
-                                                <div class="kt-timeline-v2__items  kt-padding-top-25 kt-padding-bottom-30">
+                                                <div
+                                                    class="kt-timeline-v2__items  kt-padding-top-25 kt-padding-bottom-30">
                                                     {{#each tripStudentLog}}
                                                     {{> tripLogElement}}
                                                     {{/each}}
                                                 </div>
                                             </div>
-                
+
                                         </div>
                                     </div>
                                 </div>
@@ -230,7 +236,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary pull-left" data-dismiss="modal">Đóng</button>
-                    <a type="button" class="btn btn-label-primary" href="/parent/tripTracking/{{tripData._id}}">Xem vị trí</a>
+                    <a type="button" class="btn btn-label-primary" href="/parent/tripTracking/{{tripData._id}}">Xem vị
+                        trí</a>
                     <button type="button" class="btn btn-danger" id="absentRequest">Xin nghỉ</button>
                 </div>
             </div>

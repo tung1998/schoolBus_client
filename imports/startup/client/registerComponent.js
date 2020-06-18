@@ -51,12 +51,9 @@ import '../../ui/components/parent/childrenInfo/childrenInfo.js';
 import '../../ui/components/parent/tripTracking/tripTracking.js';
 import '../../ui/components/parent/sendFeedback/parentFeedback.js';
 import '../../ui/components/parent/parentRequest/parentRequest.js';
-import '../../ui/components/parent/historyTrip/historyTrip.js';
 import '../../ui/components/parent/chat/chat.js';
 
 // nanny template
-import '../../ui/components/nanny/tripHistory/tripHistory.js';
-import '../../ui/components/nanny/tripListStudent/tripListStudent.js';
 
 // teacher template
 import '../../ui/components/teacher/listClass/listClass.js';

@@ -15,12 +15,23 @@ parentRoutes.route('/childrenInfo', {
 });
 
 parentRoutes.route('/tripHistory/:studentID([0-9a-fA-F]{24})', {
-    name: 'parent.childrenInfo',
+    name: 'parent.tripHistoryStudent',
     action() {
         BlazeLayout.setRoot('body');
         BlazeLayout.render('App_body', {
             main: 'App_home',
-            content: 'tripHistoryStudent',
+            content: 'tripList',
+        });
+    },
+});
+
+parentRoutes.route('/nextTrip/:studentID([0-9a-fA-F]{24})', {
+    name: 'parent.nextTripStudent',
+    action() {
+        BlazeLayout.setRoot('body');
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'tripList',
         });
     },
 });
