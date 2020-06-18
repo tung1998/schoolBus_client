@@ -45,7 +45,7 @@ let accessToken,
 Template.tripDetail.onCreated(async () => {
     accessToken = Cookies.get('accessToken')
     Session.set('studentTripData', [])
-    Session.set('studenInfoData', {})
+    Session.set('studentInfoData', {})
     Session.set('tripData', {})
     Session.set('tripStatus', '')
     Session.set('tripLog', [])
@@ -155,7 +155,7 @@ Template.tripDetail.onDestroyed(() => {
     stopCoor = []
     markersList = []
     Session.delete('studentTripData')
-    Session.delete('studenInfoData')
+    Session.delete('studentInfoData')
     Session.delete('tripID')
     Session.delete('tripStatus')
     Session.delete('tripData')
@@ -164,8 +164,9 @@ Template.tripDetail.onDestroyed(() => {
 })
 
 Template.studentInfoModal.helpers({
-    studenInfoData() {
-        return Session.get('studenInfoData')
+    studentInfoData() {
+        console.log(Session.get('studentInfoData'));
+        return Session.get('studentInfoData')
     }
 })
 

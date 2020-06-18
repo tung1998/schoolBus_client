@@ -40,7 +40,7 @@ let accessToken,
 Template.tripDetailNoButton.onCreated(async () => {
     accessToken = Cookies.get('accessToken')
     Session.set('studentTripData', [])
-    Session.set('studenInfoData', {})
+    Session.set('studentInfoData', {})
     Session.set('tripData', {})
     Session.set('tripStatus', '')
     Session.set('tripLog', [])
@@ -96,7 +96,7 @@ Template.tripDetailNoButton.onDestroyed(() => {
     stopCoor = []
     markersList = []
     Session.delete('studentTripData')
-    Session.delete('studenInfoData')
+    Session.delete('studentInfoData')
     Session.delete('tripID')
     Session.delete('tripStatus')
     Session.delete('tripData')
@@ -105,8 +105,8 @@ Template.tripDetailNoButton.onDestroyed(() => {
 })
 
 Template.studentInfoModalNoButton.helpers({
-    studenInfoData() {
-        return Session.get('studenInfoData')
+    studentInfoData() {
+        return Session.get('studentInfoData')
     }
 })
 
@@ -236,14 +236,15 @@ function renderTimeLine() {
 
 
 function updateStudentInfoModalData(studentID) {
-    let studenInfoData = checkStudentInfo(studentID)
-    studenInfoData.tripID = Session.get('tripID')
-    if (studenInfoData.student.user.image) {
-        studenInfoData.image = `${_URL_images}/${studenInfoData.student.user.image}/0`
+    let studentInfoData = checkStudentInfo(studentID)
+    studentInfoData.tripID = Session.get('tripID')
+    studentInfoData.status = getJsonDefault(_TRIP_STUDENT.status, 'number', studentInfoData.status)
+    if (studentInfoData.student.user.image) {
+        studentInfoData.image = `${_URL_images}/${studentInfoData.student.user.image}/0`
     } else {
-        studenInfoData.image = `/assets/media/users/user5.jpg`
+        studentInfoData.image = `/assets/media/users/user5.jpg`
     }
-    Session.set('studenInfoData', studenInfoData)
+    Session.set('studentInfoData', studentInfoData)
     $("#studentInfoModal").modal("show")
 }
 
