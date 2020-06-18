@@ -71,7 +71,11 @@
                     <button type="button" class="col btn btn-label-primary btn-upper chat-btn"
                         teacherID="{{class.teacher.user._id}}">Nhắn tin cho giáo viên</button>
                     <button type="button" class="col btn btn-label-warning btn-upper next-tripBtn"
-                        studentID="{{_id}}">Chuyến đi sắp tới</button>
+                        studentID="{{_id}}">Chuyến đi tiếp theo</button>
+                </div>
+                <div class="kt-widget__footer row">
+                    <a type="button" class="col btn btn-label-danger btn-upper"
+                        href="/parent/tripHistory/{{_id}}">Xem lịch sử chuyến đi</a>
                 </div>
             </div>
             <!--end::Widget -->
@@ -80,7 +84,7 @@
 </template>
 
 <template name="childrenNextripModal">
-    <div class="modal fade" id="childrenNextripModal" tripID="{{nextTripData._id}}" tabindex="-1" role="dialog"
+    <div class="modal fade" id="childrenNextripModal" tripID="{{tripData._id}}" tabindex="-1" role="dialog"
         aria-labelledby="exampleModalLabel" style="display: none;" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -97,14 +101,14 @@
                                     <div class="col-md-12">
                                         <div class="kt-widget__info">
                                             <div class="kt-widget__desc">
-                                                <h5><strong>Thời gian: {{nextTripData.startTime}}</strong></h5>
+                                                <h5><strong>Thời gian xuất phát: {{tripData.startTime}}</strong></h5>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="kt-widget__top">
                                             <div class="kt-widget__media kt-hidden-">
-                                                <img src="http://192.168.0.111:3000/images/{{nextTripData.driver.user.image}}/0"
+                                                <img src="{{_URL_images}}/{{tripData.driver.user.image}}/0"
                                                     alt="image">
                                             </div>
                                             <div class="kt-widget__content" style="padding-left: 1rem;">
@@ -116,10 +120,10 @@
                                                         </div>
                                                         <div class="kt-widget1__info kt-align-right">
                                                             <h3 class="kt-widget1__title kt-font-primary">
-                                                                {{nextTripData.driver.user.name}}
+                                                                {{tripData.driver.user.name}}
                                                             </h3>
                                                             <span class="kt-widget1__desc phone">
-                                                                {{nextTripData.driver.user.phone}}</span>
+                                                                {{tripData.driver.user.phone}}</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -129,24 +133,24 @@
                                   
                                     <div class="col-md-6">
                                         <div class="kt-widget__top">
-                                            <div class="kt-widget__media kt-hidden-">
-                                                <img src="http://192.168.0.111:3000/images/{{nextTripData.nanny.user.image}}/0"
+                                            <div class="kt-widget__media">
+                                                <img src="{{_URL_images}}/{{tripData.nanny.user.image}}/0"
                                                     alt="image">
                                             </div>
                                             <div class="kt-widget__content" style="padding-left: 1rem;">
                                                 <div class="kt-widget1 justify-content-center">
                                                     <div class="kt-widget1__item">
                                                         <div class="kt-widget1__info kt-align-left">
-                                                            <h4 class="kt-widget1__title">Bảo mẫu: </h4>
+                                                            <h3 class="kt-widget1__title">Bảo mẫu: </h3>
                                                             <span class="kt-widget1__desc "><i class="flaticon2-phone"></i> Số điện
                                                                 thoại:</span>
                                                         </div>
                                                         <div class="kt-widget1__info kt-align-right">
-                                                            <h4 class="kt-widget1__title kt-font-primary">
-                                                                {{nextTripData.nanny.user.name}}
-                                                            </h4>
+                                                            <h3 class="kt-widget1__title kt-font-primary">
+                                                                {{tripData.nanny.user.name}}
+                                                            </h3>
                                                             <span class="kt-widget1__desc phone">
-                                                                {{nextTripData.nanny.user.phone}}</span>
+                                                                {{tripData.nanny.user.phone}}</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -164,11 +168,59 @@
                                                     <div class="kt-widget1__info kt-align-right">
                                                         <h3 class="kt-widget1__title kt-font-success"
                                                             id="driver-name">
-                                                            {{nextTripData.car.numberPlate}}
+                                                            {{tripData.car.numberPlate}}
                                                         </h3>
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="kt-widget__top">
+                                            <div class="kt-widget__content" style="padding-left: 1rem;">
+                                                <div class="kt-widget1 justify-content-center">
+                                                    <div class="kt-widget1__item">
+                                                        <div class="kt-widget1__info kt-align-left">
+                                                            <h4 class="kt-widget1__title">Tình trạng chuyến đi</h4>
+                                                        </div>
+                                                        <div class="kt-widget1__info kt-align-right">
+                                                            <h4 class="kt-widget1__title kt-font-{{tripStatus.classname}}">
+                                                                {{tripStatus.text}}
+                                                            </h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="kt-widget__top">
+                                            <div class="kt-widget__content" style="padding-left: 1rem;">
+                                                <div class="kt-widget1 justify-content-center">
+                                                    <div class="kt-widget1__item">
+                                                        <div class="kt-widget1__info kt-align-left">
+                                                            <h4 class="kt-widget1__title">Tình trạng học sinh</h4>
+                                                        </div>
+                                                        <div class="kt-widget1__info kt-align-right">
+                                                            <h4 class="kt-widget1__title kt-font-{{studentStatus.classname}}">
+                                                                {{studentStatus.text}}
+                                                            </h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="tab-pane" id="timeline" role="tabpanel">
+                                            <div class="kt-timeline-v2">
+                                                <div class="kt-timeline-v2__items  kt-padding-top-25 kt-padding-bottom-30">
+                                                    {{#each tripStudentLog}}
+                                                    {{> tripLogElement}}
+                                                    {{/each}}
+                                                </div>
+                                            </div>
+                
                                         </div>
                                     </div>
                                 </div>
@@ -177,7 +229,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-secondary pull-left" data-dismiss="modal">Đóng</button>
+                    <a type="button" class="btn btn-label-primary" href="/parent/tripTracking/{{tripData._id}}">Xem vị trí</a>
                     <button type="button" class="btn btn-danger" id="absentRequest">Xin nghỉ</button>
                 </div>
             </div>

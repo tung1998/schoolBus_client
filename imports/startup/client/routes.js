@@ -25,6 +25,7 @@ import {
 
 FlowRouter.triggers.enter([function(context, redirect) {
     $('.modal-backdrop').remove()
+    $('.swal2-container').remove()
     let accessToken = Cookies.get('accessToken');
     BlazeLayout.render("login")
     if (!accessToken) FlowRouter.go('/login');

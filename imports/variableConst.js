@@ -226,6 +226,7 @@ const _METHODS = {
         GetNext: 'trip.getNext',
         GetAllNext: 'trip.getAllNext',
         GetTripLogByTripID: 'trip.getLogByTripID',
+        GetStudentTripLog: 'trip.getStudentTripLog',
         UpdateTripStatus: 'trip.updateTripStatus',
         UpdateCarStop: 'trip.updateCarStop'
     },
@@ -260,7 +261,8 @@ const _METHODS = {
         Delete: 'sms.deleteSMS',
     },
     gps: {
-        getLast: 'monitoring.getLastgps'
+        getLast: 'gps.getLastgps',
+        getLastByCar: 'gps.getLastByCar'
     },
     wemap: {
         getAddress: 'wemap.getAddress',
@@ -319,7 +321,7 @@ const _TRIP_STUDENT = {
 const _TRIP = {
     status: {
         ready: {
-            text: "Đã sẵn sàng",
+            text: "Đang đợi",
             classname: 'primary',
             number: 0
         },

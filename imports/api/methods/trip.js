@@ -27,6 +27,7 @@ if (Meteor.isServer) {
         'trip.getByPage': getTripByPage,
         'trip.getNext': getNextTrip,
         'trip.getLogByTripID': getTripLogByTripID,
+        'trip.getStudentTripLog': getStudentTripLog,
         'trip.updateTripStatus': updateTripStatus,
         'trip.getAllNext': getAllNextTrip,
         'trip.updateCarStop': updateTripCarStop,
@@ -129,6 +130,13 @@ function getAllNextTrip(data, accessToken = '') {
 
 function getTripLogByTripID(data, accessToken = '') {
     let url = `${AUTH_TRIP}/${data.tripID}/log`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    })
+}
+
+function getStudentTripLog(data, accessToken = '') {
+    let url = `${AUTH_TRIP}/${data.tripID}/student/${data.studentID}/log`
     return httpDefault(METHOD.get, url, {
         token: accessToken
     })

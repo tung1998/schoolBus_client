@@ -16,12 +16,20 @@ const AUTH_GPS = `${AUTH_PATH}/gps`
 
 if (Meteor.isServer) {
     Meteor.methods({
-        'monitoring.getLastgps': getLastgps,
+        'gps.getLastgps': getLastgps,
+        'gps.getLastByCar': getLastByCar,
     });
 }
 
 function getLastgps(data, accessToken = '') {
     let url = `${AUTH_GPS}/last`;
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
+}
+
+function getLastByCar(data, accessToken = '') {
+    let url = `${AUTH_GPS}/last/byCar?carID=${data._id}`;
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });
