@@ -1,1 +1,0 @@
-import './tripListStudent.html';

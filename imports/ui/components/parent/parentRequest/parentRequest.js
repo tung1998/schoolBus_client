@@ -66,7 +66,7 @@ Template.requestHtml.helpers({
         return getJsonDefault(_REQUEST.status, 'number', this.status)
     },
     requestTime() {
-        if(this.tripID)
+        if(this.tripID&&this.trip)
         return moment(this.trip.startTime).format("llll")
         return moment(this.time).format("llll")
     }

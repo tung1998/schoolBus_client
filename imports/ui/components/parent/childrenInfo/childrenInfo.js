@@ -4,26 +4,35 @@ const Cookies = require("js-cookie");
 import {
     MeteorCall,
     handleError,
-    handleConfirm
+    handleConfirm,
+    getJsonDefault
 } from "../../../../functions";
 
 import {
     _METHODS,
-    _URL_images
+    _URL_images,
+    _TRIP, _TRIP_STUDENT
 } from "../../../../variableConst";
 
 let accessToken;
 
 Template.childrenInfo.onCreated(() => {
     accessToken = Cookies.get("accessToken");
+    Session.delete('studentID')
+    Session.delete('students')
 });
 
 Template.childrenInfo.onRendered(() => {
 
 });
 
+Template.childrenInfo.onDestroyed(() => {
+    Session.delete('studentID')
+    Session.delete('students')
+});
+
 Template.childrenInfo.events({
-    'click .next-tripBtn': getNextTripData,
+    'click .next-tripBtn': gettripData,
     'click .chat-btn': chatBtnClick,
     'click #absentRequest': absentRequestBtnClick
 });
@@ -35,11 +44,26 @@ Template.childrenInfo.helpers({
 });
 
 Template.childrenNextripModal.helpers({
-    nextTripData() {
-        return Session.get('nextTripData')
+    tripData() {
+        return Session.get('tripData')
+    },
+    tripStatus() {
+        let tripData = Session.get('tripData')
+        if(!tripData) return
+        return getJsonDefault(_TRIP.status, 'number', tripData.status)
+    },
+    studentStatus() {
+        let tripData = Session.get('tripData')
+        if(!tripData) return
+        let student = tripData.students.filter(item=>item.studentID)[0]
+        if(!student) return
+        return getJsonDefault(_TRIP_STUDENT.status, 'number', student.status)
     },
     _URL_images() {
         return _URL_images
+    },
+    tripStudentLog(){
+        return Session.get('tripStudentLog')
     }
 });
 
@@ -50,18 +74,25 @@ Template.childrenHtml.helpers({
 });
 
 
-function getNextTripData(e) {
+function gettripData(e) {
     let studentID = e.currentTarget.getAttribute('studentID')
     MeteorCall(_METHODS.trip.GetNext, {
         studentID
     }, accessToken).then(result => {
         if (result) {
             result.startTime = moment(result.startTime).locale('vi').format('LLLL')
-            Session.set('nextTripData', result)
-            $("#childrenNextripModal").attr('studentID', studentID).modal('show')
+            Session.set('tripData', result)
+            Session.set('studentID',studentID)
+            $("#childrenNextripModal").modal('show')
+            return MeteorCall(_METHODS.trip.GetStudentTripLog, {
+                tripID:result._id,
+                studentID
+            }, accessToken)
         } else {
             handleError(null, 'Không có chuyến đi sắp tới')
         }
+    }).then(tripStudentLog=>{
+        Session.set('tripStudentLog', tripStudentLog)
     }).catch(error => {
         handleError(error, 'Không có chuyến đi sắp tới')
     })
@@ -76,8 +107,8 @@ function chatBtnClick(e) {
 }
 
 function absentRequestBtnClick(e) {
-    let studentID = $("#childrenNextripModal").attr('studentID')
-    let tripID = $("#childrenNextripModal").attr('tripID')
+    let studentID = Session.get('studentID')
+    let tripID = Session.get('tripData')._id
 
     $("#childrenNextripModal").modal('hide')
     handleConfirm('Bạn muốn xin nghỉ cho con?').then(result => {

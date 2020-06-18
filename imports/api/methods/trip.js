@@ -27,8 +27,10 @@ if (Meteor.isServer) {
         'trip.getByPage': getTripByPage,
         'trip.getNext': getNextTrip,
         'trip.getLogByTripID': getTripLogByTripID,
+        'trip.getStudentTripLog': getStudentTripLog,
         'trip.updateTripStatus': updateTripStatus,
         'trip.getAllNext': getAllNextTrip,
+        'trip.getByStudent': getByStudent,
         'trip.updateCarStop': updateTripCarStop,
     });
 }
@@ -53,6 +55,7 @@ function getTripByPage(data, accessToken = '') {
         data.options.forEach(item => {
             if (item.value) url += `&${encodeURIComponent(item.text)}=${encodeURIComponent(item.value)}`
         })
+        console.log(url)
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });
@@ -134,6 +137,13 @@ function getTripLogByTripID(data, accessToken = '') {
     })
 }
 
+function getStudentTripLog(data, accessToken = '') {
+    let url = `${AUTH_TRIP}/${data.tripID}/student/${data.studentID}/log`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    })
+}
+
 function updateTripStatus(data, accessToken = '') {
     let url = `${AUTH_TRIP}/${data.tripID}/status`
     return httpDefault(METHOD.put, url, {
@@ -148,4 +158,16 @@ function updateTripCarStop(data, accessToken = '') {
         body: data,
         token: accessToken
     })
+}
+
+function getByStudent(data, accessToken = '') {
+    let url = `${AUTH_TRIP}/byStudent?page=${data.page}&limit=${data.limit}&studentID=${data.studentID}`
+    if (data.options && data.options.length)
+        data.options.forEach(item => {
+            if (item.value) url += `&${encodeURIComponent(item.text)}=${encodeURIComponent(item.value)}`
+        })
+        console.log(url)
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    });
 }

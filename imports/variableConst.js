@@ -9,7 +9,8 @@ export {
     _REQUEST,
     _MARKER_CONFIG,
     _TRIP_LOG,
-    _TRIP_CARSTOP
+    _TRIP_CARSTOP,
+    _USER
 }
 const _URL_images = 'http://192.168.0.111:3000/images'
 // const _URL_images = 'http://113.190.128.251:3000/images'
@@ -225,7 +226,9 @@ const _METHODS = {
         Image: 'trip.image',
         GetNext: 'trip.getNext',
         GetAllNext: 'trip.getAllNext',
+        GetByStudent: 'trip.getByStudent',
         GetTripLogByTripID: 'trip.getLogByTripID',
+        GetStudentTripLog: 'trip.getStudentTripLog',
         UpdateTripStatus: 'trip.updateTripStatus',
         UpdateCarStop: 'trip.updateCarStop'
     },
@@ -260,7 +263,8 @@ const _METHODS = {
         Delete: 'sms.deleteSMS',
     },
     gps: {
-        getLast: 'monitoring.getLastgps'
+        getLast: 'gps.getLastgps',
+        getLastByCar: 'gps.getLastByCar'
     },
     wemap: {
         getAddress: 'wemap.getAddress',
@@ -319,7 +323,7 @@ const _TRIP_STUDENT = {
 const _TRIP = {
     status: {
         ready: {
-            text: "Đã sẵn sàng",
+            text: "Đang đợi",
             classname: 'primary',
             number: 0
         },
@@ -518,5 +522,44 @@ const _TRIP_CARSTOP = {
             classname: 'warning',
             number: 0
         },
+    }
+}
+
+const _USER = {
+    status: {
+        
+    },
+    type:{
+        administrator: {
+            text: "Quản trị viên",
+            classname: 'primary',
+            number: 0
+        },
+        student: {
+            text: "Học sinh",
+            classname: 'secondary',
+            number: 1
+        },
+        nanny: {
+            text: "Bảo mẫu",
+            classname: 'danger',
+            number: 2
+        },
+        parent: {
+            text: "Phụ huynh",
+            classname: 'success',
+            number: 3
+        },
+        driver: {
+            text: "Tài xế",
+            classname: 'info',
+            number: 4
+        },
+        teacher: {
+            text: "Giáo viên",
+            classname: 'warning',
+            number: 5
+        },
+        
     }
 }

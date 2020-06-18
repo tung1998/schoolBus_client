@@ -90,7 +90,8 @@
     }
 }
 
-#student-info__driver> .kt-widget1, #student-info__admin> .kt-widget1{
+#student-info__driver>.kt-widget1,
+#student-info__admin>.kt-widget1 {
     padding: 1rem;
 
     .kt-widget1__item {
@@ -106,7 +107,8 @@
         width: 60%;
     }
 
-    .kt-widget1__info >.kt-widget1__title,.kt-widget1__desc {
+    .kt-widget1__info>.kt-widget1__title,
+    .kt-widget1__desc {
         margin-top: 0.5rem;
     }
 
@@ -118,7 +120,16 @@
 }
 
 @media (max-width: 1024px) {
-    #student-info__driver> .kt-widget1, #student-info__admin> .kt-widget1{
+
+    #student-info__driver>.kt-widget1,
+    #student-info__admin>.kt-widget1 {
         padding: 0.5rem;
     }
+}
+
+#trackingMap {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
 }
