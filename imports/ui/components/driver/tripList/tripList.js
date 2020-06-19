@@ -25,7 +25,7 @@ Template.tripList.helpers({
 })
 
 Template.tripList.events({
-    'click openStudentTripModalBtn': openStudentTripModalBtnClick
+    'click .openStudentTripModalBtn': openStudentTripModalBtnClick
 })
 
 Template.tripHtml2.helpers({
@@ -95,5 +95,9 @@ async function reloadData(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
 }
 
 function openStudentTripModalBtnClick(e) {
+    let tripList = Session.get('tripList')
+    let tripID = e.currentTarget.getAttribute('tripID')
+    let tripData = tripList.filter(item=>item._id==tripID)[0]
+    Session.set('tripData', tripData)
     $('#childrenNextripModal').modal('show')
 }

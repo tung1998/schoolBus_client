@@ -64,6 +64,10 @@ Template.childrenNextripModal.helpers({
     },
     tripStudentLog(){
         return Session.get('tripStudentLog')
+    },
+    isShowPosition(){
+        let tripData = Session.get('tripData')
+        return tripData.status==_TRIP.status.moving.number||tripData.status==_TRIP.status.accident.number
     }
 });
 

@@ -76,8 +76,8 @@
                 <div class="kt-widget__footer row">
                     <a type="button" class="col btn btn-label-danger btn-upper" href="/parent/tripHistory/{{_id}}">Xem
                         lịch sử chuyến đi</a>
-                    <a type="button" class="col btn btn-label-success btn-upper"
-                        href="/parent/nextTrip/{{_id}}">Chuyến đi sắp tới</a>
+                    <a type="button" class="col btn btn-label-success btn-upper" href="/parent/nextTrip/{{_id}}">Chuyến
+                        đi sắp tới</a>
                 </div>
             </div>
             <!--end::Widget -->
@@ -236,8 +236,10 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary pull-left" data-dismiss="modal">Đóng</button>
+                    {{#if isShowPosition}}
                     <a type="button" class="btn btn-label-primary" href="/parent/tripTracking/{{tripData._id}}">Xem vị
                         trí</a>
+                    {{/if}}
                     <button type="button" class="btn btn-danger" id="absentRequest">Xin nghỉ</button>
                 </div>
             </div>
