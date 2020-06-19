@@ -34,8 +34,7 @@
             <div class="kt-widget kt-widget--user-profile-2">
               <div class="kt-widget__head">
                 <div class="kt-widget__media">
-                  <img class="kt-widget__img kt-hidden-" src="{{_URL_images}}/{{studentInfo.user.image}}/0"
-                    alt="image">
+                  <img class="kt-widget__img kt-hidden-" src="{{_URL_images}}/{{studentInfo.user.image}}/0" alt="image">
                 </div>
                 <div class="kt-widget__info">
                   <a href="#" class="kt-widget__username">
@@ -68,7 +67,7 @@
                 <div class="kt-widget__item">
                   {{#each studentInfo.parents}}
                   <div class="kt-widget__contact">
-                    <span class="kt-widget__label">Phụ huynh:  {{user.name}}</span>
+                    <span class="kt-widget__label">Phụ huynh: {{user.name}}</span>
                     <span class="kt-widget__data">
                       <a href="/teacher/chat?parentID={{user._id}}" class="btn btn-success btn-sm mr-3">
                         <i class="flaticon2-chat-1"></i>Nhắn tin
@@ -76,6 +75,12 @@
                     </span>
                   </div>
                   {{/each}}
+                </div>
+                <div class="kt-widget__footer row">
+                  <a type="button" class="col btn btn-label-danger btn-upper" href="/teacher/student/{{studentInfo._id}}/tripHistory">Xem
+                    lịch sử chuyến đi</a>
+                  <a type="button" class="col btn btn-label-success btn-upper" href="/teacher/student/{{studentInfo._id}}/nextTrip">Chuyến đi
+                    sắp tới</a>
                 </div>
               </div>
             </div>

@@ -47,32 +47,47 @@ async function reloadData(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
     let routeName = FlowRouter.getRouteName()
     let tripList
     try {
-        if (routeName == 'driver.tripHistory')
-            tripList = await MeteorCall(_METHODS.trip.GetByPage, {
-                page: page,
-                limit: limitDocPerPage,
-                options: [{
-                    text: "status",
-                    value: _TRIP.status.finish.number,
-                }]
-            }, accessToken)
-        else if (routeName == 'parent.tripHistoryStudent')
-            tripList = await MeteorCall(_METHODS.trip.GetByStudent, {
-                page: page,
-                limit: limitDocPerPage,
-                studentID: FlowRouter.getParam("studentID"),
-                options: [{
-                    text: "status",
-                    value: _TRIP.status.finish.number,
-                }]
-            }, accessToken)
-        else if (routeName == 'parent.nextTripStudent')
-            tripList = await MeteorCall(_METHODS.trip.GetAllNext, {
-                studentID: FlowRouter.getParam("studentID"),
-            }, accessToken)
-        else
-            tripList = await MeteorCall(_METHODS.trip.GetAllNext, {
-            }, accessToken)
+        switch (routeName) {
+            case 'driver.tripHistory':
+                tripList = await MeteorCall(_METHODS.trip.GetByPage, {
+                    page: page,
+                    limit: limitDocPerPage,
+                    options: [{
+                        text: "status",
+                        value: _TRIP.status.finish.number,
+                    }]
+                }, accessToken)
+            case 'parent.tripHistoryStudent':
+                tripList = await MeteorCall(_METHODS.trip.GetByStudent, {
+                    page: page,
+                    limit: limitDocPerPage,
+                    studentID: FlowRouter.getParam("studentID"),
+                    options: [{
+                        text: "status",
+                        value: _TRIP.status.finish.number,
+                    }]
+                }, accessToken)
+            case 'parent.nextTripStudent':
+                tripList = await MeteorCall(_METHODS.trip.GetAllNext, {
+                    studentID: FlowRouter.getParam("studentID"),
+                }, accessToken)
+            case 'teacher.studentTripHistory':
+                tripList = await MeteorCall(_METHODS.trip.GetByStudent, {
+                    page: page,
+                    limit: limitDocPerPage,
+                    studentID: FlowRouter.getParam("studentID"),
+                    options: [{
+                        text: "status",
+                        value: _TRIP.status.finish.number,
+                    }]
+                }, accessToken)
+            case 'teacher.studentNextTrip':
+                tripList = await MeteorCall(_METHODS.trip.GetAllNext, {
+                    studentID: FlowRouter.getParam("studentID"),
+                }, accessToken)
+            default:
+                tripList = await MeteorCall(_METHODS.trip.GetAllNext, {}, accessToken)
+        }
         Session.set('tripList', tripList)
     } catch (e) {
         handleError(e)

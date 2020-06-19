@@ -34,6 +34,26 @@ teacherRoutes.route('/student/:studentID([0-9a-fA-F]{24})', {
     },
 })
 
+teacherRoutes.route('/student/:studentID([0-9a-fA-F]{24})/tripHistory', {
+    name: 'teacher.studentTripHistory',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'tripList',
+        });
+    },
+})
+
+teacherRoutes.route('/student/:studentID([0-9a-fA-F]{24})/nextTrip', {
+    name: 'teacher.studentNextTrip',
+    action() {
+        BlazeLayout.render('App_body', {
+            main: 'App_home',
+            content: 'tripList',
+        });
+    },
+})
+
 //xem danh sách yêu cầu xin nghỉ
 teacherRoutes.route('/listAbsentRequest', {
     name: 'teacher.absentRequestManager',
