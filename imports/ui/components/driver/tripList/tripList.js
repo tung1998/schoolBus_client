@@ -49,6 +49,7 @@ async function reloadData(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
     try {
         switch (routeName) {
             case 'driver.tripHistory':
+                console.log(1)
                 tripList = await MeteorCall(_METHODS.trip.GetByPage, {
                     page: page,
                     limit: limitDocPerPage,
@@ -57,6 +58,7 @@ async function reloadData(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
                         value: _TRIP.status.finish.number,
                     }]
                 }, accessToken)
+                break
             case 'parent.tripHistoryStudent':
                 tripList = await MeteorCall(_METHODS.trip.GetByStudent, {
                     page: page,
@@ -67,10 +69,12 @@ async function reloadData(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
                         value: _TRIP.status.finish.number,
                     }]
                 }, accessToken)
+                break
             case 'parent.nextTripStudent':
                 tripList = await MeteorCall(_METHODS.trip.GetAllNext, {
                     studentID: FlowRouter.getParam("studentID"),
                 }, accessToken)
+                break
             case 'teacher.studentTripHistory':
                 tripList = await MeteorCall(_METHODS.trip.GetByStudent, {
                     page: page,
@@ -81,12 +85,15 @@ async function reloadData(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
                         value: _TRIP.status.finish.number,
                     }]
                 }, accessToken)
+                break
             case 'teacher.studentNextTrip':
                 tripList = await MeteorCall(_METHODS.trip.GetAllNext, {
                     studentID: FlowRouter.getParam("studentID"),
                 }, accessToken)
+                break
             default:
                 tripList = await MeteorCall(_METHODS.trip.GetAllNext, {}, accessToken)
+                break
         }
         Session.set('tripList', tripList)
     } catch (e) {
@@ -97,7 +104,7 @@ async function reloadData(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
 function openStudentTripModalBtnClick(e) {
     let tripList = Session.get('tripList')
     let tripID = e.currentTarget.getAttribute('tripID')
-    let tripData = tripList.filter(item=>item._id==tripID)[0]
+    let tripData = tripList.filter(item => item._id == tripID)[0]
     Session.set('tripData', tripData)
     $('#childrenNextripModal').modal('show')
 }

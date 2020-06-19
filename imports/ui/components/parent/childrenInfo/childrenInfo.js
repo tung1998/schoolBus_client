@@ -49,25 +49,27 @@ Template.childrenNextripModal.helpers({
     },
     tripStatus() {
         let tripData = Session.get('tripData')
-        if(!tripData) return
+        if (!tripData) return
         return getJsonDefault(_TRIP.status, 'number', tripData.status)
     },
     studentStatus() {
         let tripData = Session.get('tripData')
-        if(!tripData) return
-        let student = tripData.students.filter(item=>item.studentID)[0]
-        if(!student) return
+        if (!tripData) return
+        let student = tripData.students.filter(item => item.studentID)[0]
+        if (!student) return
         return getJsonDefault(_TRIP_STUDENT.status, 'number', student.status)
     },
     _URL_images() {
         return _URL_images
     },
-    tripStudentLog(){
+    tripStudentLog() {
         return Session.get('tripStudentLog')
     },
-    isShowPosition(){
+    isShowPosition() {
         let tripData = Session.get('tripData')
-        return tripData.status==_TRIP.status.moving.number||tripData.status==_TRIP.status.accident.number
+        if (tripData)
+            return tripData.status == _TRIP.status.moving.number || tripData.status == _TRIP.status.accident.number
+        return false
     }
 });
 
@@ -86,16 +88,16 @@ function gettripData(e) {
         if (result) {
             result.startTime = moment(result.startTime).locale('vi').format('LLLL')
             Session.set('tripData', result)
-            Session.set('studentID',studentID)
+            Session.set('studentID', studentID)
             $("#childrenNextripModal").modal('show')
             return MeteorCall(_METHODS.trip.GetStudentTripLog, {
-                tripID:result._id,
+                tripID: result._id,
                 studentID
             }, accessToken)
         } else {
             handleError(null, 'Không có chuyến đi sắp tới')
         }
-    }).then(tripStudentLog=>{
+    }).then(tripStudentLog => {
         Session.set('tripStudentLog', tripStudentLog)
     }).catch(error => {
         handleError(error, 'Không có chuyến đi sắp tới')
@@ -104,8 +106,8 @@ function gettripData(e) {
 
 function chatBtnClick(e) {
     let teacherID = e.currentTarget.getAttribute('teacherID')
-    handleConfirm('Chuyển sang trang trao đổi với giáo viên?').then(result=>{
-        if(result.value)
+    handleConfirm('Chuyển sang trang trao đổi với giáo viên?').then(result => {
+        if (result.value)
             FlowRouter.go(`/parent/chat?teacherID=${teacherID}`)
     })
 }
