@@ -2,7 +2,8 @@ import './monitoring.html';
 const Cookies = require("js-cookie");
 import {
     MeteorCall,
-    handleError
+    handleError,
+    MeteorCallNoEfect
 } from "../../../../functions";
 import {
     _METHODS
@@ -50,7 +51,7 @@ function initMap() {
         id: 'mapbox.streets'
     }).addTo(monitormap);
     window.markerGroup = L.layerGroup().addTo(monitormap);
-    MeteorCall(_METHODS.gps.getLast, null, accessToken).then(result => {
+    MeteorCallNoEfect(_METHODS.gps.getLast, null, accessToken).then(result => {
         let htmlTable = result.map(htmlRow);
         $("#table-body").html(htmlTable.join(" "));
     }).catch(handleError)
@@ -141,7 +142,7 @@ function appendLatlng(data, markerID) {
 }
 
 function updateData() {
-    MeteorCall(_METHODS.gps.getLast, null, accessToken).then(result => {
+    MeteorCallNoEfect(_METHODS.gps.getLast, null, accessToken).then(result => {
         let htmlTable = result.map((data, index) => {
             appendLatlng(data, markers_id[index]);
         })
@@ -150,7 +151,7 @@ function updateData() {
 
 async function getAddress(lat, lng) {
     try {
-        let result = await MeteorCall(_METHODS.wemap.getAddress, { lat: lat, lng: lng }, accessToken);
+        let result = await MeteorCallNoEfect(_METHODS.wemap.getAddress, { lat: lat, lng: lng }, accessToken);
         let props = result.features[0].properties;
         let addressElement = {
             name: props.name,

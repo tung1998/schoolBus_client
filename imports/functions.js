@@ -25,7 +25,8 @@ export {
     convertTime,
     popupDefault,
     removeAllLayer,
-    removeLayerByID
+    removeLayerByID,
+    MeteorCallNoEfect
 }
 
 function MeteorCall(method = "", data = null, accessToken = "") {
@@ -34,6 +35,19 @@ function MeteorCall(method = "", data = null, accessToken = "") {
         console.log(method)
         Meteor.call(method, data, accessToken, (err, result) => {
             Session.set('isLoading', false)
+            if (result && result.error) reject(result)
+            else if (err) reject(err);
+            else resolve(result);
+        });
+    })
+}
+
+function MeteorCallNoEfect(method = "", data = null, accessToken = "") {
+    // Session.set('isLoading', true)
+    return new Promise((resolve, reject) => {
+        console.log(method)
+        Meteor.call(method, data, accessToken, (err, result) => {
+            // Session.set('isLoading', false)
             if (result && result.error) reject(result)
             else if (err) reject(err);
             else resolve(result);
