@@ -23,7 +23,6 @@ if (Meteor.isServer) {
 function getAddress(data, accessToken = '') {
     let url = `https://apis.wemap.asia/we-tools/reverse?key=IqzJukzUWpWrcDHJeDpUPLSGndDx&lat=${data.lat}&lon=${data.lng}`
     return httpDefault(METHOD.get, url, {
-        token: accessToken
     });
 }
 
@@ -39,6 +38,5 @@ function getDrivePath(data, accessToken = '') {
         }
     }
     return httpDefault(METHOD.get, url, {
-        token: accessToken
     })
 }

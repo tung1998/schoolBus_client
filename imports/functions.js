@@ -3,7 +3,8 @@ import {
 } from "meteor/meteor"
 
 import {
-    LIMIT_DOCUMENT_PAGE
+    LIMIT_DOCUMENT_PAGE,
+    _METHODS
 } from './variableConst'
 
 export {
@@ -26,7 +27,8 @@ export {
     popupDefault,
     removeAllLayer,
     removeLayerByID,
-    MeteorCallNoEfect
+    MeteorCallNoEfect,
+    contentInfoMarker
 }
 
 function MeteorCall(method = "", data = null, accessToken = "") {
@@ -328,4 +330,48 @@ function removeAllLayer(groupLayer) {
     groupLayer.eachLayer((layer) => {
         groupLayer.removeLayer(layer)
     });
+}
+
+async function getAddress(lat, lng) {
+    try {
+        let result = await MeteorCallNoEfect(_METHODS.wemap.getAddress, { lat, lng }, Cookies.get('accessToken'));
+        let props = result.features[0].properties;
+        let addressElement = [
+            props.name||'',
+            props.housenumber||'',
+            props.street||'',
+            props.city||'',
+            props.district||'',
+            props.state||''
+        ]
+
+        let address = addressElement.filter(item=>item).join(', ')
+        return address
+    } catch (err) {
+        handleError(err)
+    }
+}
+
+function contentInfoMarker(lat, lng, json, mark) {
+    const adr = getAddress(lat, lng);
+    const fullDate = moment(Number(json.updatedTime)).format('HH:mm:ss DD/MM/YYYY');
+    adr.then((result) => {
+        let popup = `
+        <div class="font-14">
+            <dl class="row mr-0 mb-0">
+                <dt class="col-sm-6">Biển số: </dt>
+                <dt class="col-sm-6">${json.car.numberPlate}</dt>
+                <dt class="col-sm-6">Vị trí: </dt>
+                <dt class="col-sm-6">${result}</dt>
+                <dt class="col-sm-6">Thời điểm cập nhật: </dt>
+                <dt class="col-sm-6">${fullDate}</dt>
+                <dt class="col-sm-6">Vận tốc: </dt>
+                <dt class="col-sm-6">N/A</dt>
+            </dl>
+        </div>
+    `
+        mark.bindPopup(popup, {
+            minWidth: 301
+        });
+    })
 }
