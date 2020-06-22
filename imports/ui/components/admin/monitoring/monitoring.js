@@ -95,6 +95,7 @@ function setViewCar(marker, lat, lng) {
 }
 
 function htmlRow(data, index) {
+    console.log(data)
     let item = {
         _id: data._id,
         numberPlate: data.car.numberPlate,
