@@ -22,7 +22,23 @@ Template.instascannerModal.onCreated(() => {
 })
 
 Template.instascannerModal.onRendered(() => {
-    initScanner()
+    Meteor.startup(function() {
+        if (!Meteor.isCordova) {
+            Scanner = new Instascan.Scanner({
+                video: document.getElementById('scanner'),
+                backgroundScan: false,
+                mirror: false,
+                captureImage: true,
+            });
+        
+            Instascan.Camera.getCameras().then(renderListCamera).catch(error => {
+                $('#openScannerModal').addClass('kt-hidden')
+                $('#takePhoto').addClass('kt-hidden')
+                handleError(error, 'Không tìm thấy camera')
+            });
+            Scanner.addListener('scan', scanSuccess);
+        }
+    });
 
 })
 
@@ -38,22 +54,6 @@ Template.instascannerModal.onDestroyed(() => {
 Template.studentInfoModal.events({
     "click #takePhoto": clickTakePhoto
 })
-
-function initScanner() {
-    Scanner = new Instascan.Scanner({
-        video: document.getElementById('scanner'),
-        backgroundScan: false,
-        mirror: false,
-        captureImage: true,
-    });
-
-    Instascan.Camera.getCameras().then(renderListCamera).catch(error => {
-        $('#openScannerModal').addClass('kt-hidden')
-        $('#takePhoto').addClass('kt-hidden')
-        handleError(error, 'Không tìm thấy camera')
-    });
-    Scanner.addListener('scan', scanSuccess);
-}
 
 function scanSuccess(content) {
     if (/[0-9a-fA-F]{24}/.test(content)) {
@@ -182,4 +182,8 @@ function updateStudentInfoModalData(studentID) {
 
 function checkStudentInfo(studentID) {
     return Session.get('studentTripData').filter(student => student.studentID == studentID)[0]
+}
+
+export {
+    scanSuccess
 }
