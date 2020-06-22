@@ -1,5 +1,6 @@
 import './tripInfo.html'
 import './instascan.js'
+import './barcodescanner.js'
 import {
     FlowRouter
 } from 'meteor/kadira:flow-router';
@@ -161,7 +162,6 @@ Template.tripDetail.onDestroyed(() => {
 
 Template.studentInfoModal.helpers({
     studentInfoData() {
-        console.log(Session.get('studentInfoData'));
         return Session.get('studentInfoData')
     }
 })
