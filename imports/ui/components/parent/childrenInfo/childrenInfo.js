@@ -44,6 +44,10 @@ Template.childrenInfo.helpers({
 });
 
 Template.childrenNextripModal.helpers({
+    startTime() {
+        if(Session.get('tripData'))
+        return moment(Session.get('tripData').startTime).format("DD/MM/YYYY, HH:MM")
+    },
     tripData() {
         return Session.get('tripData')
     },
@@ -69,6 +73,12 @@ Template.childrenNextripModal.helpers({
         let tripData = Session.get('tripData')
         if (tripData)
             return tripData.status == _TRIP.status.moving.number || tripData.status == _TRIP.status.accident.number
+        return false
+    },
+    isShowRequest() {
+        let tripData = Session.get('tripData')
+        if (tripData)
+            return tripData.status == _TRIP.status.ready.number
         return false
     }
 });

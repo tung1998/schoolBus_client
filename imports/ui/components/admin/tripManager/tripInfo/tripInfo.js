@@ -1,5 +1,6 @@
 import './tripInfo.html'
 import './instascan.js'
+import './barcodescanner.js'
 import {
     FlowRouter
 } from 'meteor/kadira:flow-router';
@@ -54,13 +55,9 @@ Template.tripDetail.onCreated(async () => {
 Template.tripDetail.onRendered(() => {
     Meteor.startup(function() {
         if (Meteor.isCordova) {
-            handleSuccess("tren dien thoai")
-          // check and request microphone access
             cordova.plugins.diagnostic.requestCameraAuthorization(function (granted) {
                 handleSuccess("Successfully requested camera authorization: authorization was " + granted ? "GRANTED" : "DENIED")
             })
-        }else{
-            handleSuccess('tren may tinh')
         }
     });
     reloadData();

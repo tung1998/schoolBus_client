@@ -103,7 +103,7 @@
                                     <div class="col-md-12">
                                         <div class="kt-widget__info">
                                             <div class="kt-widget__desc">
-                                                <h5><strong>Thời gian xuất phát: {{tripData.startTime}}</strong></h5>
+                                                <h5><strong>Thời gian xuất phát: {{startTime}}</strong></h5>
                                             </div>
                                         </div>
                                     </div>
@@ -240,7 +240,9 @@
                     <a type="button" class="btn btn-label-primary" href="/parent/tripTracking/{{tripData._id}}">Xem vị
                         trí</a>
                     {{/if}}
+                    {{#if isShowRequest}}
                     <button type="button" class="btn btn-danger" id="absentRequest">Xin nghỉ</button>
+                    {{/if}}
                 </div>
             </div>
         </div>
