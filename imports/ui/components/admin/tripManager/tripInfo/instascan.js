@@ -1,12 +1,23 @@
 import '/public/assets/module/instascan.min.js'
 
 import {
-    handleError, MeteorCall,
+    handleError,
+    MeteorCall,
     makeID,
-    handleSuccess
+    handleSuccess,
+    getJsonDefault
 } from '../../../../../functions'
 
-import { _METHODS, _URL_images, _TRIP_STUDENT, _TRIP, _TRIP_CARSTOP } from '../../../../../variableConst'
+import {
+    _METHODS,
+    _URL_images,
+    _TRIP_STUDENT,
+    _TRIP,
+    _TRIP_CARSTOP
+} from '../../../../../variableConst'
+import {
+    get
+} from 'js-cookie'
 
 export {
     updateStudentInfoModalData
@@ -68,7 +79,7 @@ function scanSuccess(content) {
             })
         }
     } else {
-        handleError(null,"qr code không đúng định dạng:"+ content)
+        handleError(null, "qr code không đúng định dạng:" + content)
     }
 }
 
@@ -137,46 +148,53 @@ function clickTakePhoto(e) {
 
 function updateStudentInfoModalData(studentID) {
     $('#instascannerModal').modal('hide')
-    let studenInfoData = checkStudentInfo(studentID)
+    let studentInfoData = checkStudentInfo(studentID)
     let tripData = Session.get('tripData')
     let currentCarStop = tripData.carStops.filter(item => item.status === _TRIP_CARSTOP.status.arrived.number)[0]
-    studenInfoData.tripID = Session.get('tripID')
-    let check1 = tripData.type==_TRIP.type.toSchool.number
-    let check2 = currentCarStop&&studenInfoData.student.carStopID==currentCarStop.carStopID
-    let check3 = tripData.carStops.every(item=>item.status==_TRIP_CARSTOP.status.leaved.number)
-    let check4 = tripData.status==_TRIP.status.moving.number
-    switch (studenInfoData.status) {
+    studentInfoData.tripID = Session.get('tripID')
+    let check1 = tripData.type == _TRIP.type.toSchool.number
+    let check2 = currentCarStop && studentInfoData.student.carStopID == currentCarStop.carStopID
+    let check3 = tripData.carStops.every(item => item.status == _TRIP_CARSTOP.status.leaved.number)
+    let check4 = tripData.status == _TRIP.status.moving.number
+
+    let addNoteStudent = `<button type="button" class="btn btn-primary studentnote-btn btn-sm mr-3" tripID="${studentInfoData.tripID}" studentID="${studentInfoData.studentID}">Ghi chú</button>`
+    let waitingTrip = `<span class="kt-badge kt-badge--primary kt-badge--inline d-flex">Chuyến đi chưa bắt đầu</span>`
+    let captureStudent = `<button type="button" class="btn btn-success btn-sm ml-3" tripID="${studentInfoData.tripID}"
+    studentID="${studentInfoData.studentID}" id="takePhoto">Chụp ảnh</button>`
+    switch (studentInfoData.status) {
         case 0:
-            studenInfoData.buttonHtml = `${check4?`${(check1&&check2)||(!check1)?`<button type="button" class="btn btn-success status-btn" tripID="${studenInfoData.tripID}"  studentID="${studenInfoData.studentID}" status="${_TRIP_STUDENT.status.pickUp.number}" >Điểm danh</button>
-            <button type="button" class="btn btn-danger status-btn" tripID="${studenInfoData.tripID}" studentID="${studenInfoData.studentID}" status="${_TRIP_STUDENT.status.absent.number}">Vắng mặt</button>`:`<span class="kt-badge kt-badge--primary kt-badge--inline ">chưa tới điểm dừng</span>`}`:`<span class="kt-badge kt-badge--primary kt-badge--inline ">Chuyến đi chưa bắt đầu</span>`}
-                                        <button type="button" class="btn btn-primary studentnote-btn" tripID="${studenInfoData.tripID}" studentID="${studenInfoData.studentID}">Thêm ghi chú</button>`
+            studentInfoData.buttonHtml = `${check4?`${(check1&&check2)||(!check1)?`<div class="col-md-6 col-sm-12 mb-2"><button type="button" class="btn btn-success status-btn btn-sm" tripID="${studentInfoData.tripID}"  studentID="${studentInfoData.studentID}" status="${_TRIP_STUDENT.status.pickUp.number}">Điểm danh</button>
+            <button type="button" class="btn btn-danger status-btn btn-sm" tripID="${studentInfoData.tripID}" studentID="${studentInfoData.studentID}" status="${_TRIP_STUDENT.status.absent.number}">Vắng mặt</button></div>`:`<div class="col-md-6 col-sm-12 mb-2"><span class="kt-badge kt-badge--primary kt-badge--inline d-flex">chưa tới điểm dừng</span></div>`}`:`<div class="col-md-6 col-sm-12 mb-2">${waitingTrip}</div>`}
+            <div class="col-md-6 col-sm-12">${addNoteStudent}${captureStudent}</div>`
             break
         case 1:
-            studenInfoData.buttonHtml = `${check4?`${(check1&&check3)||(!check1&&check2)?`<button type="button" class="btn btn-success status-btn" tripID="${studenInfoData.tripID}" studentID="${studenInfoData.studentID}" status="${_TRIP_STUDENT.status.getOff.number}">Xuống xe</button>`:`<span class="kt-badge kt-badge--primary kt-badge--inline ">chưa tới điểm dừng</span>`}`:`<span class="kt-badge kt-badge--primary kt-badge--inline ">Chuyến đi chưa bắt đầu</span>`}
-                                        <button type="button" class="btn btn-primary studentnote-btn" tripID="${studenInfoData.tripID}" studentID="${studenInfoData.studentID}">Thêm ghi chú</button>`
+            studentInfoData.buttonHtml = `${check4?`${(check1&&check3)||(!check1&&check2)?`<div class="col-md-6 col-sm-12 mb-2"><button type="button" class="btn btn-success status-btn" tripID="${studentInfoData.tripID}" studentID="${studentInfoData.studentID}" status="${_TRIP_STUDENT.status.getOff.number}">Xuống xe</button></div>`:`<div class="col-md-6 col-sm-12 mb-2"><span class="kt-badge kt-badge--primary kt-badge--inline d-flex">chưa tới điểm dừng</span></div>`}`:`<div class="col-md-6 col-sm-12 mb-2">${waitingTrip}</div>`}
+            <div class="col-md-6 col-sm-12">${addNoteStudent}${captureStudent}</div>`
             break
         case 2:
-            studenInfoData.buttonHtml = `<span class="kt-badge kt-badge--success kt-badge--inline ">Đã xuống xe</span>
-            <button type="button" class="btn btn-primary studentnote-btn" tripID="${studenInfoData.tripID}" studentID="${studenInfoData.studentID}">Thêm ghi chú</button>`
+            studentInfoData.buttonHtml = `<div class="col-md-6 col-sm-12 mb-2"><span class="kt-badge kt-badge--success kt-badge--inline d-flex">Đã xuống xe</span></div>
+            <div class="col-md-6 col-sm-12">${addNoteStudent}${captureStudent}<div>`
             break
         case 3:
-            studenInfoData.buttonHtml = `<span class="kt-badge kt-badge--warning kt-badge--inline">xin nghỉ</span>
-            <button type="button" class="btn btn-primary studentnote-btn" tripID="${studenInfoData.tripID}" studentID="${studenInfoData.studentID}">Thêm ghi chú</button>`
+            studentInfoData.buttonHtml = `<div class="col-md-6 col-sm-12 mb-2"><span class="kt-badge kt-badge--warning kt-badge--inline">xin nghỉ</span></div>
+            <div class="col-md-6 col-sm-12">${addNoteStudent}${captureStudent}</div>`
             break
         case 4:
-            studenInfoData.buttonHtml = `<span class="kt-badge kt-badge--danger kt-badge--inline">Vắng mặt</span>
-            <button type="button" class="btn btn-primary studentnote-btn" tripID="${studenInfoData.tripID}" studentID="${studenInfoData.studentID}">Thêm ghi chú</button>`
+            studentInfoData.buttonHtml = `<div class="col-md-6 col-sm-12 mb-2"><span class="kt-badge kt-badge--danger kt-badge--inline">Vắng mặt</span></div>
+            <div class="col-md-6 col-sm-12">${addNoteStudent}${captureStudent}</div>`
             break
         default:
-            studenInfoData.buttonHtml = ``
+            studentInfoData.buttonHtml = ` <div class="col-md-6 col-sm-12">${captureStudent}</div>`
     }
 
-    if (studenInfoData.student.user.image) {
-        studenInfoData.image = `${_URL_images}/${studenInfoData.student.user.image}/0`
+    if (studentInfoData.student.user.image) {
+        studentInfoData.image = `${_URL_images}/${studentInfoData.student.user.image}/0`
     } else {
-        studenInfoData.image = `/assets/media/users/user5.jpg`
+        studentInfoData.image = `/assets/media/users/user5.jpg`
     }
-    Session.set('studenInfoData', studenInfoData)
+
+    studentInfoData.status = getJsonDefault(_TRIP_STUDENT.status, 'number', studentInfoData.status)
+    Session.set('studentInfoData', studentInfoData)
     $("#studentInfoModal").modal("show")
 }
 

@@ -146,7 +146,7 @@
                                         <input type="checkbox" name="carstopStudentFilter" id="carstopStudentFilter">
                                         <span> Học sinh của điểm dừng hiện tại</span> <span id="carStopName"></span>
                                     </label>
-                                    <table class="table table-bordered table-hover" id="table-studentList">
+                                    <table class="table table-hover table-responsive-md" id="table-studentList">
                                         <thead class="thead-light">
                                             <tr>
                                                 <th>#</th>
@@ -346,7 +346,7 @@
                                                     <div class="kt-widget1__info kt-align-right">
                                                         <h3 class="kt-widget1__desc">
                                                             <span
-                                                                class="kt-badge kt-badge--{{studentInfoData.status.classname}} kt-badge--inline ">{{studentInfoData.status.text}}</span>
+                                                                class="kt-badge kt-badge--{{studentInfoData.status.classname}} kt-badge--inline">{{studentInfoData.status.text}}</span>
                                                         </h3>
                                                     </div>
                                                 </div>
@@ -359,10 +359,8 @@
                         </div>
 
                         <div class="col-12">
-                            <div class="fa-pull-right">
-                                {{{studenInfoData.buttonHtml}}}
-                                <button type="button" class="btn btn-success" tripID="{{studenInfoData.tripID}}"
-                                    studentID="{{studenInfoData.studentID}}" id="takePhoto">Chụp ảnh</button>
+                            <div class="row text-center">
+                                {{{studentInfoData.buttonHtml}}}
                             </div>
                         </div>
                     </div>
