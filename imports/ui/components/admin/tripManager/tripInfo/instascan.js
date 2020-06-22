@@ -119,16 +119,23 @@ function clickTakePhoto(e) {
     $("#studentInfoModal").modal("hide")
     let tripID = $(e.currentTarget).attr("tripID");
     let studentID = $(e.currentTarget).attr("studentID")
-    MeteorCamera.getPicture((err, data) => {
-        if (err) {
-            handleError(err)
-        } else {
-            $(".photo-preview").css({
-                "width": "100% !important"
-            })
+    if(Meteor.isCordova) {
+        const Camera = navigator.camera;
+
+        const options = {
+            quality: 30,
+            destinationType: Camera.DestinationType.DATA_URL,
+            sourceType: Camera.PictureSourceType.CAMERA,
+            encodingType: Camera.EncodingType.JPEG,
+            mediaType: Camera.MediaType.PICTURE,
+            // allowEdit: true,
+            correctOrientation: true
+        }
+        Camera.getPicture( 
+        (imageData) => {
             let dt = {
                 imageId: makeID("attendance"),
-                BASE64: [data]
+                BASE64: ["data:image/jpeg;base64," + imageData]
             }
             MeteorCall(_METHODS.image.Import, dt, accessToken).then(result => {
                 let imageDetail = {
@@ -140,10 +147,38 @@ function clickTakePhoto(e) {
             }).then(result => {
                 handleSuccess('Đã xác nhận ảnh!')
             }).catch(handleError)
-        }
-    });
-
-
+            // $("#table-body").html(imageUri)
+        },
+        (error) => {
+            console.debug("Unable to obtain picture: " + error, "app");
+        },
+        options)
+    }else{
+        
+        MeteorCamera.getPicture((err, data) => {
+            if (err) {
+                handleError(err)
+            } else {
+                $(".photo-preview").css({
+                    "width": "100% !important"
+                })
+                let dt = {
+                    imageId: makeID("attendance"),
+                    BASE64: [data]
+                }
+                MeteorCall(_METHODS.image.Import, dt, accessToken).then(result => {
+                    let imageDetail = {
+                        tripID: tripID,
+                        studentID: studentID,
+                        image: dt.imageId
+                    }
+                    return MeteorCall(_METHODS.trip.Image, imageDetail, accessToken)
+                }).then(result => {
+                    handleSuccess('Đã xác nhận ảnh!')
+                }).catch(handleError)
+            }
+        });
+    }
 }
 
 function updateStudentInfoModalData(studentID) {
