@@ -165,7 +165,6 @@ Template.tripDetail.onDestroyed(() => {
 
 Template.studentInfoModal.helpers({
     studentInfoData() {
-        console.log(Session.get('studentInfoData'));
         return Session.get('studentInfoData')
     }
 })
