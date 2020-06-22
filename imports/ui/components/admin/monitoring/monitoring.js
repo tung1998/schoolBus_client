@@ -2,7 +2,9 @@ import './monitoring.html';
 const Cookies = require("js-cookie");
 import {
     MeteorCall,
-    handleError
+    handleError,
+    MeteorCallNoEfect,
+    contentInfoMarker
 } from "../../../../functions";
 import {
     _METHODS
@@ -50,7 +52,7 @@ function initMap() {
         id: 'mapbox.streets'
     }).addTo(monitormap);
     window.markerGroup = L.layerGroup().addTo(monitormap);
-    MeteorCall(_METHODS.gps.getLast, null, accessToken).then(result => {
+    MeteorCallNoEfect(_METHODS.gps.getLast, null, accessToken).then(result => {
         let htmlTable = result.map(htmlRow);
         $("#table-body").html(htmlTable.join(" "));
     }).catch(handleError)
@@ -92,30 +94,6 @@ function setViewCar(marker, lat, lng) {
     window.monitormap.setView([lat, lng], 25);
 }
 
-function contentInfoMarker(lat, lng, json, mark) {
-    const adr = getAddress(lat, lng);
-    const fullDate = moment(Number(json.updatedTime)).format('HH:mm:ss DD/MM/YYYY');
-    adr.then((result) => {
-        let popup = `
-        <div class="font-14">
-            <dl class="row mr-0 mb-0">
-                <dt class="col-sm-6">Biển số: </dt>
-                <dt class="col-sm-6">${json.car.numberPlate}</dt>
-                <dt class="col-sm-6">Vị trí: </dt>
-                <dt class="col-sm-6">${result}</dt>
-                <dt class="col-sm-6">Thời điểm cập nhật: </dt>
-                <dt class="col-sm-6">${fullDate}</dt>
-                <dt class="col-sm-6">Vận tốc: </dt>
-                <dt class="col-sm-6">N/A</dt>
-            </dl>
-        </div>
-    `
-        mark.bindPopup(popup, {
-            minWidth: 301
-        });
-    })
-}
-
 function htmlRow(data, index) {
     let item = {
         _id: data._id,
@@ -141,34 +119,10 @@ function appendLatlng(data, markerID) {
 }
 
 function updateData() {
-    MeteorCall(_METHODS.gps.getLast, null, accessToken).then(result => {
-        let htmlTable = result.map((data, index) => {
+    MeteorCallNoEfect(_METHODS.gps.getLast, null, accessToken).then(result => {
+        result.map((data, index) => {
             appendLatlng(data, markers_id[index]);
         })
     }).catch(handleError)
 }
 
-async function getAddress(lat, lng) {
-    try {
-        let result = await MeteorCall(_METHODS.wemap.getAddress, { lat: lat, lng: lng }, accessToken);
-        let props = result.features[0].properties;
-        let addressElement = {
-            name: props.name,
-            housenumber: props.housenumber,
-            street: props.street,
-            city: props.city,
-            district: props.district,
-            state: props.state
-        }
-
-        let address = addressElement.name + ', ' +
-            addressElement.housenumber + ', ' +
-            addressElement.street + ', ' +
-            addressElement.city + ', ' +
-            addressElement.district + ', ' +
-            addressElement.state + ', ';
-        return address
-    } catch (err) {
-        handleError(err)
-    }
-}
