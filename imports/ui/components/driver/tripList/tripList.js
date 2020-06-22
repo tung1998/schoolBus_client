@@ -34,7 +34,8 @@ Template.tripHtml2.helpers({
         return _URL_images
     },
     startTime() {
-        return moment(this.startTime).format("DD/MM/YYYY, HH:MM")
+        if (this)
+            return moment(this.startTime).format("DD/MM/YYYY, HH:MM")
     },
     tripStatus() {
         return getJsonDefault(_TRIP.status, 'number', this.status)
@@ -59,6 +60,7 @@ async function reloadData(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
                         value: _TRIP.status.finish.number,
                     }]
                 }, accessToken)
+                tripList = tripList.data
                 break
             case 'parent.tripHistoryStudent':
                 $("#tripListTitle").html('Lịch sử chuyến đi')

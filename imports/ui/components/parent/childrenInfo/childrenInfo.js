@@ -45,6 +45,7 @@ Template.childrenInfo.helpers({
 
 Template.childrenNextripModal.helpers({
     startTime() {
+        if(Session.get('tripData'))
         return moment(Session.get('tripData').startTime).format("DD/MM/YYYY, HH:MM")
     },
     tripData() {
