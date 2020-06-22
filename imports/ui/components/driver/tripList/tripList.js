@@ -13,6 +13,7 @@ Template.tripList.onRendered(() => {
 
 Template.tripList.onDestroyed(() => {
     Session.delete('tripList')
+    Session.delete('tripStudentLog')
 })
 
 Template.tripList.helpers({
@@ -49,7 +50,7 @@ async function reloadData(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
     try {
         switch (routeName) {
             case 'driver.tripHistory':
-                console.log(1)
+                $("#tripListTitle").html('Lịch sử chuyến đi')
                 tripList = await MeteorCall(_METHODS.trip.GetByPage, {
                     page: page,
                     limit: limitDocPerPage,
@@ -60,6 +61,7 @@ async function reloadData(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
                 }, accessToken)
                 break
             case 'parent.tripHistoryStudent':
+                $("#tripListTitle").html('Lịch sử chuyến đi')
                 tripList = await MeteorCall(_METHODS.trip.GetByStudent, {
                     page: page,
                     limit: limitDocPerPage,
@@ -71,11 +73,13 @@ async function reloadData(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
                 }, accessToken)
                 break
             case 'parent.nextTripStudent':
+                $("#tripListTitle").html('Chuyến đi tiếp theo')
                 tripList = await MeteorCall(_METHODS.trip.GetAllNext, {
                     studentID: FlowRouter.getParam("studentID"),
                 }, accessToken)
                 break
             case 'teacher.studentTripHistory':
+                $("#tripListTitle").html('Lịch sử chuyến đi')
                 tripList = await MeteorCall(_METHODS.trip.GetByStudent, {
                     page: page,
                     limit: limitDocPerPage,
@@ -87,11 +91,13 @@ async function reloadData(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
                 }, accessToken)
                 break
             case 'teacher.studentNextTrip':
+                $("#tripListTitle").html('Chuyến đi tiếp theo')
                 tripList = await MeteorCall(_METHODS.trip.GetAllNext, {
                     studentID: FlowRouter.getParam("studentID"),
                 }, accessToken)
                 break
             default:
+                $("#tripListTitle").html('Chuyến đi tiếp theo')
                 tripList = await MeteorCall(_METHODS.trip.GetAllNext, {}, accessToken)
                 break
         }
@@ -106,5 +112,13 @@ function openStudentTripModalBtnClick(e) {
     let tripID = e.currentTarget.getAttribute('tripID')
     let tripData = tripList.filter(item => item._id == tripID)[0]
     Session.set('tripData', tripData)
+    if(tripData.status!=_TRIP.status.ready.number){
+        MeteorCall(_METHODS.trip.GetStudentTripLog, {
+            tripID,
+            studentID: FlowRouter.getParam("studentID")
+        }, accessToken).then(tripStudentLog=>{
+            Session.set('tripStudentLog', tripStudentLog)
+        })
+    }
     $('#childrenNextripModal').modal('show')
 }
