@@ -1,6 +1,5 @@
 import './tripInfo.html'
 import './instascan.js'
-import './barcodescanner.js'
 
 import {
     FlowRouter

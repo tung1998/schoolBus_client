@@ -1,4 +1,5 @@
 import './monitoring.html';
+
 const Cookies = require("js-cookie");
 import {
     MeteorCall,
