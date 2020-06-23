@@ -10,7 +10,8 @@ export {
     _MARKER_CONFIG,
     _TRIP_LOG,
     _TRIP_CARSTOP,
-    _USER
+    _USER,
+    TIME_DEFAULT
 }
 const _URL_images = 'http://192.168.0.111:3000/images'
 // const _URL_images = 'http://113.190.128.251:3000/images'
@@ -563,4 +564,13 @@ const _USER = {
         },
         
     }
+}
+
+const TIME_DEFAULT = {
+    trip_end: 1.5,
+    trip_end_default: 150, // 150 minute
+    timeAnimate: 200, // 200 seconds
+    hold_seat: 5 * 60, // second,
+    hold_seat_app: 5 * 60, // second,
+    check_task: 15 * 1000, // 15 second,
 }

@@ -11,6 +11,10 @@ import {
     httpDefault
 } from '../checkAPI'
 
+import {
+    updateTask
+} from './task';
+
 const BASE_TRIP = `${BASE}/Trip`
 const AUTH_TRIP = `${AUTH_PATH}/Trip`
 
@@ -77,7 +81,10 @@ function createTrip(data, accessToken = '') {
     return httpDefault(METHOD.post, url, {
         body: data,
         token: accessToken
-    });
+    }).then(result=>{
+        updateTask('Trip', result._id)
+        return result
+    });;
 }
 
 function updateTrip(data, accessToken = '') {
@@ -85,6 +92,9 @@ function updateTrip(data, accessToken = '') {
     return httpDefault(METHOD.put, url, {
         body: data,
         token: accessToken
+    }).then(result=>{
+        updateTask('Trip', data._id)
+        return result
     });
 }
 
@@ -92,6 +102,9 @@ function deleteTrip(data, accessToken = '') {
     let url = `${AUTH_TRIP}/${data._id}`
     return httpDefault(METHOD.del, url, {
         token: accessToken
+    }).then(result=>{
+        updateTask('Trip', data._id)
+        return result
     });
 }
 
@@ -102,6 +115,10 @@ function attendanceTrip(data, accessToken = '') {
             status: data.status
         },
         token: accessToken
+    }).then(result=>{
+        updateTask('Trip', data.tripID)
+        updateTask('StudentTrip', data.studentID)
+        return result
     })
 }
 
@@ -112,6 +129,10 @@ function imageTrip(data, accessToken = '') {
             image: data.image
         },
         token: accessToken
+    }).then(result=>{
+        updateTask('Trip', data.tripID)
+        updateTask('StudentTrip', data.studentID)
+        return result
     })
 }
 
@@ -150,6 +171,9 @@ function updateTripStatus(data, accessToken = '') {
     return httpDefault(METHOD.put, url, {
         body: data,
         token: accessToken
+    }).then(result=>{
+        updateTask('Trip', data.tripID)
+        return result
     })
 }
 
@@ -158,6 +182,9 @@ function updateTripCarStop(data, accessToken = '') {
     return httpDefault(METHOD.put, url, {
         body: data,
         token: accessToken
+    }).then(result=>{
+        updateTask('Trip', data.tripID)
+        return result
     })
 }
 
