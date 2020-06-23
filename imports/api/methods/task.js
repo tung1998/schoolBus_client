@@ -34,13 +34,7 @@ if (Meteor.isServer) {
 function publishTaskByName(name) {
     return COLLECTION_TASK.find({
         name
-    }
-    // , {
-    //     disableOplog: true,
-    //     // pollingThrottleMs: 3000, 
-    //     // pollingIntervalMs: 1000
-    // }
-    );
+    });
 }
 
 

@@ -10,13 +10,19 @@ import {
 import {
     _METHODS,
     _URL_images,
-    _TRIP
+    _TRIP,
+    TIME_DEFAULT
 } from '../../../../variableConst'
+
+import {
+    COLLECTION_TASK
+} from '../../../../api/methods/task.js'
 
 let accessToken;
 
 Template.tripManager.onCreated(() => {
     accessToken = Cookies.get('accessToken')
+    Meteor.subscribe('task.byName', 'Trip');
     Session.set('tripList', [])
 })
 
@@ -24,10 +30,21 @@ Template.tripManager.onRendered(() => {
     initTimePicker()
     renderRouteSelect();
     reloadTable();
+    this.realTimeTracker = Tracker.autorun(() => {
+        let task = COLLECTION_TASK.find({
+            name: 'Trip'
+        }).fetch()
+        if (task.length && task[0].tasks.length) {
+            let checkTime = Date.now() - TIME_DEFAULT.check_task
+            if (task[0].tasks.every(item => item.updatedTime > checkTime))
+                reloadTable()
+        }
+    });
 })
 
 Template.tripManager.onDestroyed(() => {
     Session.delete('tripList')
+    if (this.realTimeTracker) this.realTimeTracker = null
 })
 
 Template.tripManager.helpers({
@@ -49,8 +66,8 @@ Template.tripHtml.helpers({
     tripStatus() {
         return getJsonDefault(_TRIP.status, 'number', this.status)
     },
-    isModifiable(){
-        return this.status ==_TRIP.status.ready.number
+    isModifiable() {
+        return this.status == _TRIP.status.ready.number
     }
 })
 
