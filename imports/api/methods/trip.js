@@ -18,20 +18,21 @@ if (Meteor.isServer) {
     Meteor.methods({
         'trip.getAll': getAllTrip,
         'trip.getByID': getTripByID,
-        'trip.create': createTrip,
-        'trip.update': updateTrip,
-        'trip.delete': deleteTrip,
-        'trip.attendance': attendanceTrip,
-        'trip.image': imageTrip,
+        'trip.getAllNext': getAllNextTrip,
+        'trip.getByStudent': getByStudent,
         'trip.getByTime': getTripByTime,
         'trip.getByPage': getTripByPage,
         'trip.getNext': getNextTrip,
         'trip.getLogByTripID': getTripLogByTripID,
         'trip.getStudentTripLog': getStudentTripLog,
+        'trip.create': createTrip,
+        'trip.update': updateTrip,
+        'trip.delete': deleteTrip,
+        'trip.attendance': attendanceTrip,
+        'trip.image': imageTrip,
         'trip.updateTripStatus': updateTripStatus,
-        'trip.getAllNext': getAllNextTrip,
-        'trip.getByStudent': getByStudent,
         'trip.updateCarStop': updateTripCarStop,
+        'trip.updateStudentNote': updateStudentNote
     });
 }
 
@@ -170,4 +171,12 @@ function getByStudent(data, accessToken = '') {
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });
+}
+
+function updateStudentNote(data, accessToken = '') {
+    let url = `${AUTH_TRIP}/${data.tripID}/student/${data.studentID}/note`
+    return httpDefault(METHOD.put, url, {
+        body: data,
+        token: accessToken
+    })
 }

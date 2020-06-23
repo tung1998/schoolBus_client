@@ -1,4 +1,5 @@
 import './tripInfo.html'
+
 import {
     FlowRouter
 } from 'meteor/kadira:flow-router';

@@ -230,7 +230,8 @@ const _METHODS = {
         GetTripLogByTripID: 'trip.getLogByTripID',
         GetStudentTripLog: 'trip.getStudentTripLog',
         UpdateTripStatus: 'trip.updateTripStatus',
-        UpdateCarStop: 'trip.updateCarStop'
+        UpdateCarStop: 'trip.updateCarStop',
+        UpdateStudentNote: 'trip.updateStudentNote'
     },
     tripLocation: {
         GetAll: 'tripLocation.getAll',

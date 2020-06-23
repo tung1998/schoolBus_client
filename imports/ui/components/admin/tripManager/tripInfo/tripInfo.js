@@ -11,6 +11,7 @@ import {
     handleError,
     handleConfirm,
     handleSuccess,
+    handlePromp,
     getJsonDefault,
     convertTime,
     popupDefault,
@@ -29,7 +30,7 @@ import {
 } from '../../../../../variableConst';
 
 import {
-    updateStudentInfoModalData, 
+    updateStudentInfoModalData,
     scanSuccess
 } from './instascan'
 
@@ -54,7 +55,7 @@ Template.tripDetail.onCreated(async () => {
 })
 
 Template.tripDetail.onRendered(() => {
-    Meteor.startup(function() {
+    Meteor.startup(function () {
         if (Meteor.isCordova) {
             cordova.plugins.diagnostic.requestCameraAuthorization(function (granted) {
                 handleSuccess("Successfully requested camera authorization: authorization was " + granted ? "GRANTED" : "DENIED")
@@ -146,6 +147,7 @@ Template.tripDetail.events({
     'click #report-button': reportIssues,
     'change input[type=radio][name=report]': chooseReport,
     'change #carstopStudentFilter': carstopStudentFilterChange,
+    'click .studentnote-btn': updateStudentNote,
 })
 
 Template.tripDetail.onDestroyed(() => {
@@ -163,6 +165,7 @@ Template.tripDetail.onDestroyed(() => {
 
 Template.studentInfoModal.helpers({
     studentInfoData() {
+        console.log(Session.get('studentInfoData'))
         return Session.get('studentInfoData')
     }
 })
@@ -193,13 +196,13 @@ Template.tripLogElement.helpers({
             tripLogJson.html = `<p> 
                                     <span class="text-${tripStatus.classname}">${tripStatus.text}</span>:  ${this.data.carStop.name}
                                 </p>`
-        }else if (this.action.includes('Update trip')&&this.data.status===_TRIP.status.accident.number) {
+        } else if (this.action.includes('Update trip') && this.data.status === _TRIP.status.accident.number) {
             let tripStatus = getJsonDefault(_TRIP_CARSTOP.status, 'number', this.data.status)
 
             tripLogJson.html = `<p> 
                                     <span class="text-${tripStatus.classname}">Xe gặp sự cố  <strong>${this.data.note}</strong></span>:
                                 </p>`
-        }else if (this.action.includes('Update trip student image')) {
+        } else if (this.action.includes('Update trip student image')) {
             tripLogJson.html = `<p> 
                                     <span>  <strong>Chụp ảnh học sinh: <strong>${this.data.student.user.name}</strong> <img src="${_URL_images}/${this.data.image}/0"></span>:
                                 </p>`
@@ -258,8 +261,8 @@ function clickStatusButton(e) {
 }
 
 function clickOpenScannerModal() {
-    
-    Meteor.startup(function() {
+
+    Meteor.startup(function () {
         if (Meteor.isCordova) {
             handleSuccess("cordovahear")
             cordova.plugins.barcodeScanner.scan(
@@ -270,19 +273,28 @@ function clickOpenScannerModal() {
                     alert("Scanning failed: " + error);
                 },
                 {
-                    preferFrontCamera : true, // iOS and Android
-                    showFlipCameraButton : true, // iOS and Android
-                    showTorchButton : true, // iOS and Android
+                    preferFrontCamera: true, // iOS and Android
+                    showFlipCameraButton: true, // iOS and Android
+                    showTorchButton: true, // iOS and Android
                     torchOn: true, // Android, launch with the torch switched on (if available)
+<<<<<<< HEAD
                     prompt : "", // Android
                     resultDisplayDuration: 500, // Android, display scanned text for X ms. 0 suppresses it entirely, default 1500
                     formats : "QR_CODE,PDF_417", // default: all but PDF_417 and RSS_EXPANDED
                     orientation : "portrait", // Android only (portrait|landscape), default unset so it rotates with the device
                     disableAnimations : true, // iOS
+=======
+                    saveHistory: true, // Android, save scan history (default false)
+                    prompt: "Place a barcode inside the scan area", // Android
+                    resultDisplayDuration: 500, // Android, display scanned text for X ms. 0 suppresses it entirely, default 1500
+                    formats: "QR_CODE,PDF_417", // default: all but PDF_417 and RSS_EXPANDED
+                    // orientation : "portrait", // Android only (portrait|landscape), default unset so it rotates with the device
+                    disableAnimations: true, // iOS
+>>>>>>> tiennm
                     disableSuccessBeep: false // iOS and Android
                 }
-             );
-        }else{
+            );
+        } else {
             $('#instascannerModal').modal('show')
         }
     });
@@ -545,4 +557,27 @@ function carstopStudentFilterChange(e) {
         Session.set('studentTripData', tripData.students)
     }
 
+}
+
+function updateStudentNote(e) {
+    let studentID = e.target.getAttribute("studentid")
+    let tripID = e.target.getAttribute("tripid")
+    $('#studentInfoModal').modal('hide')
+    handlePromp().then(result => {
+        if (result) {
+            MeteorCall(_METHODS.trip.UpdateStudentNote, {
+                tripID: tripID,
+                studentID: studentID,
+                note: result.value
+            }, accessToken).then(() => {
+                
+                Swal.fire({
+                    icon: "success",
+                    text: "Đã thêm ghi chú",
+                    timer: 3000
+                })
+            }).catch(handleError)
+        }
+        $('#studentInfoModal').modal('show')
+    })
 }

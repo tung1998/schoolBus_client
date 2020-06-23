@@ -229,6 +229,7 @@ function updateStudentInfoModalData(studentID) {
     }
 
     studentInfoData.status = getJsonDefault(_TRIP_STUDENT.status, 'number', studentInfoData.status)
+   
     Session.set('studentInfoData', studentInfoData)
     $("#studentInfoModal").modal("show")
 }

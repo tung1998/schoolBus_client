@@ -12,6 +12,7 @@ export {
     handleError,
     handleSuccess,
     handleConfirm,
+    handlePromp,
     redirectLogin,
     addRequiredInputLabel,
     getBase64,
@@ -105,6 +106,15 @@ function handleConfirm(title = "Bạn đã chắc chắn chưa?") {
         confirmButtonText: 'Đồng ý',
         cancelButtonText: 'Hủy'
     })
+}
+
+function handlePromp(title = "Nhập ghi chú ở đây!") {
+    return Swal.fire({
+        title: title,
+        input: 'textarea',
+        inputPlaceholder: title,
+        showCancelButton: true
+      })
 }
 
 function showLoading() {
