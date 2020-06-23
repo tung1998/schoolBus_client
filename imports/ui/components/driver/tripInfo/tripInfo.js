@@ -67,7 +67,7 @@ Template.tripDetailNoButton.helpers({
     },
     startTime() {
         let tripData = Session.get('tripData')
-        return convertTime(tripData.startTime, true, 'DD/MM/YYYY, HH:MM')
+        return convertTime(tripData.startTime, true, 'DD/MM/YYYY, HH:mm')
     },
     tripStatus() {
         return getJsonDefault(_TRIP.status, 'number', Session.get('tripStatus'))

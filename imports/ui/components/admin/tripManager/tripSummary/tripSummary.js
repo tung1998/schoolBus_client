@@ -125,8 +125,8 @@ function createRow(result) {
        nannyName: result.nanny.user.name,
        studentList: result.route.studentList.name,
        status: statusData.text,
-       startTime: convertTime(result.startTime, true, "DD/MM/YYYY, HH:MM"),
-       endTime: result.endTime ? convertTime(result.endTime, true, "DD/MM/YYYY, HH:MM"): 'Chưa kết thúc'
+       startTime: convertTime(result.startTime, true, "DD/MM/YYYY, HH:mm"),
+       endTime: result.endTime ? convertTime(result.endTime, true, "DD/MM/YYYY, HH:mm"): 'Chưa kết thúc'
     }
 
     // if (Session.get(_SESSION.isSuperadmin)) {

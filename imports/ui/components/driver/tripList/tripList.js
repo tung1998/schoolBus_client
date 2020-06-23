@@ -35,7 +35,7 @@ Template.tripHtml2.helpers({
     },
     startTime() {
         if (this)
-            return moment(this.startTime).format("DD/MM/YYYY, HH:MM")
+            return moment(this.startTime).format("DD/MM/YYYY, HH:mm")
     },
     tripStatus() {
         return getJsonDefault(_TRIP.status, 'number', this.status)

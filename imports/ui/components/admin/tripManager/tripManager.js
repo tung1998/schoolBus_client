@@ -61,7 +61,7 @@ Template.tripHtml.helpers({
         return _URL_images
     },
     startTime() {
-        return moment(this.startTime).format("DD/MM/YYYY, HH:MM")
+        return moment(this.startTime).format("DD/MM/YYYY, HH:mm")
     },
     tripStatus() {
         return getJsonDefault(_TRIP.status, 'number', this.status)
@@ -83,7 +83,7 @@ function initTimePicker() {
         language: 'vi',
         autoclose: true,
         // dateFormat: 'DD/MM/YYYY',
-        format: ' HH:ii dd-mm-yyyy'
+        format: 'dd/mm/yyyy, hh:ii'
     });
     $("#select_date").datepicker({
         language: 'vi',
@@ -110,7 +110,7 @@ function ClickModifyButton(event) {
     let startTime = $(event.currentTarget).attr('startTime')
     let routeID = $(event.currentTarget).attr('routeID')
     let tripID = $(event.currentTarget).attr('tripID')
-    $("#start-time").val(moment(startTime).format("HH:mm DD/MM/YYYY"));
+    $("#start-time").val(moment(startTime).format("DD/MM/YYYY, HH:mm"));
     $("#routeSelect").val(routeID).trigger('change');
 
     $('#editTripManagerModal').modal('show')
@@ -124,42 +124,43 @@ function ClickAddMoreButton(event) {
 function SubmitForm(event) {
     event.preventDefault();
     let data = {
-        startTime: moment($("#start-time").val(), "HH:mm DD/MM/YYYY").valueOf(),
+        startTime: moment($("#start-time").val(), "DD/MM/YYYY, HH:mm").valueOf(),
         routeID: $("#routeSelect").val()
     }
-    if (data.startTime < Date.now())
-        handleConfirm("Thời gian bạn chọn đang nhỏ hơn thời điểm hiện tại. Tiếp tục?").then(result => {
-            if (result.value) {
-                let modify = $('#editTripManagerModal').attr("modify");
-                if (modify == "") {
-                    MeteorCall(_METHODS.trip.Create, data, accessToken).then(result => {
-                        reloadTable();
-                        $('#editTripManagerModal').modal('hide')
-                    }).catch(handleError)
-                } else {
-                    data._id = modify;
-                    MeteorCall(_METHODS.trip.Update, data, accessToken).then(result => {
-                        reloadTable();
-                        $('#editTripManagerModal').modal('hide')
-                    }).catch(handleError)
-                }
-            }
-        })
-    else {
-        let modify = $('#editTripManagerModal').attr("modify");
-        if (modify == "") {
-            MeteorCall(_METHODS.trip.Create, data, accessToken).then(result => {
-                reloadTable();
-                $('#editTripManagerModal').modal('hide')
-            }).catch(handleError)
-        } else {
-            data._id = modify;
-            MeteorCall(_METHODS.trip.Update, data, accessToken).then(result => {
-                reloadTable();
-                $('#editTripManagerModal').modal('hide')
-            }).catch(handleError)
-        }
-    }
+    console.log(data)
+    // if (data.startTime < Date.now())
+    //     handleConfirm("Thời gian bạn chọn đang nhỏ hơn thời điểm hiện tại. Tiếp tục?").then(result => {
+    //         if (result.value) {
+    //             let modify = $('#editTripManagerModal').attr("modify");
+    //             if (modify == "") {
+    //                 MeteorCall(_METHODS.trip.Create, data, accessToken).then(result => {
+    //                     reloadTable();
+    //                     $('#editTripManagerModal').modal('hide')
+    //                 }).catch(handleError)
+    //             } else {
+    //                 data._id = modify;
+    //                 MeteorCall(_METHODS.trip.Update, data, accessToken).then(result => {
+    //                     reloadTable();
+    //                     $('#editTripManagerModal').modal('hide')
+    //                 }).catch(handleError)
+    //             }
+    //         }
+    //     })
+    // else {
+    //     let modify = $('#editTripManagerModal').attr("modify");
+    //     if (modify == "") {
+    //         MeteorCall(_METHODS.trip.Create, data, accessToken).then(result => {
+    //             reloadTable();
+    //             $('#editTripManagerModal').modal('hide')
+    //         }).catch(handleError)
+    //     } else {
+    //         data._id = modify;
+    //         MeteorCall(_METHODS.trip.Update, data, accessToken).then(result => {
+    //             reloadTable();
+    //             $('#editTripManagerModal').modal('hide')
+    //         }).catch(handleError)
+    //     }
+    // }
 }
 
 
@@ -181,6 +182,7 @@ function getDayFilter() {
 function reloadTable() {
     MeteorCall(_METHODS.trip.GetByTime, getDayFilter(), accessToken).then(result => {
         if (result.length) {
+            console.log(result)
             Session.set('tripList', result)
         } else {
             Session.set('tripList', [])

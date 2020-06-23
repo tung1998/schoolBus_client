@@ -192,30 +192,30 @@ function updateStudentInfoModalData(studentID) {
     let check3 = tripData.carStops.every(item => item.status == _TRIP_CARSTOP.status.leaved.number)
     let check4 = tripData.status == _TRIP.status.moving.number
 
-    let addNoteStudent = `<button type="button" class="btn btn-primary studentnote-btn btn-sm mr-3" tripID="${studentInfoData.tripID}" studentID="${studentInfoData.studentID}">Ghi chú</button>`
+    let addNoteStudent = `<button type="button" class="btn btn-primary studentnote-btn btn-sm" tripID="${studentInfoData.tripID}" studentID="${studentInfoData.studentID}">Ghi chú</button>`
     let waitingTrip = `<span class="kt-badge kt-badge--primary kt-badge--inline d-flex">Chuyến đi chưa bắt đầu</span>`
-    let captureStudent = `<button type="button" class="btn btn-success btn-sm ml-3" tripID="${studentInfoData.tripID}"
+    let captureStudent = `<button type="button" class="btn btn-success btn-sm" tripID="${studentInfoData.tripID}"
     studentID="${studentInfoData.studentID}" id="takePhoto">Chụp ảnh</button>`
     switch (studentInfoData.status) {
         case 0:
-            studentInfoData.buttonHtml = `${check4?`${(check1&&check2)||(!check1)?`<div class="col-md-6 col-sm-12 mb-2"><button type="button" class="btn btn-success status-btn btn-sm" tripID="${studentInfoData.tripID}"  studentID="${studentInfoData.studentID}" status="${_TRIP_STUDENT.status.pickUp.number}">Điểm danh</button>
+            studentInfoData.buttonHtml = `${check4?`${(check1&&check2)||(!check1)?`<div class="col-md-6 col-sm-12"><button type="button" class="btn btn-success status-btn btn-sm" tripID="${studentInfoData.tripID}"  studentID="${studentInfoData.studentID}" status="${_TRIP_STUDENT.status.pickUp.number}">Điểm danh</button>
             <button type="button" class="btn btn-danger status-btn btn-sm" tripID="${studentInfoData.tripID}" studentID="${studentInfoData.studentID}" status="${_TRIP_STUDENT.status.absent.number}">Vắng mặt</button></div>`:`<div class="col-md-6 col-sm-12 mb-2"><span class="kt-badge kt-badge--primary kt-badge--inline d-flex">chưa tới điểm dừng</span></div>`}`:`<div class="col-md-6 col-sm-12 mb-2">${waitingTrip}</div>`}
             <div class="col-md-6 col-sm-12">${addNoteStudent}${captureStudent}</div>`
             break
         case 1:
-            studentInfoData.buttonHtml = `${check4?`${(check1&&check3)||(!check1&&check2)?`<div class="col-md-6 col-sm-12 mb-2"><button type="button" class="btn btn-success status-btn" tripID="${studentInfoData.tripID}" studentID="${studentInfoData.studentID}" status="${_TRIP_STUDENT.status.getOff.number}">Xuống xe</button></div>`:`<div class="col-md-6 col-sm-12 mb-2"><span class="kt-badge kt-badge--primary kt-badge--inline d-flex">chưa tới điểm dừng</span></div>`}`:`<div class="col-md-6 col-sm-12 mb-2">${waitingTrip}</div>`}
+            studentInfoData.buttonHtml = `${check4?`${(check1&&check3)||(!check1&&check2)?`<div class="col-md-6 col-sm-12"><button type="button" class="btn btn-success status-btn" tripID="${studentInfoData.tripID}" studentID="${studentInfoData.studentID}" status="${_TRIP_STUDENT.status.getOff.number}">Xuống xe</button></div>`:`<div class="col-md-6 col-sm-12 mb-2"><span class="kt-badge kt-badge--primary kt-badge--inline d-flex">chưa tới điểm dừng</span></div>`}`:`<div class="col-md-6 col-sm-12 mb-2">${waitingTrip}</div>`}
             <div class="col-md-6 col-sm-12">${addNoteStudent}${captureStudent}</div>`
             break
         case 2:
-            studentInfoData.buttonHtml = `<div class="col-md-6 col-sm-12 mb-2"><span class="kt-badge kt-badge--success kt-badge--inline d-flex">Đã xuống xe</span></div>
+            studentInfoData.buttonHtml = `<div class="col-md-6 col-sm-12"><span class="kt-badge kt-badge--success kt-badge--inline d-flex">Đã xuống xe</span></div>
             <div class="col-md-6 col-sm-12">${addNoteStudent}${captureStudent}<div>`
             break
         case 3:
-            studentInfoData.buttonHtml = `<div class="col-md-6 col-sm-12 mb-2"><span class="kt-badge kt-badge--warning kt-badge--inline">xin nghỉ</span></div>
+            studentInfoData.buttonHtml = `<div class="col-md-6 col-sm-12"><span class="kt-badge kt-badge--warning kt-badge--inline">xin nghỉ</span></div>
             <div class="col-md-6 col-sm-12">${addNoteStudent}${captureStudent}</div>`
             break
         case 4:
-            studentInfoData.buttonHtml = `<div class="col-md-6 col-sm-12 mb-2"><span class="kt-badge kt-badge--danger kt-badge--inline">Vắng mặt</span></div>
+            studentInfoData.buttonHtml = `<div class="col-md-6 col-sm-12"><span class="kt-badge kt-badge--danger kt-badge--inline">Vắng mặt</span></div>
             <div class="col-md-6 col-sm-12">${addNoteStudent}${captureStudent}</div>`
             break
         default:
