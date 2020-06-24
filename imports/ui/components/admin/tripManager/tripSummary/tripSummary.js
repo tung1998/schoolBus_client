@@ -18,11 +18,16 @@ import {
 } from '../../../../../functions'
 
 import {
+    COLLECTION_TASK
+} from '../../../../../api/methods/task.js'
+
+import {
     _METHODS,
     LIMIT_DOCUMENT_PAGE,
     _SESSION,
     _URL_images,
-    _TRIP
+    _TRIP,
+    TIME_DEFAULT
 } from '../../../../../variableConst'
 
 let accessToken;
@@ -30,12 +35,27 @@ let currentPage = 1;
 
 Template.tripSummary.onCreated(() => {
     accessToken = Cookies.get('accessToken')
+    Meteor.subscribe('task.byName', 'Trip')
+
     Session.set('schools', [])
 });
 
 Template.tripSummary.onRendered(() => {
     addPaging($('#trip-summary-table'));
-    reloadTable(1, getLimitDocPerPage())
+    reloadTable()
+
+    this.realTimeTracker = Tracker.autorun(() => {
+        let task = COLLECTION_TASK.find({
+            name: 'Trip'
+        }).fetch()
+        console.log(task);
+        
+        if (task.length && task[0].tasks.length) {
+            let checkTime = Date.now() - TIME_DEFAULT.check_task
+            if (task[0].updatedTime > checkTime)
+                reloadTable(currentPage, getLimitDocPerPage())
+        }
+    });
 
     this.checkIsSuperAdmin = Tracker.autorun(() => {
         if (Session.get(_SESSION.isSuperadmin))
@@ -57,7 +77,9 @@ Template.tripSummary.events({
 })
 
 Template.tripSummary.onDestroyed(() => {
-    if (this.checkIsSuperAdmin) this.checkIsSuperAdmin = null
+    if (this.checkIsSuperAdmin) this.checkIsSuperAdmin.stop()
+    if (this.realTimeTracker) this.realTimeTracker.stop()
+
     Session.delete('schools')
 });
 
@@ -115,7 +137,7 @@ function createTable(table, result, limitDocPerPage) {
 }
 
 function createRow(result) {
-    console.log(getJsonDefault(_TRIP.status, 'number', result.status))
+    
     let statusData = getJsonDefault(_TRIP.status, 'number', result.status)
     let data = {
        _id: result._id,
@@ -142,7 +164,7 @@ function createRow(result) {
                 <td>${data.nannyName}</td>
                 <td>${data.studentList}</td>
                 <td>
-                    <span class="kt-badge kt-badge--${statusData.classname} kt-badge--inline kt-badge--pill kt-badge--rounded">${data.status}</span>
+                    <span class="badge badge-${statusData.classname}">${data.status}</span>
                 </td>
                 <td>${data.startTime}</td>
                 <td>${data.endTime}</td>

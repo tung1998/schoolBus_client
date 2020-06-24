@@ -510,7 +510,7 @@ const _TRIP_LOG = {
 const _TRIP_CARSTOP = {
     status: {
         arrived: {
-            text: "Đanng ở điểm dừng",
+            text: "Đang ở điểm dừng",
             classname: 'primary',
             number: 1
         },

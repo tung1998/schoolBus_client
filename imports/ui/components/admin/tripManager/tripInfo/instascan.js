@@ -192,18 +192,18 @@ function updateStudentInfoModalData(studentID) {
     let check3 = tripData.carStops.every(item => item.status == _TRIP_CARSTOP.status.leaved.number)
     let check4 = tripData.status == _TRIP.status.moving.number
 
-    let addNoteStudent = `<button type="button" class="btn btn-primary studentnote-btn btn-sm" tripID="${studentInfoData.tripID}" studentID="${studentInfoData.studentID}">Ghi chú</button>`
+    let addNoteStudent = `<button type="button" class="btn btn-primary studentnote-btn btn-sm custom-btn mr-1" tripID="${studentInfoData.tripID}" studentID="${studentInfoData.studentID}">Ghi chú</button>`
     let waitingTrip = `<span class="kt-badge kt-badge--primary kt-badge--inline d-flex">Chuyến đi chưa bắt đầu</span>`
-    let captureStudent = `<button type="button" class="btn btn-success btn-sm" tripID="${studentInfoData.tripID}"
+    let captureStudent = `<button type="button" class="btn btn-success btn-sm custom-btn" tripID="${studentInfoData.tripID}"
     studentID="${studentInfoData.studentID}" id="takePhoto">Chụp ảnh</button>`
     switch (studentInfoData.status) {
         case 0:
-            studentInfoData.buttonHtml = `${check4?`${(check1&&check2)||(!check1)?`<div class="col-md-6 col-sm-12"><button type="button" class="btn btn-success status-btn btn-sm" tripID="${studentInfoData.tripID}"  studentID="${studentInfoData.studentID}" status="${_TRIP_STUDENT.status.pickUp.number}">Điểm danh</button>
-            <button type="button" class="btn btn-danger status-btn btn-sm" tripID="${studentInfoData.tripID}" studentID="${studentInfoData.studentID}" status="${_TRIP_STUDENT.status.absent.number}">Vắng mặt</button></div>`:`<div class="col-md-6 col-sm-12 mb-2"><span class="kt-badge kt-badge--primary kt-badge--inline d-flex">chưa tới điểm dừng</span></div>`}`:`<div class="col-md-6 col-sm-12 mb-2">${waitingTrip}</div>`}
+            studentInfoData.buttonHtml = `${check4?`${(check1&&check2)||(!check1)?`<div class="col-md-6 col-sm-12"><button type="button" class="btn btn-success status-btn btn-sm custom-btn" tripID="${studentInfoData.tripID}"  studentID="${studentInfoData.studentID}" status="${_TRIP_STUDENT.status.pickUp.number}">Điểm danh</button>
+            <button type="button" class="btn btn-danger status-btn btn-sm custom-btn" tripID="${studentInfoData.tripID}" studentID="${studentInfoData.studentID}" status="${_TRIP_STUDENT.status.absent.number}">Vắng mặt</button></div>`:`<div class="col-md-6 col-sm-12 mb-2"><span class="kt-badge kt-badge--primary kt-badge--inline d-flex">chưa tới điểm dừng</span></div>`}`:`<div class="col-md-6 col-sm-12 mb-2">${waitingTrip}</div>`}
             <div class="col-md-6 col-sm-12">${addNoteStudent}${captureStudent}</div>`
             break
         case 1:
-            studentInfoData.buttonHtml = `${check4?`${(check1&&check3)||(!check1&&check2)?`<div class="col-md-6 col-sm-12"><button type="button" class="btn btn-success status-btn" tripID="${studentInfoData.tripID}" studentID="${studentInfoData.studentID}" status="${_TRIP_STUDENT.status.getOff.number}">Xuống xe</button></div>`:`<div class="col-md-6 col-sm-12 mb-2"><span class="kt-badge kt-badge--primary kt-badge--inline d-flex">chưa tới điểm dừng</span></div>`}`:`<div class="col-md-6 col-sm-12 mb-2">${waitingTrip}</div>`}
+            studentInfoData.buttonHtml = `${check4?`${(check1&&check3)||(!check1&&check2)?`<div class="col-md-6 col-sm-12"><button type="button" class="btn btn-success status-btn" tripID="${studentInfoData.tripID}" studentID="${studentInfoData.studentID}" status="${_TRIP_STUDENT.status.getOff.number}">Xuống xe</button></div>`:`<div class="col-md-6 col-sm-12 mb-2"><span class="kt-badge kt-badge--primary kt-badge--inline d-flex">chưa tới điểm dừng</span></div>`}`:`<div class="col-md-6 col-sm-12">${waitingTrip}</div>`}
             <div class="col-md-6 col-sm-12">${addNoteStudent}${captureStudent}</div>`
             break
         case 2:

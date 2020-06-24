@@ -234,10 +234,10 @@ function showReplyFeedBackClick(e) {
 
 function renderHtmlButton(_id, status, feedBackUser, feedbackContent) {
     if (status == _FEEDBACK.status.received.number)
-        return `<button type="button" class="btn btn-outline-success confirm-button" feedbackID="${_id}">Ghi nhận</button>
-                <button type="button" class="btn btn-outline-brand reply-button" feedbackID="${_id}">Phản hồi</button>`
+        return `<button type="button" class="btn btn-outline-success confirm-button btn-sm" feedbackID="${_id}">Ghi nhận</button>
+                <button type="button" class="btn btn-outline-brand reply-button btn-sm" feedbackID="${_id}">Phản hồi</button>`
     if (status == _FEEDBACK.status.readed.number)
-        return `<button type="button" class="btn btn-outline-brand reply-button" feedbackID="${_id}">Phản hồi</button>`
+        return `<button type="button" class="btn btn-outline-brand reply-button btn-sm" feedbackID="${_id}">Phản hồi</button>`
     if (status == _FEEDBACK.status.response.number)
-        return `<button type="button" class="btn btn-outline-brand show-button" feedbackUser="${feedBackUser}" feedbackContent="${feedbackContent}" feedbackID="${_id}">Chi tiết</button>`
+        return `<button type="button" class="btn btn-outline-brand show-button btn-sm" feedbackUser="${feedBackUser}" feedbackContent="${feedbackContent}" feedbackID="${_id}">Chi tiết</button>`
 }

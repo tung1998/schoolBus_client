@@ -86,7 +86,7 @@ Template.tripDetail.helpers({
     tripStatusBtn() {
         let tripStatus = Session.get('tripStatus')
         if (tripStatus === _TRIP.status.accident.number)
-            return `<span class="kt-badge kt-badge--${_TRIP.status.accident.classname} kt-badge--inline kt-badge--pill kt-badge--rounded">Chuyến đi gặp sự cố</span>`
+            return `<span class="kt-badge kt-badge--${_TRIP.status.accident.classname} kt-badge--inline kt-badge--pill kt-badge--rounded">Gặp sự cố</span>`
         else if (tripStatus === _TRIP.status.ready.number)
             return `<button type="button" class="btn btn-success btn-sm status-trip-btn" status="${_TRIP.status.moving.number}">
                         <i class="fas fa-play"></i> Bắt đầu
@@ -99,7 +99,7 @@ Template.tripDetail.helpers({
                         </button>`
             } else if (carStop && carStop.status === _TRIP_CARSTOP.status.notArrived.number) {
                 return `<button type="button" class="btn btn-primary btn-sm status-trip-carStop-btn" carStopID="${carStop.carStopID}" status="${_TRIP_CARSTOP.status.arrived.number}">
-                            <i class="fas fa-play"></i>Đến điểm dừng tiếp theo
+                            <i class="fas fa-play"></i>Đến điểm tiếp theo
                         </button>`
             }
             return ` <button type="button" class="btn btn-dark btn-sm status-trip-btn" status="${_TRIP.status.finish.number}">
@@ -121,6 +121,9 @@ Template.tripDetail.helpers({
             return `<button type="button" class="btn btn-success btn-sm status-trip-btn" status="${_TRIP.status.moving.number}" tripID="${Session.get('tripID')}">
                         <i class="fas fa-play"></i> Tiếp tục</button>`
         }
+    },
+    nextStop() {
+        return
     }
 })
 
@@ -165,7 +168,6 @@ Template.tripDetail.onDestroyed(() => {
 
 Template.studentInfoModal.helpers({
     studentInfoData() {
-        console.log(Session.get('studentInfoData'))
         return Session.get('studentInfoData')
     }
 })
@@ -556,20 +558,23 @@ function updateStudentNote(e) {
     let tripID = e.target.getAttribute("tripid")
     $('#studentInfoModal').modal('hide')
     handlePromp().then(result => {
-        if (result) {
+        if (result.value) {
             MeteorCall(_METHODS.trip.UpdateStudentNote, {
                 tripID: tripID,
                 studentID: studentID,
                 note: result.value
-            }, accessToken).then(() => {
-                
-                Swal.fire({
-                    icon: "success",
-                    text: "Đã thêm ghi chú",
-                    timer: 3000
-                })
+            }, accessToken).then((res) => {
+               // $(this).parents(".row").find('.col-md-9.col-sm-12').find('.kt-widget1__item').last().find('.kt-widget1__desc:eq(1)').text(result.value)
+                handleSuccess("Đã thêm ghi chú!")
+                return reloadData()
+            })
+            .then(() => {
+                updateStudentInfoModalData(studentID)
             }).catch(handleError)
         }
-        $('#studentInfoModal').modal('show')
+        if(result.dismiss == 'cancel') {
+           handleError("Đã hủy!")
+            $("#studentInfoModal").modal("show")
+        }
     })
 }

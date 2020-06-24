@@ -127,40 +127,39 @@ function SubmitForm(event) {
         startTime: moment($("#start-time").val(), "DD/MM/YYYY, HH:mm").valueOf(),
         routeID: $("#routeSelect").val()
     }
-    console.log(data)
-    // if (data.startTime < Date.now())
-    //     handleConfirm("Thời gian bạn chọn đang nhỏ hơn thời điểm hiện tại. Tiếp tục?").then(result => {
-    //         if (result.value) {
-    //             let modify = $('#editTripManagerModal').attr("modify");
-    //             if (modify == "") {
-    //                 MeteorCall(_METHODS.trip.Create, data, accessToken).then(result => {
-    //                     reloadTable();
-    //                     $('#editTripManagerModal').modal('hide')
-    //                 }).catch(handleError)
-    //             } else {
-    //                 data._id = modify;
-    //                 MeteorCall(_METHODS.trip.Update, data, accessToken).then(result => {
-    //                     reloadTable();
-    //                     $('#editTripManagerModal').modal('hide')
-    //                 }).catch(handleError)
-    //             }
-    //         }
-    //     })
-    // else {
-    //     let modify = $('#editTripManagerModal').attr("modify");
-    //     if (modify == "") {
-    //         MeteorCall(_METHODS.trip.Create, data, accessToken).then(result => {
-    //             reloadTable();
-    //             $('#editTripManagerModal').modal('hide')
-    //         }).catch(handleError)
-    //     } else {
-    //         data._id = modify;
-    //         MeteorCall(_METHODS.trip.Update, data, accessToken).then(result => {
-    //             reloadTable();
-    //             $('#editTripManagerModal').modal('hide')
-    //         }).catch(handleError)
-    //     }
-    // }
+    if (data.startTime < Date.now())
+        handleConfirm("Thời gian bạn chọn đang nhỏ hơn thời điểm hiện tại. Tiếp tục?").then(result => {
+            if (result.value) {
+                let modify = $('#editTripManagerModal').attr("modify");
+                if (modify == "") {
+                    MeteorCall(_METHODS.trip.Create, data, accessToken).then(result => {
+                        reloadTable();
+                        $('#editTripManagerModal').modal('hide')
+                    }).catch(handleError)
+                } else {
+                    data._id = modify;
+                    MeteorCall(_METHODS.trip.Update, data, accessToken).then(result => {
+                        reloadTable();
+                        $('#editTripManagerModal').modal('hide')
+                    }).catch(handleError)
+                }
+            }
+        })
+    else {
+        let modify = $('#editTripManagerModal').attr("modify");
+        if (modify == "") {
+            MeteorCall(_METHODS.trip.Create, data, accessToken).then(result => {
+                reloadTable();
+                $('#editTripManagerModal').modal('hide')
+            }).catch(handleError)
+        } else {
+            data._id = modify;
+            MeteorCall(_METHODS.trip.Update, data, accessToken).then(result => {
+                reloadTable();
+                $('#editTripManagerModal').modal('hide')
+            }).catch(handleError)
+        }
+    }
 }
 
 
