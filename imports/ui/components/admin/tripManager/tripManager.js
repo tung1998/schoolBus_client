@@ -42,7 +42,7 @@ Template.tripManager.onRendered(() => {
 
 Template.tripManager.onDestroyed(() => {
     Session.delete('tripList')
-    if (this.realTimeTracker) this.realTimeTracker = null
+    if (this.realTimeTracker) this.realTimeTracker.stop()
 })
 
 Template.tripManager.helpers({

@@ -11,24 +11,38 @@ import {
 import {
     _METHODS,
     _URL_images,
-    _TRIP, _TRIP_STUDENT
+    _TRIP, _TRIP_STUDENT,
+    TIME_DEFAULT
 } from "../../../../variableConst";
+
+import {
+    COLLECTION_TASK
+} from '../../../../api/methods/task.js'
 
 let accessToken;
 
 Template.childrenInfo.onCreated(() => {
     accessToken = Cookies.get("accessToken");
-    Session.delete('studentID')
-    Session.delete('students')
+    Meteor.subscribe('task.byName', 'Trip');
 });
 
 Template.childrenInfo.onRendered(() => {
-
+    this.realTimeTracker = Tracker.autorun(() => {
+        let task = COLLECTION_TASK.find({
+            name: 'Trip'
+        }).fetch()
+        if (task.length && task[0].tasks.length && task[0].updatedTime > Date.now() - TIME_DEFAULT.check_task) {
+            console.log(task);
+            
+        }
+    });
 });
 
 Template.childrenInfo.onDestroyed(() => {
     Session.delete('studentID')
     Session.delete('students')
+
+    if (this.realTimeTracker) this.realTimeTracker.stop()
 });
 
 Template.childrenInfo.events({
@@ -45,8 +59,9 @@ Template.childrenInfo.helpers({
 
 Template.childrenNextripModal.helpers({
     startTime() {
-        if(Session.get('tripData'))
-        return moment(Session.get('tripData').startTime).format("DD/MM/YYYY, HH:mm")
+        if (Session.get('tripData')) {
+            return moment(Session.get('tripData').startTime).format("DD/MM/YYYY, HH:mm")
+        }
     },
     tripData() {
         return Session.get('tripData')
@@ -96,7 +111,6 @@ function gettripData(e) {
         studentID
     }, accessToken).then(result => {
         if (result) {
-            result.startTime = moment(result.startTime).locale('vi').format('LLLL')
             Session.set('tripData', result)
             Session.set('studentID', studentID)
             $("#childrenNextripModal").modal('show')
@@ -113,6 +127,7 @@ function gettripData(e) {
         handleError(error, 'Không có chuyến đi sắp tới')
     })
 }
+
 
 function chatBtnClick(e) {
     let teacherID = e.currentTarget.getAttribute('teacherID')

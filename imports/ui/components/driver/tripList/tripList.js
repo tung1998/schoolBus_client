@@ -1,19 +1,36 @@
 import './tripList.html';
 import { MeteorCall, getJsonDefault, handleError } from '../../../../functions';
 import { _METHODS, _TRIP, _URL_images, LIMIT_DOCUMENT_PAGE, _USER } from '../../../../variableConst';
+import {
+    COLLECTION_TASK
+} from '../../../../api/methods/task.js'
 
 Template.tripList.onCreated(() => {
     accessToken = Cookies.get('accessToken')
     Session.set('tripList', [])
+    
+    Meteor.subscribe('task.byName', 'Trip');
 })
 
 Template.tripList.onRendered(() => {
     reloadData()
+
+    this.realTimeTracker = Tracker.autorun(() => {
+        let task = COLLECTION_TASK.find({
+            name: 'Trip'
+        }).fetch()
+        if (task.length && task[0].tasks.length && task[0].updatedTime > Date.now() - TIME_DEFAULT.check_task) {
+            reloadData()
+        }
+    });
 })
 
 Template.tripList.onDestroyed(() => {
     Session.delete('tripList')
     Session.delete('tripStudentLog')
+
+    if (this.realTimeTracker) this.realTimeTracker.stop()
+
 })
 
 Template.tripList.helpers({
@@ -114,11 +131,11 @@ function openStudentTripModalBtnClick(e) {
     let tripID = e.currentTarget.getAttribute('tripID')
     let tripData = tripList.filter(item => item._id == tripID)[0]
     Session.set('tripData', tripData)
-    if(tripData.status!=_TRIP.status.ready.number){
+    if (tripData.status != _TRIP.status.ready.number) {
         MeteorCall(_METHODS.trip.GetStudentTripLog, {
             tripID,
             studentID: FlowRouter.getParam("studentID")
-        }, accessToken).then(tripStudentLog=>{
+        }, accessToken).then(tripStudentLog => {
             Session.set('tripStudentLog', tripStudentLog)
         })
     }

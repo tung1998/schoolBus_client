@@ -53,9 +53,11 @@ function initMap() {
         id: 'mapbox.streets'
     }).addTo(monitormap);
     window.markerGroup = L.layerGroup().addTo(monitormap);
-    MeteorCallNoEfect(_METHODS.gps.getLast, null, accessToken).then(result => {
-        let htmlTable = result.map(htmlRow);
-        $("#table-body").html(htmlTable.join(" "));
+    MeteorCallNoEfect(_METHODS.trip.GetAllCurrentTrip, null, accessToken).then(result => {
+        // let htmlTable = result.map(htmlRow);
+        // $("#table-body").html(htmlTable.join(" "));
+        console.log(result);
+        
     }).catch(handleError)
 }
 
@@ -121,7 +123,7 @@ function appendLatlng(data, markerID) {
 }
 
 function updateData() {
-    MeteorCallNoEfect(_METHODS.gps.getLast, null, accessToken).then(result => {
+    MeteorCallNoEfect(_METHODS.trip.GetAllCurrentTrip, null, accessToken).then(result => {
         result.map((data, index) => {
             appendLatlng(data, markers_id[index]);
         })

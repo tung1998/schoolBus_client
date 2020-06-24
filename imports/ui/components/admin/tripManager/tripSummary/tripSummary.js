@@ -8,6 +8,7 @@ const Cookies = require('js-cookie')
 
 import {
     MeteorCall,
+    MeteorCallNoEfect,
     addPaging,
     handlePaging,
     convertTime,
@@ -49,11 +50,10 @@ Template.tripSummary.onRendered(() => {
             name: 'Trip'
         }).fetch()
         console.log(task);
-        
+
         if (task.length && task[0].tasks.length) {
-            let checkTime = Date.now() - TIME_DEFAULT.check_task
-            if (task[0].updatedTime > checkTime)
-                reloadTable(currentPage, getLimitDocPerPage())
+            if (task.length && task[0].tasks.length && task[0].updatedTime > Date.now() - TIME_DEFAULT.check_task)
+                reloadTable(currentPage, getLimitDocPerPage(),null, false)
         }
     });
 
@@ -115,16 +115,28 @@ Template.tripSummaryFilter.helpers({
 //     }
 // })
 
-function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options) {
+function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options, loading = true) {
     let table = $('#table-body');
-    MeteorCall(_METHODS.trip.GetByPage, {
-        page: page,
-        limit: limitDocPerPage,
-        options
-    }, accessToken).then(result => {
-        handlePaging(table, result.count, page, limitDocPerPage)
-        createTable(table, result, limitDocPerPage)
-    })
+    if (loading) {
+        MeteorCall(_METHODS.trip.GetByPage, {
+            page: page,
+            limit: limitDocPerPage,
+            options
+        }, accessToken).then(result => {
+            handlePaging(table, result.count, page, limitDocPerPage)
+            createTable(table, result, limitDocPerPage)
+        })
+    }
+    else {
+        MeteorCallNoEfect(_METHODS.trip.GetByPage, {
+            page: page,
+            limit: limitDocPerPage,
+            options
+        }, accessToken).then(result => {
+            handlePaging(table, result.count, page, limitDocPerPage)
+            createTable(table, result, limitDocPerPage)
+        })
+    }
 
 }
 
@@ -137,18 +149,18 @@ function createTable(table, result, limitDocPerPage) {
 }
 
 function createRow(result) {
-    
+
     let statusData = getJsonDefault(_TRIP.status, 'number', result.status)
     let data = {
-       _id: result._id,
-       car: result.car.numberPlate,
-       routeName: result.route.name,
-       driverName: result.driver.user.name,
-       nannyName: result.nanny.user.name,
-       studentList: result.route.studentList.name,
-       status: statusData.text,
-       startTime: convertTime(result.startTime, true, "DD/MM/YYYY, HH:mm"),
-       endTime: result.endTime ? convertTime(result.endTime, true, "DD/MM/YYYY, HH:mm"): 'Chưa kết thúc'
+        _id: result._id,
+        car: result.car.numberPlate,
+        routeName: result.route.name,
+        driverName: result.driver.user.name,
+        nannyName: result.nanny.user.name,
+        studentList: result.route.studentList.name,
+        status: statusData.text,
+        startTime: convertTime(result.startTime, true, "DD/MM/YYYY, HH:mm"),
+        endTime: result.endTime ? convertTime(result.endTime, true, "DD/MM/YYYY, HH:mm") : 'Chưa kết thúc'
     }
 
     // if (Session.get(_SESSION.isSuperadmin)) {
@@ -185,7 +197,7 @@ function initSchoolSelect2() {
 }
 
 // function refreshFilter() {
-   
+
 
 //     reloadTable(1, getLimitDocPerPage(), null)
 // }
