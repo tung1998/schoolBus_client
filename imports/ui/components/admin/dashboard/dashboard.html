@@ -41,73 +41,10 @@
                     <div class="col-lg-12 col-xl-12 col-md-12 order-lg-1 order-xl-1 order-md-1">
                       <div class="kt-widget17">
                         <div class="kt-widget17__stats custom_stats">
-                          <div class="kt-widget17__stats custom_stats">
-                            <div class="kt-portlet__head kt-portlet__space-x">
-                              <div class="kt-portlet__head-label">
-                                <h5 class="kt-portlet__head-title">
-                                  Trường học
-                                </h5>
-                              </div>
-                              <!-- <div class="kt-portlet__head-toolbar">
-                                <h6 class="kt-portlet__head-title" style="
-                                width: 100%;
-                                margin-right: 1rem">
-                                  Trường học:
-                                </h6>
-                                <select id="school-dashboard">
-                                  <option value=""></option>
-                                  <option value="1">Trường Học A</option>
-                                  <option value="2">Trường Học B</option>
-                                  <option value="3">rường Học C</option>
-                                </select>
-                              </div> -->
-                            </div>
-                            <div class="kt-widget17__items">
-                              <div class="kt-widget17__item">
-                                <span class="kt-widget17__icon" style="color: rgb(77, 212, 50)">
-                                  <i class="fa fa-school"></i>
-                                </span>
-                                <div class="information">
-                                  <span class="kt-widget17__subtitle">
-                                    Trường học
-                                  </span>
-                                  <span class="kt-widget17__desc">
-                                    2
-                                  </span>
-                                </div>
-                              </div>
-                              <div class="kt-widget17__item">
-                                <span class="kt-widget17__icon" style="color: rgb(0, 202, 158)">
-                                  <i class="fas fa-grip-horizontal"></i>
-                                </span>
-                                <div class="information">
-                                  <span class="kt-widget17__subtitle">
-                                    Lớp
-                                  </span>
-                                  <span class="kt-widget17__desc">
-                                    2
-                                  </span>
-                                </div>
-                              </div>
-                              <div class="kt-widget17__item">
-                                <span class="kt-widget17__icon" style="color: rgb(75, 24, 216)">
-                                  <i class="fa fas fa-car"></i>
-                                </span>
-                                <div class="information">
-                                  <span class="kt-widget17__subtitle">
-                                    Số lượng xe
-                                  </span>
-                                  <span class="kt-widget17__desc">
-                                    2
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
                           <div class="kt-portlet__head kt-portlet__space-x">
                             <div class="kt-portlet__head-label">
                               <h5 class="kt-portlet__head-title">
-                                Tài khoản: 40
+                                Tài khoản: {{numberUser}}
                               </h5>
                             </div>
                             <div class="kt-portlet__head-toolbar">
@@ -124,71 +61,23 @@
                               </select>
                             </div>
                           </div>
-                          <div class="kt-widget17__items">
-                            <div class="kt-widget17__item">
-                              <span class="kt-widget17__icon" style="color: rgb(77, 212, 50)">
-                                <i class="fa fa-street-view"></i>
-                              </span>
-                              <div class="information">
-                                <span class="kt-widget17__subtitle">
-                                  Tài xế
+                          <div class="kt-portlet__body">
+                            <div class="kt-widget17__items">
+                              {{#each dataUser}}
+                              <div class="kt-widget17__item">
+                                <span class="kt-widget17__icon" style="color: {{color}}">
+                                  <i class="fa {{icon}}"></i>
                                 </span>
-                                <span class="kt-widget17__desc">
-                                  2
-                                </span>
+                                <div class="information">
+                                  <span class="kt-widget17__subtitle">
+                                    {{text}}
+                                  </span>
+                                  <span class="kt-widget17__desc">
+                                    {{number}}
+                                  </span>
+                                </div>
                               </div>
-                            </div>
-                            <div class="kt-widget17__item">
-                              <span class="kt-widget17__icon" style="color: rgb(0, 202, 158)">
-                                <i class="fa fa-street-view"></i>
-                              </span>
-                              <div class="information">
-                                <span class="kt-widget17__subtitle">
-                                  Bảo mẫu
-                                </span>
-                                <span class="kt-widget17__desc">
-                                  2
-                                </span>
-                              </div>
-                            </div>
-                            <div class="kt-widget17__item">
-                              <span class="kt-widget17__icon" style="color: rgb(75, 24, 216)">
-                                <i class="fa fa-street-view"></i>
-                              </span>
-                              <div class="information">
-                                <span class="kt-widget17__subtitle">
-                                  Giáo viên
-                                </span>
-                                <span class="kt-widget17__desc">
-                                  2
-                                </span>
-                              </div>
-                            </div>
-                            <div class="kt-widget17__item">
-                              <span class="kt-widget17__icon" style="color: rgb(170, 20, 90)">
-                                <i class="fa fa-street-view"></i>
-                              </span>
-                              <div class="information">
-                                <span class="kt-widget17__subtitle">
-                                  Phụ huynh
-                                </span>
-                                <span class="kt-widget17__desc">
-                                  4
-                                </span>
-                              </div>
-                            </div>
-                            <div class="kt-widget17__item">
-                              <span class="kt-widget17__icon" style="color: rgb(131, 68, 98)">
-                                <i class="fa fa-street-view"></i>
-                              </span>
-                              <div class="information">
-                                <span class="kt-widget17__subtitle">
-                                  Học sinh
-                                </span>
-                                <span class="kt-widget17__desc">
-                                  30
-                                </span>
-                              </div>
+                              {{/each}}
                             </div>
                           </div>
                           <div class="kt-portlet__head kt-portlet__space-x">
@@ -211,44 +100,123 @@
                               </select>
                             </div> -->
                           </div>
-                          <div class="kt-widget17__items">
-                            <div class="kt-widget17__item">
-                              <span class="kt-widget17__icon" style="color: rgb(77, 212, 50)">
-                                <i class="fa fas fa-map-marker-alt"></i>
-                              </span>
-                              <div class="information">
-                                <span class="kt-widget17__subtitle">
-                                  Điểm dừng
+                          <div class="kt-portlet__body">
+                            <div class="kt-widget17__items">
+                              <div class="kt-widget17__item">
+                                <span class="kt-widget17__icon" style="color: rgb(77, 212, 50)">
+                                  <i class="fa fas fa-map-marker-alt"></i>
                                 </span>
-                                <span class="kt-widget17__desc">
-                                  10
+                                <div class="information">
+                                  <span class="kt-widget17__subtitle">
+                                    Điểm dừng
+                                  </span>
+                                  <span class="kt-widget17__desc">
+                                    10
+                                  </span>
+                                </div>
+                              </div>
+                              <div class="kt-widget17__item">
+                                <span class="kt-widget17__icon" style="color: rgb(0, 202, 158)">
+                                  <i class="fas fa-road"></i>
                                 </span>
+                                <div class="information">
+                                  <span class="kt-widget17__subtitle">
+                                    Cung đường
+                                  </span>
+                                  <span class="kt-widget17__desc">
+                                    2
+                                  </span>
+                                </div>
+                              </div>
+                              <div class="kt-widget17__item">
+                                <span class="kt-widget17__icon" style="color: rgb(75, 24, 216)">
+                                  <i class="fa fas fa-car-side"></i>
+                                </span>
+                                <div class="information">
+                                  <span class="kt-widget17__subtitle">
+                                    Số Chuyến
+                                  </span>
+                                  <span class="kt-widget17__desc">
+                                    2
+                                  </span>
+                                </div>
                               </div>
                             </div>
-                            <div class="kt-widget17__item">
-                              <span class="kt-widget17__icon" style="color: rgb(0, 202, 158)">
-                                <i class="fas fa-road"></i>
-                              </span>
-                              <div class="information">
-                                <span class="kt-widget17__subtitle">
-                                  Cung đường
-                                </span>
-                                <span class="kt-widget17__desc">
-                                  2
-                                </span>
+                          </div>
+                          <div class="kt-portlet__body">
+                            <div class="kt-widget3">
+                              <div class="kt-widget3__item">
+                                <div class="kt-widget3__header">
+                                  <div class="kt-widget3__info">
+                                    <h5 class="kt-widget3__title" style="margin-bottom: 0">Chuyến đi đang chạy: </h5>
+                                  </div>
+                                  <div class="kt-widget3__status">
+                                    <div class="progress" style="height: 1.2rem; margin-left: 2rem;">
+                                      <div class="progress-bar bg-danger" role="progressbar" style="width: 10%"
+                                        aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">123</div>
+                                    </div>
+                                  </div>
+                                </div>
                               </div>
                             </div>
-                            <div class="kt-widget17__item">
-                              <span class="kt-widget17__icon" style="color: rgb(75, 24, 216)">
-                                <i class="fa fas fa-car-side"></i>
-                              </span>
-                              <div class="information">
-                                <span class="kt-widget17__subtitle">
-                                  Số Chuyến
-                                </span>
-                                <span class="kt-widget17__desc">
-                                  2
-                                </span>
+                            <div class="kt-widget3">
+                              <div class="kt-widget3__item">
+                                <div class="kt-widget3__header">
+                                  <div class="kt-widget3__info">
+                                    <h5 class="kt-widget3__title" style="margin-bottom: 0">Chuyến đi đang chạy: </h5>
+                                  </div>
+                                  <div class="kt-widget3__status">
+                                    <div class="progress" style="height: 1.2rem; margin-left: 2rem;">
+                                      <div class="progress-bar bg-danger" role="progressbar" style="width: 10%"
+                                        aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">123</div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="kt-widget3">
+                              <div class="kt-widget3__item">
+                                <div class="kt-widget3__header">
+                                  <div class="kt-widget3__info">
+                                    <h5 class="kt-widget3__title" style="margin-bottom: 0">Chuyến đi đang chạy: </h5>
+                                  </div>
+                                  <div class="kt-widget3__status">
+                                    <div class="progress" style="height: 1.2rem; margin-left: 2rem;">
+                                      <div class="progress-bar bg-danger" role="progressbar" style="width: 10%"
+                                        aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">123</div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="kt-widget3">
+                              <div class="kt-widget3__item">
+                                <div class="kt-widget3__header">
+                                  <div class="kt-widget3__info">
+                                    <h5 class="kt-widget3__title" style="margin-bottom: 0">Chuyến đi đang chạy: </h5>
+                                  </div>
+                                  <div class="kt-widget3__status">
+                                    <div class="progress" style="height: 1.2rem; margin-left: 2rem;">
+                                      <div class="progress-bar bg-danger" role="progressbar" style="width: 10%"
+                                        aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">123</div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="kt-widget3">
+                              <div class="kt-widget3__item">
+                                <div class="kt-widget3__header">
+                                  <div class="kt-widget3__info">
+                                    <h5 class="kt-widget3__title" style="margin-bottom: 0">Chuyến đi đang chạy: </h5>
+                                  </div>
+                                  <div class="kt-widget3__status">
+                                    <div class="progress" style="height: 1.2rem; margin-left: 2rem;">
+                                      <div class="progress-bar bg-danger" role="progressbar" style="width: 10%"
+                                        aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">123</div>
+                                    </div>
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -269,35 +237,21 @@
                         </div>
                         <div class="kt-widget14__content">
                           <div class="kt-widget14__chart">
-                            <div class="kt-widget14__stat">40</div>
+                            <div class="kt-widget14__stat">{{numberUser}}</div>
                             <canvas id="userChart" style="height: 140px; width: 140px; z-index: 0"></canvas>
                           </div>
                           <div class="kt-widget14__legends">
+                            {{#each dataUser}}
                             <div class="kt-widget14__legend">
-                              <span class="kt-widget14__bullet" style="background-color: rgb(77, 212, 50);"></span>
-                              <span class="kt-widget14__stats">Tài xế</span>
+                              <span class="kt-widget14__bullet" style="background-color: {{color}}"></span>
+                              <span class="kt-widget14__stats">{{text}}</span>
                             </div>
-                            <div class="kt-widget14__legend">
-                              <span class="kt-widget14__bullet" style="background-color: rgb(0, 202, 158);"></span>
-                              <span class="kt-widget14__stats">Bảo mẫu</span>
-                            </div>
-                            <div class="kt-widget14__legend">
-                              <span class="kt-widget14__bullet" style="background-color: rgb(75, 24, 216);"></span>
-                              <span class="kt-widget14__stats">Giáo viên</span>
-                            </div>
-                            <div class="kt-widget14__legend">
-                              <span class="kt-widget14__bullet" style="background-color: rgb(170, 20, 90);"></span>
-                              <span class="kt-widget14__stats">Phụ huynh</span>
-                            </div>
-                            <div class="kt-widget14__legend">
-                              <span class="kt-widget14__bullet" style="background-color: rgb(131, 68, 98);"></span>
-                              <span class="kt-widget14__stats">Học sinh</span>
-                            </div>
+                            {{/each}}
                           </div>
                         </div>
                       </div>
                     </div>
-                    <div class="col-xl-6 col-lg-6 col-md-6 order-lg-2 order-xl-2 order-md-2">
+                    <!-- <div class="col-xl-6 col-lg-6 col-md-6 order-lg-2 order-xl-2 order-md-2">
                       <div class="kt-widget14">
                         <div class="kt-widget14__header">
                           <h3 class="kt-widget14__title">
@@ -328,7 +282,7 @@
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </div> -->
                   </div>
                 </div>
               </div>

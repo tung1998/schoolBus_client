@@ -108,7 +108,7 @@ function ClickModifyButton(event) {
     let startTime = $(event.currentTarget).attr('startTime')
     let routeID = $(event.currentTarget).attr('routeID')
     let tripID = $(event.currentTarget).attr('tripID')
-    $("#start-time").val(moment(startTime).format("DD/MM/YYYY, HH:mm"));
+    $("#start-time").val(startTime);
     $("#routeSelect").val(routeID).trigger('change');
 
     $('#editTripManagerModal').modal('show')

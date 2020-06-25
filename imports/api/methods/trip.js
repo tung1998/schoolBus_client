@@ -214,7 +214,7 @@ function updateStudentNote(data, accessToken = '') {
 
 function getAllCurrentTrip(data, accessToken = '') {
     let url = `${AUTH_TRIP}/allCurrent`
-    return httpDefault(METHOD.put, url, {
+    return httpDefault(METHOD.get, url, {
         token: accessToken
     })
 }

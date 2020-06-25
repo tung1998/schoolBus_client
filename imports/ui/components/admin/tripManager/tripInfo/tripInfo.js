@@ -26,7 +26,8 @@ import {
     _MARKER_CONFIG,
     _TRIP_LOG,
     _TRIP_CARSTOP,
-    _URL_images
+    _URL_images,
+    TIME_DEFAULT
 } from '../../../../../variableConst';
 
 import {
