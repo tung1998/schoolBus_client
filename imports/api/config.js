@@ -13,6 +13,7 @@ const BASE = 'http://192.168.0.111:3000';
 
 // mail hainv@fimo
 export const FCM_ = {
-    server_key: 'AAAAzsXbi0A:APA91bH0NyrKR7hQ5AZug1Qv94GMp10xQr_OGTMq05VkPbAkW_2NqVsJyaazvyia26GG25QTNSPREzjIOXKoS4kyx0SwQdEUztYxmytuKfBpOMqql_QlBPhkJ9pbcbteJRaqi7jxWq5HXnP5ddm1IRrVT8ZymSUblw',
-    sender_ID: 888082762560,
+    server_key : 'AAAAUa0Yk08:APA91bHMW8nogp3LbZpYnRR67ULdAWv_fdL1hUGF0OiIepZG9SsjYiFLhFtUEFvSO5LxzBD8MKzraZvP0izV6rt0q5tucfKPkkC943QniGWKXzhJtUbDSSmCTaNv5Sq0AiqQpTDUkbjZ',
+    sender_ID : 350796419919,
+    project_number : 350796419919,
 }

@@ -6,13 +6,13 @@ import './parentRoutes'
 import './teacherRoutes'
 import './driverRoutes'
 import './nannyRoutes'
-import { handleSuccess } from '../../functions';
+import './FCM'
 
 
 Meteor.startup(function() {
     if (Meteor.isCordova) {
         cordova.plugins.diagnostic.requestCameraAuthorization(function (granted) {
-            handleSuccess("Successfully requested camera authorization: authorization was " + granted ? "GRANTED" : "DENIED")
+            // handleSuccess("Successfully requested camera authorization: authorization was " + granted ? "GRANTED" : "DENIED")
         })
     }
 });
