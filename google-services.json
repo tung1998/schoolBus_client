@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "350796419919",
+    "firebase_url": "https://schoolbus-394dd.firebaseio.com",
+    "project_id": "schoolbus-394dd",
+    "storage_bucket": "schoolbus-394dd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:350796419919:android:00c5fccf6b5853a6b76b3a",
+        "android_client_info": {
+          "package_name": "com.FIMO.SCHOOLBUS"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "350796419919-p2poj7dq7jfsl76aavei21k9pr9vuoam.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlt-qpsdZXMn7T8ZHm-ElRFqiM-OEKC5s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "350796419919-p2poj7dq7jfsl76aavei21k9pr9vuoam.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
