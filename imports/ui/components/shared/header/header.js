@@ -28,6 +28,9 @@ function sightOutClick() {
     Session.set(_SESSION.avata, null)
     Session.set(_SESSION.username, null)
     Session.set(_SESSION.userID, null)
+    if(Meteor.isCordova){
+        Push.setUser();
+    }
     BlazeLayout.render("login");
     FlowRouter.go('/login')
 }

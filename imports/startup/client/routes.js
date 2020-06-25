@@ -31,6 +31,11 @@ FlowRouter.triggers.enter([function(context, redirect) {
     if (!accessToken) FlowRouter.go('/login');
     else {
         MeteorCall(_METHODS.token.GetUserInfo, null, accessToken).then(result => {
+            if(Meteor.isCordova){
+                if(!Push.enabled())
+                    Push.enabled(true);
+                    Push.setUser(result.userID);
+            }
             Session.set(_SESSION.modules, result.modules)
                 Session.set(_SESSION.userID, result.userID)
                 Session.set(_SESSION.username, result.user.username)
@@ -66,6 +71,11 @@ FlowRouter.route('/login', {
         BlazeLayout.setRoot('body');
         if (accessToken) {
             MeteorCall(_METHODS.token.GetUserInfo, null, accessToken).then(result => {
+                if(Meteor.isCordova){
+                    if(!Push.enabled())
+                        Push.enabled(true);
+                        Push.setUser(result.userID);
+                }
                 Session.set(_SESSION.modules, result.modules)
                 Session.set(_SESSION.userID, result.userID)
                 Session.set(_SESSION.username, result.user.username)

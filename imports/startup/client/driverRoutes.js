@@ -1,3 +1,5 @@
+import {sendFCMToUser} from '../../api/methods/notification'
+
 const driverRoutes = FlowRouter.group({
     prefix: "/driver",
     name: "driverRoutes",
@@ -6,6 +8,10 @@ const driverRoutes = FlowRouter.group({
 driverRoutes.route('/upCommingTripInfo', {
     name: 'driver.upCommingTripInfo',
     action() {
+        sendFCMToUser(Session.get('userID'), "hello",{data:'helo'}).then(status => {
+            if (status.error)
+                console.log(`tripID: ${customerTrip.tripID} ${status.message}`)
+        }).catch(e => console.log(`tripID: ${customerTrip.tripID} ${e.message}`));
         BlazeLayout.render('App_body', {
             main: 'App_home',
             content: 'tripDetail',

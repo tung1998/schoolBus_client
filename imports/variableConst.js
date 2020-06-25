@@ -11,7 +11,8 @@ export {
     _TRIP_LOG,
     _TRIP_CARSTOP,
     _USER,
-    TIME_DEFAULT
+    TIME_DEFAULT,
+    NOTI_DEFAULT
 }
 const _URL_images = 'http://192.168.0.111:3000/images'
 // const _URL_images = 'http://113.190.128.251:3000/images'
@@ -573,4 +574,53 @@ const TIME_DEFAULT = {
     hold_seat: 5 * 60, // second,
     hold_seat_app: 5 * 60, // second,
     check_task: 15 * 1000, // 15 second,
+}
+
+const NOTI_DEFAULT = {
+    customerTrip: {
+        new: {
+            title: 'Có khách mới',
+            text: ctmTrip => {
+                let pickupAdd = ctmTrip.pickup.address || '';
+                let takeoffAdd = ctmTrip.takeoff.address || '';
+                let time = formatTimeNotUseMoment(ctmTrip.trip.startTime);
+                return `${ctmTrip.name || ''} - ${ctmTrip.phone || ''}, ${pickupAdd} - ${takeoffAdd}, ${ctmTrip.seats} ghế, ${time}`
+            },
+            activity: 'customerTripNoti',
+        },
+        update: {
+            title: 'Khách thay đổi thông tin',
+            text: 'Chạm để xem chi tiết',
+            activity: 'customerTripNoti',
+        },
+        delete: {
+            title: 'Khách hủy chuyến',
+            text: ctmTrip => {
+                // console.log(ctmTrip);
+                let pickupAdd = ctmTrip.pickup.address || '';
+                let takeoffAdd = ctmTrip.takeoff.address || '';
+                let time = formatTimeNotUseMoment(ctmTrip.trip.startTime);
+                return `${ctmTrip.name || ''} - ${ctmTrip.phone || ''}, ${pickupAdd} - ${takeoffAdd}, ${ctmTrip.seats} ghế, ${time}\nLý do: ${ctmTrip.cancel.reasonText}${ctmTrip.cancel.note ? ", "+ ctmTrip.cancel.note : ''}`
+            },
+            activity: 'customerTripNoti',
+        },
+    },
+    assign: {
+        trip: {
+            title: 'Bạn được gán chuyến mới',
+            text: trip => textNoTificationDefault(trip),
+            activity: 'tripNoti',
+        },
+        car: {
+            title: 'Bạn được gán xe mới',
+            text: car => {
+                let carModel = car.carModel || {
+                    model: '',
+                    seatNumber: ''
+                };
+                return `Xe: ${carModel.model} - ${carModel.seatNumber} chỗ, BKX: ${car.numberPlate}`
+            },
+            activity: 'tripNoti',
+        }
+    },
 }

@@ -8,7 +8,7 @@ App.info({
     version: '1.0.0'
 });
 
-// App.addResourceFile('google-services.json', 'google-services.json', 'android');
+App.addResourceFile('google-services.json', 'google-services.json', 'android');
 
 App.accessRule('https://maps.googleapis.com/*');
 App.accessRule('*');
@@ -17,7 +17,7 @@ App.setPreference('android-minSdkVersion', '23');
 
 
 App.configurePlugin ('phonegap-plugin-push', {
-    SENDER_ID: 888082762560
+    SENDER_ID: 350796419919
 });
 
 
