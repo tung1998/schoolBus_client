@@ -8,6 +8,7 @@ const Cookies = require('js-cookie')
 
 import {
     MeteorCall,
+    MeteorCallNoEfect,
     addPaging,
     handlePaging,
     convertTime,
@@ -18,11 +19,16 @@ import {
 } from '../../../../../functions'
 
 import {
+    COLLECTION_TASK
+} from '../../../../../api/methods/task.js'
+
+import {
     _METHODS,
     LIMIT_DOCUMENT_PAGE,
     _SESSION,
     _URL_images,
-    _TRIP
+    _TRIP,
+    TIME_DEFAULT
 } from '../../../../../variableConst'
 
 let accessToken;
@@ -30,12 +36,26 @@ let currentPage = 1;
 
 Template.tripSummary.onCreated(() => {
     accessToken = Cookies.get('accessToken')
+    Meteor.subscribe('task.byName', 'Trip')
+
     Session.set('schools', [])
 });
 
 Template.tripSummary.onRendered(() => {
     addPaging($('#trip-summary-table'));
-    reloadTable(1, getLimitDocPerPage())
+    reloadTable()
+
+    this.realTimeTracker = Tracker.autorun(() => {
+        let task = COLLECTION_TASK.find({
+            name: 'Trip'
+        }).fetch()
+        console.log(task);
+
+        if (task.length && task[0].tasks.length) {
+            if (task.length && task[0].tasks.length && task[0].updatedTime > Date.now() - TIME_DEFAULT.check_task)
+                reloadTable(currentPage, getLimitDocPerPage(),null, false)
+        }
+    });
 
     this.checkIsSuperAdmin = Tracker.autorun(() => {
         if (Session.get(_SESSION.isSuperadmin))
@@ -57,7 +77,9 @@ Template.tripSummary.events({
 })
 
 Template.tripSummary.onDestroyed(() => {
-    if (this.checkIsSuperAdmin) this.checkIsSuperAdmin = null
+    if (this.checkIsSuperAdmin) this.checkIsSuperAdmin.stop()
+    if (this.realTimeTracker) this.realTimeTracker.stop()
+
     Session.delete('schools')
 });
 
@@ -93,16 +115,28 @@ Template.tripSummaryFilter.helpers({
 //     }
 // })
 
-function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options) {
+function reloadTable(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE, options, loading = true) {
     let table = $('#table-body');
-    MeteorCall(_METHODS.trip.GetByPage, {
-        page: page,
-        limit: limitDocPerPage,
-        options
-    }, accessToken).then(result => {
-        handlePaging(table, result.count, page, limitDocPerPage)
-        createTable(table, result, limitDocPerPage)
-    })
+    if (loading) {
+        MeteorCall(_METHODS.trip.GetByPage, {
+            page: page,
+            limit: limitDocPerPage,
+            options
+        }, accessToken).then(result => {
+            handlePaging(table, result.count, page, limitDocPerPage)
+            createTable(table, result, limitDocPerPage)
+        })
+    }
+    else {
+        MeteorCallNoEfect(_METHODS.trip.GetByPage, {
+            page: page,
+            limit: limitDocPerPage,
+            options
+        }, accessToken).then(result => {
+            handlePaging(table, result.count, page, limitDocPerPage)
+            createTable(table, result, limitDocPerPage)
+        })
+    }
 
 }
 
@@ -115,18 +149,18 @@ function createTable(table, result, limitDocPerPage) {
 }
 
 function createRow(result) {
-    console.log(getJsonDefault(_TRIP.status, 'number', result.status))
+
     let statusData = getJsonDefault(_TRIP.status, 'number', result.status)
     let data = {
-       _id: result._id,
-       car: result.car.numberPlate,
-       routeName: result.route.name,
-       driverName: result.driver.user.name,
-       nannyName: result.nanny.user.name,
-       studentList: result.route.studentList.name,
-       status: statusData.text,
-       startTime: convertTime(result.startTime, true, "DD/MM/YYYY, HH:MM"),
-       endTime: result.endTime ? convertTime(result.endTime, true, "DD/MM/YYYY, HH:MM"): 'Chưa kết thúc'
+        _id: result._id,
+        car: result.car.numberPlate,
+        routeName: result.route.name,
+        driverName: result.driver.user.name,
+        nannyName: result.nanny.user.name,
+        studentList: result.route.studentList.name,
+        status: statusData.text,
+        startTime: convertTime(result.startTime, true, "DD/MM/YYYY, HH:mm"),
+        endTime: result.endTime ? convertTime(result.endTime, true, "DD/MM/YYYY, HH:mm") : 'Chưa kết thúc'
     }
 
     // if (Session.get(_SESSION.isSuperadmin)) {
@@ -142,7 +176,7 @@ function createRow(result) {
                 <td>${data.nannyName}</td>
                 <td>${data.studentList}</td>
                 <td>
-                    <span class="kt-badge kt-badge--${statusData.classname} kt-badge--inline kt-badge--pill kt-badge--rounded">${data.status}</span>
+                    <span class="badge badge-${statusData.classname}">${data.status}</span>
                 </td>
                 <td>${data.startTime}</td>
                 <td>${data.endTime}</td>
@@ -163,7 +197,7 @@ function initSchoolSelect2() {
 }
 
 // function refreshFilter() {
-   
+
 
 //     reloadTable(1, getLimitDocPerPage(), null)
 // }

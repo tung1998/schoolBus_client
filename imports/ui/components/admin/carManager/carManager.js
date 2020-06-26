@@ -77,7 +77,7 @@ Template.carManager.events({
 });
 
 Template.carManager.onDestroyed(() => {
-    if (this.checkIsSuperAdmin) this.checkIsSuperAdmin = null
+    if (this.checkIsSuperAdmin) this.checkIsSuperAdmin.stop()
     Session.delete('schools')
 })
 

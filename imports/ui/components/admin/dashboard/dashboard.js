@@ -21,78 +21,80 @@ let accessToken;
 Template.dashboard.onCreated(() => {
   accessToken = Cookies.get("accessToken");
   Session.set('schools', [])
-  Session.set('numberUser', {})
-  Session.set('numberDriver', {})
-  Session.set('numberNanny', {})
-  Session.set('numberTeacher', {})
-  Session.set('numberParent', {})
-  Session.set('numberStudent', {})
+  Session.set('users', {})
 })
 
 Template.dashboard.onRendered(() => {
-  initChart()
   $('#school-dashboard').select2({
     width: '85%',
     placeholder: 'Chọn trường'
   })
+
+  getNumberUser()
 })
 
+
+Template.dashboard.helpers({
+  numberUser() {
+    return Session.get('users').numberUser
+  },
+  dataUser() {
+    return Session.get('users').data
+  }
+})
+
+function formatData(icon, text, number, color) {
+  return {
+    icon: icon,
+    text: text,
+    number: number,
+    color: color
+  }
+}
+
 function getNumberUser(options = null) {
-  MeteorCall(_METHODS.driver.GetAll, {
+  MeteorCall(_METHODS.user.GetAll, {
     options
   }, accessToken).then(result => {
-    let data = {
-      icon: "fa-street-view",
-      text: "Lái xe",
-      number: result.count,
-      color: "rgb(175, 41, 41)"
+    let nStudent = result.data.filter(item => item.userType === 1).length
+    let nDriver = result.data.filter(item => item.userType === 4).length
+    let nNanny = result.data.filter(item => item.userType === 2).length
+    let nParent = result.data.filter(item => item.userType === 3).length
+    let nTeacher = result.data.filter(item => item.userType === 5).length
+
+    let dataUser = {
+      numberUser: nStudent + nDriver + nNanny + nParent + nTeacher,
+      data: [
+        formatData("fa-street-view", "Tài xế", nDriver, "rgb(77, 212, 50)"),
+        formatData("fa-street-view", "Bảo mẫu", nNanny, "rgb(0, 202, 158)"),
+        formatData("fa-street-view", "Giáo viên", nTeacher, "rgb(75, 24, 216)"),
+        formatData("fa-street-view", "Phụ huynh", nParent, "rgb(170, 20, 90)"),
+        formatData("fa-street-view", "Học sinh", nStudent, "rgb(131, 68, 98)"),
+      ]
     }
-    Session.set('numberDriver', data)
+
+    Session.set('users', dataUser)
+
+    initChart(
+      $('#userChart'),
+      {
+        data: dataUser.data.map(value => {return value.number}),
+        backgroundColor: dataUser.data.map(value => {return value.color}),
+        label: dataUser.data.map(value => {return value.text})
+    })
+    
   })
 
 
 }
 
-function initChart() {
-  let ctx1 = $('#userChart')
-  let ctx2 = $('#schoolChart')
-  if (!ctx1 && !ctx2) {
+
+
+function initChart(ctx, dataConfig) {
+  if (!ctx) {
     return;
   }
-  let dataConfig1 = {
-    data: [
-      2, 2, 2, 4, 30
-    ],
-    backgroundColor: [
-      'rgb(77, 212, 50)',
-      'rgb(0, 202, 158)',
-      'rgb(75, 24, 216)',
-      'rgb(170, 20, 90)',
-      'rgb(131, 68, 98)'
-    ],
-    label: [
-      'Tài xế',
-      'Bảo Mẫu',
-      'Giáo viên',
-      'Phụ huynh',
-      'Học sinh'
-    ]
-  }
-  let dataConfig2 = {
-    data: [2, 2, 2],
-    backgroundColor: [
-      'rgb(77, 212, 50)',
-      'rgb(0, 202, 158)',
-      'rgb(75, 24, 216)'
-    ],
-    label: [
-      'Trường học',
-      'Lớp học',
-      'Số lượng xe'
-    ]
-  }
-  let chart1 = new Chart(ctx1, config(dataConfig1));
-  let chart2 = new Chart(ctx2, config(dataConfig2));
+  let chart = new Chart(ctx, config(dataConfig));
 }
 
 function config(dataConfig) {

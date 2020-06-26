@@ -29,6 +29,7 @@ if (Meteor.isServer) {
         'trip.getNext': getNextTrip,
         'trip.getLogByTripID': getTripLogByTripID,
         'trip.getStudentTripLog': getStudentTripLog,
+        'trip.getAllCurrentTrip': getAllCurrentTrip,
         'trip.create': createTrip,
         'trip.update': updateTrip,
         'trip.delete': deleteTrip,
@@ -204,6 +205,16 @@ function updateStudentNote(data, accessToken = '') {
     let url = `${AUTH_TRIP}/${data.tripID}/student/${data.studentID}/note`
     return httpDefault(METHOD.put, url, {
         body: data,
+        token: accessToken
+    }).then(result=>{
+        updateTask('Trip', data.tripID)
+        return result
+    })
+}
+
+function getAllCurrentTrip(data, accessToken = '') {
+    let url = `${AUTH_TRIP}/allCurrent`
+    return httpDefault(METHOD.get, url, {
         token: accessToken
     })
 }

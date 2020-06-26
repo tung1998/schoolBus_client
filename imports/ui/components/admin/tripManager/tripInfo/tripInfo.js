@@ -26,13 +26,18 @@ import {
     _MARKER_CONFIG,
     _TRIP_LOG,
     _TRIP_CARSTOP,
-    _URL_images
+    _URL_images,
+    TIME_DEFAULT
 } from '../../../../../variableConst';
 
 import {
     updateStudentInfoModalData,
     scanSuccess
 } from './instascan'
+
+import {
+    COLLECTION_TASK
+} from '../../../../../api/methods/task.js'
 
 let accessToken,
     carStopList = [],
@@ -52,6 +57,8 @@ Template.tripDetail.onCreated(async () => {
     Session.set('tripData', {})
     Session.set('tripStatus', '')
     Session.set('tripLog', [])
+
+    Meteor.subscribe('task.byName', 'Trip')
 })
 
 Template.tripDetail.onRendered(() => {
@@ -67,6 +74,18 @@ Template.tripDetail.onRendered(() => {
         "height": 400
     })
     initMap()
+
+    this.realTimeTracker = Tracker.autorun(() => {
+        let task = COLLECTION_TASK.find({
+            name: 'Trip'
+        }).fetch()
+        console.log(task);
+
+        if (task.length && task[0].tasks.length) {
+            if (task.length && task[0].tasks.length && task[0].updatedTime > Date.now() - TIME_DEFAULT.check_task)
+                reloadData()
+        }
+    });
 })
 
 Template.tripDetail.helpers({
@@ -81,12 +100,12 @@ Template.tripDetail.helpers({
     },
     startTime() {
         let tripData = Session.get('tripData')
-        return convertTime(tripData.startTime, true, 'DD/MM/YYYY, HH:MM')
+        return convertTime(tripData.startTime, true, 'DD/MM/YYYY, HH:mm')
     },
     tripStatusBtn() {
         let tripStatus = Session.get('tripStatus')
         if (tripStatus === _TRIP.status.accident.number)
-            return `<span class="kt-badge kt-badge--${_TRIP.status.accident.classname} kt-badge--inline kt-badge--pill kt-badge--rounded">Chuyến đi gặp sự cố</span>`
+            return `<span class="kt-badge kt-badge--${_TRIP.status.accident.classname} kt-badge--inline kt-badge--pill kt-badge--rounded">Gặp sự cố</span>`
         else if (tripStatus === _TRIP.status.ready.number)
             return `<button type="button" class="btn btn-success btn-sm status-trip-btn" status="${_TRIP.status.moving.number}">
                         <i class="fas fa-play"></i> Bắt đầu
@@ -99,7 +118,7 @@ Template.tripDetail.helpers({
                         </button>`
             } else if (carStop && carStop.status === _TRIP_CARSTOP.status.notArrived.number) {
                 return `<button type="button" class="btn btn-primary btn-sm status-trip-carStop-btn" carStopID="${carStop.carStopID}" status="${_TRIP_CARSTOP.status.arrived.number}">
-                            <i class="fas fa-play"></i>Đến điểm dừng tiếp theo
+                            <i class="fas fa-play"></i>Đến điểm tiếp theo
                         </button>`
             }
             return ` <button type="button" class="btn btn-dark btn-sm status-trip-btn" status="${_TRIP.status.finish.number}">
@@ -121,6 +140,9 @@ Template.tripDetail.helpers({
             return `<button type="button" class="btn btn-success btn-sm status-trip-btn" status="${_TRIP.status.moving.number}" tripID="${Session.get('tripID')}">
                         <i class="fas fa-play"></i> Tiếp tục</button>`
         }
+    },
+    nextStop() {
+        return
     }
 })
 
@@ -161,18 +183,18 @@ Template.tripDetail.onDestroyed(() => {
     Session.delete('tripData')
     Session.delete('tripLog')
     removeAllLayer(markerGroup)
+    if (this.realTimeTracker) this.realTimeTracker.stop()
 })
 
 Template.studentInfoModal.helpers({
     studentInfoData() {
-        console.log(Session.get('studentInfoData'))
         return Session.get('studentInfoData')
     }
 })
 
 Template.tripLogElement.helpers({
     actionTime() {
-        return moment(this.time).format('HH:MM')
+        return moment(this.time).format('HH:mm')
     },
     action() {
         let tripLogJson = getJsonDefault(_TRIP_LOG.type, 'number', this.type)
@@ -555,20 +577,23 @@ function updateStudentNote(e) {
     let tripID = e.target.getAttribute("tripid")
     $('#studentInfoModal').modal('hide')
     handlePromp().then(result => {
-        if (result) {
+        if (result.value) {
             MeteorCall(_METHODS.trip.UpdateStudentNote, {
                 tripID: tripID,
                 studentID: studentID,
                 note: result.value
-            }, accessToken).then(() => {
-                
-                Swal.fire({
-                    icon: "success",
-                    text: "Đã thêm ghi chú",
-                    timer: 3000
-                })
+            }, accessToken).then((res) => {
+               // $(this).parents(".row").find('.col-md-9.col-sm-12').find('.kt-widget1__item').last().find('.kt-widget1__desc:eq(1)').text(result.value)
+                handleSuccess("Đã thêm ghi chú!")
+                return reloadData()
+            })
+            .then(() => {
+                updateStudentInfoModalData(studentID)
             }).catch(handleError)
         }
-        $('#studentInfoModal').modal('show')
+        if(result.dismiss == 'cancel') {
+           handleError("Đã hủy!")
+            $("#studentInfoModal").modal("show")
+        }
     })
 }

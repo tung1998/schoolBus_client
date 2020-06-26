@@ -32,10 +32,9 @@ if (Meteor.isServer) {
     });
 }
 
-function getAllUser(accessToken = '') {
+function getAllUser(data, accessToken = '') {
     let url = `${AUTH_USER}`
     return httpDefault(METHOD.get, url, {
-        body: data,
         token: accessToken
     });
 }
