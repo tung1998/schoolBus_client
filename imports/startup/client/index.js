@@ -14,5 +14,19 @@ Meteor.startup(function() {
         cordova.plugins.diagnostic.requestCameraAuthorization(function (granted) {
             // handleSuccess("Successfully requested camera authorization: authorization was " + granted ? "GRANTED" : "DENIED")
         })
+        PushNotification.createChannel(
+            () => {
+                console.log('createChannel');
+            },
+            () => {
+                console.log('error');
+            },
+            {
+               id: Session.get("userID"), //Use any Id you prefer, but the same Id for this channel must be sent from the server, 
+               description: 'Android Channel', //And any description your prefer
+               importance: 3,
+               vibration: true
+              }
+        );
     }
 });

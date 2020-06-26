@@ -1,15 +1,9 @@
 import { FCM_ } from '../../api/config';
 import { NOTI_DEFAULT } from '../../variableConst';
+import { handleSuccess, handleConfirm } from '../../functions';
 
 Meteor.startup(function () {
-    // get current location if app cordova
-    // if(Meteor.isCordova){
-    //     Location.getGPSState(success, failure, options);
-    // }
-
-    // key map in project: WSN account: hainv@fimo.edu.vn
-    // không cần phải chọn Restrictions...
-    // GoogleMaps.load({v: '3', key: 'AIzaSyDa-epGk5gYdpYf_jXwItwGKaygniRQIl8', libraries: 'geometry,places'});
+    
     window.addEventListener('resize', function () {
         Session.set("resize", new Date());
     });
@@ -17,13 +11,13 @@ Meteor.startup(function () {
     Push.Configure({
         android: {
             senderID: FCM_.sender_ID,
-            // alert: true,
-            // badge: true,
-            // sound: true,
-            // vibrate: true,
-            // clearNotifications: true
-            // "icon": "pushicon",
-            // "iconColor": "#FF00FF",
+            alert: true,
+            badge: true,
+            sound: true,
+            vibrate: true,
+            clearNotifications: true,
+            "icon": "pushicon",
+            "iconColor": "#FF00FF",
         },
         alert: true,
         badge: true,
@@ -32,12 +26,14 @@ Meteor.startup(function () {
         clearNotifications: true
     });
 
-    // Push.addListener('alert', function(notification) {
-    //     // Called when message recieved on startup (cold+warm)
-    //     console.log('alert' + JSON.stringify(notification));
-    //     alertify.success('alert' + JSON.stringify(notification));
-    //     alert('alert' + JSON.stringify(notification));
-    // });
+    Push.addListener('alert', function(notification) {
+        // Called when message recieved on startup (cold+warm)
+        console.log('alert' + JSON.stringify(notification));
+        handleConfirm(notification.title+":"+notification.text).then(result=>{
+            cachesonsole.log(result)
+        });
+        // alert('alert' + JSON.stringify(notification));
+    });
 
     Push.addListener('message', handleNotification);
 });
@@ -67,18 +63,4 @@ function handleNotification(noti) {
     if(go_to_page == current_page)
         noti_modal.find('#go-to-page').addClass('d-none');
     noti_modal.modal('show');
-}
-
-function success(state) {
-    if(state === 'Enabled') {
-        // alert("GPS Is Enabled");
-    }
-}
-
-function failure() {
-    // alert("Failed to get the GPS State");
-}
-let options = {
-    dialog: true,
-    title: 'abc',
 }
