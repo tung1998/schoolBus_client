@@ -62,34 +62,36 @@ export function sendFCMToAndroid(userID = '') {
     Push.send({
         from: 'test',
         title: 'test',
-         text: 'hello',
-            android_channel_id:userID,		//The android channel should match the id on the client
-            query: {
-                userId: userID
-            }, 
-            gcm: {
-              style: 'inbox',
-              summaryText: 'There are %n% notifications'
-            },          
+        text: 'hello',
+        android_channel_id:userID,		//The android channel should match the id on the client
+        query: {
+            userId: userID
+        }, 
+        gcm: {
+            style: 'inbox',
+            summaryText: 'There are %n% notifications'
+        },          
   });  
 }
 
 export function sendFCMToMultiUser(data = null) {
-    if(data&&data.userIDs)
+    if(data&&data.userIds)
     data.userIds.forEach(item=>{
         Push.send({
             from: 'SchoolBus',
             title: data.title||"Thông báo",
             text: data.text||"Thông báo",
-            url:data.url||"",
-                android_channel_id:userID,		//The android channel should match the id on the client
-                query: {
-                    userId: item
-                }, 
-                gcm: {
-                  style: 'inbox',
-                  summaryText: 'There are %n% notifications'
-                },          
+            android_channel_id:item,		//The android channel should match the id on the client
+            query: {
+                userId: item
+            }, 
+            payload:{
+                url:data.url||"",
+            },
+            gcm: {
+                style: 'inbox',
+                summaryText: 'There are %n% notifications'
+            },          
       });
     })
 }

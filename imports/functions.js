@@ -84,7 +84,7 @@ function handleSuccess(title = "Thành công") {
         toast: true,
         position: 'top',
         showConfirmButton: false,
-        timer: 1000,
+        timer: 2000,
         timerProgressBar: true,
         onOpen: (toast) => {
             toast.addEventListener('mouseenter', Swal.stopTimer)
