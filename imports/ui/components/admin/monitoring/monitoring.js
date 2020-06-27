@@ -5,29 +5,45 @@ import {
     MeteorCall,
     handleError,
     MeteorCallNoEfect,
-    contentInfoMarker
+    contentInfoMarker,
+    getJsonDefault
 } from "../../../../functions";
 import {
-    _METHODS
+    _METHODS,
+    _TRIP_STUDENT,
+    _TRIP,
+    TIME_DEFAULT
 } from "../../../../variableConst";
+
+import {
+    COLLECTION_TASK
+} from '../../../../api/methods/task'
+
 let accessToken;
 var markers_id = [];
 var carID = [];
 Template.monitoring.onCreated(() => {
     accessToken = Cookies.get("accessToken");
+    Session.set("tripData", [])
+    Meteor.subscribe('task.byName', 'Trip')
 });
 
-Template.monitor_map.onRendered(() => {
+Template.monitoring.onRendered(() => {
     setMapHeight()
     initMap()
+    updateData()
+    this.realTimeTracker = Tracker.autorun(() => {
+        let task = COLLECTION_TASK.find({
+            name: 'Trip'
+        }).fetch()
+        if (task.length && task[0].tasks.length) {
+            if (task.length && task[0].tasks.length && task[0].updatedTime > Date.now() - TIME_DEFAULT.check_task)
+                updateData()
+        }
+    });
     this.updateGPS = setInterval(() => {
-        updateData()
+        updateGPS()
     }, 5000)
-})
-
-
-Template.monitor_map.onDestroyed(() => {
-    clearInterval(this.updateGPS)
 })
 
 Template.monitoring.events({
@@ -38,6 +54,48 @@ Template.monitoring.events({
         let lngval = tarMark._latlng.lng;
         setViewCar(tarMark, latval, lngval)
     },
+})
+
+Template.monitoring.helpers({
+    hasData() {
+        return Session.get('tripsData').length
+    },
+    tripsData() {
+        return Session.get('tripsData')
+    },
+})
+
+Template.monitoringListTrip.helpers({
+    index() {
+        return ++this.index
+    },
+    tripStatus() {
+        return getJsonDefault(_TRIP.status, "number", this.tripData.status)
+    },
+    tripType() {
+        return getJsonDefault(_TRIP.type, "number", this.tripData.type)
+    },
+    totalStudent() {
+        return this.tripData.students.length
+    },
+    pickUpStudent() {
+        return this.tripData.students.filter(item => item.status === _TRIP_STUDENT.status.pickUp.number).length
+    },
+    getOffStudent() {
+        return this.tripData.students.filter(item => item.status === _TRIP_STUDENT.status.getOff.number).length
+    },
+    requestStudent() {
+        return this.tripData.students.filter(item => item.status === _TRIP_STUDENT.status.request.number).length
+    },
+    absentStudent() {
+        return this.tripData.students.filter(item => item.status === _TRIP_STUDENT.status.absent.number).length
+    },
+})
+
+Template.monitoring.onDestroyed(() => {
+    clearInterval(this.updateGPS)
+    Session.delete('tripsData')
+    if (this.realTimeTracker) this.realTimeTracker.stop()
 })
 
 function initMap() {
@@ -54,16 +112,6 @@ function initMap() {
         id: 'mapbox.streets'
     }).addTo(monitormap);
     window.markerGroup = L.layerGroup().addTo(monitormap);
-    MeteorCallNoEfect(_METHODS.trip.GetAllCurrentTrip, null, accessToken).then(result => {
-        if (result.data) {
-            carID = result.map(result => {
-                return result.carID
-            })
-            let htmlTable = result.map(htmlRow);
-            $("#table-body").html(htmlTable.join(" "));
-        }
-
-    }).catch(handleError)
 }
 
 function setMapHeight() {
@@ -102,34 +150,6 @@ function setViewCar(marker, lat, lng) {
     window.monitormap.setView([lat, lng], 25);
 }
 
-function htmlRow(data, index) {
-    
-    let item = {
-            _id: data._id,
-            numberPlate: data.car.numberPlate,
-            allStudents: data.students.length,
-            leaveStudent: data.students.filter(value => value.status === 3).length,
-            attendanceStudent: data.students.filter(value => value.status === 1).length,
-            status: data.status
-        }
-        console.log(item);
-        
-    
-    markers_id.push(47 + 2 * index)
-    // let lat = data.location[0],
-    //     lng = data.location[1];
-    // setMarker(lat, lng, data)
-    return ` <tr id = ${index}>
-                <th scope="row">${index+1}</th>
-                <td>${item.numberPlate}</td>
-                <td>144 Xuân Thủy</td>
-                <td>${item.allStudents}</td>
-                <td>${item.leaveStudent}</td>
-                <td>${item.attendanceStudent}</td>
-                <td>${item.status}</td>
-            </tr>`;
-}
-
 function appendLatlng(data, markerID) {
     let lat = data.location[0],
         lng = data.location[1];
@@ -138,14 +158,34 @@ function appendLatlng(data, markerID) {
 }
 
 function updateData() {
-    // MeteorCallNoEfect(_METHODS.gps.getLast, null, accessToken).then(result => {
-    //     if (result) {
-    //         console.log(result);
-            
-    //         result.map((data, index) => {
-    //             appendLatlng(data, markers_id[index]);
-    //         })
-    //     }
-    // }).catch(handleError)
+    MeteorCallNoEfect(_METHODS.trip.GetAllCurrentTrip, null, accessToken).then(result => {
+        console.log(result)
+        Session.set("tripsData", result)
+
+    }).catch(handleError)
+
 }
 
+function updateGPS() {
+    let tripsData = Session.get('tripsData')
+    let GPSData = tripsData.map(item => item.carID)
+        .filter((item, index, array) => array.indexOf(item) === index)
+        .map(item => {
+            console.log(item)
+            MeteorCallNoEfect(_METHODS.gps.getLastByCar, {
+                _id: item
+            }, accessToken)
+            // .then(result => {
+            //     if (result) {
+            //         console.log(result);
+
+            //         result.map((data, index) => {
+            //             appendLatlng(data, markers_id[index]);
+            //         })
+            //     }
+            // }).catch(handleError)
+        })
+    Promise.all(GPSData).then(result => {
+        console.log(result)
+    }).catch(handleError)
+}

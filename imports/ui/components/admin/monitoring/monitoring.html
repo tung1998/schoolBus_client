@@ -19,37 +19,51 @@
             style="padding: 0px !important;">
             <button data-toggle="collapse" data-target=".collapse" class="floatingContent btn btn-primary btn-sm"><i
                     class="fas fa-bus"></i>Xem danh sách xe</button>
-            <div id="demo" class="collapse">
-                <div class="kt-section">
-                    <div class="kt-section__content">
+            <div class="kt-section">
+                <div class="kt-section__content">
+                    <div id="demo" class="collapse show">
+                        {{#if hasData}}
                         <table class="table">
                             <thead>
                                 <tr>
                                     <th>#</th>
                                     <th>Biển số xe</th>
-                                    <th>Điểm dừng tiếp theo</th>
+                                    <th>Loại chuyến đi</th>
+                                    <th>Tình trạng</th>
                                     <th>Tổng số học sinh</th>
+                                    <th>Lên xe</th>
+                                    <th>Xuống xe</th>
                                     <th>Xin nghỉ</th>
-                                    <th>Đã điểm danh</th>
-                                    <th>Trạng thái</th>
+                                    <th>Vắng mặt</th>
                                 </tr>
                             </thead>
                             <tbody id="table-body">
-                                <td colspan="7" class="text-center">Không có chuyến đi đang tiến hành</td>
+                                {{#each tripData in tripsData}}
+                                {{> monitoringListTrip tripData = tripData index=@index}}
+                                {{/each}}
                             </tbody>
                         </table>
+                        {{else}}
+                        <span class="text-center">Không có chuyến đi đang tiến hành</span>
+                        {{/if}}
                     </div>
                 </div>
             </div>
-            {{>monitor_map}}
+            <div id="monitormap" style="padding: 0px; z-index: 0;"></div>
         </div>
     </div>
 </template>
 
-<template name="monitor_map">
-    <div id="monitormap" style="padding: 0px; z-index: 0;"></div>
-</template>
-
-<template name="monitoring-list">
-
+<template name="monitoringListTrip">
+    <tr class="text-center">
+        <td>{{index}}</td>
+        <td>{{tripData.car.numberPlate}}</td>
+        <td><span class="badge badge-{{tripType.classname}}">{{tripType.text}}</span></td>
+        <td><span class="badge badge-{{tripStatus.classname}}">{{tripStatus.text}}</span></td>
+        <td>{{totalStudent}}</td>
+        <td>{{pickUpStudent}}</td>
+        <td>{{getOffStudent}}</td>
+        <td>{{requestStudent}}</td>
+        <td>{{absentStudent}}</td>
+    </tr>
 </template>

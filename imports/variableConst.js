@@ -531,9 +531,9 @@ const _TRIP_CARSTOP = {
 
 const _USER = {
     status: {
-        
+
     },
-    type:{
+    type: {
         administrator: {
             text: "Quản trị viên",
             classname: 'primary',
@@ -564,7 +564,7 @@ const _USER = {
             classname: 'warning',
             number: 5
         },
-        
+
     }
 }
 
@@ -601,7 +601,7 @@ const NOTI_DEFAULT = {
                 let pickupAdd = ctmTrip.pickup.address || '';
                 let takeoffAdd = ctmTrip.takeoff.address || '';
                 let time = formatTimeNotUseMoment(ctmTrip.trip.startTime);
-                return `${ctmTrip.name || ''} - ${ctmTrip.phone || ''}, ${pickupAdd} - ${takeoffAdd}, ${ctmTrip.seats} ghế, ${time}\nLý do: ${ctmTrip.cancel.reasonText}${ctmTrip.cancel.note ? ", "+ ctmTrip.cancel.note : ''}`
+                return `${ctmTrip.name || ''} - ${ctmTrip.phone || ''}, ${pickupAdd} - ${takeoffAdd}, ${ctmTrip.seats} ghế, ${time}\nLý do: ${ctmTrip.cancel.reasonText}${ctmTrip.cancel.note ? ", " + ctmTrip.cancel.note : ''}`
             },
             activity: 'customerTripNoti',
         },

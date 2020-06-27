@@ -65,7 +65,7 @@ Template.tripDetail.onRendered(() => {
     Meteor.startup(function () {
         if (Meteor.isCordova) {
             cordova.plugins.diagnostic.requestCameraAuthorization(function (granted) {
-                handleSuccess("Successfully requested camera authorization: authorization was " + granted ? "GRANTED" : "DENIED")
+                // handleSuccess("Successfully requested camera authorization: authorization was " + granted ? "GRANTED" : "DENIED")
             })
         }
     });
@@ -79,8 +79,6 @@ Template.tripDetail.onRendered(() => {
         let task = COLLECTION_TASK.find({
             name: 'Trip'
         }).fetch()
-        console.log(task);
-
         if (task.length && task[0].tasks.length) {
             if (task.length && task[0].tasks.length && task[0].updatedTime > Date.now() - TIME_DEFAULT.check_task)
                 reloadData()

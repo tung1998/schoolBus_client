@@ -299,7 +299,7 @@ function removeDuplicated(arr, key = 'id') {
 }
 
 function getJsonDefault(json, field, value) {
-    let key = Object.keys(json).find(item => json[item][field] === value)
+    let key = Object.keys(json).find(item => json[item][field] == value)
     return Object.assign({}, json[key]);
 }
 
