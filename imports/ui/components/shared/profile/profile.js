@@ -33,7 +33,7 @@ Template.profile.onRendered(() => {
         Session.set(_SESSION.username, result.username);
         //$(document).ready(() => {
         //type: 0 ADMIN, schoolID = null
-        if ((result.userType == 0) && (Session.get(_SESSION.isSuperadmin)==false)){
+        if ((result.userType == 0) && (Session.get(_SESSION.isSuperadmin) == false)) {
             Session.set(_SESSION.isLocalAdmin, true);
             //Session.set('schools', Session.get(_SESSION.schoolID));
         }
@@ -80,11 +80,11 @@ function dzPreviewClick() {
 
 function checkNewPass(string1, string2) {
     //errorType = 0: trung mat khau || errorType = 1: mat khau qua ngan
-    if ((string1 != string2)){
+    if ((string1 != string2)) {
         errorType = 0;
         return false;
     }
-    if (string1.length <= 8){
+    if (string1.length < 8) {
         errorType = 1;
         return false;
     }
@@ -100,35 +100,39 @@ function appendNewPass(event) {
         username: Session.get(_SESSION.username),
         password: oldPass
     }
-    MeteorCall(_METHODS.token.LoginByUsername, data, null).then(result => {
-        if (newPass == ""){
-            handleError(null, "Vui lòng điền đủ thông tin");
-        } else {
+    if (newPass == "" || oldPass == "" || confirmation == "") {
+        handleError(null, "Vui lòng điền đủ thông tin");
+    } else {
+        MeteorCall(_METHODS.token.LoginByUsername, data, null).then(result => {
             if (oldPass == newPass) {
                 handleError(null, "Mật khẩu cũ và mới không được giống nhau!")
             } else {
                 if (checkNewPass(newPass, confirmation)) {
                     MeteorCall(_METHODS.user.UpdatePassword, {
-                            password: newPass
-                        }, accessToken)
+                        password: newPass
+                    }, accessToken)
                         .then(result => {
-                            handleSuccess("", "Đã đổi mật khẩu")
-                            Cookies.remove('accessToken')
-                            BlazeLayout.render("login");
-                            FlowRouter.go('/login')
+                            handleSuccess("Đã đổi mật khẩu, đang đăng xuất!")
+                            setTimeout(() => {
+                                handleSuccess("Đăng xuất!")
+                                Cookies.remove('accessToken')
+                                BlazeLayout.render("login");
+                                FlowRouter.go('/login')
+                            }, 3000)
                         })
+
                         .catch(handleError);
                 } else {
-                    if (errorType == 0){
+                    if (errorType == 0) {
                         handleError(null, "Xác nhận mật khẩu sai!")
-                    } else if (errorType == 1){
+                    } else if (errorType == 1) {
                         handleError(null, "Hãy nhập mật khẩu dài hơn 8 ký tự!")
                     }
-                    
+
                 }
             }
-        }  
-    }).catch(handleError)
+        }).catch(handleError)
+    }
 
 }
 

@@ -60,29 +60,35 @@
                           <th>
                             <div class="from-group">
                               <label class="kt-checkbox kt-checkbox--brand">
-                              <input type="checkbox" id="user-checkbox-all">
-                              <span></span>
+                                <input type="checkbox" id="user-checkbox-all">
+                                <span></span>
                               </label>
-                          </div>
+                            </div>
                           </th>
                           <th>
                             <div class="dropdown dropdown-inline">
-                              <button type="button"
-                              class="btn btn-clean btn-icon btn-sm btn-icon-md"
-                              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                              <i class="flaticon-more-1"></i>
+                              <button type="button" class="btn btn-clean btn-icon btn-sm btn-icon-md"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="flaticon-more-1"></i>
                               </button>
                               <div class="dropdown-menu dropdown-menu-right">
-                              <a class="dropdown-item" href="#" id="reset-password"><i class="la la-rotate-right"></i> Reset Mật khẩu</a>
-                              <div class="dropdown-divider"></div>
-                              <a class="dropdown-item delete-user" href="#"><i class="la la-trash"></i> Xóa</a>
+                                <a class="dropdown-item" href="#" id="reset-password"><i class="la la-rotate-right"></i>
+                                  Reset Mật khẩu</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item send-noti" href="#">
+                                  <i class="flaticon-alert"></i> Gửi thông báo</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item delete-user" href="#">
+                                  <i class="flaticon-delete"></i> Xóa</a>
                               </div>
-                          </div>
+                            </div>
                           </th>
                         </tr>
                       </thead>
                       <tbody id="table-body">
-
+                        {{#each userInfo in listUser}}
+                        {{> userRow userInfo = userInfo index = @index}}
+                        {{/each}}
                       </tbody>
                     </table>
                   </div>
@@ -101,6 +107,99 @@
   {{> editPasswordModal}}
   {{> editUserModal}}
   {{> blockUserModal}}
+  {{> sendNotiModal}}
+</template>
+
+<template name="userRow">
+  <tr id="{{userInfo._id}}" class="table-row">
+    <td class="text-center">{{index}}</td>
+    <td>{{userInfo.name}}</td>
+    <td>{{userInfo.username}}</td>
+    <td>{{userInfo.phone}}</td>
+    <td>{{userInfo.email}}</td>
+    <td class="text-center">
+      {{#if userInfo.isBlocked}}
+      <span class="kt-badge kt-badge--warning kt-badge--inline  kt-badge--pill kt-badge--rounded">Khóa</span>
+      {{else}}
+      <span class="kt-badge kt-badge--success kt-badge--inline kt-badge--pill kt-badge--rounded">Mở</span>
+      {{/if}}
+    </td>
+    <td>{{userInfo.blockedReason}}</td>
+    <td>{{userType.text}}</td>
+
+    <td class="text-center">
+      <div class="from-group">
+        <label class="kt-checkbox kt-checkbox--brand">
+          <input type="checkbox" class="user-checkbox" value="{{userInfo._id}}">
+          <span></span>
+        </label>
+      </div>
+    </td>
+    <td class="text-center">
+      <div class="dropdown dropdown-inline">
+        <button type="button" class="btn btn-hover-danger btn-elevate-hover btn-icon btn-sm btn-icon-md"
+          data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="flaticon-more-1"></i>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right">
+          <a class="dropdown-item change-password" href="#" userID="{{userInfo._id}}" data-toggle="modal"
+            data-target="#editPasswordModal"><i class="la la-key"></i> Đổi mật khẩu</a>
+          <a class="dropdown-item edit-user" href="#" userID="{{userInfo._id}}">
+            <i class="la la-pencil-square"></i> Sửa thông tin</a>
+          {{#if userInfo.isBlocked}}
+          <a class="dropdown-item unblock-user" href="#" userID="{{userInfo._id}}"><i class="la la-unlock-alt"></i>
+            Mở</a>
+          {{else}}
+          <a class="dropdown-item block-user" href="#" userID="{{userInfo._id}}"><i class="la la-unlock"></i> Khóa</a>
+          {{/if}}
+          {{blockedButton}}
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item send-noti" href="#" userID="{{userInfo._id}}">
+            <i class="flaticon-alert"></i> Gửi thông báo</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item delete-user" href="#" userID="{{userInfo._id}}">
+            <i class="la la-trash"></i>Xóa </a>
+        </div>
+      </div>
+    </td>
+  </tr>
+</template>
+
+<template name="sendNotiModal">
+  <div class="modal fade" id="sendNotiModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-center" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Gửi thông báo</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          </button>
+        </div>
+        <div class="modal-body">
+          <form class="kt-form kt-form--label-right">
+            <div class="kt-portlet__body">
+              <div class="form-group row">
+                <label for="example-text-input" class="col-3 col-form-label required-input-label">Tiêu đề</label>
+                <div class="col-8">
+                  <input class="form-control" type="text" id="notiTitle" placeholder="Tiêu đề">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="example-email-input" class="col-3 col-form-label required-input-label">Nội dung</label>
+                <div class="col-8">
+                  <input class="form-control" type="text" id="notiText" placeholder="Nội dung">
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+              <button type="button" class="btn btn-primary" id="sendNotiConfirm">Xác nhận</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 
@@ -115,20 +214,20 @@
           </button>
         </div>
         <div class="modal-body">
-          <form class="kt-form kt-form--label-right">
+          <div class="kt-form kt-form--label-right">
             <div class="kt-portlet__body">
               <input type="hidden" id="user-changepass-id">
               <div class="form-group row">
                 <label for="example-text-input" class="col-3 col-form-label required-input-label">Mật khẩu mới</label>
                 <div class="col-8">
-                  <input class="form-control" type="password" id="password" placeholder="Mật khẩu mới">
+                  <input class="form-control" type="password" id="password" autocomplete="off" placeholder="Mật khẩu mới">
                 </div>
               </div>
               <div class="form-group row">
                 <label for="example-email-input" class="col-3 col-form-label required-input-label">Nhập lại mật
                   khẩu</label>
                 <div class="col-8">
-                  <input class="form-control" type="password" id="confirm-password" placeholder="Nhập lại mật khẩu">
+                  <input class="form-control" type="password" id="confirm-password" autocomplete="off" placeholder="Nhập lại mật khẩu">
                 </div>
               </div>
             </div>
@@ -136,7 +235,7 @@
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
               <button type="button" class="btn btn-primary" id="password-confirm-button">Xác nhận</button>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>

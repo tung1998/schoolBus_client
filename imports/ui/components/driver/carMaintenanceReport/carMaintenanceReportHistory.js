@@ -35,6 +35,10 @@ Template.carMaintenanceReportHistory.onRendered(() => {
     reloadTable()
     Session.set('cars', [])
     Session.set('species', true)
+
+    this.checkCarData = Tracker.autorun(() => {
+        getCars()
+    })
 })
 Template.addFuelReportModal.onRendered(() => {
     $('#fuel-car-input').select2({

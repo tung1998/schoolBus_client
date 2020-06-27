@@ -29,7 +29,8 @@ export {
     removeAllLayer,
     removeLayerByID,
     MeteorCallNoEfect,
-    contentInfoMarker
+    contentInfoMarker,
+    getSendNotiUserIDs
 }
 
 function MeteorCall(method = "", data = null, accessToken = "") {
@@ -108,10 +109,10 @@ function handleConfirm(title = "Bạn đã chắc chắn chưa?") {
     })
 }
 
-function handlePromp(title = "Nhập ghi chú ở đây!") {
+function handlePromp(title = "Nhập ghi chú ở đây!", text = "textarea") {
     return Swal.fire({
         title: title,
-        input: 'textarea',
+        input: text,
         inputPlaceholder: title,
         showCancelButton: true
       })
@@ -384,4 +385,34 @@ function contentInfoMarker(lat, lng, json, mark) {
             minWidth: 301
         });
     })
+}
+
+function getSendNotiUserIDs(routeData, studentID = null, isSendDriver=true, carStopID = null) {
+    let notifySendUserIDs = []
+    if (studentID) {
+        studentFilter = routeData.studentList.students.filter(item._id === studentID)
+    }
+    else {
+        studentFilter = routeData.studentList.students
+        if(isSendDriver){
+            notifySendUserIDs.push(routeData.driver.user._id)
+            notifySendUserIDs.push(routeData.nanny.user._id)
+        }
+    }
+    if(carStopID)
+        studentFilter = studentFilter.filer(item=>item.carStop._id===carStopID)
+    let parentUserIDs = []
+    studentFilter.forEach(item => {
+        if (item.parents) {
+            item.parents.forEach(item => {
+                if (!parentUserIDs.includes(item.user._id))
+                    parentUserIDs.push(item.user._id)
+            })
+        }
+    })
+    let teacherUserIDs = studentFilter
+        .map(item => item.class.teacher.user._id)
+        .filter((item, index, array) => array.indexOf(item) === index)
+    notifySendUserIDs = notifySendUserIDs.concat(parentUserIDs, teacherUserIDs)
+    return notifySendUserIDs
 }

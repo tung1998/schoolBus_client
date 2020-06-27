@@ -112,14 +112,20 @@ Template.tripDetail.helpers({
                     </button>`
         else if (tripStatus === _TRIP.status.moving.number) {
             let carStop = checkCarstop()
-            if (carStop && carStop.status === _TRIP_CARSTOP.status.arrived.number) {
-                return `<button type="button" class="btn btn-primary btn-sm status-trip-carStop-btn" carStopID="${carStop.carStopID}" status="${_TRIP_CARSTOP.status.leaved.number}">
-                            <i class="fas fa-play"></i>Rời điểm dừng
-                        </button>`
-            } else if (carStop && carStop.status === _TRIP_CARSTOP.status.notArrived.number) {
-                return `<button type="button" class="btn btn-primary btn-sm status-trip-carStop-btn" carStopID="${carStop.carStopID}" status="${_TRIP_CARSTOP.status.arrived.number}">
-                            <i class="fas fa-play"></i>Đến điểm tiếp theo
-                        </button>`
+            if (carStop) {
+                $('#next-trip').removeClass('kt-hidden')
+                $('#next-stop').html(carStop.carStop.name)
+                if (carStop.status === _TRIP_CARSTOP.status.arrived.number) {
+                    return `<button type="button" class="btn btn-primary btn-sm status-trip-carStop-btn" carStopID="${carStop.carStopID}" status="${_TRIP_CARSTOP.status.leaved.number}">
+                                <i class="fas fa-play"></i>Rời điểm dừng
+                            </button>`
+                } else if (carStop.status === _TRIP_CARSTOP.status.notArrived.number) {
+                    return `<button type="button" class="btn btn-primary btn-sm status-trip-carStop-btn" carStopID="${carStop.carStopID}" status="${_TRIP_CARSTOP.status.arrived.number}">
+                                <i class="fas fa-play"></i>Đến điểm tiếp theo
+                            </button>`
+                }
+            } else {
+                $('#next-trip').addClass('kt-hidden')
             }
             return ` <button type="button" class="btn btn-dark btn-sm status-trip-btn" status="${_TRIP.status.finish.number}">
                         <i class="fas fa-stop"></i>Kết thúc
@@ -299,11 +305,11 @@ function clickOpenScannerModal() {
                     showFlipCameraButton: true, // iOS and Android
                     showTorchButton: true, // iOS and Android
                     torchOn: true, // Android, launch with the torch switched on (if available)
-                    prompt : "", // Android
+                    prompt: "", // Android
                     resultDisplayDuration: 500, // Android, display scanned text for X ms. 0 suppresses it entirely, default 1500
-                    formats : "QR_CODE,PDF_417", // default: all but PDF_417 and RSS_EXPANDED
-                    orientation : "portrait", // Android only (portrait|landscape), default unset so it rotates with the device
-                    disableAnimations : true, // iOS
+                    formats: "QR_CODE,PDF_417", // default: all but PDF_417 and RSS_EXPANDED
+                    orientation: "portrait", // Android only (portrait|landscape), default unset so it rotates with the device
+                    disableAnimations: true, // iOS
                     disableSuccessBeep: false // iOS and Android
                 }
             );
@@ -583,16 +589,16 @@ function updateStudentNote(e) {
                 studentID: studentID,
                 note: result.value
             }, accessToken).then((res) => {
-               // $(this).parents(".row").find('.col-md-9.col-sm-12').find('.kt-widget1__item').last().find('.kt-widget1__desc:eq(1)').text(result.value)
+                // $(this).parents(".row").find('.col-md-9.col-sm-12').find('.kt-widget1__item').last().find('.kt-widget1__desc:eq(1)').text(result.value)
                 handleSuccess("Đã thêm ghi chú!")
                 return reloadData()
             })
-            .then(() => {
-                updateStudentInfoModalData(studentID)
-            }).catch(handleError)
+                .then(() => {
+                    updateStudentInfoModalData(studentID)
+                }).catch(handleError)
         }
-        if(result.dismiss == 'cancel') {
-           handleError("Đã hủy!")
+        if (result.dismiss == 'cancel') {
+            handleError("Đã hủy!")
             $("#studentInfoModal").modal("show")
         }
     })

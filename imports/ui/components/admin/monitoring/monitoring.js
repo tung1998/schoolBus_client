@@ -55,7 +55,7 @@ function initMap() {
     }).addTo(monitormap);
     window.markerGroup = L.layerGroup().addTo(monitormap);
     MeteorCallNoEfect(_METHODS.trip.GetAllCurrentTrip, null, accessToken).then(result => {
-        if (result) {
+        if (result.data) {
             carID = result.map(result => {
                 return result.carID
             })
@@ -103,7 +103,6 @@ function setViewCar(marker, lat, lng) {
 }
 
 function htmlRow(data, index) {
-    console.log(data);
     
     let item = {
             _id: data._id,
@@ -120,11 +119,15 @@ function htmlRow(data, index) {
     // let lat = data.location[0],
     //     lng = data.location[1];
     // setMarker(lat, lng, data)
-    // return ` <tr id = ${index}>
-    //             <th scope="row">${index}</th>
-    //             <td>${item.numberPlate}</td>
-    //             <td>${item.velocity}</td>
-    //         </tr>`;
+    return ` <tr id = ${index}>
+                <th scope="row">${index+1}</th>
+                <td>${item.numberPlate}</td>
+                <td>144 Xuân Thủy</td>
+                <td>${item.allStudents}</td>
+                <td>${item.leaveStudent}</td>
+                <td>${item.attendanceStudent}</td>
+                <td>${item.status}</td>
+            </tr>`;
 }
 
 function appendLatlng(data, markerID) {
@@ -135,14 +138,14 @@ function appendLatlng(data, markerID) {
 }
 
 function updateData() {
-    MeteorCallNoEfect(_METHODS.gps.getLast, null, accessToken).then(result => {
-        if (result) {
-            console.log(result);
+    // MeteorCallNoEfect(_METHODS.gps.getLast, null, accessToken).then(result => {
+    //     if (result) {
+    //         console.log(result);
             
-            result.map((data, index) => {
-                appendLatlng(data, markers_id[index]);
-            })
-        }
-    }).catch(handleError)
+    //         result.map((data, index) => {
+    //             appendLatlng(data, markers_id[index]);
+    //         })
+    //     }
+    // }).catch(handleError)
 }
 

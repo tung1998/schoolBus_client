@@ -4,7 +4,8 @@ import {
     MeteorCall,
     handleError,
     handleConfirm,
-    getJsonDefault
+    getJsonDefault,
+    getSendNotiUserIDs
 } from '../../../../functions'
 
 import {
@@ -22,6 +23,7 @@ let accessToken;
 
 Template.tripManager.onCreated(() => {
     accessToken = Cookies.get('accessToken')
+    Session.set('routeList', [])
     Meteor.subscribe('task.byName', 'Trip');
     Session.set('tripList', [])
 })
@@ -43,6 +45,7 @@ Template.tripManager.onRendered(() => {
 Template.tripManager.onDestroyed(() => {
     Session.delete('tripList')
     if (this.realTimeTracker) this.realTimeTracker.stop()
+    Session.delete('routeList')
 })
 
 Template.tripManager.helpers({
@@ -93,6 +96,7 @@ function initTimePicker() {
 
 function renderRouteSelect() {
     MeteorCall(_METHODS.route.GetAll, null, accessToken).then(result => {
+        Session.set('routeList', result.data)
         let options = result.data.map(route => {
             return `<option value="${route._id}">${route.name}</option>`
         })
@@ -119,43 +123,37 @@ function ClickAddMoreButton(event) {
     $('#editTripManagerModal').attr("modify", "")
 }
 
-function SubmitForm(event) {
+async function SubmitForm(event) {
     event.preventDefault();
     let data = {
         startTime: moment($("#start-time").val(), "DD/MM/YYYY, HH:mm").valueOf(),
         routeID: $("#routeSelect").val()
     }
     if (data.startTime < Date.now())
-        handleConfirm("Thời gian bạn chọn đang nhỏ hơn thời điểm hiện tại. Tiếp tục?").then(result => {
-            if (result.value) {
-                let modify = $('#editTripManagerModal').attr("modify");
-                if (modify == "") {
-                    MeteorCall(_METHODS.trip.Create, data, accessToken).then(result => {
-                        reloadTable();
-                        $('#editTripManagerModal').modal('hide')
-                    }).catch(handleError)
-                } else {
-                    data._id = modify;
-                    MeteorCall(_METHODS.trip.Update, data, accessToken).then(result => {
-                        reloadTable();
-                        $('#editTripManagerModal').modal('hide')
-                    }).catch(handleError)
-                }
-            }
-        })
+        handleError(null, "Thời gian bạn chọn đang nhỏ hơn thời điểm hiện tại!")
     else {
         let modify = $('#editTripManagerModal').attr("modify");
-        if (modify == "") {
-            MeteorCall(_METHODS.trip.Create, data, accessToken).then(result => {
-                reloadTable();
-                $('#editTripManagerModal').modal('hide')
-            }).catch(handleError)
-        } else {
-            data._id = modify;
-            MeteorCall(_METHODS.trip.Update, data, accessToken).then(result => {
-                reloadTable();
-                $('#editTripManagerModal').modal('hide')
-            }).catch(handleError)
+        try {
+            let newTrip
+            if (modify == "") {
+                newTrip = await MeteorCall(_METHODS.trip.Create, data, accessToken)
+            } else {
+                data._id = modify;
+                newTrip = await MeteorCall(_METHODS.trip.Update, data, accessToken)
+            }
+            let routeData = Session.get('routeList').filter(item => item._id === data.routeID)[0]
+            let notifySendUserIDs = getSendNotiUserIDs(routeData)
+            if (notifySendUserIDs.length)
+                MeteorCall('notification.sendFCMToMultiUser', {
+                    userIds: notifySendUserIDs,
+                    title: "Chuyến đi",
+                    text: "Chuyến đi được tạo mới",
+                    tripID: newTrip._id
+                }, accessToken)
+            reloadTable();
+            $('#editTripManagerModal').modal('hide')
+        } catch (e) {
+            handleError(e)
         }
     }
 }
@@ -179,7 +177,6 @@ function getDayFilter() {
 function reloadTable() {
     MeteorCall(_METHODS.trip.GetByTime, getDayFilter(), accessToken).then(result => {
         if (result.length) {
-            console.log(result)
             Session.set('tripList', result)
         } else {
             Session.set('tripList', [])

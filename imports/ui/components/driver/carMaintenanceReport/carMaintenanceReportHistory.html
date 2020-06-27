@@ -80,7 +80,7 @@
                 <p id="empty-data" class="text-muted font-14 d-none">
                     Không có dữ liệu
                 </p>
-                <table class="table table-head-bg-brand table-hover table-responsive" id="fuelTable">
+                <table class="table table-head-bg-brand table-hover" id="fuelTable">
                     <thead class="thead-inverse">
                         <tr class="text-center">
                             <th width="5%">#</th>
@@ -88,22 +88,26 @@
                             <th>Số lượng (lít)</th>
                             <th>Thành tiền</th>
                             <th>Ghi chú</th>
-                            <th width="13%">Hành động</th>
+                            <th width="15%">Hành động</th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
                         {{#each dataFuels}}
-                            <tr class="text-center">
-                                <th>{{index}}</th>
-                                <td>{{car.numberPlate}}</td>
-                                <td>{{volume}}</td>
-                                <td>{{price}}</td>
-                                <td></td>
-                                <td>
-                                    <button type="button" class="btn btn-brand btn-sm btn-elevate btn-icon"><i class="la la-pencil"></i></button>
-                                    <button type="button" class="btn btn-warning btn-sm btn-elevate btn-icon"><i class="la la-trash"></i></button>
-                                </td>
-                            </tr>
+                        <tr class="text-center">
+                            <th>{{index}}</th>
+                            <td>{{car.numberPlate}}</td>
+                            <td>{{volume}}</td>
+                            <td>{{price}}</td>
+                            <td></td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-brand btn-sm btn-elevate btn-icon"><i
+                                            class="la la-pencil"></i></button>
+                                    <button type="button" class="btn btn-warning btn-sm btn-elevate btn-icon"><i
+                                            class="la la-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
                         {{/each}}
                     </tbody>
                 </table>
@@ -131,7 +135,7 @@
                             <th>Loại</th>
                             <th>Thành tiền</th>
                             <th>Ghi chú</th>
-                            <th width="13%">Hành động</th>
+                            <th width="14%">Hành động</th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
@@ -211,8 +215,8 @@
 </template>
 
 <template name="addMaintenanceReportModal">
-    <div class="modal fade" id="addMaintenanceReportModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        style="display: none;" aria-hidden="true">
+    <div class="modal fade" id="addMaintenanceReportModal" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" style="display: none;" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
