@@ -115,7 +115,7 @@ function handlePromp(title = "Nhập ghi chú ở đây!", text = "textarea") {
         input: text,
         inputPlaceholder: title,
         showCancelButton: true
-      })
+    })
 }
 
 function showLoading() {
@@ -348,15 +348,15 @@ async function getAddress(lat, lng) {
         let result = await MeteorCallNoEfect(_METHODS.wemap.getAddress, { lat, lng }, Cookies.get('accessToken'));
         let props = result.features[0].properties;
         let addressElement = [
-            props.name||'',
-            props.housenumber||'',
-            props.street||'',
-            props.city||'',
-            props.district||'',
-            props.state||''
+            props.name || '',
+            props.housenumber || '',
+            props.street || '',
+            props.city || '',
+            props.district || '',
+            props.state || ''
         ]
 
-        let address = addressElement.filter(item=>item).join(', ')
+        let address = addressElement.filter(item => item).join(', ')
         return address
     } catch (err) {
         handleError(err)
@@ -387,20 +387,35 @@ function contentInfoMarker(lat, lng, json, mark) {
     })
 }
 
-function getSendNotiUserIDs(routeData, studentID = null, isSendDriver=true, carStopID = null) {
+function getSendNotiUserIDs(routeData, studentID = null, isSendDriver = true, carStopID = null) {
     let notifySendUserIDs = []
+
     if (studentID) {
-        studentFilter = routeData.studentList.students.filter(item._id === studentID)
-    }
-    else {
-        studentFilter = routeData.studentList.students
-        if(isSendDriver){
-            notifySendUserIDs.push(routeData.driver.user._id)
-            notifySendUserIDs.push(routeData.nanny.user._id)
+        if (routeData.studentList) {
+            studentFilter = routeData.studentList.students.filter(item._id === studentID)
+        }
+        else {
+            studentFilter = routeData.students.filter(item._id === studentID)
         }
     }
-    if(carStopID)
-        studentFilter = studentFilter.filer(item=>item.carStop._id===carStopID)
+    else {
+        if (routeData.studentList) {
+            studentFilter = routeData.studentList.students
+            if (isSendDriver) {
+                notifySendUserIDs.push(routeData.driver.user._id)
+                notifySendUserIDs.push(routeData.nanny.user._id)
+            }
+        }
+        else {
+            studentFilter = routeData.students
+            if (isSendDriver) {
+                notifySendUserIDs.push(routeData.driver.user._id)
+                notifySendUserIDs.push(routeData.nanny.user._id)
+            }
+        }
+    }
+    if (carStopID)
+        studentFilter = studentFilter.filer(item => item.carStop._id === carStopID)
     let parentUserIDs = []
     studentFilter.forEach(item => {
         if (item.parents) {
@@ -410,9 +425,12 @@ function getSendNotiUserIDs(routeData, studentID = null, isSendDriver=true, carS
             })
         }
     })
+    
     let teacherUserIDs = studentFilter
         .map(item => item.class.teacher.user._id)
         .filter((item, index, array) => array.indexOf(item) === index)
     notifySendUserIDs = notifySendUserIDs.concat(parentUserIDs, teacherUserIDs)
+    // console.log(notifySendUserIDs);
+    
     return notifySendUserIDs
 }

@@ -16,7 +16,8 @@ import {
     convertTime,
     popupDefault,
     removeLayerByID,
-    removeAllLayer
+    removeAllLayer,
+    getSendNotiUserIDs
 } from '../../../../../functions';
 
 import {
@@ -486,7 +487,12 @@ function reportIssues(e) {
             } else {
                 data.note = value.parent().text().trim()
             }
+            
             MeteorCall(_METHODS.trip.Update, data, accessToken).then(result => {
+              console.log(Session.get('tripData'));
+                let userID = getSendNotiUserIDs(Session.get('tripData').route, null, false, null)
+                console.log(userID);
+                
                 reloadData();
             }).catch(handleError)
         }

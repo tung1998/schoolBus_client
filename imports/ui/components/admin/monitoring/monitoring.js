@@ -6,7 +6,8 @@ import {
     handleError,
     MeteorCallNoEfect,
     contentInfoMarker,
-    getJsonDefault
+    getJsonDefault,
+    removeAllLayer
 } from "../../../../functions";
 import {
     _METHODS,
@@ -58,7 +59,7 @@ Template.monitoring.events({
 
 Template.monitoring.helpers({
     hasData() {
-        return Session.get('tripsData').length
+        return Session.get('tripsData') && Session.get('tripsData').length
     },
     tripsData() {
         return Session.get('tripsData')
@@ -140,6 +141,7 @@ function setMapHeight() {
 }
 
 function setMarker(lat, lng, json) {
+    removeAllLayer(markerGroup)
     let mark = L.marker([lat, lng]).addTo(markerGroup);
     contentInfoMarker(lat, lng, json, mark)
     markers_id.push(markerGroup.getLayerId(mark))
@@ -158,10 +160,22 @@ function appendLatlng(data, markerID) {
 }
 
 function updateData() {
-    MeteorCallNoEfect(_METHODS.trip.GetAllCurrentTrip, null, accessToken).then(result => {
-        console.log(result)
-        Session.set("tripsData", result)
-
+    MeteorCallNoEfect(_METHODS.trip.GetAllCurrentTrip, null, accessToken).then(tripsData => {
+        Session.set("tripsData", tripsData)
+        let GPSData = tripsData.map(item => item.carID)
+            .filter((item, index, array) => array.indexOf(item) === index)
+            .map(item => {
+                return MeteorCallNoEfect(_METHODS.gps.getLastByCar, {
+                    _id: item
+                }, accessToken)
+            })
+        return Promise.all(GPSData)
+    }).then(result => {
+        if (result && result.length) {
+            result.forEach(data => {
+                setMarker(data.location[0], data.location[1], data)
+            })
+        }
     }).catch(handleError)
 
 }
@@ -171,21 +185,15 @@ function updateGPS() {
     let GPSData = tripsData.map(item => item.carID)
         .filter((item, index, array) => array.indexOf(item) === index)
         .map(item => {
-            console.log(item)
-            MeteorCallNoEfect(_METHODS.gps.getLastByCar, {
+            return MeteorCallNoEfect(_METHODS.gps.getLastByCar, {
                 _id: item
             }, accessToken)
-            // .then(result => {
-            //     if (result) {
-            //         console.log(result);
-
-            //         result.map((data, index) => {
-            //             appendLatlng(data, markers_id[index]);
-            //         })
-            //     }
-            // }).catch(handleError)
         })
     Promise.all(GPSData).then(result => {
-        console.log(result)
+        if (result && result.length) {
+            result.forEach((data, index) => {
+                appendLatlng(data, markers_id[index]);
+            })
+        }
     }).catch(handleError)
 }
