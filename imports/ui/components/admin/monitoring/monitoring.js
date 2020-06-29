@@ -21,7 +21,7 @@ import {
 } from '../../../../api/methods/task'
 
 let accessToken;
-var markers_id = [];
+var markers_id = {};
 var carID = [];
 Template.monitoring.onCreated(() => {
     accessToken = Cookies.get("accessToken");
@@ -48,13 +48,7 @@ Template.monitoring.onRendered(() => {
 })
 
 Template.monitoring.events({
-    'click tr': (event) => {
-        let indx = parseInt($(event.currentTarget).attr("id"));
-        let tarMark = markerGroup._layers[markers_id[indx]]
-        let latval = tarMark._latlng.lat;
-        let lngval = tarMark._latlng.lng;
-        setViewCar(tarMark, latval, lngval)
-    },
+    'click .monitoring-trip-row':clickMonitoringTripRow
 })
 
 Template.monitoring.helpers({
@@ -97,6 +91,7 @@ Template.monitoring.onDestroyed(() => {
     clearInterval(this.updateGPS)
     Session.delete('tripsData')
     if (this.realTimeTracker) this.realTimeTracker.stop()
+    removeAllLayer(markerGroup)
 })
 
 function initMap() {
@@ -141,15 +136,10 @@ function setMapHeight() {
 }
 
 function setMarker(lat, lng, json) {
-    removeAllLayer(markerGroup)
+    markerGroup.clearLayers()
     let mark = L.marker([lat, lng]).addTo(markerGroup);
     contentInfoMarker(lat, lng, json, mark)
-    markers_id.push(markerGroup.getLayerId(mark))
-}
-
-function setViewCar(marker, lat, lng) {
-    marker.openPopup();
-    window.monitormap.setView([lat, lng], 25);
+    markers_id[json.carID]=markerGroup.getLayerId(mark)
 }
 
 function appendLatlng(data, markerID) {
@@ -160,7 +150,10 @@ function appendLatlng(data, markerID) {
 }
 
 function updateData() {
-    MeteorCallNoEfect(_METHODS.trip.GetAllCurrentTrip, null, accessToken).then(tripsData => {
+    MeteorCallNoEfect(_METHODS.trip.GetAllCurrentTrip, {
+        beforeTime:"6000000",
+        afterTime:"6000000"
+    }, accessToken).then(tripsData => {
         Session.set("tripsData", tripsData)
         let GPSData = tripsData.map(item => item.carID)
             .filter((item, index, array) => array.indexOf(item) === index)
@@ -173,6 +166,7 @@ function updateData() {
     }).then(result => {
         if (result && result.length) {
             result.forEach(data => {
+                console.log(data)
                 setMarker(data.location[0], data.location[1], data)
             })
         }
@@ -191,9 +185,14 @@ function updateGPS() {
         })
     Promise.all(GPSData).then(result => {
         if (result && result.length) {
-            result.forEach((data, index) => {
-                appendLatlng(data, markers_id[index]);
+            result.forEach(data => {
+                appendLatlng(data, markers_id[data.carID]);
             })
         }
     }).catch(handleError)
+}
+
+function clickMonitoringTripRow(e){
+    let carID = e.currentTarget.getAttribute("carID")
+    markerGroup._layers[markers_id[carID]].openPopup()
 }

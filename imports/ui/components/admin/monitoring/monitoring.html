@@ -55,7 +55,7 @@
 </template>
 
 <template name="monitoringListTrip">
-    <tr class="text-center">
+    <tr class="text-center monitoring-trip-row" carID="{{tripData.carID}}">
         <td>{{index}}</td>
         <td>{{tripData.car.numberPlate}}</td>
         <td><span class="badge badge-{{tripType.classname}}">{{tripType.text}}</span></td>

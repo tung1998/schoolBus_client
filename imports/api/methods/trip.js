@@ -213,7 +213,9 @@ function updateStudentNote(data, accessToken = '') {
 }
 
 function getAllCurrentTrip(data, accessToken = '') {
-    let url = `${AUTH_TRIP}/allCurrent`
+    let url = `${AUTH_TRIP}/allCurrent?`
+    if(data.beforeTime) url+=`beforeTime=${data.beforeTime}`
+    if(data.afterTime) url+=`&afterTime=${data.afterTime}`
     return httpDefault(METHOD.get, url, {
         token: accessToken
     })
