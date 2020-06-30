@@ -391,7 +391,7 @@ function getSendNotiUserIDs(routeData, studentID = null, isSendDriver = true, ca
     let notifySendUserIDs = []
 
     if (studentID) {
-            studentFilter = routeData.students.filter(item._id === studentID)
+            studentFilter = routeData.studentList.students.filter(item => item._id === studentID)
     }
     else {
             studentFilter = routeData.studentList.students

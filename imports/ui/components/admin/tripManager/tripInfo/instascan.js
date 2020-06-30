@@ -184,6 +184,7 @@ function clickTakePhoto(e) {
 function updateStudentInfoModalData(studentID) {
     $('#instascannerModal').modal('hide')
     let studentInfoData = checkStudentInfo(studentID)
+    
     let tripData = Session.get('tripData')
     let currentCarStop = tripData.carStops.filter(item => item.status === _TRIP_CARSTOP.status.arrived.number)[0]
     studentInfoData.tripID = Session.get('tripID')
@@ -198,8 +199,8 @@ function updateStudentInfoModalData(studentID) {
     studentID="${studentInfoData.studentID}" id="takePhoto">Chụp ảnh</button>`
     switch (studentInfoData.status) {
         case 0:
-            studentInfoData.buttonHtml = `${check4?`${(check1&&check2)||(!check1)?`<div class="col-md-6 col-sm-12"><button type="button" class="btn btn-success status-btn btn-sm custom-btn" tripID="${studentInfoData.tripID}"  studentID="${studentInfoData.studentID}" status="${_TRIP_STUDENT.status.pickUp.number}">Điểm danh</button>
-            <button type="button" class="btn btn-danger status-btn btn-sm custom-btn" tripID="${studentInfoData.tripID}" studentID="${studentInfoData.studentID}" status="${_TRIP_STUDENT.status.absent.number}">Vắng mặt</button></div>`:`<div class="col-md-6 col-sm-12 mb-2"><span class="kt-badge kt-badge--primary kt-badge--inline d-flex">chưa tới điểm dừng</span></div>`}`:`<div class="col-md-6 col-sm-12 mb-2">${waitingTrip}</div>`}
+            studentInfoData.buttonHtml = `${check4?`${(check1&&check2)||(!check1)?`<div class="col-md-6 col-sm-12"><button type="button" class="btn btn-success status-btn btn-sm custom-btn" tripID="${studentInfoData.tripID}"  studentID="${studentInfoData.studentID}" status="${_TRIP_STUDENT.status.pickUp.number}" studentName="${studentInfoData.student.user.name}">Điểm danh</button>
+            <button type="button" class="btn btn-danger status-btn btn-sm custom-btn" tripID="${studentInfoData.tripID}" studentID="${studentInfoData.studentID}" status="${_TRIP_STUDENT.status.absent.number}" studentName="${studentInfoData.student.user.name}">Vắng mặt</button></div>`:`<div class="col-md-6 col-sm-12 mb-2"><span class="kt-badge kt-badge--primary kt-badge--inline d-flex">chưa tới điểm dừng</span></div>`}`:`<div class="col-md-6 col-sm-12 mb-2">${waitingTrip}</div>`}
             <div class="col-md-6 col-sm-12">${addNoteStudent}${captureStudent}</div>`
             break
         case 1:

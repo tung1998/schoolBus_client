@@ -152,7 +152,7 @@ Template.tripDetail.helpers({
     else if (tripStatus === _TRIP.status.accident.number) {
       return `<button type="button" class="btn btn-success btn-sm status-trip-btn" status="${
         _TRIP.status.moving.number
-      }" tripID="${Session.get("tripID")}">
+        }" tripID="${Session.get("tripID")}">
                         <i class="fas fa-play"></i> Tiếp tục</button>`;
     }
   },
@@ -175,10 +175,10 @@ Template.tripDetail.events({
     window.tripMap.setView([latval, lngval], 25);
   },
   'click .nav-link[href="#timeline"]': renderTimeLine,
-  "click .polyToggle": (event) => {
-    event.preventDefault();
-    removeLayerByID(polyID);
-  },
+  // "click .polyToggle": (event) => {
+  //   event.preventDefault();
+  //   removeLayerByID(polyID);
+  // },
   "click .status-trip-btn": updateTripStatus,
   "click .status-trip-carStop-btn": updateTripCarstopStatus,
   "click #report-button": reportIssues,
@@ -286,12 +286,12 @@ function initMap() {
   }).setView([21.0388, 105.7886], 14);
   L.tileLayer(
     "https://apis.wemap.asia/raster-tiles/styles/osm-bright/{z}/{x}/{y}@2x.png?key=vpstPRxkBBTLaZkOaCfAHlqXtCR", {
-      maxZoom: 18,
-      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-        '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-        'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-      id: "mapbox.streets",
-    }
+    maxZoom: 18,
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+      '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+      'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    id: "mapbox.streets",
+  }
   ).addTo(tripMap);
   setInterval(() => {
     tripMap.invalidateSize();
@@ -308,15 +308,27 @@ function clickStatusButton(e) {
   let tripID = target.getAttribute("tripID");
   let studentID = target.getAttribute("studentID");
   let status = Number(target.getAttribute("status"));
+  let studentName = target.getAttribute("studentName");
+  console.log(studentName);
+
   MeteorCall(
-      _METHODS.trip.Attendace, {
-        tripID,
-        status,
-        studentID,
-      },
-      accessToken
-    )
+    _METHODS.trip.Attendace, {
+    tripID,
+    status,
+    studentID,
+  },
+    accessToken
+  )
     .then(async (result) => {
+      let userIDs = getSendNotiUserIDs(
+        Session.get('tripData').route,
+        studentID,
+        false, null)
+      MeteorCallNoEfect(_METHODS.notification.sendFCMToMultiUser, {
+        userIds: userIDs,
+        title: `Thông báo phụ huynh`,
+        text: `Học sinh: ${studentName} ${getJsonDefault(_TRIP_STUDENT.status, 'number', status)}`
+      }, accessToken)
       handleSuccess("Đã cập nhật");
       return reloadData();
     })
@@ -337,17 +349,17 @@ function clickOpenScannerModal() {
         function (error) {
           alert("Scanning failed: " + error);
         }, {
-          preferFrontCamera: true, // iOS and Android
-          showFlipCameraButton: true, // iOS and Android
-          showTorchButton: true, // iOS and Android
-          torchOn: true, // Android, launch with the torch switched on (if available)
-          prompt: "", // Android
-          resultDisplayDuration: 500, // Android, display scanned text for X ms. 0 suppresses it entirely, default 1500
-          formats: "QR_CODE,PDF_417", // default: all but PDF_417 and RSS_EXPANDED
-          orientation: "portrait", // Android only (portrait|landscape), default unset so it rotates with the device
-          disableAnimations: true, // iOS
-          disableSuccessBeep: false, // iOS and Android
-        }
+        preferFrontCamera: true, // iOS and Android
+        showFlipCameraButton: true, // iOS and Android
+        showTorchButton: true, // iOS and Android
+        torchOn: true, // Android, launch with the torch switched on (if available)
+        prompt: "", // Android
+        resultDisplayDuration: 500, // Android, display scanned text for X ms. 0 suppresses it entirely, default 1500
+        formats: "QR_CODE,PDF_417", // default: all but PDF_417 and RSS_EXPANDED
+        orientation: "portrait", // Android only (portrait|landscape), default unset so it rotates with the device
+        disableAnimations: true, // iOS
+        disableSuccessBeep: false, // iOS and Android
+      }
       );
     } else {
       $("#instascannerModal").modal("show");
@@ -371,8 +383,8 @@ async function reloadData() {
     if (routeName == "tripManager.tripDetail")
       tripData = await MeteorCall(
         _METHODS.trip.GetById, {
-          _id: FlowRouter.getParam("tripID"),
-        },
+        _id: FlowRouter.getParam("tripID"),
+      },
         accessToken
       );
     else if (
@@ -457,27 +469,27 @@ async function updateTripStatus(e) {
   if (checkConfirm.value)
     MeteorCall(
       _METHODS.trip.UpdateTripStatus, {
-        tripID: Session.get("tripID"),
-        status,
-      },
+      tripID: Session.get("tripID"),
+      status,
+    },
       accessToken
     )
-    .then((result) => {
-      let car = Session.get("tripData").car.numberPlate
-      let userIDs = getSendNotiUserIDs(
-        Session.get("tripData").route,
-        null,
-        false,
-        null
-      );
-      MeteorCallNoEfect(_METHODS.notification.sendFCMToMultiUser, {
-        userIds: userIDs,
-        title: "Thông báo chuyến đi",
-        text: `Chuyến đi của xe ${car} đã ${getJsonDefault(_TRIP.status, 'number', status)}`
-      }, accessToken)
-      reloadData();
-    })
-    .catch(handleError);
+      .then((result) => {
+        let car = Session.get("tripData").car.numberPlate
+        let userIDs = getSendNotiUserIDs(
+          Session.get("tripData").route,
+          null,
+          false,
+          null
+        );
+        MeteorCallNoEfect(_METHODS.notification.sendFCMToMultiUser, {
+          userIds: userIDs,
+          title: "Thông báo chuyến đi",
+          text: `Chuyến đi của xe ${car} đã ${getJsonDefault(_TRIP.status, 'number', status)}`
+        }, accessToken)
+        reloadData();
+      })
+      .catch(handleError);
 }
 
 async function updateTripCarstopStatus(e) {
@@ -573,16 +585,28 @@ async function updateTripCarstopStatus(e) {
   if (checkConfirm.value)
     MeteorCall(
       _METHODS.trip.UpdateCarStop, {
-        tripID: Session.get("tripID"),
-        carStopID,
-        status,
-      },
+      tripID: Session.get("tripID"),
+      carStopID,
+      status,
+    },
       accessToken
     )
-    .then((result) => {
-      reloadData();
-    })
-    .catch(handleError);
+      .then((result) => {
+        let car = Session.get("tripData").car.numberPlate
+        let userIDs = getSendNotiUserIDs(
+          Session.get("tripData").route,
+          null,
+          false,
+          carStopID
+        );
+        MeteorCallNoEfect(_METHODS.notification.sendFCMToMultiUser, {
+          userIds: userIDs,
+          title: "Thông báo chuyến đi",
+          text: `Xe có biển số: ${car} đang tới điểm dừng của bạn`
+        }, accessToken)
+        reloadData();
+      })
+      .catch(handleError);
 }
 
 function reportIssues(e) {
@@ -634,8 +658,8 @@ function chooseReport(e) {
 
 function bindMarker(carStop, icon = normalCarStopMarker) {
   let marker = L.marker(carStop.location, {
-      icon
-    })
+    icon
+  })
     .bindTooltip(carStop.name, {
       permanent: false
     })
@@ -679,8 +703,8 @@ function swapPcs(arr) {
 function renderTimeLine() {
   MeteorCall(
     _METHODS.trip.GetTripLogByTripID, {
-      tripID: Session.get("tripID"),
-    },
+    tripID: Session.get("tripID"),
+  },
     accessToken
   ).then((result) => {
     Session.set("tripLog", result.data);
@@ -695,8 +719,8 @@ function checkCarstop() {
   if (arrivedCarstop) return arrivedCarstop;
   let notArrivedCarStop = tripData.carStops.filter(
     (item) =>
-    item.status == _TRIP_CARSTOP.status.notArrived.number ||
-    item.status === null
+      item.status == _TRIP_CARSTOP.status.notArrived.number ||
+      item.status === null
   )[0];
   if (notArrivedCarStop) return notArrivedCarStop;
   return false;
@@ -730,15 +754,28 @@ function updateStudentNote(e) {
   $("#studentInfoModal").modal("hide");
   handlePromp().then((result) => {
     if (result.value) {
+      let note = result.value
       MeteorCall(
-          _METHODS.trip.UpdateStudentNote, {
-            tripID: tripID,
-            studentID: studentID,
-            note: result.value,
-          },
-          accessToken
-        )
+        _METHODS.trip.UpdateStudentNote, {
+        tripID: tripID,
+        studentID: studentID,
+        note: note,
+      },
+        accessToken
+      )
         .then((res) => {
+          let userIDs = getSendNotiUserIDs(
+            Session.get("tripData").route,
+            studentID,
+            false,
+            null
+          );
+          MeteorCallNoEfect(_METHODS.notification.sendFCMToMultiUser, {
+            userIds: userIDs,
+            title: "Ghi chú học sinh",
+            text: `Nội dung: ${note}`
+          }, accessToken)
+
           handleSuccess("Đã thêm ghi chú!");
           return reloadData();
         })
