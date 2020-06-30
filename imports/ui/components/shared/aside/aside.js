@@ -12,7 +12,7 @@ import {
 Template.aside.onRendered(() => {
    this.trackerModules = Tracker.autorun(() => {
         let modules = Session.get(_SESSION.modules)
-        if(!Session.get(_SESSION.isSuperadmin)){
+        if(modules&&!Session.get(_SESSION.isSuperadmin)){
             modules = modules.filter(item=>!(item.route=="/moduleManager"||item.route=="/schoolManager"))
         }
         renderAside(modules)
