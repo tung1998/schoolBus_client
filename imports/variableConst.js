@@ -84,11 +84,11 @@ const _METHODS = {
     },
     class: {
         GetAll: 'class.getAll',
-        GetByPage: 'class.getByPage',
-        GetById: 'class.getByID',
-        Create: 'class.create',
-        Update: 'class.update',
-        Delete: 'class.delete',
+            GetByPage: 'class.getByPage',
+            GetById: 'class.getByID',
+            Create: 'class.create',
+            Update: 'class.update',
+            Delete: 'class.delete',
     },
     config: {
         GetAll: 'config.getAll',
@@ -133,6 +133,15 @@ const _METHODS = {
         GetIcons: 'modules.getIcons',
         Init: 'modules.init'
     },
+    notification: {
+        GetAll: 'notification.getAll',
+        GetFilter: 'notification.getFilter',
+        Read: 'notification.read',
+        Create: 'notification.create',
+        sendFCMToAndroid: 'notification.sendFCMToAndroid',
+        sendFCMToMultiUser: 'notification.sendFCMToMultiUser',
+
+    },
     Nanny: {
         GetAll: 'Nanny.getAll',
         GetById: 'Nanny.getByID',
@@ -140,12 +149,6 @@ const _METHODS = {
         Create: 'Nanny.create',
         Update: 'Nanny.update',
         Delete: 'Nanny.delete',
-    },
-    notification: {
-        GetAll: 'notification.getAll',
-        Create: 'notification.create',
-        Update: 'notification.update',
-        Delete: 'notification.delete',
     },
     Parent: {
         GetAll: 'Parent.getAll',
@@ -491,7 +494,8 @@ const _TRIP_LOG = {
             classname: 'danger',
             number: 3
         }
-    }, type: {
+    },
+    type: {
         create: {
             text: "Khởi tạo",
             classname: 'primary',

@@ -391,28 +391,14 @@ function getSendNotiUserIDs(routeData, studentID = null, isSendDriver = true, ca
     let notifySendUserIDs = []
 
     if (studentID) {
-        if (routeData.studentList) {
-            studentFilter = routeData.studentList.students.filter(item._id === studentID)
-        }
-        else {
             studentFilter = routeData.students.filter(item._id === studentID)
-        }
     }
     else {
-        if (routeData.studentList) {
             studentFilter = routeData.studentList.students
             if (isSendDriver) {
                 notifySendUserIDs.push(routeData.driver.user._id)
                 notifySendUserIDs.push(routeData.nanny.user._id)
             }
-        }
-        else {
-            studentFilter = routeData.students
-            if (isSendDriver) {
-                notifySendUserIDs.push(routeData.driver.user._id)
-                notifySendUserIDs.push(routeData.nanny.user._id)
-            }
-        }
     }
     if (carStopID)
         studentFilter = studentFilter.filer(item => item.carStop._id === carStopID)
