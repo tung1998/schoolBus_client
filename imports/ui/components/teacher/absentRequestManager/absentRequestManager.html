@@ -1,128 +1,105 @@
 <template name="absentRequestManager">
-	<div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
-    <!-- begin:: Subheader -->
-    <div class="kt-subheader   kt-grid__item" id="kt_subheader">
-        <div class="kt-container  kt-container--fluid ">
-            <div class="kt-subheader__main">
-                <h3 class="kt-subheader__title">
+    <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
+        <!-- begin:: Subheader -->
+        <div class="kt-subheader   kt-grid__item" id="kt_subheader">
+            <div class="kt-container  kt-container--fluid ">
+                <div class="kt-subheader__main">
+                    <h3 class="kt-subheader__title">
 
-                   Giáo viên </h3>
+                        Giáo viên </h3>
 
-                <span class="kt-subheader__separator kt-hidden"></span>
-                <div class="kt-subheader__breadcrumbs">
-                    <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
-                    <span class="kt-subheader__breadcrumbs-separator"></span>
-                    <a href="" class="kt-subheader__breadcrumbs-link">
-                        SchoolBus </a>
-                    <span class="kt-subheader__breadcrumbs-separator"></span>
-                    <a href="" class="kt-subheader__breadcrumbs-link">
-                        Danh sách xin nghỉ</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- end:: Subheader -->
-    <div>
-        <!-- begin:: Content -->
-        <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
-            <div class="row">
-                <div class="col">
-                    <div class="kt-portlet">
-                        <div class="kt-portlet__head">
-                            <div class="kt-portlet__head-label">
-                                <h3 class="kt-portlet__head-title">
-                                    Danh sách xin nghỉ
-                                </h3>
-                            </div>
-                        </div>
-
-                        <div class="kt-portlet__body">
-                            <!--begin::Section-->
-                            <div class="kt-section">
-                                <div class="kt-section__content">
-                                    <table class="table table-bordered table-hover">
-                                        <thead class="thead-light">
-                                            <tr>
-                                                <th>STT</th>
-                                                <th>Tên học sinh</th>
-                                                <th>Tên phụ huynh</th>
-                                                <th>Ngày nghỉ</th>
-                                                <th>Lý do</th>
-                                                <th>Ghi chú</th>
-                                                <th>Trạng thái</th>
-                                                <th>Hành động</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <th scope="row">1</th>
-                                                <td width="20%">Larry</td>
-                                                <td width="20%">Larry</td>
-                                                <td width="15%">12/12/1212</td>
-
-                                                <td width="15%">Ốm</td>
-                                                <td width="15%"></td>
-                                                <th width="15%">Cho phép</th>
-                                                <td width="15%">
-                                                    <button type="button" class="btn btn-brand btn-elevate btn-pill btn-sm"
-                                                        data-toggle="modal"
-                                                        data-target="#absentActionModal">Duyệt</button>
-                                            
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <!--end::Section-->
-                        </div>
+                    <span class="kt-subheader__separator kt-hidden"></span>
+                    <div class="kt-subheader__breadcrumbs">
+                        <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
+                        <span class="kt-subheader__breadcrumbs-separator"></span>
+                        <a href="" class="kt-subheader__breadcrumbs-link">
+                            SchoolBus </a>
+                        <span class="kt-subheader__breadcrumbs-separator"></span>
+                        <a href="" class="kt-subheader__breadcrumbs-link">
+                            Danh sách xin nghỉ</a>
                     </div>
                 </div>
             </div>
-
         </div>
+        <!-- end:: Subheader -->
+        <div>
+            <!-- begin:: Content -->
+            <div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+                <div class="row">
+                    <div class="col">
+                        <div class="kt-portlet">
+                            <div class="kt-portlet__head">
+                                <div class="kt-portlet__head-label">
+                                    <h3 class="kt-portlet__head-title">
+                                        Danh sách xin nghỉ
+                                    </h3>
+                                </div>
+                            </div>
 
-        
-        <!-- end:: Content -->
-      </div>
-      {{> absentActionModal}}
-  </div>
+                            <div class="kt-portlet__body">
+                                <!--begin::Section-->
+                                <div class="kt-section">
+                                    <div class="kt-section__content">
+                                        <table class="table table-bordered table-hover">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th>Tên học sinh</th>
+                                                    <th>Ngày nghỉ</th>
+                                                    <th>Trạng thái</th>
+                                                    <th>Hành động</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {{#each parrentRequestList}}
+                                                {{> parentRequestRow}}
+                                                {{/each}}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <!--end::Section-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- end:: Content -->
+        </div>
+        {{> absentActionModal}}
+    </div>
+</template>
+
+<template name="parentRequestRow">
+    <tr>
+        <td width="20%">{{student.user.name}}</td>
+        <td width="15%">{{requestTime}}</td>
+        <td width="15%">{{parentReqestStatus.text}}</td>
+        <td width="15%">
+            <button type="button" parentRequestID="{{_id}}" class="btn btn-brand btn-elevate btn-pill btn-sm parentRequestDataModal">Chi tiết</button>
+        </td>
+    </tr>
 </template>
 
 <template name="absentActionModal">
-  <div class="modal fade" id="absentActionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    style="display: none;" aria-hidden="true">
-    <div class="modal-dialog modal-sm" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Thêm mới</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          </button>
-        </div>
-        <div class="modal-body">
-          <form>
-            <br>
-            <div class="form-group">
-              <label class="kt-radio kt-radio--bold kt-radio--brand">
-                  <input type="radio" name="radio6" value="1">
-                  Cho phép
-                  <span></span>
-              </label>
+    <div class="modal fade" id="absentActionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Thông tin chi tiết</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {{parentReqestData._id}}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" requestID="{{parentRequestData._id}}" tripID="{{parentRequestData._id}}" class="btn btn-outline-primary" id="confirmRequestBtn">Xác nhận</button>
+                </div>
             </div>
-            <div class="form-group">
-              <label class="kt-radio kt-radio--bold kt-radio--brand">
-                  <input type="radio" name="radio6" value="2">
-                  Không cho phép
-                  <span></span>
-              </label>
-            </div>
-          </form>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-outline-primary">Xong</button>
-        </div>
-      </div>
     </div>
-  </div>
 </template>
