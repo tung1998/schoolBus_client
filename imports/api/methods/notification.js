@@ -38,9 +38,9 @@ function getNotifications(accessToken) {
 }
 
 function getNotificationsFilter(options, page, limit, accessToken = '') {
-    let {sortBy, sortType} = options;
-    if(!sortBy) sortBy = 'createdTime';
-    if(!sortType) sortType = '-1';
+    let { sortBy, sortType } = options;
+    if (!sortBy) sortBy = 'createdTime';
+    if (!sortType) sortType = '-1';
     let url = `${BASE_API}/filter?page=${page}&limit=${limit}&sortBy=${sortBy}&sortType=${sortType}`;
     // console.log(url)
     return httpDefault(METHOD.get, url, {
@@ -50,8 +50,8 @@ function getNotificationsFilter(options, page, limit, accessToken = '') {
 
 function readNotifications(notificationID, accessToken) {
     let url = `${BASE_API}/${notificationID}/status`
-    return httpDefault(METHOD.put,url, {
-        body:{
+    return httpDefault(METHOD.put, url, {
+        body: {
             status: 1
         },
         token: accessToken
@@ -63,37 +63,37 @@ export function sendFCMToAndroid(userID = '') {
         from: 'test',
         title: 'test',
         text: 'hello',
-        android_channel_id:userID,		//The android channel should match the id on the client
+        android_channel_id: userID,		//The android channel should match the id on the client
         query: {
             userId: userID
-        }, 
+        },
         gcm: {
             style: 'inbox',
             summaryText: 'There are %n% notifications'
-        },          
-  });  
+        },
+    });
 }
 
 export function sendFCMToMultiUser(data = null) {
-    if(data&&data.userIds)
-    data.userIds.forEach(item=>{
+    if (data && data.userIds)
         Push.send({
             from: 'SchoolBus',
-            title: data.title||"Thông báo",
-            text: data.text||"Thông báo",
-            android_channel_id:item,		//The android channel should match the id on the client
+            title: data.title || "Thông báo",
+            text: data.text || "Thông báo",
+            // android_channel_id:item,		//The android channel should match the id on the client
             query: {
-                userId: item
-            }, 
-            payload:{
-                url:data.url||"",
+                userId: {$in:data.userIds}
+            },
+            payload: {
+                url: data.url || "",
             },
             gcm: {
                 style: 'inbox',
                 summaryText: 'There are %n% notifications'
-            },          
-      });
-    })
+            },
+        });
+    // data.userIds.forEach(item=>{
+    // })
 }
 
 function createNotification({

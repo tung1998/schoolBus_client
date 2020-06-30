@@ -61,6 +61,7 @@ Template.userManager.events({
   "click .block-user": clickBlockUser,
   "click .unblock-user": clickUnBlockUser,
   "click .edit-user": clickEditUser,
+  "click .send-noti-muti": clickSendNotiMuti,
   "click .send-noti": clickSendNoti,
   "click .delete-user": clickDeleteUser,
   "click .change-password": (e) => {
@@ -101,6 +102,8 @@ Template.userManager.events({
   },
   "click .dz-preview": dzPreviewClick,
   "click #reset-password": resetPassword,
+
+  "click #sendNotiConfirm": sendNotiConfirm
 });
 
 Template.userFilter.onRendered(() => {
@@ -200,7 +203,15 @@ function clickSendNoti(e) {
   let userID = e.currentTarget.getAttribute("userID")
   // if(!userID)
 
-  $("#sendNotiModal").modal("show").attr("userID", userID);
+  $("#sendNotiModal").modal("show").data("userIds", [userID]);
+}
+
+function clickSendNotiMuti(e) {
+  let userIds = []
+  $(".user-checkbox:checked").each((index, item) => {
+    userIds.push(item.value);
+  });
+  $("#sendNotiModal").modal("show").data("userIds", userIds);
 }
 
 async function submitEditUser() {
@@ -429,4 +440,16 @@ function resetPassword() {
   } else {
     handleError("", "Chưa chọn người dùng!!!");
   }
+}
+
+function sendNotiConfirm(e) {
+  let userIds = $("#sendNotiModal").data("userIds");
+  console.log(userIds)
+  MeteorCall('notification.sendFCMToMultiUser', {
+    userIds,
+    title: $("#notiTitle").val(),
+    text: $("#notiText").val(),
+  }).then(result=>{
+    handleSuccess("Đã gửi thông báo")
+  }).catch(handleError)
 }

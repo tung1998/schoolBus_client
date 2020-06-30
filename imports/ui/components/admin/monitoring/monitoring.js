@@ -166,7 +166,6 @@ function updateData() {
     }).then(result => {
         if (result && result.length) {
             result.forEach(data => {
-                console.log(data)
                 setMarker(data.location[0], data.location[1], data)
             })
         }

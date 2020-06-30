@@ -131,33 +131,32 @@
                 <div class="kt-widget__content">
                     <div class="kt-widget__head">
 
-                        <div class="col-8 kt-align-left">
+                        <div class="col-7 kt-align-left">
                             {{#if isModifiable}}
                             <button type="button" class="btn btn-danger btn-sm modify-button" startTime={{startTime}}
                                 routeID="{{route._id}}" tripID="{{_id}}">Sửa</button>
                             <span></span>
                             {{/if}}
-                            <a href="tripManager/{{_id}}"><button type="button" class="btn btn-success btn-sm">Xem
-                                    thông tin</button></a>
+                            <a href="tripManager/{{_id}}"><button type="button" class="btn btn-success btn-sm">Chi tiết</button></a>
                         </div>
-                        <div class="col-4 kt-align-right">
+                        <div class="col-5 kt-align-right">
                             <span class="badge badge-{{tripStatus.classname}}">{{tripStatus.text}}</span>
                         </div>
                     </div>
 
                     <div class="kt-widget__subhead">
                         <div class="row">
-                            <div class="col-md-6 col-sm-12">
+                            <div class="col-md-12 col-sm-12">
                                 <i class="flaticon2-fast-next"></i>&nbsp;
                                 <label for="route-name" class="form-control-label">Biển số:</label>&nbsp;
                                 <span href="#" id="route-name">{{car.numberPlate}}</span>
                             </div>
-                            <div class="col-md-6 col-sm-12">
+                            <div class="col-md-12 col-sm-12">
                                 <i class="flaticon2-map"></i>&nbsp;
                                 <label for="route-name" class="form-control-label">Cung đường:</label>&nbsp;
                                 <span href="#" id="route-name">{{route.name}}</span>
                             </div>
-                            <div class="col-md-6 col-sm-12">
+                            <div class="col-md-12 col-sm-12">
                                 <i class="flaticon2-calendar-1"></i>&nbsp;
                                 <label for="time-start" class="form-control-label">Khởi hành:</label>&nbsp;
                                 <span id="time-start">{{startTime}}</span>
