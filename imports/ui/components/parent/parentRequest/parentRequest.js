@@ -67,8 +67,8 @@ Template.requestHtml.helpers({
     },
     requestTime() {
         if(this.tripID&&this.trip)
-        return moment(this.trip.startTime).format("llll")
-        return moment(this.time).format("llll")
+        return moment(this.trip.startTime).format("l")
+        return moment(this.time).format("l")
     }
 })
 
