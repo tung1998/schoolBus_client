@@ -3,7 +3,7 @@
 }
 
 .dropzone {
-    height   : 160px;
+    height: 160px;
     min-width: 160px;
 
     .dz-preview {
@@ -12,23 +12,23 @@
 }
 
 .avatabox {
-    height    : 160px;
+    height: 160px;
     text-align: center;
 
     img {
         border-radius: 15px;
-        border       : 2px dashed #5d78ff;
-        height       : 160px;
-        width        : 160px;
-        object-fit   : cover;
+        border: 2px dashed #5d78ff;
+        height: 160px;
+        width: 160px;
+        object-fit: cover;
     }
 }
 
 .kt-header-mobile__toolbar .kt-header__topbar-item.kt-header__topbar-item--user .kt-header__topbar-user img {
     -ms-flex-item-align: center;
-    align-self         : center;
-    max-height         : 34px;
-    border-radius      : 4px;
+    align-self: center;
+    max-height: 34px;
+    border-radius: 4px;
 }
 
 .kt-login.kt-login--v3 .kt-login__wrapper .kt-login__container .kt-form .form-control:focus {
@@ -42,10 +42,10 @@
 
 .kt-widget17 .kt-widget17__stats.custom_stats {
     margin: 0 auto;
-    width : 100%;
+    width: 100%;
 
     .kt-widget17__items>.kt-widget17__item {
-        border    : 1px solid rgb(64, 79, 167);
+        border: 1px solid rgb(64, 79, 167);
         box-sizing: border-box;
 
         .kt-widget17__icon,
@@ -82,14 +82,14 @@
 }
 
 .studentInfoModal-body .image-student {
-    margin    : 0 auto;
-    width     : 13rem;
-    height    : 13rem;
+    margin: 0 auto;
+    width: 13rem;
+    height: 13rem;
     box-sizing: border-box;
 
     img {
-        width        : 100%;
-        padding      : 1.3rem;
+        width: 100%;
+        padding: 1.3rem;
         border-radius: 15%;
     }
 }
@@ -132,25 +132,27 @@
 
 #trackingMap {
     position: absolute;
-    top     : 0;
-    bottom  : 0;
-    width   : 100%;
+    top: 0;
+    bottom: 0;
+    width: 100%;
 }
 
 .custom-btn {
-    width : 9rem;
+    width: 9rem;
     margin: 1px 0;
 }
 
 #trip-manager {
     background-color: #c2cae5;
-    border-radius   : 10px !important;
-    padding         : .8rem;
-    margin-bottom   : 0.5rem;
+    border-radius: 10px !important;
+    padding: .8rem;
+    margin-bottom: 0.5rem;
+
     .kt-widget__top .kt-widget__content .kt-widget__head {
         border-bottom: 1px solid #2673bb;
         padding: 1rem 0;
     }
+
     .kt-widget__top .kt-widget__content .kt-widget__subhead {
         .row {
             i {
@@ -159,9 +161,9 @@
 
             label,
             span {
-                color      : #272626;
+                color: #272626;
                 font-weight: 600;
-                font-size  : 14px;
+                font-size: 14px;
             }
         }
     }
@@ -171,7 +173,8 @@
     position: relative;
     width: 20rem;
     height: 20rem;
-    img{
+
+    img {
         width: 13rem;
         border-radius: 20px 20px;
         margin: 0 auto;
@@ -185,7 +188,53 @@
     }
 }
 
+#inbox_message {
+    width: 85%;
+    height: 30px;
+    outline: none;
+    border: none;
+    font-family: Roboto, sans-serif;
+    font-size: 1.1rem;
+    font-weight: 400;
+}
 
+.empty-text {
+    border-bottom: 1px solid rgb(136, 0, 0) !important;
+
+    /* Chrome, Opera, Safari */
+    ::-webkit-input-placeholder {
+        color: rgb(136, 0, 0);
+        font-weight: 500;
+    }
+
+    /* Firefox 19+ */
+    ::-moz-placeholder {
+        color: rgb(136, 0, 0);
+        font-weight: 500;
+    }
+
+    /* IE 10+ */
+    :-ms-input-placeholder {
+        color: rgb(136, 0, 0);
+        font-weight: 500;
+    }
+
+    /* Firefox 18- */
+    :-moz-placeholder {
+        color: rgb(136, 0, 0);
+        font-weight: 500;
+    }
+}
+
+
+#send-button {
+    width: 13%;
+    display: inline-block;
+    .submit_button {
+        display: block;
+        margin: 0 auto !important;
+    } 
+}
 // Tạo hiệu ứng chữ nhấp nháy
 // @-webkit-keyframes trip-next {
 //     0% {

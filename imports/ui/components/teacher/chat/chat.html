@@ -117,19 +117,25 @@
 
               <div class="kt-portlet__foot box_messages_foot">
                 <form class="kt-chat__input">
-                  <div class="kt-chat__editor">
-                    <input type="text" id="inbox_message" style="height: 50px; width: 100%" placeholder="Type here..."
-                      autocomplete="none">
-                  </div>
-                  <div class="kt-chat__toolbar">
-                    <div class="kt_chat__tools">
+                    <div class="kt-chat__editor">
+                        <input type="text" id="inbox_message" placeholder="Nhập..." autocomplete="off">
+                        <div id="send-button">
+                            <button type="submit" class="btn btn-icon submit_button ">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    xmlns:xlink="http://www.w3.org/1999/xlink" width="24px"
+                                    height="24px" viewBox="0 0 24 24" version="1.1" class="kt-svg-icon">
+                                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                        <rect id="bound" x="0" y="0" width="24" height="24" />
+                                        <path
+                                            d="M3,13.5 L19,12 L3,10.5 L3,3.7732928 C3,3.70255344 3.01501031,3.63261921 3.04403925,3.56811047 C3.15735832,3.3162903 3.45336217,3.20401298 3.70518234,3.31733205 L21.9867539,11.5440392 C22.098181,11.5941815 22.1873901,11.6833905 22.2375323,11.7948177 C22.3508514,12.0466378 22.2385741,12.3426417 21.9867539,12.4559608 L3.70518234,20.6826679 C3.64067359,20.7116969 3.57073936,20.7267072 3.5,20.7267072 C3.22385763,20.7267072 3,20.5028496 3,20.2267072 L3,13.5 Z"
+                                            id="Combined-Shape" fill="#000000" />
+                                    </g>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
-                    <div class="kt_chat__actions">
-                      <button type="submit" class="btn btn-brand btn-md btn-upper btn-bold submit_button">reply</button>
-                    </div>
-                  </div>
                 </form>
-              </div>
+            </div>
             </div>
           </div>
         </div>
@@ -143,20 +149,16 @@
 <template name="messageHtml">
   {{#if isUserMessage}}
   <div class="kt-chat__message kt-chat__message--right">
-    <div class="kt-chat__user">
-      <span class="kt-chat__datetime">{{updatedTime}}</span>
-    </div>
+    <span class="kt-chat__datetime">{{updatedTime}}</span>
     <div class="kt-chat__text kt-bg-light-success" title="{{updatedTime}}">
       {{text}} </div>
     </div>
     {{else}}
     <div class="kt-chat__message">
-      <div class="kt-chat__user">
-        <span class="kt-chat__datetime">{{updatedTime}}</span>
-      </div>
       <div class="kt-chat__text kt-bg-light" title="{{updatedTime}}">
         {{text}}
       </div>
+      <span class="kt-chat__datetime">{{updatedTime}}</span>
     </div>
     {{/if}}
 </template>

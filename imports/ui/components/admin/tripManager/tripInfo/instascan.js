@@ -125,7 +125,7 @@ function clickTakePhoto(e) {
         const Camera = navigator.camera;
 
         const options = {
-            quality: 30,
+            quality: 50,
             destinationType: Camera.DestinationType.DATA_URL,
             sourceType: Camera.PictureSourceType.CAMERA,
             encodingType: Camera.EncodingType.JPEG,

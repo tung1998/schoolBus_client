@@ -428,6 +428,6 @@ function resizeBoxChat(){
     let height2 = $('#kt_subheader').outerHeight()
     let height3 = $('.box_messages_head').outerHeight()
     let height4 = $('.box_messages_foot').outerHeight()
-    let height5 = $('.kt-chat__toolbar').outerHeight()
-    $('.kt-chat__messages').height($(window).height()-height1-height2-height3-height4-height5-45)
+    // let height5 = $('.kt-chat__toolbar').outerHeight()
+    $('.kt-chat__messages').height($(window).height()-height1-height2-height3-height4-60)
 }

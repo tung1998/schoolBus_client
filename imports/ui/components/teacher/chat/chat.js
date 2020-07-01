@@ -35,7 +35,7 @@ Template.chatParent.onCreated(() => {
 })
 
 Template.chatParent.onRendered(() => {
-    KTUtil.ready(function() {
+    KTUtil.ready(function () {
         KTAppChat.init();
     });
     resizeBoxChat()
@@ -48,7 +48,12 @@ Template.chatParent.onRendered(() => {
     })
 
     this.renderListParentss = Tracker.autorun(() => {
-        let messages = COLLECTION_Messages.find({ isDeleted: false, sendBy: { $ne: userID } }).fetch();
+        let messages = COLLECTION_Messages.find({
+            isDeleted: false,
+            sendBy: {
+                $ne: userID
+            }
+        }).fetch();
         listRoomID.map(value => {
             let lastestMsg = [];
             let countUnread = 0;
@@ -71,7 +76,10 @@ Template.chatParent.onRendered(() => {
 
     this.loadMessagesInChatRooms = Tracker.autorun(() => {
         let roomID = Session.get(_SESSION.roomID)
-        let messages = COLLECTION_Messages.find({ roomID: roomID, isDeleted: false }).fetch();
+        let messages = COLLECTION_Messages.find({
+            roomID: roomID,
+            isDeleted: false
+        }).fetch();
         if (roomID) {
             renderMessages(messages)
         }
@@ -115,13 +123,18 @@ Template.messageHtml.helpers({
 Template.chatParent.events({
     'click .kt-widget__info': ClickUserName,
     'submit form': SubmitForm,
+    'keyup #inbox_message, click #inbox_message': () => {
+        $("#inbox_message").addClass('empty-text').removeClass('empty-text')
+    }
 })
 
 function renderMessages(messages) {
     $(".kt-chat__title").html(partnerName)
     $(".box_messages_foot").show();
     Session.set('messagesData', messages)
-    $(".kt-chat__messages").animate({ scrollTop: $('.kt-chat__messages').prop("scrollHeight")}, 200);
+    $(".kt-chat__messages").animate({
+        scrollTop: $('.kt-chat__messages').prop("scrollHeight")
+    }, 200);
 }
 
 function ClickUserName(e) {
@@ -143,28 +156,34 @@ function ClickUserName(e) {
 function SubmitForm(e) {
     e.preventDefault();
     let message = $("#inbox_message").val();
-    $("#inbox_message").val("");
-    Meteor.call('message.create', {
-        text: message,
-        createdTime: Date.now(),
-        updatedTime: Date.now(),
-        isDeleted: false,
-        sendBy: userID,
-        roomID: Session.get(_SESSION.roomID),
-        status: 0
-    }, (result, err) => {
-        if (err) throw err;
-        else { }
-    })
-    updateStatus(Session.get(_SESSION.roomID), partnerID);
-    $(`#${Session.get(_SESSION.roomID)}`).children(".kt-widget__action").html(``)
+    if (message) {
+        $("#inbox_message").val("");
+        Meteor.call('message.create', {
+            text: message,
+            createdTime: Date.now(),
+            updatedTime: Date.now(),
+            isDeleted: false,
+            sendBy: userID,
+            roomID: Session.get(_SESSION.roomID),
+            status: 0
+        }, (result, err) => {
+            if (err) throw err;
+            else {}
+        })
+        updateStatus(Session.get(_SESSION.roomID), partnerID);
+        $(`#${Session.get(_SESSION.roomID)}`).children(".kt-widget__action").html(``)
+    } else {
+        $("#inbox_message").removeClass('empty-text').addClass('empty-text')
+    }
 }
 
 function renderListParents() {
     MeteorCall(_METHODS.class.GetAll, null, accessToken)
         .then(result => {
             result.data.map(value => {
-                MeteorCall(_METHODS.Parent.GetByClass, { _id: value._id }, accessToken)
+                MeteorCall(_METHODS.Parent.GetByClass, {
+                        _id: value._id
+                    }, accessToken)
                     .then(parent => {
                         if (parent.length)
                             createParentsRow(parent)
@@ -237,7 +256,17 @@ function parentRow(data) {
 }
 
 function getLastestAndCountUnSeenMessage(roomID) {
-    let messages = COLLECTION_Messages.find({ roomID: roomID, sendBy: { $ne: userID }, isDeleted: false }, { sort: { createdTime: -1 } }).fetch();
+    let messages = COLLECTION_Messages.find({
+        roomID: roomID,
+        sendBy: {
+            $ne: userID
+        },
+        isDeleted: false
+    }, {
+        sort: {
+            createdTime: -1
+        }
+    }).fetch();
     let result = [];
     result.push(getUnSeenMessages(messages));
     if (messages[0]) {
@@ -265,7 +294,6 @@ function getUnSeenMessages(messages) {
 function updateStatus(roomID, sendBy) {
     Meteor.call('message.update', roomID, sendBy, (result, err) => {
         if (err) throw err;
-        else { }
+        else {}
     })
 }
-
