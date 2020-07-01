@@ -327,7 +327,7 @@ function clickStatusButton(e) {
       MeteorCallNoEfect(_METHODS.notification.sendFCMToMultiUser, {
         userIds: userIDs,
         title: `Thông báo phụ huynh`,
-        text: `Học sinh: ${studentName} ${getJsonDefault(_TRIP_STUDENT.status, 'number', status)}`
+        text: `Học sinh: ${studentName} ${getJsonDefault(_TRIP_STUDENT.status, 'number', status).text}`
       }, accessToken)
       handleSuccess("Đã cập nhật");
       return reloadData();

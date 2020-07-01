@@ -5,7 +5,8 @@ import {
     handleError,
     handleConfirm,
     getJsonDefault,
-    getSendNotiUserIDs
+    getSendNotiUserIDs,
+    MeteorCallNoEfect
 } from '../../../../functions'
 
 import {
@@ -148,7 +149,7 @@ async function SubmitForm(event) {
                     userIds: notifySendUserIDs,
                     title: "Chuyến đi",
                     text: "Chuyến đi được tạo mới",
-                    tripID: newTrip._id
+                    // tripID: newTrip._id
                 }, accessToken)
             reloadTable();
             $('#editTripManagerModal').modal('hide')
@@ -175,7 +176,7 @@ function getDayFilter() {
 }
 
 function reloadTable() {
-    MeteorCall(_METHODS.trip.GetByTime, getDayFilter(), accessToken).then(result => {
+    MeteorCallNoEfect(_METHODS.trip.GetByTime, getDayFilter(), accessToken).then(result => {
         if (result.length) {
             Session.set('tripList', result)
         } else {

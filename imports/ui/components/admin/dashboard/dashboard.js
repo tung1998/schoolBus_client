@@ -7,6 +7,7 @@ import {
   handleError,
   handleSuccess,
   handleConfirm,
+  MeteorCallNoEfect,
 } from "../../../../functions";
 
 import {
@@ -40,6 +41,9 @@ Template.dashboard.helpers({
   },
   dataUser() {
     return Session.get('users').data
+  },
+  dataTrip() {
+    return
   }
 })
 
@@ -140,4 +144,10 @@ function config(dataConfig) {
       }
     }
   }
+}
+
+function getAllTrip() {
+  MeteorCall(_METHODS.trip.GetAll, null, accessToken).then(result => {
+
+  })
 }

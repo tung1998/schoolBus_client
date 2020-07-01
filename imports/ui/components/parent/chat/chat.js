@@ -7,6 +7,7 @@ import {
     handleError,
     handleSuccess,
     removeDuplicated,
+    resizeBoxChat
 } from "../../../../functions";
 
 import {
@@ -23,7 +24,7 @@ let accessToken;
 let userID;
 let username;
 let userImage;
-let partnerImage;
+let partnerImageUrl;
 let partnerName;
 let partnerID;
 let listRoomID = [];
@@ -32,9 +33,15 @@ let listRoomID = [];
 Template.chatTeacher.onCreated(() => {
     accessToken = Cookies.get("accessToken");
     Meteor.subscribe("message.publish.All");
+    Session.set('messagesData',[])
 })
 
 Template.chatTeacher.onRendered(() => {
+    KTUtil.ready(function() {
+        KTAppChat.init();
+    });
+    resizeBoxChat()
+
     this.getUserID = Tracker.autorun(() => {
         userID = Session.get(_SESSION.userID)
         username = Session.get(_SESSION.name)
@@ -43,10 +50,10 @@ Template.chatTeacher.onRendered(() => {
         createTeachersRow(students);
         if (FlowRouter.getQueryParam('teacherID')) {
             $(`a[partnerid=${FlowRouter.getQueryParam('teacherID')}]`).trigger('click')
-        }else $(`a[partnerid]`).first().trigger('click')
+        } else $(`div[partnerid]`).first().trigger('click')
     })
 
-    
+
 
     this.renderListTeachers = Tracker.autorun(() => {
         let messages = COLLECTION_Messages.find({ isDeleted: false, sendBy: { $ne: userID } }).fetch();
@@ -74,7 +81,7 @@ Template.chatTeacher.onRendered(() => {
         let roomID = Session.get(_SESSION.roomID)
         let messages = COLLECTION_Messages.find({ roomID: roomID, isDeleted: false }).fetch();
         if (messages) {
-            loadMessagesInChatRoom(messages)
+            renderMessages(messages)
         }
     })
 })
@@ -83,58 +90,46 @@ Template.chatTeacher.onDestroyed(() => {
     if (this.getUserID) this.getUserID = null;
     if (this.loadMessagesInChatRooms) this.loadMessagesInChatRooms = null;
     if (this.renderListTeachers) this.renderListTeachers = null;
+    Session.delete('messagesData')
 })
 
 Template.chatTeacher.events({
-    'click .kt-widget__username': ClickUserName,
+    'click .kt-widget__info': ClickUserName,
     'submit form': SubmitForm,
 })
 
-function loadMessagesInChatRoom(messages) {
-    renderMessages(messages)
-}
+Template.chatTeacher.helpers({
+    messagesData(){
+        return Session.get('messagesData')
+    }
+})
+
+Template.messageHtml2.helpers({
+    isUserMessage() {
+        return this.sendBy == userID
+    },
+    updatedTime() {
+        return moment(this.updatedTime).startOf('second').fromNow()
+    },
+    username() {
+        return username
+    },
+    userImage() {
+        return userImage
+    },
+    partnerName() {
+        return partnerName
+    },
+    partnerImageUrl() {
+        return partnerImageUrl
+    }
+})
 
 function renderMessages(messages) {
     $(".kt-chat__title").html(partnerName)
     $(".box_messages_foot").show();
-    let messagesData = messages.map(message => {
-        if (message.sendBy == userID) {
-            return renderRightMessage(message)
-        } else {
-            return renderLeftMessage(message)
-        }
-    })
-    $(".kt-chat__messages").html(messagesData.join(" "));
-}
-
-function renderRightMessage(message) {
-    return `<div class="kt-chat__message kt-chat__message--right">
-                <div class="kt-chat__user">
-                    <span class="kt-chat__datetime">${moment(message.updatedTime).startOf('second').fromNow()}</span>
-                    <a href="#" class="kt-chat__username">${username}</a>
-                    <span class="kt-media kt-media--circle kt-media--sm"> 
-                        <img src=${userImage} alt="image">   
-                    </span>
-                </div>
-                <div class="kt-chat__text kt-bg-light-success">
-                   ${message.text}
-                </div>
-            </div>`
-}
-
-function renderLeftMessage(message) {
-    return `<div class="kt-chat__message">
-                <div class="kt-chat__user">
-                    <span class="kt-media kt-media--circle kt-media--sm"> 
-                        <img src=${partnerImage} alt="image">   
-                    </span>
-                    <a href="#" class="kt-chat__username">${partnerName}</a>
-                    <span class="kt-chat__datetime">${moment(message.updatedTime).startOf('second').fromNow()}</span>
-                </div>
-                <div class="kt-chat__text kt-bg-light-success">
-                   ${message.text}
-                </div>
-            </div>`
+    Session.set('messagesData',messages)
+    $(".kt-chat__messages").animate({ scrollTop: $('.kt-chat__messages').prop("scrollHeight")}, 200);
 }
 
 function ClickUserName(e) {
@@ -150,6 +145,7 @@ function ClickUserName(e) {
         img = `<img src="${partnerImageUrl}" alt="image">`
     }
     $('.avata-center').html(img)
+    $('.kt-app__aside-overlay').trigger('click')
 }
 
 
@@ -176,9 +172,9 @@ function SubmitForm(e) {
 
 
 function createTeachersRow(students = []) {
-    let teachers = students.map(item=>item.class.teacher)
+    let teachers = students.map(item => item.class.teacher)
     teachers = removeDuplicated(teachers, '_id')
-    
+
     let teachersRow = teachers.map(teacherRow);
     $(".listParents").html(teachersRow.join(" "));
 }
@@ -206,9 +202,9 @@ function teacherRow(teacher) {
                 <span class="kt-media kt-media--circle"> 
                     ${img}  
                 </span>
-                <div class="kt-widget__info">
+                <div class="kt-widget__info"  partnerID=${teacher.user._id} partnerImage=${partnerImg} partnerName="${teacher.user.name}" roomID="${roomID}">
                     <div class="kt-widget__section">
-                        <a href="#" class="kt-widget__username" partnerID=${teacher.user._id} partnerImage=${partnerImg} partnerName="${teacher.user.name}" roomID="${roomID}">${teacher.user.name}</a>
+                        <a href="#" class="kt-widget__username">${teacher.user.name}</a>
                         <span class="kt-badge kt-badge--success kt-badge--dot"></span>
                     </div>
 
