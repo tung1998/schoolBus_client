@@ -39,7 +39,7 @@
                     <div class="kt-portlet kt-portlet--last">
                         <div class="kt-portlet__body">
                             <div class="kt-searchbar">
-                                <div class="input-group">
+                                <!-- <div class="input-group">
                                     <div class="input-group-prepend"><span class="input-group-text"
                                             id="basic-addon1"><svg xmlns="http://www.w3.org/2000/svg"
                                                 xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px"
@@ -57,7 +57,7 @@
                                             </svg></span></div>
                                     <input type="text" class="form-control" placeholder="Search"
                                         aria-describedby="basic-addon1">
-                                </div>
+                                </div> -->
                             </div>
                             <div class="kt-widget kt-widget--users kt-mt-20">
                                 <div class="kt-scroll kt-scroll--pull ps ps--active-y"
@@ -114,15 +114,10 @@
                             </div>
 
                             <div class="kt-portlet__body">
-                                <div class="kt-scroll kt-scroll--pull ps ps--active-y kt-chat__messages"
-                                    data-mobile-height="300" style="height: 170px; overflow: hidden;">
-
-                                    <div class="ps__rail-x" style="left: 0px; bottom: 0px;">
-                                        <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
-                                    </div>
-                                    <div class="ps__rail-y" style="top: 0px; height: 170px; right: -2px;">
-                                        <div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 40px;"></div>
-                                    </div>
+                                <div class="kt-scroll kt-scroll--pull kt-chat__messages">
+                                    {{#each messagesData}}
+                                    {{> messageHtml2}}
+                                    {{/each}}
                                 </div>
                             </div>
 
@@ -152,3 +147,32 @@
         <!-- end:: Content -->
     </div>
 </template>
+
+<template name="messageHtml2">
+    {{#if isUserMessage}}
+    <div class="kt-chat__message kt-chat__message--right">
+      <div class="kt-chat__user">
+        <span class="kt-chat__datetime">{{updatedTime}}</span>
+        <a href="#" class="kt-chat__username">{{username}}</a>
+        <span class="kt-media kt-media--circle kt-media--sm">
+          <img src={{userImage}} alt="image">
+        </span>
+      </div>
+      <div class="kt-chat__text kt-bg-light-success">
+        {{text}} </div>
+      </div>
+      {{else}}
+      <div class="kt-chat__message">
+        <div class="kt-chat__user">
+          <span class="kt-media kt-media--circle kt-media--sm">
+            <img src={{partnerImageUrl}} alt="image">
+          </span>
+          <a href="#" class="kt-chat__username">{{partnerName}}</a>
+          <span class="kt-chat__datetime">{{updatedTime}}</span>
+        </div>
+        <div class="kt-chat__text kt-bg-light-success">
+          {{text}}
+        </div>
+      </div>
+      {{/if}}
+  </template>
