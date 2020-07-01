@@ -122,7 +122,7 @@ function renderCarOption(options = null, carID = null) {
         .then(result => {
             if (options && options.length) result.data = result.data.filter(item => item.schoolID == options[0].value)
             let optionSelects = result.data.map(res => {
-                return `<option value=${res._id}>Biển số:&nbsp;${res.numberPlate}&nbsp&nbsp${res.carModel.brand}-${res.carModel.model}</option>`;
+                return `<option value=${res._id}>Biển số:&nbsp;${res.numberPlate},&nbsp${res.carModel.brand}&nbsp-&nbsp${res.carModel.model}</option>`;
             });
             $("#car-select").html('<option></option>').append(optionSelects.join(" "));
             if (carID) $('#car-select').val(carID).trigger('change')

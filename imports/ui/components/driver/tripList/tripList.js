@@ -122,6 +122,8 @@ async function reloadData(page = 1, limitDocPerPage = LIMIT_DOCUMENT_PAGE) {
         }
         Session.set('tripList', tripList)
     } catch (e) {
+        console.log(e);
+        
         handleError(e)
     }
 }

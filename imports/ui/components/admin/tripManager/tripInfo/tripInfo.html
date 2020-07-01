@@ -161,7 +161,7 @@
                                         <input type="checkbox" name="carstopStudentFilter" id="carstopStudentFilter">
                                         <span> Học sinh của điểm dừng hiện tại</span> <span id="carStopName"></span>
                                     </label>
-                                    <table class="table table-hover table-responsive-md" id="table-studentList">
+                                    <table class="table table-hover" id="table-studentList">
                                         <thead class="thead-light">
                                             <tr>
                                                 <th>#</th>
@@ -402,7 +402,7 @@
         <th scope="row">{{index}}</th>
         <td>{{value.student.IDStudent}}</td>
         <td>{{value.student.user.name}}</td>
-        <td><span class="kt-badge kt-badge--{{status.classname}} kt-badge--inline ">{{status.text}}</span></td>
+        <td><span class="badge badge-{{status.classname}}">{{status.text}}</span></td>
     </tr>
 </template>
 

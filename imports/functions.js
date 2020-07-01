@@ -75,17 +75,18 @@ function handleError(error, title = "Có lỗi xảy ra") {
         },
         icon: 'error',
         title,
-        width: '20rem'
+        width: '20rem',
+        height: '10rem'
     });
 }
 
 
-function handleSuccess(title = "Thành công") {
+function handleSuccess(title = "Thành công", timer = 2000) {
     return Swal.fire({
         toast: true,
         position: 'top',
         showConfirmButton: false,
-        timer: 2000,
+        timer: timer,
         timerProgressBar: true,
         onOpen: (toast) => {
             toast.addEventListener('mouseenter', Swal.stopTimer)
@@ -93,7 +94,8 @@ function handleSuccess(title = "Thành công") {
         },
         icon: 'success',
         title,
-        width: '20rem'
+        width: '20rem',
+        height: '10rem'
     });
 }
 

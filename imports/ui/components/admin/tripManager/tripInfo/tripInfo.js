@@ -785,7 +785,7 @@ function updateStudentNote(e) {
         .catch(handleError);
     }
     if (result.dismiss == "cancel") {
-      handleError("Đã hủy!");
+      handleSuccess("Đã hủy!", 800);
       $("#studentInfoModal").modal("show");
     }
   });
