@@ -300,8 +300,8 @@ function createRow(result) {
             <td>${moment(data.updatedTime).format('L')}</td>
             ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>` : ''}
             <td>
-            <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
-            <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
+            <button type="button" class="btn btn-sm btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
+            <button type="button" class="btn btn-sm btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
             </td>
         </tr>
         `

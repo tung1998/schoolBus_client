@@ -385,8 +385,8 @@ function createRow(result) {
                 <ul>${studentHtml.join('')}</ul>
               </td>
               <td>
-                  <button type="button" class="btn btn-outline-brand dz-remove" data-toggle="modal" id="edit-button" data-target="#editParentModal" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
-                  <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
+                  <button type="button" class="btn btn-sm btn-outline-brand dz-remove" data-toggle="modal" id="edit-button" data-target="#editParentModal" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
+                  <button type="button" class="btn btn-sm btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
               </td>
             </tr>
           `

@@ -124,7 +124,7 @@ function gettripData(e) {
     }).then(tripStudentLog => {
         Session.set('tripStudentLog', tripStudentLog)
     }).catch(error => {
-        handleError(error, 'Không có chuyến đi sắp tới')
+        handleError(error, 'Không có chuyến đi sắp tới', 'warning')
     })
 }
 

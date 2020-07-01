@@ -30,8 +30,7 @@ export {
     removeLayerByID,
     MeteorCallNoEfect,
     contentInfoMarker,
-    getSendNotiUserIDs,
-    resizeBoxChat
+    getSendNotiUserIDs
 }
 
 function MeteorCall(method = "", data = null, accessToken = "") {
@@ -62,22 +61,21 @@ function MeteorCallNoEfect(method = "", data = null, accessToken = "") {
 
 
 
-function handleError(error, title = "Có lỗi xảy ra") {
+function handleError(error, title = "Có lỗi xảy ra", icon = 'error', timer = 3000) {
     console.log(error);
     return Swal.fire({
         toast: true,
         position: 'top',
         showConfirmButton: false,
-        timer: 3000,
+        timer: timer,
         timerProgressBar: true,
         onOpen: (toast) => {
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)
         },
-        icon: 'error',
+        icon: icon,
         title,
         width: '20rem',
-        height: '10rem'
     });
 }
 
@@ -96,7 +94,6 @@ function handleSuccess(title = "Thành công", timer = 2000) {
         icon: 'success',
         title,
         width: '20rem',
-        height: '10rem'
     });
 }
 
@@ -392,6 +389,7 @@ function contentInfoMarker(lat, lng, json, mark) {
 
 function getSendNotiUserIDs(routeData, studentID = null, isSendDriver = true, carStopID = null) {
     let notifySendUserIDs = []
+    let studentFilter = []
 
     if (studentID) {
             studentFilter = routeData.studentList.students.filter(item => item._id === studentID)
@@ -422,13 +420,4 @@ function getSendNotiUserIDs(routeData, studentID = null, isSendDriver = true, ca
     // console.log(notifySendUserIDs);
     
     return notifySendUserIDs
-}
-
-function resizeBoxChat(){
-    let height1 = $('#kt_header_mobile').outerHeight()
-    let height2 = $('#kt_subheader').outerHeight()
-    let height3 = $('.box_messages_head').outerHeight()
-    let height4 = $('.box_messages_foot').outerHeight()
-    let height5 = $('.kt-chat__toolbar').outerHeight()
-    $('.kt-chat__messages').height($(window).height()-height1-height2-height3-height4-height5-45)
 }

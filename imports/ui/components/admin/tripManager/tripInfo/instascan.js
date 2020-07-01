@@ -33,7 +33,7 @@ Template.instascannerModal.onCreated(() => {
 })
 
 Template.instascannerModal.onRendered(() => {
-    Meteor.startup(function() {
+    Meteor.startup(function () {
         if (!Meteor.isCordova) {
             Scanner = new Instascan.Scanner({
                 video: document.getElementById('scanner'),
@@ -41,7 +41,7 @@ Template.instascannerModal.onRendered(() => {
                 mirror: false,
                 captureImage: true,
             });
-        
+
             Instascan.Camera.getCameras().then(renderListCamera).catch(error => {
                 $('#openScannerModal').addClass('kt-hidden')
                 $('#takePhoto').addClass('kt-hidden')
@@ -84,14 +84,16 @@ function scanSuccess(content) {
 }
 
 function renderListCamera(cameras) {
+    let cameraSelect = $('.camera-list')
     if (cameras.length) {
-        // danh sách camera
-        Cameras = cameras
-        cameras.map(cam => {
-            $(".camera-list").append(`
-                <option value="${cam.id}">${cam.name}</option>
-            `)
+        let cameraList = cameras.map(cam => {
+            return `<option value="${cam.id}">${cam.name}</option>`
         })
+        cameraSelect.html('').append(cameraList.join(''))
+            .select2({
+                width: "100%",
+                minimumResultsForSearch: Infinity,
+            })
         $("#instascannerModal").on('show.bs.modal', function () {
             Scanner.start(cameras[0]);
         })
@@ -119,7 +121,7 @@ function clickTakePhoto(e) {
     $("#studentInfoModal").modal("hide")
     let tripID = $(e.currentTarget).attr("tripID");
     let studentID = $(e.currentTarget).attr("studentID")
-    if(Meteor.isCordova) {
+    if (Meteor.isCordova) {
         const Camera = navigator.camera;
 
         const options = {
@@ -131,33 +133,37 @@ function clickTakePhoto(e) {
             // allowEdit: true,
             correctOrientation: true
         }
-        Camera.getPicture( 
-        (imageData) => {
-            let dt = {
-                imageId: makeID("attendance"),
-                BASE64: ["data:image/jpeg;base64," + imageData]
-            }
-            MeteorCall(_METHODS.image.Import, dt, accessToken).then(result => {
-                let imageDetail = {
-                    tripID: tripID,
-                    studentID: studentID,
-                    image: dt.imageId
+        Camera.getPicture(
+            (imageData) => {
+                let dt = {
+                    imageId: makeID("attendance"),
+                    BASE64: ["data:image/jpeg;base64," + imageData]
                 }
-                return MeteorCall(_METHODS.trip.Image, imageDetail, accessToken)
-            }).then(result => {
-                handleSuccess('Đã xác nhận ảnh!')
-            }).catch(handleError)
-            // $("#table-body").html(imageUri)
-        },
-        (error) => {
-            console.debug("Unable to obtain picture: " + error, "app");
-        },
-        options)
-    }else{
-        
+                MeteorCall(_METHODS.image.Import, dt, accessToken).then(result => {
+                    let imageDetail = {
+                        tripID: tripID,
+                        studentID: studentID,
+                        image: dt.imageId
+                    }
+                    return MeteorCall(_METHODS.trip.Image, imageDetail, accessToken)
+                }).then(result => {
+                    handleSuccess('Đã xác nhận ảnh!')
+                }).catch(error => {
+                    console.log(error);
+
+                })
+                // $("#table-body").html(imageUri)
+            },
+            (error) => {
+                console.debug("Unable to obtain picture: " + error, "app");
+            },
+            options)
+    } else {
+
         MeteorCamera.getPicture((err, data) => {
             if (err) {
-                handleError(err)
+                return
+
             } else {
                 $(".photo-preview").css({
                     "width": "100% !important"
@@ -175,7 +181,10 @@ function clickTakePhoto(e) {
                     return MeteorCall(_METHODS.trip.Image, imageDetail, accessToken)
                 }).then(result => {
                     handleSuccess('Đã xác nhận ảnh!')
-                }).catch(handleError)
+                }).catch(error => {
+                    console.log(error);
+
+                })
             }
         });
     }
@@ -184,7 +193,7 @@ function clickTakePhoto(e) {
 function updateStudentInfoModalData(studentID) {
     $('#instascannerModal').modal('hide')
     let studentInfoData = checkStudentInfo(studentID)
-    
+
     let tripData = Session.get('tripData')
     let currentCarStop = tripData.carStops.filter(item => item.status === _TRIP_CARSTOP.status.arrived.number)[0]
     studentInfoData.tripID = Session.get('tripID')
@@ -193,9 +202,9 @@ function updateStudentInfoModalData(studentID) {
     let check3 = tripData.carStops.every(item => item.status == _TRIP_CARSTOP.status.leaved.number)
     let check4 = tripData.status == _TRIP.status.moving.number
 
-    let addNoteStudent = `<button type="button" class="btn btn-primary studentnote-btn btn-sm custom-btn mr-1" tripID="${studentInfoData.tripID}" studentID="${studentInfoData.studentID}">Ghi chú</button>`
+    let addNoteStudent = `<button type="button" class="btn btn-primary studentnote-btn btn-sm custom-btn mr-1" tripID="${studentInfoData.tripID}" studentID="${studentInfoData.studentID}" studentName="${studentInfoData.student.user.name}">Ghi chú</button>`
     let waitingTrip = `<span class="badge badge-primary justify-content-center d-flex">Chuyến đi chưa bắt đầu</span>`
-    let captureStudent = `<button type="button" class="btn btn-success btn-sm custom-btn" tripID="${studentInfoData.tripID}"
+    let captureStudent = `<button type="button" class="btn btn-success btn-sm custom-btn" studentName="${studentInfoData.student.user.name}" stripID="${studentInfoData.tripID}"
     studentID="${studentInfoData.studentID}" id="takePhoto">Chụp ảnh</button>`
     switch (studentInfoData.status) {
         case 0:
@@ -230,7 +239,7 @@ function updateStudentInfoModalData(studentID) {
     }
 
     studentInfoData.status = getJsonDefault(_TRIP_STUDENT.status, 'number', studentInfoData.status)
-   
+
     Session.set('studentInfoData', studentInfoData)
     $("#studentInfoModal").modal("show")
 }

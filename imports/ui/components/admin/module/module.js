@@ -187,9 +187,9 @@ function htmlRow(key, index) {
                 <td>${key.permission}</td>
                 <td>${moment(key.createdTime).format('L')}</td>
                 <td>
-                    <button type="button" class="btn btn-outline-brand"
+                    <button type="button" class="btn btn-sm btn-outline-brand"
                         data-toggle="modal" id="edit-module" data-target="#editModuleModal" data-json=\'${JSON.stringify(key)}\'>Sửa</button>
-                    <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(key)}\'>Xóa</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger delete-button" data-json=\'${JSON.stringify(key)}\'>Xóa</button>
                 </td>
             </tr>`
 }

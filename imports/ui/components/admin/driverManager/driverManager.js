@@ -353,9 +353,9 @@ function createRow(result) {
                 <td>${data.DLIssueDate}</td>
                 ${Session.get(_SESSION.isSuperadmin) ? `<td>${data.schoolName}</td>` : ''}
                 <td class="text-center">
-                    <button type="button" class="btn btn-outline-brand edit-button"
+                    <button type="button" class="btn btn-sm btn-outline-brand edit-button"
                         data-toggle="modal" data-target="#editDriverModal" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
-                    <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger delete-button" data-json=\'${JSON.stringify(data)}\'>Xóa</button>
                 </td>
             </tr>
             `

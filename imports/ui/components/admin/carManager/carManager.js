@@ -304,8 +304,8 @@ function createRow(result) {
             <td>${data.numberPlate}</td>
             <td>${data.status}</td>
             <td class="text-center">
-            <button type="button" class="btn btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
-            <button type="button" class="btn btn-outline-danger delete-button" data-json=\'${JSON.stringify({_id: data._id})}\'>Xóa</button>
+            <button type="button" class="btn btn-sm btn-outline-brand modify-button" data-json=\'${JSON.stringify(data)}\'>Sửa</button>
+            <button type="button" class="btn btn-sm btn-outline-danger delete-button" data-json=\'${JSON.stringify({_id: data._id})}\'>Xóa</button>
             </td>
         </tr>
         `

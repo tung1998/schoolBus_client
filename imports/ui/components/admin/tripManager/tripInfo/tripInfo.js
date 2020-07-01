@@ -477,7 +477,7 @@ async function updateTripStatus(e) {
       .then((result) => {
         let car = Session.get("tripData").car.numberPlate
         let userIDs = getSendNotiUserIDs(
-          Session.get("tripData").route,
+          studentTripData.route,
           null,
           false,
           null
@@ -749,8 +749,9 @@ function carstopStudentFilterChange(e) {
 }
 
 function updateStudentNote(e) {
-  let studentID = e.target.getAttribute("studentid");
-  let tripID = e.target.getAttribute("tripid");
+  let studentID = e.currentTarget.getAttribute("studentid");
+  let tripID = e.curemtTarget.getAttribute("tripid");
+  let studentName = e.currentTarget.getAttribute("studentName")
   $("#studentInfoModal").modal("hide");
   handlePromp().then((result) => {
     if (result.value) {
@@ -772,7 +773,7 @@ function updateStudentNote(e) {
           );
           MeteorCallNoEfect(_METHODS.notification.sendFCMToMultiUser, {
             userIds: userIDs,
-            title: "Ghi chú học sinh",
+            title: `Ghi chú học sinh ${studentName}`,
             text: `Nội dung: ${note}`
           }, accessToken)
 
