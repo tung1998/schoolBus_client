@@ -477,7 +477,7 @@ async function updateTripStatus(e) {
       .then((result) => {
         let car = Session.get("tripData").car.numberPlate
         let userIDs = getSendNotiUserIDs(
-          studentTripData.route,
+          Session.get("tripData").route,
           null,
           false,
           null
