@@ -40,7 +40,7 @@
                                 <!--begin::Section-->
                                 <div class="kt-section">
                                     <div class="kt-section__content">
-                                        <table class="table table-bordered table-hover">
+                                        <table class="table table-bordered table-hover table-responsive-md">
                                             <thead class="thead-light">
                                                 <tr>
                                                     <th>Tên học sinh</th>
@@ -76,9 +76,10 @@
     <tr>
         <td width="20%">{{student.user.name}}</td>
         <td width="15%">{{requestTime}}</td>
-        <td width="15%">{{parentReqestStatus.text}}</td>
-        <td width="15%">
-            <button type="button" parentRequestID="{{_id}}" class="btn btn-brand btn-elevate btn-pill btn-sm parentRequestDataModal">Chi tiết</button>
+        <td width="">{{parentReqestStatus.text}}</td>
+        <td width="15%" class="text-center">
+            <button type="button" parentRequestID="{{_id}}"
+                class="btn btn-success btn-elevate btn-pill btn-sm parentRequestDataModal">Chi tiết</button>
         </td>
     </tr>
 </template>
@@ -86,7 +87,7 @@
 <template name="absentActionModal">
     <div class="modal fade" id="absentActionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         style="display: none;" aria-hidden="true">
-        <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Thông tin chi tiết</h5>
@@ -94,10 +95,52 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    {{parentReqestData._id}}
+                    <div class="table-responsive mt-3">
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th width="30%">Họ tên</th>
+                                    <td>{{parentReqestData.student.user.name}}</td>
+                                </tr>
+                                <tr>
+                                    <th width="30%">Ngày sinh</th>
+                                    <td>{{parentReqestData.student.user.dateOfBirth}}</td>
+                                </tr>
+                                <tr>
+                                    <th width="30%">Lớp</th>
+                                    <td>{{parentReqestData.student.class.name}}</td>
+                                </tr>
+                                <tr>
+                                    <th width="30%">Giáo viên chủ nhiệm</th>
+                                    <td>{{parentReqestData.student.class.teacher.user.name}}</td>
+                                </tr>
+                                <tr>
+                                    <th width="30%">Trường</th>
+                                    <td>{{parentReqestData.school.name}}</td>
+                                </tr>
+                                <tr>
+                                    <th width="30%">Ghi chú</th>
+                                    <td>{{parentReqestData.note}}</td>
+                                </tr>
+                                <tr>
+                                    <th width="30%">Thời gian</th>
+                                    <td>{{parentReqestData.time}}</td>
+                                </tr>
+                                <tr>
+                                    <th width="30%">Trạng thái</th>
+                                    <td>{{parentReqestData.status}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+
                 <div class="modal-footer">
-                    <button type="button" time="{{parentReqestData.time}}" requestID="{{parentReqestData._id}}" studentID="{{parentReqestData.studentID}}" tripID="{{parentReqestData.tripID}}" class="btn btn-outline-primary" id="confirmRequestBtn">Xác nhận</button>
+                    <button type="button" time="{{parentReqestData.time}}" requestID="{{parentReqestData._id}}"
+                        studentID="{{parentReqestData.studentID}}" tripID="{{parentReqestData.tripID}}"
+                        class="btn btn-outline-primary btn-sm" id="confirmRequestBtn">
+                        Xác nhận
+                    </button>
                 </div>
             </div>
         </div>

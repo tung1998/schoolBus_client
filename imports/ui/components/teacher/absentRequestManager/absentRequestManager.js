@@ -45,8 +45,8 @@ Template.absentRequestManager.helpers({
 Template.parentRequestRow.helpers({
     requestTime() {
         if (this.tripID && this.trip)
-            return moment(this.trip.startTime).format("l")
-        return moment(this.time).format("l")
+            return this.time?moment(this.trip.startTime).format("l"):''
+        return this.time? moment(this.time).format("l"): ''
     },
     parentReqestStatus() {
         return getJsonDefault(_REQUEST.status, 'number', this.status)
@@ -74,6 +74,8 @@ function reloadData() {
 function parentRequestDataModalCLick(e) {
     let parentRequestId = e.currentTarget.getAttribute('parentRequestId')
     let parentRequestData = Session.get("parentRequestList").filter(item => item._id == parentRequestId)[0]
+    parentRequestData.time = moment(parentRequestData.time).format('L')
+    parentRequestData.status = getJsonDefault(_REQUEST.status, 'number', parentRequestData.status).text
     Session.set("parentRequestData", parentRequestData)
     $("#absentActionModal").modal('show')
 }
