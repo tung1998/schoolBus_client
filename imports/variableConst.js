@@ -237,7 +237,9 @@ const _METHODS = {
         GetAllCurrentTrip: 'trip.getAllCurrentTrip',
         UpdateTripStatus: 'trip.updateTripStatus',
         UpdateCarStop: 'trip.updateCarStop',
-        UpdateStudentNote: 'trip.updateStudentNote'
+        UpdateStudentNote: 'trip.updateStudentNote',
+        ParentRequestByTime: 'trip.parentRequestByTime',
+        ProblemInDay: 'trip.problemInDay',
     },
     tripLocation: {
         GetAll: 'tripLocation.getAll',

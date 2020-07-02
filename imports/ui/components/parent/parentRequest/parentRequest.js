@@ -102,6 +102,12 @@ function sendRequest(e) {
     if (data.time || data.tripID)
         MeteorCall(_METHODS.ParrentRequest.Create, data, accessToken).then(result => {
             handleSuccess('Đã gửi yêu cầu thành công, Đợi giáo viên xác nhận!')
+            let studentData = Session.get(_SESSION.students).filter(item=>item._id==data.studentID)[0]
+            MeteorCall(_METHODS.notification.sendFCMToMultiUser,{
+                userIds: [studentData.class.teacher._id],
+                title: "Học sinh xin nghỉ",
+                text: `Học sinh ${studentData.user.name} muốn xin nghỉ!`
+            }, accessToken)
             reloadData()
         }).catch(handleError)
     else handleError(null, 'Vui lòng điền đầy đủ thông tin!')

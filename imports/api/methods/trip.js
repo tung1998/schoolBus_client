@@ -37,7 +37,9 @@ if (Meteor.isServer) {
         'trip.image': imageTrip,
         'trip.updateTripStatus': updateTripStatus,
         'trip.updateCarStop': updateTripCarStop,
-        'trip.updateStudentNote': updateStudentNote
+        'trip.updateStudentNote': updateStudentNote,
+        'trip.parentRequestByTime': parentRequestByTime,
+        'trip.problemInDay': problemInDay,
     });
 }
 
@@ -61,7 +63,7 @@ function getTripByPage(data, accessToken = '') {
         data.options.forEach(item => {
             if (item.value) url += `&${encodeURIComponent(item.text)}=${encodeURIComponent(item.value)}`
         })
-        console.log(url)
+    console.log(url)
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });
@@ -82,7 +84,7 @@ function createTrip(data, accessToken = '') {
     return httpDefault(METHOD.post, url, {
         body: data,
         token: accessToken
-    }).then(result=>{
+    }).then(result => {
         updateTask('Trip', result._id)
         return result
     });;
@@ -93,7 +95,7 @@ function updateTrip(data, accessToken = '') {
     return httpDefault(METHOD.put, url, {
         body: data,
         token: accessToken
-    }).then(result=>{
+    }).then(result => {
         updateTask('Trip', data._id)
         return result
     });
@@ -103,7 +105,7 @@ function deleteTrip(data, accessToken = '') {
     let url = `${AUTH_TRIP}/${data._id}`
     return httpDefault(METHOD.del, url, {
         token: accessToken
-    }).then(result=>{
+    }).then(result => {
         updateTask('Trip', data._id)
         return result
     });
@@ -116,7 +118,7 @@ function attendanceTrip(data, accessToken = '') {
             status: data.status
         },
         token: accessToken
-    }).then(result=>{
+    }).then(result => {
         updateTask('Trip', data.tripID)
         updateTask('StudentTrip', data.studentID)
         return result
@@ -130,7 +132,7 @@ function imageTrip(data, accessToken = '') {
             image: data.image
         },
         token: accessToken
-    }).then(result=>{
+    }).then(result => {
         updateTask('Trip', data.tripID)
         updateTask('StudentTrip', data.studentID)
         return result
@@ -172,7 +174,7 @@ function updateTripStatus(data, accessToken = '') {
     return httpDefault(METHOD.put, url, {
         body: data,
         token: accessToken
-    }).then(result=>{
+    }).then(result => {
         updateTask('Trip', data.tripID)
         return result
     })
@@ -183,7 +185,7 @@ function updateTripCarStop(data, accessToken = '') {
     return httpDefault(METHOD.put, url, {
         body: data,
         token: accessToken
-    }).then(result=>{
+    }).then(result => {
         updateTask('Trip', data.tripID)
         return result
     })
@@ -195,7 +197,7 @@ function getByStudent(data, accessToken = '') {
         data.options.forEach(item => {
             if (item.value) url += `&${encodeURIComponent(item.text)}=${encodeURIComponent(item.value)}`
         })
-        console.log(url)
+    console.log(url)
     return httpDefault(METHOD.get, url, {
         token: accessToken
     });
@@ -206,7 +208,7 @@ function updateStudentNote(data, accessToken = '') {
     return httpDefault(METHOD.put, url, {
         body: data,
         token: accessToken
-    }).then(result=>{
+    }).then(result => {
         updateTask('Trip', data.tripID)
         return result
     })
@@ -214,8 +216,26 @@ function updateStudentNote(data, accessToken = '') {
 
 function getAllCurrentTrip(data, accessToken = '') {
     let url = `${AUTH_TRIP}/allCurrent?`
-    if(data.beforeTime) url+=`beforeTime=${data.beforeTime}`
-    if(data.afterTime) url+=`&afterTime=${data.afterTime}`
+    if (data.beforeTime) url += `beforeTime=${data.beforeTime}`
+    if (data.afterTime) url += `&afterTime=${data.afterTime}`
+    return httpDefault(METHOD.get, url, {
+        token: accessToken
+    })
+}
+
+function parentRequestByTime(data, accessToken = '') {
+    let url = `${AUTH_TRIP}/parentRequestByTime`
+    return httpDefault(METHOD.put, url, {
+        body: data,
+        token: accessToken
+    })
+}
+
+function problemInDay(data, accessToken = '') {
+    let url = `${AUTH_TRIP}/allCurrent?`
+    if (data.year) url += `year=${data.year}`
+    if (data.month) url += `&month=${data.month}`
+    if (data.date) url += `&date=${data.date}`
     return httpDefault(METHOD.get, url, {
         token: accessToken
     })
