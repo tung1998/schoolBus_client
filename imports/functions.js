@@ -403,7 +403,7 @@ function getSendNotiUserIDs(routeData, studentID = null, isSendDriver = true, ca
             }
     }
     if (carStopID)
-        studentFilter = studentFilter.filer(item => item.carStop._id === carStopID)
+        studentFilter = studentFilter.filter(item => item.carStop._id === carStopID)
     let parentUserIDs = []
     studentFilter.forEach(item => {
         if (item.parents) {
