@@ -31,31 +31,33 @@ Template.header.onCreated(() => {
 
 Template.header.onRendered(() => {
     this.checkIsAdmin = Tracker.autorun(() => {
-        if (Session.get(_SESSION.userType) !== 0) {
-            Session.set('isAdmin', false)
-        }
-        else {
+        if (Session.get(_SESSION.userType) === 0) {
             Session.set('isAdmin', true)
             getAllNotification()
-            
+        } else {
+            Session.set('isAdmin', false)
+
         }
     })
 
     this.realTimeTracker = Tracker.autorun(() => {
-        let task = COLLECTION_TASK.find({
-            name: 'Trip'
-        }).fetch()
-        if (task.length && task[0].tasks.length && task[0].updatedTime > Date.now() - TIME_DEFAULT.check_task) {
-            getAllNotification()
-            $('#noti-icon').removeClass('kt-pulse--brand').addClass('kt-pulse--danger')
+        if (Session.get('isAdmin')) {
+            let task = COLLECTION_TASK.find({
+                name: 'Trip'
+            }).fetch()
+            if (task.length && task[0].tasks.length && task[0].updatedTime > Date.now() - TIME_DEFAULT.check_task) {
 
+                console.log(task);
+                getAllNotification()
+            }
         }
     });
-    
+
 })
 
 Template.header.onDestroyed(() => {
     if (this.checkIsAdmin) this.checkIsAdmin.stop()
+    if (this.realTimeTracker) this.realTimeTracker.stop()
     Session.delete('isAdmin')
     Session.delete('tripNotification')
     Session.delete('studentNotification')
@@ -63,11 +65,6 @@ Template.header.onDestroyed(() => {
 
 Template.header.events({
     'click #signOut': sightOutClick,
-    'click #noti-icon': (e) => {
-        if($(this).hasClass('kt-pulse--danger')) {
-            $(this).removeClass('kt-pulse--danger').addClass('kt-pulse--brand')
-        }
-    }
 })
 
 Template.header.helpers({
@@ -124,12 +121,12 @@ async function getAllNotification() {
         let tripNotificationData = []
         let studentNotificationData = []
         let problemData = await MeteorCallNoEfect(_METHODS.trip.ProblemInDay, {
-            date: moment(Date.now()).date()-1,
+            date: moment(Date.now()).date(),
             month: moment(Date.now()).month() + 1,
             year: moment(Date.now()).year()
         }, accessToken)
         problemData.map(result => {
-            if(result.studentID) 
+            if (result.studentID)
                 studentNotificationData.push(result)
             else tripNotificationData.push(result)
         })

@@ -53,6 +53,15 @@ Template.tripDetailNoButton.onRendered(() => {
         "height": 400
     })
     initMap()
+
+    this.realTimeTracker = Tracker.autorun(() => {
+        let task = COLLECTION_TASK.find({
+            name: 'Trip'
+        }).fetch()
+        if (task.length && task[0].tasks.length && task[0].updatedTime > Date.now() - TIME_DEFAULT.check_task) {
+            reloadData()
+        }
+    });
 })
 
 Template.tripDetailNoButton.helpers({
@@ -192,7 +201,11 @@ function addPoly(arr) {
 
 
 function bindMarker(carStop, icon = normalCarStopMarker) {
-    let marker = L.marker(carStop.location, { icon }).bindTooltip(carStop.name, { permanent: false }).addTo(markerGroup);
+    let marker = L.marker(carStop.location, {
+        icon
+    }).bindTooltip(carStop.name, {
+        permanent: false
+    }).addTo(markerGroup);
     markersList.push(markerGroup.getLayerId(marker))
     let popup = popupDefault(carStop.name, carStop.address)
     marker.bindPopup(popup, {
