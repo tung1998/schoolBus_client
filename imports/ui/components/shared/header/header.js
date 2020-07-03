@@ -5,6 +5,7 @@ import {
 import {
     _SESSION,
     _METHODS,
+    TIME_DEFAULT
 } from '../../../../variableConst';
 
 const Cookies = require('js-cookie');
@@ -14,6 +15,10 @@ import {
     MeteorCallNoEfect,
     handleError
 } from '../../../../functions'
+
+import {
+    COLLECTION_TASK
+} from '../../../../api/methods/task.js'
 
 let accessToken;
 
@@ -31,10 +36,22 @@ Template.header.onRendered(() => {
         }
         else {
             Session.set('isAdmin', true)
+            getAllNotification()
+            
         }
     })
 
-    getAllNotification()
+    this.realTimeTracker = Tracker.autorun(() => {
+        let task = COLLECTION_TASK.find({
+            name: 'Trip'
+        }).fetch()
+        if (task.length && task[0].tasks.length && task[0].updatedTime > Date.now() - TIME_DEFAULT.check_task) {
+            getAllNotification()
+            $('#noti-icon').removeClass('kt-pulse--brand').addClass('kt-pulse--danger')
+
+        }
+    });
+    
 })
 
 Template.header.onDestroyed(() => {
@@ -45,7 +62,12 @@ Template.header.onDestroyed(() => {
 })
 
 Template.header.events({
-    'click #signOut': sightOutClick
+    'click #signOut': sightOutClick,
+    'click #noti-icon': (e) => {
+        if($(this).hasClass('kt-pulse--danger')) {
+            $(this).removeClass('kt-pulse--danger').addClass('kt-pulse--brand')
+        }
+    }
 })
 
 Template.header.helpers({
@@ -111,6 +133,7 @@ async function getAllNotification() {
                 studentNotificationData.push(result)
             else tripNotificationData.push(result)
         })
+        $('#number-notification').text(problemData.length)
         Session.set('tripNotification', tripNotificationData);
         Session.set('studentNotification', studentNotificationData);
     } catch (error) {
