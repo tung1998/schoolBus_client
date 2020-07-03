@@ -232,10 +232,12 @@ function parentRequestByTime(data, accessToken = '') {
 }
 
 function problemInDay(data, accessToken = '') {
-    let url = `${AUTH_TRIP}/allCurrent?`
+    let url = `${AUTH_TRIP}/problemInDay?`
     if (data.year) url += `year=${data.year}`
     if (data.month) url += `&month=${data.month}`
     if (data.date) url += `&date=${data.date}`
+    console.log(url);
+    
     return httpDefault(METHOD.get, url, {
         token: accessToken
     })
