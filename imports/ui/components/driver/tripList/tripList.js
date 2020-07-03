@@ -1,6 +1,6 @@
 import './tripList.html';
 import { MeteorCall, getJsonDefault, handleError } from '../../../../functions';
-import { _METHODS, _TRIP, _URL_images, LIMIT_DOCUMENT_PAGE, _USER } from '../../../../variableConst';
+import { _METHODS, _TRIP, _URL_images, LIMIT_DOCUMENT_PAGE, _USER, TIME_DEFAULT } from '../../../../variableConst';
 import {
     COLLECTION_TASK
 } from '../../../../api/methods/task.js'

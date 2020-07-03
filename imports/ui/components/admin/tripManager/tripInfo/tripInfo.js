@@ -377,7 +377,7 @@ async function reloadData() {
   $(".kt-footer--fixed").css({
     "padding-bottom": 0,
   });
-  let tripData;
+  let tripData = [];
   let routeName = FlowRouter.getRouteName();
   try {
     if (routeName == "tripManager.tripDetail")
@@ -392,9 +392,7 @@ async function reloadData() {
       routeName == "nanny.upCommingTripInfo"
     )
       tripData = await MeteorCall(_METHODS.trip.GetNext, null, accessToken);
-
     //get info trip
-    if(tripData) {
       Session.set("tripData", tripData);
       Session.set("tripID", tripData._id);
       startCarStop = tripData.route.startCarStop;
@@ -411,9 +409,8 @@ async function reloadData() {
       Session.set("tripStatus", tripData.status);
 
       reloadMap();
-    }
   } catch (error) {
-    handleError(error, "Không có dữ liệu");
+    // handleError(error, "Không có dữ liệu");
     $("#tripData").addClass("kt-hidden");
     $("#noData").removeClass("kt-hidden");
   }
