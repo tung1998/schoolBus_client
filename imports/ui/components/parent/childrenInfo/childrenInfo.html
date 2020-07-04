@@ -104,6 +104,10 @@
                                         <div class="kt-widget__info">
                                             <div class="kt-widget__desc">
                                                 <h5><strong>Thời gian xuất phát: {{startTime}}</strong></h5>
+                                                {{#if delayTime}}
+                                                <h5><strong>Chậm trễ do sự cố: <span class="text-danger">{{delayTime}} phút</span></strong></h5>
+                                                {{/if}}
+                                                <h5><strong>Dự kiến đến điểm dừng: {{reachCarstopTime}}</strong></h5>
                                             </div>
                                         </div>
                                     </div>

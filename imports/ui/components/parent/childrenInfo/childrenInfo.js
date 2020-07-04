@@ -95,7 +95,22 @@ Template.childrenNextripModal.helpers({
         if (tripData)
             return tripData.status == _TRIP.status.ready.number
         return false
-    }
+    },
+    reachCarstopTime(){
+        let tripData = Session.get('tripData')
+        let studentInfo = Session.get('students').filter(item=>item._id==Session.get('studentID'))[0]
+        if(studentInfo){
+            let carStopDelayTime = tripData.route.carStops.filter(item=>item.carStopID==studentInfo.carStopID)[0].delayTime
+            let delayTime = Session.get('tripData').delayTime||0
+            if(carStopDelayTime&&Session.get('tripData').delayTime) 
+                return moment(Session.get('tripData').startTime+(Number(carStopDelayTime)+delayTime)*60*1000).format("DD/MM/YYYY, HH:mm")
+                return moment(Session.get('tripData').startTime).format("DD/MM/YYYY, HH:mm")
+        }
+        return 
+    },
+    delayTime(){
+        return Session.get('tripData').delayTime
+    },
 });
 
 Template.childrenHtml.helpers({

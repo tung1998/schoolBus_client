@@ -145,7 +145,22 @@
                                                 </div>
                                             </div>
                                         </div>
-
+                                        {{#if tripData.delayTime}}
+                                        <div class="col-md-6 col-lg-6 col-xl-6">
+                                            <div class="kt-widget1">
+                                                <div class="kt-widget1__item">
+                                                    <div class="kt-widget1__info">
+                                                        <h3 class="kt-widget1__title">Thời gian chậm trễ: </h3>
+                                                    </div>
+                                                    <div class="kt-widget1__info kt-align-right">
+                                                        <h3 class="kt-widget1__title kt-font-danger" id="delay-time">
+                                                            {{tripData.delayTime}} phút
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {{/if}}
                                     </div>
                                 </div>
                             </div>
@@ -365,7 +380,7 @@
                                                         </h3>
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div class="kt-widget1__item">
                                                     <div class="kt-widget1__info kt-align-left">
                                                         <h3 class="kt-widget1__desc "><i
@@ -377,7 +392,7 @@
                                                         </h3>
                                                     </div>
                                                 </div>
-                                                
+
                                             </div>
                                         </div>
 
@@ -421,7 +436,7 @@
                         <div class="kt-portlet__body">
 
                             <div class="form-group row">
-                                <label class="col-3 col-form-label required-input-label">Nội dụng sự cố</label>
+                                <label class="col-3 col-form-label required-input-label">Nội dụng:</label>
                                 <div class="col-9">
                                     <div class="kt-radio-list">
                                         <label class="kt-radio">
@@ -436,11 +451,16 @@
                                             <input type="radio" name="report" value="0"> Lý do khác
                                             <span></span>
                                         </label>
-                                        <textarea class="form-control" id="report-content" disabled="disabled"
-                                            placeholder="Nhập lý do..." rows="3"
-                                            style="overflow: hidden; overflow-wrap: break-word; resize: none; height: 72px;"></textarea>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="form-group row">
+                                <textarea class="form-control mb-2" id="report-content" disabled="disabled"
+                                    placeholder="Nhập lý do..." rows="3"
+                                    style="overflow: hidden; overflow-wrap: break-word; resize: none; height: 72px;"></textarea>
+                                <label>Ước tính thời gian chậm trễ</label>
+                                <input type="number" id="report-delayTime" class="form-control"
+                                    placeholder="Thời gian chậm trễ (phút)">
                             </div>
                         </div>
                         <div class="modal-footer">
