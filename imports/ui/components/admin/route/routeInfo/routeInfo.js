@@ -9,7 +9,8 @@ import {
     popupDefault,
     removeLayerByID,
     removeAllLayer,
-    handleSuccess
+    handleSuccess,
+    handlePromp
 } from '../../../../../functions';
 
 import {
@@ -45,7 +46,9 @@ Template.routeInfo.onRendered(() => {
     $(".kt-footer--fixed").css({
         "padding-bottom": 0
     })
-    reloadData();
+    reloadData().then(result=>{
+        reloadMap()
+    }).catch(handleError);
     initMap();
 
 });
@@ -65,10 +68,19 @@ Template.routeStudentRow.helpers({
     }
 })
 
+Template.routeCarStopInfo.helpers({
+    delayTime() {
+        if (this.carStopData.delayTime)
+            return this.carStopData.delayTime
+        else return "0"
+    }
+})
+
 Template.routeInfo.events({
     'click .addressTab': clickCarStop,
     'drag .addressTab': dragTab,
     'click .confirmButton': confirmPath,
+    'click .changeDelayTimeBtn': changeDelayTimeBtnClick,
 })
 
 Template.routeInfo.onDestroyed(() => {
@@ -83,7 +95,7 @@ Template.routeInfo.onDestroyed(() => {
 
 function reloadData() {
     let routeID = FlowRouter.getParam('id')
-    MeteorCall(_METHODS.route.GetById, {
+    return MeteorCall(_METHODS.route.GetById, {
         _id: routeID
     }, accessToken).then(result => {
         startCarStop = result.startCarStop
@@ -97,9 +109,9 @@ function reloadData() {
         // add start, end marker
         bindMarker(result.startCarStop, startCarStopMarker)
         bindMarker(result.endCarStop, endCarStopMarker)
-
-        reloadMap()
-    }).catch(handleError)
+        return result
+        
+    })
 }
 
 function initMap() {
@@ -141,6 +153,10 @@ function dragTab(event) {
 
 function clickCarStop(event) {
     event.preventDefault();
+    if ($(event.currentTarget).hasClass("kt-portlet--sortable")) {
+        $('#kt_sortable_portlets .kt-portlet__body').addClass('kt-hidden')
+        $(event.currentTarget).find('.kt-portlet__body').removeClass('kt-hidden')
+    }
     let indx = parseInt($(event.currentTarget).attr("index"));
     let tarMark = markerGroup._layers[markersList[indx]];
     let latval = tarMark._latlng.lat;
@@ -195,4 +211,19 @@ function reloadMap() {
         pol.push(coorArr[0])
         addPoly(pol)
     }).catch(handleError);
+}
+
+function changeDelayTimeBtnClick(e) {
+    let routeID = FlowRouter.getParam('id')
+    let carStopID = e.currentTarget.getAttribute('carStopID')
+    handlePromp("Nhập thời gian trễ").then(result => {
+        if (result.value)
+            return MeteorCall(_METHODS.route.UpdateCarStopDelayTime, {
+                routeID, carStopID,
+                delayTime: Number(result.value)
+            },accessToken)
+    }).then(result=>{
+        handleSuccess("cập nhật thành công")
+        return reloadData()
+    }).catch(handleError)
 }

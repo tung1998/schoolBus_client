@@ -173,6 +173,7 @@ const _METHODS = {
         Create: 'route.create',
         Update: 'route.update',
         Delete: 'route.delete',
+        UpdateCarStopDelayTime: 'route.updateCarStopDelayTime',
     },
     school: {
         GetAll: 'school.getAll',

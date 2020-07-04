@@ -22,6 +22,7 @@ if (Meteor.isServer) {
         'route.create': createRoute,
         'route.update': updateRoute,
         'route.delete': deleteRoute,
+        'route.updateCarStopDelayTime': updateCarStopDelayTime,
     });
 }
 
@@ -69,6 +70,16 @@ function updateRoute(data, accessToken = '') {
 function deleteRoute(data, accessToken = '') {
     let url = `${AUTH_ROUTE}/${data._id}`
     return httpDefault(METHOD.del, url, {
+        token: accessToken
+    });
+}
+
+function updateCarStopDelayTime(data, accessToken = '') {
+    let url = `${AUTH_ROUTE}/${data.routeID}/carStop/${data.carStopID}`
+    return httpDefault(METHOD.put, url, {
+        body:{
+            delayTime: data.delayTime
+        },
         token: accessToken
     });
 }
