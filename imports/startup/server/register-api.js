@@ -16,7 +16,7 @@ import '../../api/methods/task';
 import '../../api/methods/token';
 import '../../api/methods/trip';
 import '../../api/methods/user';
-import '../../api/methods/parrentRequest';
+import '../../api/methods/parentRequest';
 import '../../api/methods/parent';
 import '../../api/methods/class';
 import '../../api/methods/nanny';

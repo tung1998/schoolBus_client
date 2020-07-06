@@ -37,7 +37,7 @@ Template.absentRequestManager.onDestroyed(() => {
 })
 
 Template.absentRequestManager.helpers({
-    parrentRequestList() {
+    parentRequestList() {
         return Session.get("parentRequestList")
     }
 })
@@ -45,8 +45,8 @@ Template.absentRequestManager.helpers({
 Template.parentRequestRow.helpers({
     requestTime() {
         if (this.tripID && this.trip)
-            return this.time?moment(this.trip.startTime).format("l"):''
-        return this.time? moment(this.time).format("l"): ''
+            return moment(this.trip.startTime).format("l")
+        return moment(this.time).format("l")
     },
     parentReqestStatus() {
         return getJsonDefault(_REQUEST.status, 'number', this.status)
@@ -57,6 +57,9 @@ Template.absentActionModal.helpers({
     parentReqestData() {
         return Session.get("parentRequestData")
     },
+    isConfirmed(){
+        return Session.get("parentRequestData").status==_REQUEST.status.confirmed.number
+    }
 })
 
 Template.absentRequestManager.events({
@@ -65,8 +68,7 @@ Template.absentRequestManager.events({
 })
 
 function reloadData() {
-    MeteorCall(_METHODS.ParrentRequest.GetAll, null, accessToken).then(result => {
-        console.log(result)
+    MeteorCall(_METHODS.ParentRequest.GetAll, null, accessToken).then(result => {
         Session.set("parentRequestList", result.data)
     }).catch(handleError)
 }
@@ -74,30 +76,32 @@ function reloadData() {
 function parentRequestDataModalCLick(e) {
     let parentRequestId = e.currentTarget.getAttribute('parentRequestId')
     let parentRequestData = Session.get("parentRequestList").filter(item => item._id == parentRequestId)[0]
-    parentRequestData.time = moment(parentRequestData.time).format('L')
-    parentRequestData.status = getJsonDefault(_REQUEST.status, 'number', parentRequestData.status).text
+    if (parentRequestData.tripID && parentRequestData.trip)
+        parentRequestData.requestTime = moment(parentRequestData.trip.startTime).format("l")
+    else parentRequestData.requestTime = moment(parentRequestData.time).format("l")
+    parentRequestData.parentRequestStatus = getJsonDefault(_REQUEST.status, 'number', parentRequestData.status)
     Session.set("parentRequestData", parentRequestData)
     $("#absentActionModal").modal('show')
 }
 
 function confirmRequestBtnCLick(e) {
-    let tripID = e.currentTarget.getAttribute("tripID")
-    let time = e.currentTarget.getAttribute("time")
-    let studentID = e.currentTarget.getAttribute("studentID")
+    let requestID = e.currentTarget.getAttribute("requestID")
     handleConfirm("Xác nhận học sinh xin nghỉ").then(result => {
         if (result.value)
-            return MeteorCall(_METHODS.trip.ParentRequestByTime, {
-                tripID, time, studentID
+            return MeteorCall(_METHODS.ParentRequest.Confirm, {
+                _id: requestID
             }, accessToken)
     }).then(result => {
         handleSuccess("Đã xin nghỉ thành công")
         let parentRequestData = Session.get("parentRequestData")
-        let parentIDs= parentRequestData.student.parents.map(item=>item._id)
+        let parentIDs = parentRequestData.student.parents.map(item => item._id)
         MeteorCall(_METHODS.notification.sendFCMToMultiUser, {
             userIds: parentIDs,
             title: "Xác nhận xin nghỉ",
             text: `Học sinh ${parentRequestData.student.user.name} được phép nghỉ!`
         }, accessToken)
+        reloadData()
+        $("#absentActionModal").modal('hide')
     }).catch(e => {
         handleError(e, "Không tìm thấy chuyến đi phù hợp!")
     })

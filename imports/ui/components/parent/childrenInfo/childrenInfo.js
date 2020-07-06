@@ -59,6 +59,9 @@ Template.childrenInfo.helpers({
 });
 
 Template.childrenNextripModal.helpers({
+    studentID() {
+        return Session.get('studentID')
+    },
     startTime() {
         if (Session.get('tripData')) {
             return moment(Session.get('tripData').startTime).format("DD/MM/YYYY, HH:mm")
@@ -74,8 +77,9 @@ Template.childrenNextripModal.helpers({
     },
     studentStatus() {
         let tripData = Session.get('tripData')
+        let studentID = Session.get('studentID')
         if (!tripData) return
-        let student = tripData.students.filter(item => item.studentID)[0]
+        let student = tripData.students.filter(item => item.studentID==studentID)[0]
         if (!student) return
         return getJsonDefault(_TRIP_STUDENT.status, 'number', student.status)
     },

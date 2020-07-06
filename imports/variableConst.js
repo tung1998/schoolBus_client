@@ -159,12 +159,13 @@ const _METHODS = {
         Update: 'Parent.update',
         Delete: 'Parent.delete',
     },
-    ParrentRequest: {
-        GetAll: 'ParrentRequest.getAll',
-        GetById: 'ParrentRequest.getById',
-        Create: 'ParrentRequest.create',
-        Update: 'ParrentRequest.update',
-        Delete: 'ParrentRequest.delete',
+    ParentRequest: {
+        GetAll: 'ParentRequest.getAll',
+        GetById: 'ParentRequest.getById',
+        Create: 'ParentRequest.create',
+        Update: 'ParentRequest.update',
+        Delete: 'ParentRequest.delete',
+        Confirm: 'ParentRequest.confirm',
     },
     route: {
         GetAll: 'route.getAll',
