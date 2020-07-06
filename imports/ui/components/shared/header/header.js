@@ -20,6 +20,10 @@ import {
     COLLECTION_TASK
 } from '../../../../api/methods/task.js'
 
+export {
+    getAllNotification
+}
+
 let accessToken;
 
 Template.header.onCreated(() => {
@@ -28,7 +32,7 @@ Template.header.onCreated(() => {
     Session.set('tripNotification', [])
     Session.set('studentNotification', [])
     Session.set('numberNotification', '')
-    
+
 })
 
 Template.header.onRendered(() => {
@@ -43,14 +47,13 @@ Template.header.onRendered(() => {
     })
 
     this.realTimeTracker = Tracker.autorun(() => {
-        console.log(10);   
-            let task = COLLECTION_TASK.find({
-                name: 'Trip'
-            }).fetch()
-            if (task.length && task[0].tasks.length && task[0].updatedTime > Date.now() - TIME_DEFAULT.check_task) {
-                console.log(task);
+        let task = COLLECTION_TASK.find({
+            name: 'Trip'
+        }).fetch()
+        if (task.length && task[0].tasks.length && task[0].updatedTime > Date.now() - TIME_DEFAULT.check_task) {
+            if (Session.get('isAdmin'))
                 getAllNotification()
-            }
+        }
     });
 
 })
@@ -58,7 +61,6 @@ Template.header.onRendered(() => {
 Template.header.onDestroyed(() => {
     if (this.checkIsAdmin) this.checkIsAdmin.stop()
     if (this.realTimeTracker) this.realTimeTracker.stop()
-    Session.delete('isAdmin')
     Session.delete('tripNotification')
     Session.delete('studentNotification')
     Session.delete('numberNotification')
@@ -80,6 +82,9 @@ Template.header.helpers({
     },
     isAdmin() {
         return Session.get('isAdmin')
+    },
+    numberNotification() {
+        return Session.get('numberNotification')
     },
     numberStudent() {
         return Session.get('studentNotification').length
@@ -111,6 +116,7 @@ function sightOutClick() {
     Session.set(_SESSION.username, null)
     Session.set(_SESSION.userID, null)
     Session.set(_SESSION.userType, null)
+    Session.delete('isAdmin')
     if (Meteor.isCordova) {
         Push.setUser();
     }
@@ -122,21 +128,23 @@ function sightOutClick() {
 
 async function getAllNotification() {
     try {
-        let tripNotificationData = []
-        let studentNotificationData = []
-        let problemData = await MeteorCallNoEfect(_METHODS.trip.ProblemInDay, {
-            date: moment(Date.now()).date(),
-            month: moment(Date.now()).month() + 1,
-            year: moment(Date.now()).year()
-        }, accessToken)
-        problemData.map(result => {
-            if (result.studentID)
-                studentNotificationData.push(result)
-            else tripNotificationData.push(result)
-        })
-        Session.set('numberNotification', problemData.length)
-        Session.set('tripNotification', tripNotificationData);
-        Session.set('studentNotification', studentNotificationData);
+        if (Session.get('isAdmin')) {
+            let tripNotificationData = []
+            let studentNotificationData = []
+            let problemData = await MeteorCallNoEfect(_METHODS.trip.ProblemInDay, {
+                date: moment(Date.now()).date(),
+                month: moment(Date.now()).month() + 1,
+                year: moment(Date.now()).year()
+            }, accessToken)
+            problemData.map(result => {
+                if (result.studentID)
+                    studentNotificationData.push(result)
+                else tripNotificationData.push(result)
+            })
+            Session.set('numberNotification', problemData.length)
+            Session.set('tripNotification', tripNotificationData);
+            Session.set('studentNotification', studentNotificationData);
+        }
     } catch (error) {
         handleError(error)
     }

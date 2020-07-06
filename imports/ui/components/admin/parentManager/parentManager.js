@@ -165,6 +165,8 @@ function getStudentData() {
   MeteorCall(_METHODS.student.GetByClass, {
     classID
   }, accessToken).then(result => {
+    console.log(result);
+    
     Session.set('students', result)
   })
 }

@@ -20,6 +20,9 @@ import {
     COLLECTION_TASK
 } from '../../../../api/methods/task.js'
 
+import {
+    getAllNotification
+} from '../header/header.js'
 
 let accessToken;
 
@@ -29,14 +32,14 @@ Template.mobileHeader.onCreated(() => {
     Session.set('tripNotification', [])
     Session.set('studentNotification', [])
     Session.set('numberNotification', '')
-    
+
 })
 
 Template.mobileHeader.onRendered(() => {
     this.checkIsAdmin = Tracker.autorun(() => {
         if (Session.get(_SESSION.userType) === 0) {
             Session.set('isAdmin', true)
-            getAllNotificationMobile()
+            getAllNotification()
         } else {
             Session.set('isAdmin', false)
 
@@ -44,14 +47,14 @@ Template.mobileHeader.onRendered(() => {
     })
 
     this.realTimeTracker = Tracker.autorun(() => {
-            let task = COLLECTION_TASK.find({
-                name: 'Trip'
-            }).fetch()
-            if (task.length && task[0].tasks.length && task[0].updatedTime > Date.now() - TIME_DEFAULT.check_task) {
+        let task = COLLECTION_TASK.find({
+            name: 'Trip'
+        }).fetch()
+        if (task.length && task[0].tasks.length && task[0].updatedTime > Date.now() - TIME_DEFAULT.check_task) {
 
-                console.log(task);
-                getAllNotificationMobile()
-            }
+            if (Session.get('isAdmin'))
+                getAllNotification()
+        }
     });
 
 })
@@ -103,7 +106,7 @@ Template.mobileHeader.helpers({
     updatedTimeStudent() {
         return moment(this.student.updatedTime).startOf('second').fromNow()
     },
-   
+
 })
 
 function sightOutClick() {
@@ -116,24 +119,24 @@ function sightOutClick() {
     FlowRouter.go('/login')
 }
 
-async function getAllNotificationMobile() {
-    try {
-        let tripNotificationData = []
-        let studentNotificationData = []
-        let problemData = await MeteorCallNoEfect(_METHODS.trip.ProblemInDay, {
-            date: moment(Date.now()).date(),
-            month: moment(Date.now()).month() + 1,
-            year: moment(Date.now()).year()
-        }, accessToken)
-        problemData.map(result => {
-            if (result.studentID)
-                studentNotificationData.push(result)
-            else tripNotificationData.push(result)
-        })
-        Session.set('numberNotification', problemData.length)
-        Session.set('tripNotification', tripNotificationData);
-        Session.set('studentNotification', studentNotificationData);
-    } catch (error) {
-        handleError(error)
-    }
-}
+// async function getAllNotificationMobile() {
+//     try {
+//         let tripNotificationData = []
+//         let studentNotificationData = []
+//         let problemData = await MeteorCallNoEfect(_METHODS.trip.ProblemInDay, {
+//             date: moment(Date.now()).date(),
+//             month: moment(Date.now()).month() + 1,
+//             year: moment(Date.now()).year()
+//         }, accessToken)
+//         problemData.map(result => {
+//             if (result.studentID)
+//                 studentNotificationData.push(result)
+//             else tripNotificationData.push(result)
+//         })
+//         Session.set('numberNotification', problemData.length)
+//         Session.set('tripNotification', tripNotificationData);
+//         Session.set('studentNotification', studentNotificationData);
+//     } catch (error) {
+//         handleError(error)
+//     }
+// }

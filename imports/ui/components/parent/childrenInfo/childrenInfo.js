@@ -11,7 +11,8 @@ import {
 import {
     _METHODS,
     _URL_images,
-    _TRIP, _TRIP_STUDENT,
+    _TRIP,
+    _TRIP_STUDENT,
     TIME_DEFAULT
 } from "../../../../variableConst";
 
@@ -33,7 +34,7 @@ Template.childrenInfo.onRendered(() => {
         }).fetch()
         if (task.length && task[0].tasks.length && task[0].updatedTime > Date.now() - TIME_DEFAULT.check_task) {
             console.log(task);
-            
+
         }
     });
 });
@@ -96,20 +97,23 @@ Template.childrenNextripModal.helpers({
             return tripData.status == _TRIP.status.ready.number
         return false
     },
-    reachCarstopTime(){
+    reachCarstopTime() {
         let tripData = Session.get('tripData')
-        let studentInfo = Session.get('students').filter(item=>item._id==Session.get('studentID'))[0]
-        if(studentInfo){
-            let carStopDelayTime = tripData.route.carStops.filter(item=>item.carStopID==studentInfo.carStopID)[0].delayTime
-            let delayTime = Session.get('tripData').delayTime||0
-            if(carStopDelayTime&&Session.get('tripData').delayTime) 
-                return moment(Session.get('tripData').startTime+(Number(carStopDelayTime)+delayTime)*60*1000).format("DD/MM/YYYY, HH:mm")
+        if (Session.get('students')) {
+            let studentInfo = Session.get('students').filter(item => item._id == Session.get('studentID'))[0]
+            if (studentInfo) {
+                let carStopDelayTime = tripData.route.carStops.filter(item => item.carStopID == studentInfo.carStopID)[0].delayTime
+                let delayTime = Session.get('tripData').delayTime || 0
+                if (carStopDelayTime && Session.get('tripData').delayTime)
+                    return moment(Session.get('tripData').startTime + (Number(carStopDelayTime) + delayTime) * 60 * 1000).format("DD/MM/YYYY, HH:mm")
                 return moment(Session.get('tripData').startTime).format("DD/MM/YYYY, HH:mm")
+            }
+            return
         }
-        return 
     },
-    delayTime(){
-        return Session.get('tripData').delayTime
+    delayTime() {
+        if (Session.get('tripData'))
+            return Session.get('tripData').delayTime
     },
 });
 

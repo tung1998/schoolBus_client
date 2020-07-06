@@ -18,13 +18,18 @@ import {
 } from '../../../../functions';
 
 import {
+    COLLECTION_TASK
+  } from "../../../../api/methods/task.js";
+
+import {
     _METHODS,
     _TRIP_STUDENT,
     _TRIP,
     _MARKER_CONFIG,
     _TRIP_LOG,
     _TRIP_CARSTOP,
-    _URL_images
+    _URL_images,
+    TIME_DEFAULT
 } from '../../../../variableConst';
 
 let accessToken,
