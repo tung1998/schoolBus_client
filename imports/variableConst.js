@@ -233,6 +233,7 @@ const _METHODS = {
         Image: 'trip.image',
         GetNext: 'trip.getNext',
         GetAllNext: 'trip.getAllNext',
+        GetCurrent: 'trip.getCurrent',
         GetByStudent: 'trip.getByStudent',
         GetTripLogByTripID: 'trip.getLogByTripID',
         GetStudentTripLog: 'trip.getStudentTripLog',

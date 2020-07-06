@@ -391,7 +391,7 @@ async function reloadData() {
       routeName == "driver.upCommingTripInfo" ||
       routeName == "nanny.upCommingTripInfo"
     )
-      tripData = await MeteorCall(_METHODS.trip.GetNext, null, accessToken);
+      tripData = await MeteorCall(_METHODS.trip.GetCurrent, null, accessToken);
     //get info trip
       Session.set("tripData", tripData);
       Session.set("tripID", tripData._id);
