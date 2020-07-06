@@ -161,7 +161,7 @@ function ClickModifyButton(e) {
     $("#editStudentModal").attr("studentID", studentData._id);
     $(".modal-title").html("Chỉnh Sửa");
     $(".confirm-button").html("Sửa");
-
+    $('#date-of-birth').val(moment(studentData.dateOfBirth).format('L')).
     $('input[name="IDstudent"]').val(studentData.IDStudent);
     $('input[name="address"]').val(studentData.address);
     $('input[name="name"]').val(studentData.name);
@@ -374,7 +374,8 @@ function createRow(result) {
         carStopID: result.carStopID,
         carStop: result.carStop.name,
         status: result.status,
-        image: result.user.image
+        image: result.user.image,
+        dateOfBirth: result.user.dateOfBirth ? result.user.dateOfBirth: ''
     }
     // _id is tripID
     return `
