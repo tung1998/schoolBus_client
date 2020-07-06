@@ -14,7 +14,7 @@ export {
     TIME_DEFAULT,
     NOTI_DEFAULT
 }
-const _URL_images = 'http://192.168.0.111:3000/images'
+const _URL_images = 'https://schoolbus.247car.vn/images'
 // const _URL_images = 'http://113.190.128.251:3000/images'
 
 const _METHODS = {
