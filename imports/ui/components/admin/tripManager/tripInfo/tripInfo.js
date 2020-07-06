@@ -611,16 +611,20 @@ function reportIssues(e) {
   $("#reportModal").modal("hide");
   handleConfirm("Xác nhận báo cáo sự cố").then((result) => {
     if (result.value) {
-      let value = $("input[name=report]:checked");
+      let reportValue = $("input[name=report]:checked");
       let data = {
         _id: Session.get("tripID"),
-        note: "",
-        status: _TRIP.status.accident.number,
       };
-      if (value.val() == 0) {
+      if (reportValue.val() == 0) {
         data.note = $("#report-content").val();
       } else {
-        data.note = value.parent().text().trim();
+        data.note = reportValue.parent().text().trim();
+      }
+      
+      if($("#report-delayTime").val()){
+        data.delayTime = Number($("#report-delayTime").val())
+      }else{
+        data.status = _TRIP.status.accident.number
       }
 
       MeteorCall(_METHODS.trip.Update, data, accessToken)
@@ -635,7 +639,7 @@ function reportIssues(e) {
           MeteorCallNoEfect(_METHODS.notification.sendFCMToMultiUser, {
             userIds: userIDs,
             title: "Thông báo sự cố",
-            text: `Xe gặp sự cố: ${car}. \n Nội dụng: ${data.note}`
+            text: `Xe gặp sự cố: ${car}. \n Nội dụng: ${data.note} ${data.delayTime?`Dự kiến chậm trễ ${data.delayTime} phút`:""}`
           }, accessToken)
 
           reloadData();

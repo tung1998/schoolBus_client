@@ -116,7 +116,8 @@
                             <!--begin::Section-->
                             <div class="kt-section">
                                 <div class="kt-section__content">
-                                    <table class="table table-bordered table-hover table-responsive-md" id="table-studentList">
+                                    <table class="table table-bordered table-hover table-responsive-md"
+                                        id="table-studentList">
                                         <thead class="thead-light">
                                             <tr>
                                                 <th>#</th>
@@ -153,6 +154,7 @@
                                                             <h3 class="kt-portlet__head-title">
                                                                 {{routeInfo.startCarStop.name}}
                                                             </h3>
+
                                                         </div>
                                                     </div>
                                                     <div class="kt-portlet__body"
@@ -163,17 +165,8 @@
                                                 </div>
                                             </div>
                                             <div class="ui-sortable carStopContainer" id="kt_sortable_portlets">
-                                                {{#each routeInfo.studentList.carStops}}
-                                                <div class="kt-portlet kt-portlet--mobile addressTab kt-portlet--sortable"
-                                                    carStopID="{{_id}}" index="{{@index}}">
-                                                    <div class="kt-portlet__head ui-sortable-handle">
-                                                        <div class="kt-portlet__head-label">
-                                                            <h3 class="kt-portlet__head-title">
-                                                                {{name}}
-                                                            </h3>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                {{#each carStopData in routeInfo.carStops}}
+                                                {{> routeCarStopInfo carStopData=carStopData index=@index}}
                                                 {{/each}}
                                             </div>
                                             <div id="endCarStop">
@@ -231,4 +224,25 @@
         <td>{{data.school.name}}</td>
         <td>{{data.school.address}}</td>
     </tr>
+</template>
+
+<template name="routeCarStopInfo">
+    <div class="kt-portlet kt-portlet--mobile addressTab kt-portlet--sortable" carStopID="{{carStopData.carStopID}}"
+        index="{{index}}">
+        <div class="kt-portlet__head ui-sortable-handle">
+            <div class="kt-portlet__head-label">
+                <h3 class="kt-portlet__head-title">
+                    {{carStopData.carStop.name}}
+                </h3>
+            </div>
+        </div>
+        <div class="kt-portlet__body kt-hidden"
+            style="height: 10px; text-align: center; border-top-left-radius: 0px !important; border-top-right-radius: 0px !important; padding-top: 10px!important">
+            <div style="display: inline-block; text-align: left">
+                Thời gian trễ: <strong>{{delayTime}}</strong> phút<button
+                    class="pull-right btn btn-primary btn-hover-brand changeDelayTimeBtn" carStopID="{{carStopData.carStopID}}">Thay
+                    Đổi</button>
+            </div>
+        </div>
+    </div>
 </template>
