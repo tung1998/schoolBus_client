@@ -126,7 +126,7 @@ Template.childrenHtml.helpers({
 
 function gettripData(e) {
     let studentID = e.currentTarget.getAttribute('studentID')
-    MeteorCall(_METHODS.trip.GetNext, {
+    MeteorCall(_METHODS.trip.GetCurrent, {
         studentID
     }, accessToken).then(result => {
         if (result) {
