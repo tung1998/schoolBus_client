@@ -323,7 +323,7 @@ function clickStatusButton(e) {
       let userIDs = getSendNotiUserIDs(
         Session.get('tripData').route,
         studentID,
-        false, null)
+        false, null)       
       MeteorCallNoEfect(_METHODS.notification.sendFCMToMultiUser, {
         userIds: userIDs,
         title: `Thông báo phụ huynh`,
@@ -483,7 +483,7 @@ async function updateTripStatus(e) {
         MeteorCallNoEfect(_METHODS.notification.sendFCMToMultiUser, {
           userIds: userIDs,
           title: "Thông báo chuyến đi",
-          text: `Chuyến đi của xe ${car} đã ${getJsonDefault(_TRIP.status, 'number', status)}`
+          text: `Chuyến đi của xe ${car} đã ${getJsonDefault(_TRIP.status, 'number', status).text}`
         }, accessToken)
         reloadData();
       })

@@ -28,6 +28,8 @@ Template.mobileHeader.onCreated(() => {
     Session.set('isAdmin', true)
     Session.set('tripNotification', [])
     Session.set('studentNotification', [])
+    Session.set('numberNotification', '')
+    
 })
 
 Template.mobileHeader.onRendered(() => {
@@ -42,7 +44,6 @@ Template.mobileHeader.onRendered(() => {
     })
 
     this.realTimeTracker = Tracker.autorun(() => {
-        if (Session.get('isAdmin')) {
             let task = COLLECTION_TASK.find({
                 name: 'Trip'
             }).fetch()
@@ -51,7 +52,6 @@ Template.mobileHeader.onRendered(() => {
                 console.log(task);
                 getAllNotificationMobile()
             }
-        }
     });
 
 })
@@ -62,6 +62,7 @@ Template.mobileHeader.onDestroyed(() => {
     Session.delete('isAdmin')
     Session.delete('tripNotification')
     Session.delete('studentNotification')
+    Session.delete('numberNotification')
 })
 
 Template.mobileHeader.events({
@@ -81,6 +82,9 @@ Template.mobileHeader.helpers({
     isAdmin() {
         return Session.get('isAdmin')
     },
+    numberNotification() {
+        return Session.get('numberNotification')
+    },
     numberTrip() {
         return Session.get('tripNotification').length
     },
@@ -99,6 +103,7 @@ Template.mobileHeader.helpers({
     updatedTimeStudent() {
         return moment(this.student.updatedTime).startOf('second').fromNow()
     },
+   
 })
 
 function sightOutClick() {
@@ -125,7 +130,7 @@ async function getAllNotificationMobile() {
                 studentNotificationData.push(result)
             else tripNotificationData.push(result)
         })
-        $('#number-notification-moblie').text(problemData.length)
+        Session.set('numberNotification', problemData.length)
         Session.set('tripNotification', tripNotificationData);
         Session.set('studentNotification', studentNotificationData);
     } catch (error) {
