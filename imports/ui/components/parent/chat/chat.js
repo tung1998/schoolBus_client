@@ -49,7 +49,7 @@ Template.chatTeacher.onRendered(() => {
         students = Session.get(_SESSION.students)
         createTeachersRow(students);
         if (FlowRouter.getQueryParam('teacherID')) {
-            $(`a[partnerid=${FlowRouter.getQueryParam('teacherID')}]`).trigger('click')
+            $(`div[partnerid=${FlowRouter.getQueryParam('teacherID')}]`).trigger('click')
         } else $(`div[partnerid]`).first().trigger('click')
     })
 
@@ -102,7 +102,7 @@ Template.chatTeacher.onDestroyed(() => {
 })
 
 Template.chatTeacher.events({
-    'click .kt-widget__info': ClickUserName,
+    'click .kt-widget__item': ClickUserName,
     'submit form': SubmitForm,
     'keyup #inbox_message, click #inbox_message': () => {
         $("#inbox_message").addClass('empty-text').removeClass('empty-text')
@@ -217,11 +217,11 @@ function teacherRow(teacher) {
     } else {
         unreaIcon = `<span class="kt-badge kt-badge--success kt-font-bold unreadMessage" > ${messageInfo[0]}</span>`
     }
-    return `<div class="kt-widget__item" id=${roomID}>
+    return `<div class="kt-widget__item" id=${roomID} partnerID=${teacher.user._id} partnerImage=${partnerImg} partnerName="${teacher.user.name}" roomID="${roomID}">
                 <span class="kt-media kt-media--circle"> 
                     ${img}  
                 </span>
-                <div class="kt-widget__info"  partnerID=${teacher.user._id} partnerImage=${partnerImg} partnerName="${teacher.user.name}" roomID="${roomID}">
+                <div class="kt-widget__info"  >
                     <div class="kt-widget__section">
                         <a href="#" class="kt-widget__username">${teacher.user.name}</a>
                         <span class="kt-badge kt-badge--success kt-badge--dot"></span>

@@ -121,7 +121,7 @@ Template.messageHtml.helpers({
 })
 
 Template.chatParent.events({
-    'click .kt-widget__info': ClickUserName,
+    'click .kt-widget__item': ClickUserName,
     'submit form': SubmitForm,
     'keyup #inbox_message, click #inbox_message': () => {
         $("#inbox_message").addClass('empty-text').removeClass('empty-text')
@@ -188,7 +188,7 @@ function renderListParents() {
                         if (parent.length)
                             createParentsRow(parent)
                         if (FlowRouter.getQueryParam('parentID')) {
-                            $(`a[partnerid=${FlowRouter.getQueryParam('parentID')}]`).trigger('click')
+                            $(`div[partnerid=${FlowRouter.getQueryParam('parentID')}]`).trigger('click')
                         } else $(`div[partnerid]`).first().trigger('click')
                     })
                     .catch(handleError);
@@ -234,11 +234,11 @@ function parentRow(data) {
     } else {
         unreaIcon = `<span class="kt-badge kt-badge--success kt-font-bold unreadMessage" unreadID=${roomID}> ${messageInfo[0]}</span>`
     }
-    return `<div class="kt-widget__item" id=${roomID}>
+    return `<div class="kt-widget__item" id=${roomID} partnerID=${data.user._id} partnerImage=${partnerImg} partnerName="${data.user.name}" roomID="${roomID}">
                 <span class="kt-media kt-media--circle"> 
                     ${img}  
                 </span>
-                <div class="kt-widget__info" partnerID=${data.user._id} partnerImage=${partnerImg} partnerName="${data.user.name}" roomID="${roomID}">
+                <div class="kt-widget__info">
                     <div class="kt-widget__section">
                         <a href="#" class="kt-widget__username">${data.user.name}</a>
                         <span class="kt-badge kt-badge--success kt-badge--dot"></span>
