@@ -37,10 +37,6 @@ Template.parentRequest.helpers({
 
 Template.parentRequest.onRendered(() => {
     reloadData()
-
-    let studentID = FlowRouter.getParam("studentID")
-    let tripID = FlowRouter.getParam("tripID")
-
     $(`#time`).datepicker({
         language: "vi",
         autoclose: true,
@@ -48,8 +44,6 @@ Template.parentRequest.onRendered(() => {
         disableTouchKeyboard: true,
         ignoreReadonly: true,
     })
-
-    if (studentID) $('#student').val(studentID)
 })
 
 Template.parentRequest.onDestroyed(() => {
@@ -80,18 +74,21 @@ Template.requestHtml.helpers({
 // function getFutureTrip
 
 function reloadData() {
-    MeteorCall(_METHODS.ParrentRequest.GetAll, null, accessToken).then(result => {
+    MeteorCall(_METHODS.ParentRequest.GetAll, null, accessToken).then(result => {
         Session.set('requests', result.data)
     }).catch(handleError)
-
+    let studentID = FlowRouter.getQueryParam("studentID")
+    if (studentID) $('#student').val(studentID)
     MeteorCall(_METHODS.trip.GetAllNext, {
         studentID: $('#student').val()
     }, accessToken).then(result => {
-        result.map(item => {
-            item.startTime = moment(item.startTime).format('llll')
-            return item
+        let tripHtml = result.map(item => {
+            let startTime = moment(item.startTime).format('llll')
+            return `<option value="${item._id}">${item.route.name}-${startTime}</option>`
         })
-        Session.set('nextTrip', result)
+        $('#trip').html(tripHtml.join(''))
+        if (FlowRouter.getQueryParam("tripID"))
+            $('#trip').val(FlowRouter.getQueryParam("tripID"))
     }).catch(handleError)
 }
 
@@ -105,7 +102,7 @@ function sendRequest(e) {
     if (chooseType == 1) data.tripID = $('#trip').val()
     else data.time = moment($("#time").val(), "DD/MM/YYYY").valueOf()
     if (data.time || data.tripID)
-        MeteorCall(_METHODS.ParrentRequest.Create, data, accessToken).then(result => {
+        MeteorCall(_METHODS.ParentRequest.Create, data, accessToken).then(result => {
             handleSuccess('Đã gửi yêu cầu thành công, Đợi giáo viên xác nhận!')
             let studentData = Session.get(_SESSION.students).filter(item => item._id == data.studentID)[0]
             MeteorCall(_METHODS.notification.sendFCMToMultiUser, {
@@ -134,10 +131,10 @@ function studentChange(e) {
     MeteorCall(_METHODS.trip.GetAllNext, {
         studentID
     }, accessToken).then(result => {
-        result.map(item => {
-            item.startTime = moment(item.startTime).format('llll')
-            return item
+        let tripHtml = result.map(item => {
+            let startTime = moment(item.startTime).format('llll')
+            return `<option value="${item._id}">${item.route.name}-${startTime}</option>`
         })
-        Session.set('nextTrip', result)
+        $('#trip').html(tripHtml.join(''))
     }).catch(handleError)
 }

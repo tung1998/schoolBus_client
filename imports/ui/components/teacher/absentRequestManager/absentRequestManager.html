@@ -50,7 +50,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {{#each parrentRequestList}}
+                                                {{#each parentRequestList}}
                                                 {{> parentRequestRow}}
                                                 {{/each}}
                                             </tbody>
@@ -124,11 +124,11 @@
                                 </tr>
                                 <tr>
                                     <th width="30%">Thời gian</th>
-                                    <td>{{parentReqestData.time}}</td>
+                                    <td>{{parentReqestData.requestTime}}</td>
                                 </tr>
                                 <tr>
                                     <th width="30%">Trạng thái</th>
-                                    <td>{{parentReqestData.status}}</td>
+                                    <td><span class="kt-badge kt-badge--{{parentReqestData.parentRequestStatus.classname}} kt-badge--inline">{{parentReqestData.parentRequestStatus.text}}</span></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -136,11 +136,13 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" time="{{parentReqestData.time}}" requestID="{{parentReqestData._id}}"
-                        studentID="{{parentReqestData.studentID}}" tripID="{{parentReqestData.tripID}}"
-                        class="btn btn-outline-primary btn-sm" id="confirmRequestBtn">
+                    {{#if isConfirmed}}
+                    {{else}}
+                    <button type="button" requestID="{{parentReqestData._id}}" class="btn btn-outline-primary btn-sm"
+                        id="confirmRequestBtn">
                         Xác nhận
                     </button>
+                    {{/if}}
                 </div>
             </div>
         </div>
