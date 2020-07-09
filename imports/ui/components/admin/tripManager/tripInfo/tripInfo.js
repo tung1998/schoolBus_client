@@ -752,7 +752,7 @@ function carstopStudentFilterChange(e) {
 
 function updateStudentNote(e) {
   let studentID = e.currentTarget.getAttribute("studentid");
-  let tripID = e.curemtTarget.getAttribute("tripid");
+  let tripID = e.currentTarget.getAttribute("tripid");
   let studentName = e.currentTarget.getAttribute("studentName")
   $("#studentInfoModal").modal("hide");
   handlePromp().then((result) => {

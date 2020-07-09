@@ -415,6 +415,8 @@ function initDatePicker() {
         $(`#${key}`).datepicker({
             language: "vi",
             autoclose: true,
+            disableTouchKeyboard: true,
+            ignoreReadonly: true,
         })
     })
 }

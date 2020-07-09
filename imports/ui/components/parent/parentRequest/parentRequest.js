@@ -10,7 +10,10 @@ import {
 } from '../../../../functions'
 
 import {
-    _METHODS, _SESSION, _FEEDBACK, _REQUEST
+    _METHODS,
+    _SESSION,
+    _FEEDBACK,
+    _REQUEST
 } from '../../../../variableConst'
 
 let accessToken;
@@ -41,7 +44,9 @@ Template.parentRequest.onRendered(() => {
     $(`#time`).datepicker({
         language: "vi",
         autoclose: true,
-        dateFormat: 'DD/MM/YYYY'
+        dateFormat: 'DD/MM/YYYY',
+        disableTouchKeyboard: true,
+        ignoreReadonly: true,
     })
 
     if (studentID) $('#student').val(studentID)
@@ -66,8 +71,8 @@ Template.requestHtml.helpers({
         return getJsonDefault(_REQUEST.status, 'number', this.status)
     },
     requestTime() {
-        if(this.tripID&&this.trip)
-        return moment(this.trip.startTime).format("l")
+        if (this.tripID && this.trip)
+            return moment(this.trip.startTime).format("l")
         return moment(this.time).format("l")
     }
 })
@@ -82,7 +87,7 @@ function reloadData() {
     MeteorCall(_METHODS.trip.GetAllNext, {
         studentID: $('#student').val()
     }, accessToken).then(result => {
-        result.map(item=>{
+        result.map(item => {
             item.startTime = moment(item.startTime).format('llll')
             return item
         })
@@ -102,8 +107,8 @@ function sendRequest(e) {
     if (data.time || data.tripID)
         MeteorCall(_METHODS.ParrentRequest.Create, data, accessToken).then(result => {
             handleSuccess('Đã gửi yêu cầu thành công, Đợi giáo viên xác nhận!')
-            let studentData = Session.get(_SESSION.students).filter(item=>item._id==data.studentID)[0]
-            MeteorCall(_METHODS.notification.sendFCMToMultiUser,{
+            let studentData = Session.get(_SESSION.students).filter(item => item._id == data.studentID)[0]
+            MeteorCall(_METHODS.notification.sendFCMToMultiUser, {
                 userIds: [studentData.class.teacher._id],
                 title: "Học sinh xin nghỉ",
                 text: `Học sinh ${studentData.user.name} muốn xin nghỉ!`
@@ -118,19 +123,18 @@ function chooseTypeChange(e) {
     if (value == 1) {
         $('#time').parent().parent().addClass('kt-hidden')
         $('#trip').parent().parent().removeClass('kt-hidden')
-    }
-    else {
+    } else {
         $('#time').parent().parent().removeClass('kt-hidden')
         $('#trip').parent().parent().addClass('kt-hidden')
     }
 }
 
-function studentChange(e){
+function studentChange(e) {
     let studentID = $('#student').val()
     MeteorCall(_METHODS.trip.GetAllNext, {
         studentID
     }, accessToken).then(result => {
-        result.map(item=>{
+        result.map(item => {
             item.startTime = moment(item.startTime).format('llll')
             return item
         })

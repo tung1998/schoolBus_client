@@ -375,7 +375,7 @@ function createRow(result) {
         carStop: result.carStop.name,
         status: result.status,
         image: result.user.image,
-        dateOfBirth: result.user.dateOfBirth ? result.user.dateOfBirth: ''
+        dateOfBirth: result.user.dateOfBirth ? result.user.dateOfBirth : ''
     }
     // _id is tripID
     return `
@@ -446,5 +446,7 @@ function initDatePikcer() {
     $('#date-of-birth').datepicker({
         language: 'vi',
         autoclose: true,
+        disableTouchKeyboard: true,
+        ignoreReadonly: true,
     }).datepicker('update', '')
 }

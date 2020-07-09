@@ -408,6 +408,7 @@ function initDatepicker() {
             language: "vi",
             autoclose: true,
             disableTouchKeyboard: true,
+            ignoreReadonly: true,
         })
     })
 }
