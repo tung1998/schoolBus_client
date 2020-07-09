@@ -38,7 +38,7 @@
                 role="tablist">
                 <li class="nav-item">
                     <a class="nav-link active show" data-toggle="tab"
-                        href="#topbar_notifications_trips" role="tab"
+                        href="#topbar_notifications_mobile_trips" role="tab"
                         aria-selected="true">Chuyến đi
                         <span class="kt-nav__link-badge">
                           <span class="kt-badge kt-badge--danger">&nbsp;{{numberTrip}}</span>
@@ -48,7 +48,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="tab"
-                        href="#topbar_notifications_students" role="tab"
+                        href="#topbar_notifications_mobile_students" role="tab"
                         aria-selected="false">Học sinh
                         <span class="kt-nav__link-badge">
                           <span class="kt-badge kt-badge--warning">&nbsp;{{numberStudent}}</span>
@@ -60,7 +60,7 @@
             </div>
         <!--end: Head -->
             <div class="tab-content">
-              <div class="tab-pane active show" id="topbar_notifications_trips"
+              <div class="tab-pane active show" id="topbar_notifications_mobile_trips"
                   role="tabpanel">
                   <div class="kt-notification kt-margin-t-10 kt-margin-b-10 kt-scroll" data-scroll="true" data-height="300" data-mobile-height="200">
                     {{#each tripNotificationData}}
@@ -80,7 +80,7 @@
                     {{/each}}
                 </div>
               </div>
-              <div class="tab-pane" id="topbar_notifications_students"
+              <div class="tab-pane" id="topbar_notifications_mobile_students"
                   role="tabpanel">
                   <div class="kt-notification kt-margin-t-10 kt-margin-b-10 kt-scroll" data-scroll="true" data-height="300" data-mobile-height="200">
                     {{#each studentNotificationData}}
